@@ -603,8 +603,7 @@ function tableBase() {
 }
 
 // ════════════════════════════════════
-//  CARGAR DATA — usa endpoint de Tabla
-//  Sin rangos, sin cell count, sin drama
+//  CARGAR DATA — tabla paginada con $top/$skip
 // ════════════════════════════════════
 async function loadData() {
   if (!config.fileId) {
@@ -615,34 +614,46 @@ async function loadData() {
 
   showLoading(true);
   showLoadProgress(true);
-  updateLoadProgress(10, 0);
+  updateLoadProgress(5, 0);
   allData = [];
 
   try {
     const base = tableBase();
 
-    // 1) Obtener headers de la tabla
+    // 1) Obtener headers
     const colData = await graphRequest(`${base}/columns?$select=name`);
     headers = colData.value.map(c => c.name);
-    updateLoadProgress(30, 0);
+    updateLoadProgress(15, 0);
 
-    // 2) Obtener TODAS las filas en una sola llamada — la API de tabla no tiene cell count limit
-    const rowData = await graphRequest(`${base}/rows`);
-    updateLoadProgress(80, rowData.value.length);
+    // 2) Paginar filas con $top=100 y $skip
+    const PAGE = 100;
+    let skip = 0;
+    let totalLoaded = 0;
+    let keepGoing = true;
 
-    // 3) Mapear filas a objetos
-    // Cada fila tiene: { index: N, values: [[v1, v2, ...]] }
-    allData = rowData.value.map(row => {
-      const obj = { _rowId: row.index }; // index 0-based dentro de la tabla
-      headers.forEach((h, i) => {
-        // Los checkboxes/booleanos vienen como true/false, los normalizamos
-        const val = row.values[0][i];
-        obj[h] = (val === true) ? 'SI' : (val === false) ? '' : (val ?? '');
-      });
-      return obj;
-    });
+    while (keepGoing) {
+      const url = `${base}/rows?$top=${PAGE}&$skip=${skip}`;
+      const rowData = await graphRequest(url);
+      const rows = rowData.value || [];
 
-    updateLoadProgress(100, allData.length);
+      for (const row of rows) {
+        const obj = { _rowId: row.index };
+        headers.forEach((h, i) => {
+          const val = row.values[0][i];
+          obj[h] = (val === true) ? 'SI' : (val === false) ? '' : (val ?? '');
+        });
+        allData.push(obj);
+        totalLoaded++;
+      }
+
+      skip += PAGE;
+      updateLoadProgress(Math.min(15 + Math.round((totalLoaded / Math.max(totalLoaded + PAGE, 1)) * 80), 95), totalLoaded);
+
+      // Si vino menos de PAGE filas, llegamos al final
+      if (rows.length < PAGE) keepGoing = false;
+    }
+
+    updateLoadProgress(100, totalLoaded);
 
     if (!allData.length) { showToast('La tabla TablaDatos está vacía', true); return; }
 
