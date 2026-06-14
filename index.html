@@ -410,7 +410,7 @@ const SCOPES=["Files.ReadWrite","User.Read"];
 const TABLE_NAME="TablaData";
 
 // *** COLUMNAS FIJAS segun el Excel visto ***
-const COL_FUNC    = 'FNCNE';   // columna funcionario
+const COL_FUNC    = 'FNCNR';   // columna funcionario
 const COL_NETA    = 'NETA';    // columna neta
 const COL_FECHA   = 'FECHA';   // columna fecha (si existe; se intentan aliases)
 const COL_ESTGES  = 'EST_GES'; // estado gestion
@@ -583,11 +583,11 @@ function resetDashFilters(){
 function updateDashboard(){
   const d=dashData;
 
-  // KPIs conteo
   document.getElementById('kpi-total').textContent=d.length.toLocaleString('es-PE');
 
-  const lsng=d.filter(r=>String(r[COL_PROD]||'').startsWith('LSNG'));
-  const crdt=d.filter(r=>String(r[COL_PROD]||'').startsWith('CRDT'));
+  // ✅ LSNG = empieza con L, CRDT = empieza con C
+  const lsng=d.filter(r=>String(r[COL_PROD]||'').startsWith('L'));
+  const crdt=d.filter(r=>String(r[COL_PROD]||'').startsWith('C'));
   const lsbk=d.filter(r=>String(r[COL_PROD]||'').startsWith('LSBK'));
   document.getElementById('kpi-lsng').textContent=lsng.length.toLocaleString('es-PE');
   document.getElementById('kpi-lsng-sub').textContent=`VEH:${lsng.filter(r=>String(r[COL_PROD]).includes('VEH')).length}  MAQ:${lsng.filter(r=>String(r[COL_PROD]).includes('MAQ')).length}`;
@@ -595,13 +595,19 @@ function updateDashboard(){
   document.getElementById('kpi-crdt-sub').textContent=`VEH:${crdt.filter(r=>String(r[COL_PROD]).includes('VEH')).length}  MAQ:${crdt.filter(r=>String(r[COL_PROD]).includes('MAQ')).length}`;
   document.getElementById('kpi-lsbk').textContent=lsbk.length.toLocaleString('es-PE');
 
-  // Funcionarios únicos usando COL_FUNC = FNCNE
-  const funcKey=headers.includes(COL_FUNC)?COL_FUNC:detectField(['FNCNE','FUNCIONARIO','ANALISTA','ASESOR','EJECUTIVO']);
+  // ✅ FUNCIONARIOS ÚNICOS — columna FNCNR
+  const funcKey=headers.includes('FNCNR')?'FNCNR':detectField(['FNCNR','FNCNE','FUNCIONARIO','ANALISTA','EJECUTIVO']);
   const funcsUniq=funcKey?[...new Set(d.map(r=>String(r[funcKey]||'').trim()).filter(Boolean))]:[];
   document.getElementById('kpi-func').textContent=funcsUniq.length.toLocaleString('es-PE');
 
-  // NETA total solo PROYE (EST_COM contiene "PROYE")
-  const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE_NETA','MONTO','IMPORTE']);
+  // ✅ CLIENTES ÚNICOS — solo ACTIVADO en EST_GES
+  const activados=d.filter(r=>String(r[COL_ESTGES]||'').toUpperCase().includes('ACTIVADO'));
+  const clientesUniq=[...new Set(activados.map(r=>String(r['NOMBRE_RSOCIAL_CLIENTE']||'').trim()).filter(Boolean))];
+  // Mostramos en kpi-total-sub
+  document.getElementById('kpi-total-sub').textContent=`Clientes únicos ACTIVADO: ${clientesUniq.length}`;
+
+  // ✅ NETA total solo PROYE
+  const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
   const proyes=d.filter(r=>String(r[COL_ESTCOM]||'').toUpperCase().includes('PROYE'));
   let netaTotal=0;
   if(netaKey){
@@ -612,43 +618,34 @@ function updateDashboard(){
   }
   document.getElementById('kpi-neta').textContent=fmtMonto(netaTotal);
 
-  // Chart Productos
+  // Charts — igual que antes
   const prods={};
   d.forEach(r=>{const p=String(r[COL_PROD]||'').trim()||'S/D';prods[p]=(prods[p]||0)+1;});
   const topP=Object.entries(prods).sort((a,b)=>b[1]-a[1]);
   const prodColors=['var(--accent)','var(--gold)','var(--success)','var(--danger)','#A78BFA','#14B8A6'];
   document.getElementById('chart-producto').innerHTML=renderHBarsColor(topP,prodColors);
 
-  // Chart Zonas horizontal
   const zonaMap={};
   d.forEach(r=>{const z=String(r[COL_ZONA]||'').trim()||'S/D';zonaMap[z]=(zonaMap[z]||0)+1;});
   const topZ=Object.entries(zonaMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
   document.getElementById('chart-zonas').innerHTML=renderHBars(topZ,'var(--success)');
-
-  // Chart Zonas vertical
   document.getElementById('chart-zonas-v').innerHTML=renderVBars(topZ.slice(0,8),'var(--accent)');
 
-  // Chart Funcionarios (FNCNE)
   if(funcKey){
     const fMap={};
     d.forEach(r=>{const f=String(r[funcKey]||'').trim();if(f)fMap[f]=(fMap[f]||0)+1;});
     const topF=Object.entries(fMap).sort((a,b)=>b[1]-a[1]).slice(0,12);
     document.getElementById('chart-funcionarios').innerHTML=renderHBars(topF,'#A78BFA');
-  }else{
-    document.getElementById('chart-funcionarios').innerHTML='<div class="empty-state" style="padding:16px"><p>Columna FNCNE no encontrada</p></div>';
   }
 
-  // Chart Neta por Mes — solo PROYE
   renderNetaMes(d,netaKey);
 
-  // Chart Estados gestión
   const estMap={};
   d.forEach(r=>{const e=String(r[COL_ESTGES]||'').trim()||'S/D';estMap[e]=(estMap[e]||0)+1;});
   const topEst=Object.entries(estMap).sort((a,b)=>b[1]-a[1]);
   const estColors=['#1E6FD9','#22C55E','#F5A623','#EF4444','#A78BFA','#14B8A6','#F97316','#EC4899'];
   document.getElementById('chart-estados').innerHTML=renderHBarsColor(topEst,estColors);
 
-  // Chart Estado Comercial
   const ecMap={};
   d.forEach(r=>{const e=String(r[COL_ESTCOM]||'').trim()||'S/D';ecMap[e]=(ecMap[e]||0)+1;});
   const topEc=Object.entries(ecMap).sort((a,b)=>b[1]-a[1]);
