@@ -918,7 +918,7 @@ async function guardarCambios(){
 }
 
 /* ══ CONFIG ══ */
-function loadData(){
+function saveConfig(){
   config={driveId:document.getElementById('cfg-driveid').value.trim()||'me',fileId:document.getElementById('cfg-fileid').value.trim()};
   if(!config.fileId){const s=document.getElementById('cfg-status');s.textContent='⚠️ Ingresa el File ID';s.style.color='var(--danger)';return;}
   localStorage.setItem('gestion_cfg',JSON.stringify(config));
