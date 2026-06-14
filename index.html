@@ -500,7 +500,7 @@ async function loadData(background=false){
     const colData=await graphRequest(`${base}/columns?$select=name`);
     headers=colData.value.map(c=>c.name);
 
-    const PAGE=100;let skip=0,totalRows=0,keepGoing=true;
+    const PAGE=500;;let skip=0,totalRows=0,keepGoing=true;
     while(keepGoing){
       const rowData=await graphRequest(`${base}/rows?$top=${PAGE}&$skip=${skip}`);
       const rows=rowData.value||[];
