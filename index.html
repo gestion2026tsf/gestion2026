@@ -167,7 +167,6 @@
   .bar-track { flex: 1; background: var(--bg); border-radius: 4px; height: 22px; overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 4px; background: var(--accent); display: flex; align-items: center; padding-left: 8px; font-size: 11px; color: #fff; font-weight: 600; min-width: 30px; transition: width 0.6s ease; }
 
-  /* ── PROGRESS CARGA ── */
   .load-progress {
     background: var(--card); border-radius: 12px; padding: 24px;
     border: 1px solid var(--border); margin-bottom: 20px; display: none;
@@ -236,7 +235,6 @@
   .page-btn:hover, .page-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
   .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* ── MODAL ── */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--card); border-radius: 16px; width: 100%; max-width: 720px; max-height: 90vh; overflow-y: auto; box-shadow: 0 32px 80px rgba(0,0,0,0.4); }
@@ -256,11 +254,9 @@
   .form-input[readonly] { background: var(--bg); color: var(--muted); cursor: not-allowed; }
   .modal-footer { display: flex; gap: 10px; justify-content: flex-end; padding: 16px 24px; border-top: 1px solid var(--border); position: sticky; bottom: 0; background: var(--card); }
 
-  /* ── NUEVO EXPEDIENTE ── */
   .btn-success { background: var(--success); color: #fff; border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.2s; }
   .btn-success:hover { background: #16A34A; }
 
-  /* ── CONFIG ── */
   .setup-card { background: var(--card); border-radius: 16px; padding: 32px; max-width: 560px; border: 1px solid var(--border); margin: 0 auto; }
   .setup-card h2 { font-size: 20px; margin-bottom: 8px; color: var(--navy); }
   .setup-card p  { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
@@ -436,7 +432,7 @@
       <div class="section-title">⚙️ Configurar conexión al Excel</div>
       <div class="setup-card">
         <h2>Conectar tu Excel de OneDrive</h2>
-        <p>Ingresa el File ID de tu Excel en SharePoint/OneDrive para conectar la data automáticamente.</p>
+        <p>Conectado a la tabla <b>TablaDatos</b> de tu Excel en OneDrive/SharePoint.</p>
 
         <div class="setup-step">
           <div class="step-num">1</div>
@@ -450,7 +446,7 @@
           <div class="step-num">2</div>
           <div class="step-content">
             <strong>File ID del Excel</strong>
-            <p>Es el ID entre llaves en la URL de SharePoint: <code>sourcedoc=%7BXXXXXXXX%7D</code></p>
+            <p>Abre el Excel en OneDrive Online. En la URL busca el parámetro <code>resid=</code> o el ID largo después de <code>/items/</code></p>
           </div>
         </div>
 
@@ -462,16 +458,6 @@
         <div class="form-group" style="margin-top:12px">
           <label class="form-label">File ID del Excel</label>
           <input class="config-input" type="text" id="cfg-fileid" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
-        </div>
-
-        <div class="form-group" style="margin-top:12px">
-          <label class="form-label">Nombre de la hoja (Sheet)</label>
-          <input class="config-input" type="text" id="cfg-sheet" placeholder="DATA">
-        </div>
-
-        <div class="form-group" style="margin-top:12px">
-          <label class="form-label">Número máximo de filas (ej: 5000)</label>
-          <input class="config-input" type="number" id="cfg-maxrows" placeholder="5000" value="5000">
         </div>
 
         <div style="margin-top:20px;display:flex;gap:10px">
@@ -519,15 +505,15 @@ const MSAL_CONFIG = {
 };
 
 const SCOPES = ["Files.ReadWrite", "User.Read"];
+const TABLE_NAME = "TablaDatos"; // ← nombre fijo de tu tabla Excel
 
 let msalInstance, currentAccount;
 let allData = [], filteredData = [];
 let sortField = '', sortDir = 1;
 let page = 1, pageSize = 25;
-let editingRow = null;
+let editingRow = null;   // { _rowId: number, ...campos }
 let isNewRecord = false;
 let headers = [];
-const rowCache = new Map();
 
 let config = JSON.parse(localStorage.getItem('gestion_cfg') || '{}');
 
@@ -541,13 +527,11 @@ window.onload = async () => {
   if (accounts.length > 0) {
     currentAccount = accounts[0];
     showApp();
-    if (config.fileId && config.sheet) loadData();
+    if (config.fileId) loadData();
   }
 
-  document.getElementById('cfg-driveid').value  = config.driveId  || 'me';
-  document.getElementById('cfg-fileid').value   = config.fileId   || '';
-  document.getElementById('cfg-sheet').value    = config.sheet    || 'DATA';
-  document.getElementById('cfg-maxrows').value  = config.maxRows  || 5000;
+  document.getElementById('cfg-driveid').value = config.driveId || 'me';
+  document.getElementById('cfg-fileid').value  = config.fileId  || '';
 };
 
 // ── AUTH ──
@@ -561,7 +545,7 @@ async function signIn() {
     const result = await msalInstance.loginPopup({ scopes: SCOPES });
     currentAccount = result.account;
     showApp();
-    if (config.fileId && config.sheet) loadData();
+    if (config.fileId) loadData();
   } catch(e) {
     if (!e.message?.includes('interaction_in_progress'))
       showToast('Error al iniciar sesión: ' + e.message, true);
@@ -610,91 +594,57 @@ async function graphRequest(url, method = 'GET', body = null) {
   return method === 'DELETE' ? null : res.json();
 }
 
-function driveBase() {
+function tableBase() {
   const driveId = config.driveId || 'me';
-  if (driveId === 'me') return 'https://graph.microsoft.com/v1.0/me/drive';
-  return `https://graph.microsoft.com/v1.0/drives/${driveId}`;
+  const drive = driveId === 'me'
+    ? 'https://graph.microsoft.com/v1.0/me/drive'
+    : `https://graph.microsoft.com/v1.0/drives/${driveId}`;
+  return `${drive}/items/${config.fileId}/workbook/tables/${TABLE_NAME}`;
 }
 
-function colToLetter(col) {
-  let letter = '';
-  while (col >= 0) {
-    letter = String.fromCharCode(65 + (col % 26)) + letter;
-    col = Math.floor(col / 26) - 1;
-  }
-  return letter;
-}
-
-// ── CARGAR DATA POR LOTES ──
+// ════════════════════════════════════
+//  CARGAR DATA — usa endpoint de Tabla
+//  Sin rangos, sin cell count, sin drama
+// ════════════════════════════════════
 async function loadData() {
-  if (!config.fileId || !config.sheet) {
-    showToast('Configura el Excel primero (⚙️ Configurar)', true);
+  if (!config.fileId) {
+    showToast('Configura el File ID primero (⚙️ Configurar)', true);
     showView('config', document.querySelectorAll('.nav-btn')[2]);
     return;
   }
 
-  const maxRows = config.maxRows || 5000;
-  const BATCH   = 500; // filas por lote
-
   showLoading(true);
   showLoadProgress(true);
+  updateLoadProgress(10, 0);
   allData = [];
-  rowCache.clear();
 
   try {
-    const base = driveBase();
+    const base = tableBase();
 
-    // 1) Leer headers (fila 1)
-    const hdrUrl = `${base}/items/${config.fileId}/workbook/worksheets/${encodeURIComponent(config.sheet)}/rows/itemAt(index=0)`;
-    const hdrData = await graphRequest(hdrUrl);
-    headers = hdrData.values[0].map(h => String(h).trim());
-    const lastCol = colToLetter(headers.length - 1);
+    // 1) Obtener headers de la tabla
+    const colData = await graphRequest(`${base}/columns?$select=name`);
+    headers = colData.value.map(c => c.name);
+    updateLoadProgress(30, 0);
 
-    // 2) Cargar filas en lotes de BATCH
-    let rowIdx = 2; // fila Excel (1=header)
-    let totalLoaded = 0;
+    // 2) Obtener TODAS las filas en una sola llamada — la API de tabla no tiene cell count limit
+    const rowData = await graphRequest(`${base}/rows`);
+    updateLoadProgress(80, rowData.value.length);
 
-    while (rowIdx <= maxRows + 1) {
-      const endRow = Math.min(rowIdx + BATCH - 1, maxRows + 1);
-      const range  = `A${rowIdx}:${lastCol}${endRow}`;
-      const url    = `${base}/items/${config.fileId}/workbook/worksheets/${encodeURIComponent(config.sheet)}/range(address='${range}')`;
+    // 3) Mapear filas a objetos
+    // Cada fila tiene: { index: N, values: [[v1, v2, ...]] }
+    allData = rowData.value.map(row => {
+      const obj = { _rowId: row.index }; // index 0-based dentro de la tabla
+      headers.forEach((h, i) => {
+        // Los checkboxes/booleanos vienen como true/false, los normalizamos
+        const val = row.values[0][i];
+        obj[h] = (val === true) ? 'SI' : (val === false) ? '' : (val ?? '');
+      });
+      return obj;
+    });
 
-      let batchData;
-      try { batchData = await graphRequest(url); } catch(e) { break; }
+    updateLoadProgress(100, allData.length);
 
-      const rows = batchData.values || [];
-      let emptyCount = 0;
-
-      for (let i = 0; i < rows.length; i++) {
-        const row = rows[i];
-        // Detener si la fila está completamente vacía
-        if (row.every(c => c === null || c === '')) {
-          emptyCount++;
-          if (emptyCount >= 5) break; // 5 filas vacías seguidas = fin de data
-          continue;
-        }
-        emptyCount = 0;
-
-        const obj = { _rowIndex: rowIdx + i };
-        headers.forEach((h, j) => { obj[h] = row[j] ?? ''; });
-        allData.push(obj);
-        rowCache.set(obj._rowIndex, obj);
-        totalLoaded++;
-      }
-
-      // Actualizar barra de progreso
-      const pct = Math.min(Math.round((endRow / (maxRows + 1)) * 100), 99);
-      updateLoadProgress(pct, totalLoaded);
-
-      rowIdx = endRow + 1;
-
-      // Si el lote vino incompleto, llegamos al final
-      if (rows.length < BATCH) break;
-    }
-
-    updateLoadProgress(100, totalLoaded);
-
-    if (!allData.length) { showToast('La hoja está vacía o no se encontró data', true); return; }
+    if (!allData.length) { showToast('La tabla TablaDatos está vacía', true); return; }
 
     updateDashboard();
     filterTable();
@@ -702,7 +652,7 @@ async function loadData() {
     showToast(`✓ ${allData.length} expedientes cargados`);
 
   } catch(e) {
-    showToast('Error cargando Excel: ' + e.message, true);
+    showToast('Error cargando: ' + e.message, true);
     console.error(e);
   } finally {
     showLoading(false);
@@ -713,7 +663,6 @@ async function loadData() {
 function showLoadProgress(on) {
   document.getElementById('loadProgress').style.display = on ? 'block' : 'none';
 }
-
 function updateLoadProgress(pct, total) {
   document.getElementById('loadProgressFill').style.width = pct + '%';
   document.getElementById('loadProgressText').textContent = `${pct}% — ${total} filas`;
@@ -731,7 +680,6 @@ function updateDashboard() {
   document.getElementById('kpi-crdt').textContent = crdt.toLocaleString();
   document.getElementById('kpi-act').textContent  = act.toLocaleString();
 
-  // Chart marcas
   const marcas = {};
   allData.forEach(r => { const m = String(r.MARCA||'').trim()||'S/D'; marcas[m]=(marcas[m]||0)+1; });
   const topM = Object.entries(marcas).sort((a,b)=>b[1]-a[1]).slice(0,8);
@@ -742,7 +690,6 @@ function updateDashboard() {
       <div class="bar-track"><div class="bar-fill" style="width:${(c/maxM*100).toFixed(0)}%">${c}</div></div>
     </div>`).join('') || '<div class="empty-state"><p>Sin data</p></div>';
 
-  // Chart producto
   const prods = {};
   allData.forEach(r => { const p=String(r.PRODUCTO||'').trim()||'S/D'; prods[p]=(prods[p]||0)+1; });
   const topP = Object.entries(prods).sort((a,b)=>b[1]-a[1]);
@@ -814,14 +761,13 @@ function renderTable() {
       <td>${r.EST_COM||''}</td>
       <td>${r.MARCA||''}</td>
       <td>${r.ZONA||''}</td>
-      <td><button class="btn-edit" onclick="openEdit(${r._rowIndex})">✏️ Editar</button></td>
+      <td><button class="btn-edit" onclick="openEdit(${r._rowId})">✏️ Editar</button></td>
     </tr>`;
   }).join('');
 
   const totalPages = Math.ceil(filteredData.length / pageSize);
   document.getElementById('page-info').textContent = `${start+1}–${Math.min(end,filteredData.length)} de ${filteredData.length}`;
 
-  // Paginación inteligente
   let nums = '';
   const pages = getPaginasMostrar(page, totalPages);
   pages.forEach(p => {
@@ -835,8 +781,7 @@ function renderTable() {
 
 function getPaginasMostrar(current, total) {
   if (total <= 7) return Array.from({length:total},(_,i)=>i+1);
-  const pages = [];
-  pages.push(1);
+  const pages = [1];
   if (current > 3) pages.push('...');
   for (let i=Math.max(2,current-1); i<=Math.min(total-1,current+1); i++) pages.push(i);
   if (current < total-2) pages.push('...');
@@ -855,8 +800,8 @@ function sortTable(field) {
 }
 
 // ── EDITAR ──
-function openEdit(rowIndex) {
-  const row = rowCache.get(rowIndex);
+function openEdit(rowId) {
+  const row = allData.find(r => r._rowId === rowId);
   if (!row) return;
   editingRow = row;
   isNewRecord = false;
@@ -865,10 +810,9 @@ function openEdit(rowIndex) {
   document.getElementById('modal-expid').textContent = `EXP # ${row.EXPE||''}`;
   document.getElementById('btn-guardar').textContent = '💾 Guardar en Excel';
 
-  const readonly = ['EXPE', 'RUC', '_rowIndex'];
-  const fields = Object.entries(row).filter(([k])=>k!=='_rowIndex');
-
-  document.getElementById('form-fields').innerHTML = fields.map(([k,v]) => {
+  const readonly = ['EXPE', 'RUC'];
+  document.getElementById('form-fields').innerHTML = headers.map(k => {
+    const v = row[k] ?? '';
     const ro = readonly.includes(k);
     return `<div class="form-group">
       <label class="form-label">${k}</label>
@@ -888,9 +832,7 @@ function openNuevo() {
   document.getElementById('modal-expid').textContent = 'Nuevo registro';
   document.getElementById('btn-guardar').textContent = '💾 Agregar al Excel';
 
-  // Usar los headers del Excel para generar los campos
   const cols = headers.length ? headers : ['EXPE','PRODUCTO','RUC','NOMBRE_RSOCIAL_CLIENTE','ZONA','SUCURSAL','EST_COM','EST_GES','MARCA','CLASE','TIPO'];
-
   document.getElementById('form-fields').innerHTML = cols.map(k =>
     `<div class="form-group">
       <label class="form-label">${k}</label>
@@ -907,9 +849,11 @@ function closeModal() {
   isNewRecord = false;
 }
 
-// ── GUARDAR (editar o nuevo) ──
+// ════════════════════════════════════
+//  GUARDAR — usa endpoint de Tabla
+// ════════════════════════════════════
 async function guardarCambios() {
-  if (!config.fileId || !config.sheet) { showToast('Configura el Excel primero', true); return; }
+  if (!config.fileId) { showToast('Configura el File ID primero', true); return; }
 
   const btn = document.getElementById('btn-guardar');
   btn.disabled = true;
@@ -917,31 +861,19 @@ async function guardarCambios() {
   showLoading(true);
 
   try {
-    const base = driveBase();
+    const base = tableBase();
+    const values = [headers.map(h => {
+      const input = document.getElementById(`field-${h}`);
+      return input ? input.value : (editingRow?.[h] ?? '');
+    })];
 
     if (isNewRecord) {
-      // ── AGREGAR NUEVA FILA ──
-      // Encontrar la primera fila vacía
-      const newRowIndex = allData.length > 0 ? Math.max(...allData.map(r=>r._rowIndex)) + 1 : 2;
-      const lastCol = colToLetter(headers.length - 1);
-      const rangeAddr = `A${newRowIndex}:${lastCol}${newRowIndex}`;
+      // POST → agrega fila al final de la tabla
+      const res = await graphRequest(`${base}/rows/add`, 'POST', { values });
 
-      const values = [headers.map(h => {
-        const input = document.getElementById(`field-${h}`);
-        return input ? input.value : '';
-      })];
-
-      const patchUrl = `${base}/items/${config.fileId}/workbook/worksheets/${encodeURIComponent(config.sheet)}/range(address='${rangeAddr}')`;
-      await graphRequest(patchUrl, 'PATCH', { values });
-
-      // Agregar a data local
-      const newObj = { _rowIndex: newRowIndex };
-      headers.forEach(h => {
-        const input = document.getElementById(`field-${h}`);
-        newObj[h] = input ? input.value : '';
-      });
+      const newObj = { _rowId: res.index };
+      headers.forEach((h, i) => { newObj[h] = values[0][i]; });
       allData.push(newObj);
-      rowCache.set(newRowIndex, newObj);
 
       closeModal();
       filterTable();
@@ -949,26 +881,12 @@ async function guardarCambios() {
       showToast('✓ Nuevo expediente agregado al Excel');
 
     } else {
-      // ── EDITAR FILA EXISTENTE ──
-      const lastCol = colToLetter(headers.length - 1);
-      const rangeAddr = `A${editingRow._rowIndex}:${lastCol}${editingRow._rowIndex}`;
+      // PATCH → actualiza fila por su index en la tabla
+      await graphRequest(`${base}/rows/itemAt(index=${editingRow._rowId})`, 'PATCH', { values });
 
-      const values = [headers.map(h => {
-        const input = document.getElementById(`field-${h}`);
-        return input ? input.value : (editingRow[h] ?? '');
-      })];
-
-      const patchUrl = `${base}/items/${config.fileId}/workbook/worksheets/${encodeURIComponent(config.sheet)}/range(address='${rangeAddr}')`;
-      await graphRequest(patchUrl, 'PATCH', { values });
-
-      // Actualizar data local
-      const idx = allData.findIndex(r=>r._rowIndex===editingRow._rowIndex);
+      const idx = allData.findIndex(r => r._rowId === editingRow._rowId);
       if (idx >= 0) {
-        headers.forEach(h => {
-          const input = document.getElementById(`field-${h}`);
-          if (input) allData[idx][h] = input.value;
-        });
-        rowCache.set(editingRow._rowIndex, allData[idx]);
+        headers.forEach((h, i) => { allData[idx][h] = values[0][i]; });
       }
 
       closeModal();
@@ -990,10 +908,8 @@ async function guardarCambios() {
 // ── CONFIG ──
 function saveConfig() {
   config = {
-    driveId:  document.getElementById('cfg-driveid').value.trim() || 'me',
-    fileId:   document.getElementById('cfg-fileid').value.trim(),
-    sheet:    document.getElementById('cfg-sheet').value.trim() || 'DATA',
-    maxRows:  parseInt(document.getElementById('cfg-maxrows').value) || 5000
+    driveId: document.getElementById('cfg-driveid').value.trim() || 'me',
+    fileId:  document.getElementById('cfg-fileid').value.trim(),
   };
 
   if (!config.fileId) {
@@ -1019,10 +935,12 @@ async function testConnection() {
   showLoading(true);
 
   try {
-    const base = driveId==='me' ? 'https://graph.microsoft.com/v1.0/me/drive' : `https://graph.microsoft.com/v1.0/drives/${driveId}`;
-    const data = await graphRequest(`${base}/items/${fileId}/workbook/worksheets`);
-    const sheets = data.value.map(s=>s.name).join(', ');
-    status.innerHTML = `✓ Conexión OK. Hojas: <b>${sheets}</b>`;
+    const drive = driveId==='me'
+      ? 'https://graph.microsoft.com/v1.0/me/drive'
+      : `https://graph.microsoft.com/v1.0/drives/${driveId}`;
+    const data = await graphRequest(`${drive}/items/${fileId}/workbook/tables`);
+    const tables = data.value.map(t=>t.name).join(', ');
+    status.innerHTML = `✓ Conexión OK. Tablas encontradas: <b>${tables}</b>`;
     status.style.color = 'var(--success)';
   } catch(e) {
     status.textContent = '✗ Error: ' + e.message;
@@ -1033,7 +951,7 @@ async function testConnection() {
 // ── EXPORT CSV ──
 function exportCSV() {
   if (!filteredData.length) { showToast('No hay data para exportar', true); return; }
-  const keys = headers.length ? headers : Object.keys(filteredData[0]).filter(k=>k!=='_rowIndex');
+  const keys = headers.length ? headers : Object.keys(filteredData[0]).filter(k=>k!=='_rowId');
   const csv  = [keys.join(','), ...filteredData.map(r=>keys.map(k=>`"${String(r[k]||'').replace(/"/g,'""')}"`).join(','))].join('\n');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'}));
