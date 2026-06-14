@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestión 2026 — Total Servicios Financieros</title>
+
+<!-- MSAL para autenticación Microsoft -->
+<script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.7.1/lib/msal-browser.min.js"></script>
+
+<style>
+  :root {
+    --navy:    #0F1F3D;
+    --navy2:   #1A2F52;
+    --accent:  #1E6FD9;
+    --accent2: #2588FF;
+    --gold:    #F5A623;
+    --success: #22C55E;
+    --danger:  #EF4444;
+    --warn:    #F59E0B;
+    --bg:      #F0F4FA;
+    --card:    #FFFFFF;
+    --border:  #D6E0F0;
+    --text:    #1A2035;
+    --muted:   #6B7A9A;
+    --font:    'Segoe UI', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+  }
+
+  .login-box {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 48px 56px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+  }
+
+  .login-logo {
+    width: 56px;
+    height: 56px;
+    background: var(--accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 28px;
+  }
+
+  .login-box h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  .login-box p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .btn-ms {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s;
+  }
+
+  .btn-ms:hover { background: var(--accent2); }
+
+  /* ── APP SHELL ── */
+  #app { display: none; flex-direction: column; min-height: 100vh; }
+
+  header {
+    background: var(--navy);
+    color: #fff;
+    padding: 0 24px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  header h1 { font-size: 16px; font-weight: 700; letter-spacing: 0.3px; }
+  header span { font-size: 11px; color: #8AA0C0; }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .btn-logout {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-logout:hover { background: rgba(255,255,255,0.2); }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--navy2);
+    display: flex;
+    gap: 4px;
+    padding: 0 24px;
+    border-bottom: 2px solid rgba(30,111,217,0.4);
+  }
+
+  .nav-btn {
+    background: none;
+    border: none;
+    color: #8AA0C0;
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-btn:hover { color: #fff; }
+  .nav-btn.active { color: #fff; border-bottom-color: var(--accent2); }
+
+  /* ── MAIN ── */
+  main { flex: 1; padding: 28px 24px; max-width: 1400px; width: 100%; margin: 0 auto; }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── LOADING ── */
+  .loading-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    z-index: 999;
+    display: none;
+    animation: loadpulse 1.2s ease-in-out infinite;
+  }
+
+  @keyframes loadpulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--navy);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    z-index: 999;
+    display: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    border-left: 3px solid var(--success);
+  }
+
+  .toast.error { border-left-color: var(--danger); }
+
+  /* ── DASHBOARD ── */
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title small {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .kpi-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px 24px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .kpi-card.blue::after  { background: var(--accent); }
+  .kpi-card.gold::after  { background: var(--gold); }
+  .kpi-card.green::after { background: var(--success); }
+  .kpi-card.red::after   { background: var(--danger); }
+
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+
+  .kpi-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .kpi-sub {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 768px) { .dash-grid { grid-template-columns: 1fr; } }
+
+  .chart-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .chart-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .bar-label { font-size: 12px; color: var(--text); min-width: 80px; }
+
+  .bar-track {
+    flex: 1;
+    background: var(--bg);
+    border-radius: 4px;
+    height: 22px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    font-size: 11px;
+    color: #fff;
+    font-weight: 600;
+    min-width: 30px;
+    transition: width 0.6s ease;
+  }
+
+  /* ── TABLA EXPEDIENTES ── */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--card);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-input:focus { border-color: var(--accent); }
+
+  .filter-select {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--card);
+    outline: none;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+  }
+
+  .btn-primary:hover { background: var(--accent2); }
+
+  .btn-secondary {
+    background: var(--card);
+    color: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    overflow-x: auto;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+  thead {
+    background: var(--navy);
+    color: #fff;
+    position: sticky;
+    top: 60px;
+  }
+
+  th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  th:hover { background: var(--navy2); }
+
+  td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tr:hover td { background: #EEF4FF; }
+  tr:last-child td { border-bottom: none; }
+
+  .badge {
+    display: inline-flex;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .badge-act  { background: #D1FAE5; color: #065F46; }
+  .badge-inac { background: #FEE2E2; color: #991B1B; }
+  .badge-lsng { background: #DBEAFE; color: #1E40AF; }
+  .badge-crdt { background: #FEF3C7; color: #92400E; }
+
+  .btn-edit {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--accent);
+    transition: all 0.2s;
+  }
+
+  .btn-edit:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .page-btns { display: flex; gap: 6px; }
+
+  .page-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .page-btn:hover, .page-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── MODAL EDITAR ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 720px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--card);
+    z-index: 1;
+  }
+
+  .modal-header h3 { font-size: 16px; font-weight: 700; color: var(--navy); }
+
+  .modal-expid {
+    font-size: 12px;
+    background: var(--bg);
+    padding: 4px 10px;
+    border-radius: 20px;
+    color: var(--muted);
+  }
+
+  .btn-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--muted);
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+
+  .btn-close:hover { color: var(--danger); }
+
+  .modal-body { padding: 24px; }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 500px) { .form-grid { grid-template-columns: 1fr; } }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  .form-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .form-input, .form-select {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    background: var(--bg);
+    font-family: var(--font);
+  }
+
+  .form-input:focus, .form-select:focus { border-color: var(--accent); background: #fff; }
+  .form-input[readonly] { background: var(--bg); color: var(--muted); cursor: not-allowed; }
+
+  .modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    position: sticky;
+    bottom: 0;
+    background: var(--card);
+  }
+
+  /* ── SETUP PANEL ── */
+  .setup-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 560px;
+    border: 1px solid var(--border);
+    margin: 0 auto;
+  }
+
+  .setup-card h2 { font-size: 20px; margin-bottom: 8px; color: var(--navy); }
+  .setup-card p  { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+  .setup-step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--bg);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-content { flex: 1; }
+  .step-content strong { display: block; font-size: 13px; color: var(--navy); margin-bottom: 4px; }
+  .step-content p { font-size: 12px; margin: 0; }
+  .step-content code {
+    font-family: monospace;
+    background: var(--navy);
+    color: var(--gold);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    display: inline-block;
+    margin-top: 4px;
+    word-break: break-all;
+  }
+
+  .config-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: 8px;
+    outline: none;
+    font-family: monospace;
+    transition: border-color 0.2s;
+  }
+
+  .config-input:focus { border-color: var(--accent); }
+
+  /* ── EMPTY ── */
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--muted);
+  }
+
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state h3 { color: var(--navy); margin-bottom: 8px; }
+  .empty-state p { font-size: 14px; }
+</style>
+</head>
+
+<body>
+
+<div class="loading-bar" id="loadingBar"></div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════ LOGIN ═══════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">📊</div>
+    <h1>Gestión 2026</h1>
+    <p>Total Servicios Financieros<br>Ingresa con tu cuenta corporativa</p>
+    <button class="btn-ms" onclick="signIn()">
+      <svg width="20" height="20" viewBox="0 0 21 21">
+        <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+        <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+        <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+        <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+      </svg>
+      Ingresar con Microsoft
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════ APP ═══════════════ -->
+<div id="app">
+  <header>
+    <div class="header-left">
+      <div class="brand-icon">📊</div>
+      <div>
+        <h1>Gestión 2026</h1>
+        <span>Total Servicios Financieros</span>
+      </div>
+    </div>
+    <div class="user-info">
+      <div class="avatar" id="userAvatar">?</div>
+      <span id="userName" style="color:#CBD5E1;font-size:13px"></span>
+      <button class="btn-logout" onclick="signOut()">Salir</button>
+    </div>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" onclick="showView('dashboard', this)">📈 Dashboard</button>
+    <button class="nav-btn" onclick="showView('expedientes', this)">📁 Expedientes</button>
+    <button class="nav-btn" onclick="showView('config', this)">⚙️ Configurar</button>
+  </nav>
+
+  <main>
+    <!-- ─── DASHBOARD ─── -->
+    <div class="view active" id="view-dashboard">
+      <div class="section-title">
+        📈 Dashboard General
+        <small id="dash-fecha"></small>
+        <button class="btn-secondary" style="margin-left:auto;font-size:12px" onclick="loadData()">↻ Actualizar</button>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-label">Total Expedientes</div>
+          <div class="kpi-value" id="kpi-total">—</div>
+          <div class="kpi-sub">registros en el Excel</div>
+        </div>
+        <div class="kpi-card gold">
+          <div class="kpi-label">LSNG_VEH</div>
+          <div class="kpi-value" id="kpi-lsng">—</div>
+          <div class="kpi-sub">expedientes leasing vehículo</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">CRDT_VEH</div>
+          <div class="kpi-value" id="kpi-crdt">—</div>
+          <div class="kpi-sub">expedientes crédito vehículo</div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-label">Activados MAR26</div>
+          <div class="kpi-value" id="kpi-act">—</div>
+          <div class="kpi-sub">estado 8.ACTIVADO.MAR26</div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="chart-card">
+          <div class="chart-title">Top Marcas</div>
+          <div id="chart-marcas"><div class="empty-state"><div class="empty-icon">⏳</div><p>Cargando data...</p></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Por Producto</div>
+          <div id="chart-producto"><div class="empty-state"><div class="empty-icon">⏳</div><p>Cargando data...</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── EXPEDIENTES ─── -->
+    <div class="view" id="view-expedientes">
+      <div class="section-title">
+        📁 Expedientes
+        <small id="exp-count"></small>
+      </div>
+
+      <div class="toolbar">
+        <input class="search-input" type="text" id="searchInput"
+               placeholder="Buscar por expediente, cliente, RUC..."
+               oninput="filterTable()">
+        <select class="filter-select" id="filtroProducto" onchange="filterTable()">
+          <option value="">Todos los productos</option>
+          <option value="LSNG_VEH">LSNG_VEH</option>
+          <option value="CRDT_VEH">CRDT_VEH</option>
+        </select>
+        <select class="filter-select" id="filtroEstado" onchange="filterTable()">
+          <option value="">Todos los estados</option>
+        </select>
+        <button class="btn-primary" onclick="exportCSV()">⬇ Exportar CSV</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortTable('EXPE')">EXP #</th>
+              <th onclick="sortTable('PRODUCTO')">Producto</th>
+              <th onclick="sortTable('RUC')">RUC</th>
+              <th onclick="sortTable('NOMBRE_SOCIAL_CLIENTE')">Cliente</th>
+              <th onclick="sortTable('EST_GES')">Est. Gestión</th>
+              <th onclick="sortTable('MARCA')">Marca</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-body">
+            <tr><td colspan="7" class="empty-state" style="text-align:center;padding:40px;color:#6B7A9A">Carga el Excel desde ⚙️ Configurar</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <span id="page-info">—</span>
+        <div class="page-btns">
+          <button class="page-btn" id="btn-prev" onclick="changePage(-1)">‹</button>
+          <span id="page-nums"></span>
+          <button class="page-btn" id="btn-next" onclick="changePage(1)">›</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── CONFIG ─── -->
+    <div class="view" id="view-config">
+      <div class="section-title">⚙️ Configurar conexión al Excel</div>
+      <div class="setup-card">
+        <h2>Conectar tu Excel de OneDrive</h2>
+        <p>Necesitas el ID de tu archivo Excel y el nombre de la hoja para jalar la data automáticamente.</p>
+
+        <div class="setup-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Abre tu Excel en OneDrive / SharePoint</strong>
+            <p>Ve a OneDrive, abre el archivo <b>Gestión_2026</b> en Excel Online.</p>
+          </div>
+        </div>
+
+        <div class="setup-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Copia el File ID de la URL</strong>
+            <p>En la barra de dirección busca el parámetro <code>resid=</code> o el ID largo. Ejemplo:</p>
+            <code>https://onedrive.live.com/edit?resid=ABC123XYZ!456</code>
+            <p style="margin-top:6px">El ID sería: <code>ABC123XYZ!456</code></p>
+          </div>
+        </div>
+
+        <div class="setup-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Para cuenta corporativa (Microsoft 365)</strong>
+            <p>Ve a SharePoint o Teams, busca el archivo, clic en "..." → Detalles → copia el <b>ID de elemento</b>.</p>
+            <p>O abre en Excel Online y la URL tendrá: <code>/Items/ID_AQUI/workbook</code></p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Drive ID o Site ID (para M365)</label>
+          <input class="config-input" type="text" id="cfg-driveid"
+                 placeholder="me o: drives/DRIVE_ID"
+                 value="">
+        </div>
+
+        <div class="form-group" style="margin-top:12px">
+          <label class="form-label">File ID del Excel</label>
+          <input class="config-input" type="text" id="cfg-fileid"
+                 placeholder="ABC123!456 o ID largo de SharePoint">
+        </div>
+
+        <div class="form-group" style="margin-top:12px">
+          <label class="form-label">Nombre de la hoja (Sheet)</label>
+          <input class="config-input" type="text" id="cfg-sheet"
+                 placeholder="Hoja1 o el nombre de tu pestaña">
+        </div>
+
+        <div style="margin-top:20px;display:flex;gap:10px">
+          <button class="btn-primary" onclick="saveConfig()">💾 Guardar y cargar data</button>
+          <button class="btn-secondary" onclick="testConnection()">🔌 Probar conexión</button>
+        </div>
+
+        <div id="cfg-status" style="margin-top:14px;font-size:13px;color:var(--muted)"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════════ MODAL EDITAR ═══════════════ -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <h3>✏️ Editar Expediente</h3>
+        <span class="modal-expid" id="modal-expid"></span>
+      </div>
+      <button class="btn-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid" id="form-fields">
+        <!-- Se genera dinámicamente -->
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" id="btn-guardar" onclick="guardarCambios()">
+        💾 Guardar en Excel
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+//  CONFIGURACIÓN MSAL — Microsoft Authentication
+// ════════════════════════════════════════════════
+const MSAL_CONFIG = {
+  auth: {
+    clientId: "683e6fbc-8e43-4310-b9dc-be4c813605bd",
+    authority: "https://login.microsoftonline.com/2e32ce4d-9718-4ed3-81d2-8de99f5e6ae3",
+    redirectUri: window.location.href.split('?')[0]
+  },
+  cache: { cacheLocation: "localStorage", storeAuthStateInCookie: false }
+};
+
+const SCOPES = ["Files.ReadWrite", "User.Read"];
+
+let msalInstance, currentAccount, allData = [], filteredData = [];
+let sortField = '', sortDir = 1;
+let page = 1, pageSize = 25;
+let editingRow = null;
+
+// Config del Excel
+let config = JSON.parse(localStorage.getItem('gestion_cfg') || '{}');
+
+// ──────── INIT ────────
+window.onload = async () => {
+  msalInstance = new msal.PublicClientApplication(MSAL_CONFIG);
+  await msalInstance.initialize();
+
+  // Limpia interacciones pendientes
+  try {
+    await msalInstance.handleRedirectPromise();
+  } catch(e) {
+    console.warn(e);
+  }
+
+  const accounts = msalInstance.getAllAccounts();
+  if (accounts.length > 0) {
+    currentAccount = accounts[0];
+    showApp();
+    if (config.fileId && config.sheet) loadData();
+  }
+
+  document.getElementById('cfg-driveid').value = config.driveId || 'me';
+  document.getElementById('cfg-fileid').value  = config.fileId || '';
+  document.getElementById('cfg-sheet').value   = config.sheet  || 'Hoja1';
+};
+
+// ──────── AUTH ────────
+let loginInProgress = false;
+
+async function signIn() {
+  if (loginInProgress) return; // ✅ evita doble clic
+  loginInProgress = true;
+  try {
+    showLoading(true);
+    const result = await msalInstance.loginPopup({ scopes: SCOPES });
+    currentAccount = result.account;
+    showApp();
+    if (config.fileId && config.sheet) loadData();
+  } catch(e) {
+    if (!e.message?.includes('interaction_in_progress')) {
+      showToast('Error al iniciar sesión: ' + e.message, true);
+    }
+  } finally {
+    showLoading(false);
+    loginInProgress = false;
+  }
+}
+
+function signOut() {
+  msalInstance.logoutPopup({ account: currentAccount });
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  allData = []; filteredData = [];
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  const app = document.getElementById('app');
+  app.style.display = 'flex';
+  document.getElementById('userAvatar').textContent = currentAccount.name?.[0] || '?';
+  document.getElementById('userName').textContent = currentAccount.name || currentAccount.username;
+  document.getElementById('dash-fecha').textContent = new Date().toLocaleDateString('es-PE', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+}
+
+async function getToken() {
+  try {
+    const res = await msalInstance.acquireTokenSilent({ scopes: SCOPES, account: currentAccount });
+    return res.accessToken;
+  } catch {
+    const res = await msalInstance.acquireTokenPopup({ scopes: SCOPES });
+    return res.accessToken;
+  }
+}
+
+// ──────── GRAPH API ────────
+async function graphRequest(url, method = 'GET', body = null) {
+  const token = await getToken();
+  const opts = {
+    method,
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `Error ${res.status}`);
+  }
+  return method === 'DELETE' ? null : res.json();
+}
+
+function driveBase() {
+  const driveId = config.driveId || 'me';
+  if (driveId === 'me') return 'https://graph.microsoft.com/v1.0/me/drive';
+  return `https://graph.microsoft.com/v1.0/drives/${driveId}`;
+}
+
+// ──────── CARGAR DATA DEL EXCEL ────────
+async function loadData() {
+  if (!config.fileId || !config.sheet) {
+    showToast('Configura el Excel primero (⚙️ Configurar)', true);
+    showView('config', document.querySelectorAll('.nav-btn')[2]);
+    return;
+  }
+
+  showLoading(true);
+  try {
+    const base = driveBase();
+    const url = `${base}/items/${config.fileId}/workbook/worksheets/${encodeURIComponent(config.sheet)}/usedRange`;
+    const data = await graphRequest(url);
+
+    const rows = data.values;
+    if (!rows || rows.length < 2) { showToast('La hoja está vacía o no se encontró', true); return; }
+
+    const headers = rows[0].map(h => String(h).trim());
+    allData = rows.slice(1).map((row, i) => {
+      const obj = { _rowIndex: i + 2 }; // +2: header es fila 1, data empieza fila 2
+      headers.forEach((h, j) => { obj[h] = row[j] ?? ''; });
+      return obj;
+    }).filter(r => r[headers[0]]); // filtrar filas vacías
+
+    updateDashboard();
+    filterTable();
+    updateEstadosFilter();
+    showToast(`✓ ${allData.length} expedientes cargados`);
+  } catch(e) {
+    showToast('Error cargando Excel: ' + e.message, true);
+    console.error(e);
+  } finally { showLoading(false); }
+}
+
+// ──────── DASHBOARD ────────
+function updateDashboard() {
+  document.getElementById('kpi-total').textContent = allData.length.toLocaleString();
+
+  const lsng = allData.filter(r => String(r.PRODUCTO).includes('LSNG')).length;
+  const crdt = allData.filter(r => String(r.PRODUCTO).includes('CRDT')).length;
+  const act  = allData.filter(r => String(r.EST_GES).includes('ACTIVADO')).length;
+
+  document.getElementById('kpi-lsng').textContent = lsng.toLocaleString();
+  document.getElementById('kpi-crdt').textContent = crdt.toLocaleString();
+  document.getElementById('kpi-act').textContent  = act.toLocaleString();
+
+  // Chart marcas
+  const marcas = {};
+  allData.forEach(r => {
+    const m = String(r.MARCA || r.MA || '').trim() || 'S/D';
+    marcas[m] = (marcas[m] || 0) + 1;
+  });
+  const topMarcas = Object.entries(marcas).sort((a,b) => b[1]-a[1]).slice(0, 8);
+  const maxM = topMarcas[0]?.[1] || 1;
+  document.getElementById('chart-marcas').innerHTML = topMarcas.map(([m, c]) =>
+    `<div class="bar-row">
+      <span class="bar-label">${m}</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(c/maxM*100).toFixed(0)}%">${c}</div>
+      </div>
+    </div>`
+  ).join('') || '<div class="empty-state"><div class="empty-icon">📊</div><p>Sin data de marcas</p></div>';
+
+  // Chart producto
+  const prods = {};
+  allData.forEach(r => { const p = String(r.PRODUCTO||'').trim()||'S/D'; prods[p]=(prods[p]||0)+1; });
+  const topProds = Object.entries(prods).sort((a,b)=>b[1]-a[1]);
+  const maxP = topProds[0]?.[1] || 1;
+  const colors = ['var(--accent)','var(--gold)','var(--success)','var(--danger)','#A78BFA'];
+  document.getElementById('chart-producto').innerHTML = topProds.map(([p,c],i) =>
+    `<div class="bar-row">
+      <span class="bar-label">${p}</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(c/maxP*100).toFixed(0)}%;background:${colors[i%colors.length]}">${c}</div>
+      </div>
+    </div>`
+  ).join('') || '<div class="empty-state"><p>Sin data</p></div>';
+}
+
+// ──────── TABLA EXPEDIENTES ────────
+function filterTable() {
+  const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
+  const prod = document.getElementById('filtroProducto')?.value || '';
+  const estado = document.getElementById('filtroEstado')?.value || '';
+
+  filteredData = allData.filter(r => {
+    const txt = [r.EXPE, r.PRODUCTO, r.RUC, r.NOMBRE_SOCIAL_CLIENTE || r.NOMBRE_RSOCIAL_CLIENTE, r.EST_GES].join(' ').toLowerCase();
+    return (!q || txt.includes(q))
+        && (!prod || String(r.PRODUCTO).includes(prod))
+        && (!estado || String(r.EST_GES) === estado);
+  });
+
+  if (sortField) {
+    filteredData.sort((a,b) => {
+      const av = String(a[sortField] || ''), bv = String(b[sortField] || '');
+      return av.localeCompare(bv) * sortDir;
+    });
+  }
+
+  page = 1;
+  renderTable();
+  document.getElementById('exp-count').textContent = `${filteredData.length} de ${allData.length}`;
+}
+
+function updateEstadosFilter() {
+  const estados = [...new Set(allData.map(r => String(r.EST_GES || '')).filter(Boolean))].sort();
+  const sel = document.getElementById('filtroEstado');
+  sel.innerHTML = '<option value="">Todos los estados</option>' +
+    estados.map(e => `<option value="${e}">${e}</option>`).join('');
+}
+
+function renderTable() {
+  const start = (page-1)*pageSize, end = start+pageSize;
+  const rows = filteredData.slice(start, end);
+  const tbody = document.getElementById('tabla-body');
+
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="7">
+      <div class="empty-state"><div class="empty-icon">🔍</div><h3>Sin resultados</h3><p>Ajusta el filtro de búsqueda</p></div>
+    </td></tr>`;
+    document.getElementById('page-info').textContent = '0 registros';
+    document.getElementById('page-nums').innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = rows.map(r => {
+    const cliente = r.NOMBRE_SOCIAL_CLIENTE || r.NOMBRE_RSOCIAL_CLIENTE || '';
+    const prod = String(r.PRODUCTO || '');
+    const est  = String(r.EST_GES || '');
+    const prodBadge = prod.includes('LSNG') ? 'badge-lsng' : prod.includes('CRDT') ? 'badge-crdt' : '';
+    const estBadge  = est.includes('ACTIVADO') ? 'badge-act' : 'badge-inac';
+    return `<tr>
+      <td><b>${r.EXPE || ''}</b></td>
+      <td><span class="badge ${prodBadge}">${prod}</span></td>
+      <td>${r.RUC || ''}</td>
+      <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis">${cliente}</td>
+      <td><span class="badge ${estBadge}">${est}</span></td>
+      <td>${r.MARCA || r.MA || ''}</td>
+      <td><button class="btn-edit" onclick='openEdit(${JSON.stringify(r).replace(/'/g,"&#39;")})'>✏️ Editar</button></td>
+    </tr>`;
+  }).join('');
+
+  // Paginación
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  document.getElementById('page-info').textContent = `${start+1}–${Math.min(end, filteredData.length)} de ${filteredData.length}`;
+
+  let nums = '';
+  for (let i = 1; i <= Math.min(totalPages, 7); i++) {
+    nums += `<button class="page-btn ${i===page?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  if (totalPages > 7) nums += `<span style="padding:0 6px;color:var(--muted)">… ${totalPages}</span>`;
+  document.getElementById('page-nums').innerHTML = nums;
+
+  document.getElementById('btn-prev').disabled = page <= 1;
+  document.getElementById('btn-next').disabled = page >= totalPages;
+}
+
+function changePage(dir) { goPage(page + dir); }
+
+function goPage(p) {
+  const total = Math.ceil(filteredData.length / pageSize);
+  page = Math.max(1, Math.min(p, total));
+  renderTable();
+}
+
+function sortTable(field) {
+  if (sortField === field) sortDir *= -1;
+  else { sortField = field; sortDir = 1; }
+  filterTable();
+}
+
+// ──────── EDITAR / MODAL ────────
+function openEdit(row) {
+  editingRow = row;
+  document.getElementById('modal-expid').textContent = `EXP # ${row.EXPE || ''}`;
+
+  // Campos editables vs solo lectura
+  const readonly = ['EXPE', 'RUC', '_rowIndex'];
+  const fields = Object.entries(row).filter(([k]) => k !== '_rowIndex');
+
+  document.getElementById('form-fields').innerHTML = fields.map(([k, v]) => {
+    const isReadonly = readonly.includes(k);
+    return `<div class="form-group ${k.length > 15 ? 'full' : ''}">
+      <label class="form-label">${k}</label>
+      <input class="form-input" id="field-${k}"
+        value="${String(v).replace(/"/g,'&quot;')}"
+        ${isReadonly ? 'readonly' : ''}
+        placeholder="${k}">
+    </div>`;
+  }).join('');
+
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  editingRow = null;
+}
+
+async function guardarCambios() {
+  if (!editingRow) return;
+  if (!config.fileId || !config.sheet) {
+    showToast('Configura el Excel primero', true);
+    return;
+  }
+
+  const btn = document.getElementById('btn-guardar');
+  btn.disabled = true;
+  btn.textContent = '⏳ Guardando...';
+  showLoading(true);
+
+  try {
+    // Leer headers del Excel para saber el orden de columnas
+    const base = driveBase();
+    const url = `${base}/items/${config.fileId}/workbook/worksheets/${encodeURIComponent(config.sheet)}/rows/itemAt(index=0)`;
+    const headerRow = await graphRequest(url);
+    const headers = headerRow.values[0].map(h => String(h).trim());
+
+    // Construir la fila actualizada
+    const updatedValues = [headers.map(h => {
+      const input = document.getElementById(`field-${h}`);
+      return input ? input.value : (editingRow[h] ?? '');
+    })];
+
+    // rowIndex empieza en 2 (fila 1 = headers), Graph usa índice 0-based
+    const rowIdx = editingRow._rowIndex - 1; // 0-based
+    const colCount = headers.length;
+    const lastCol = colToLetter(colCount - 1);
+    const rangeAddr = `A${editingRow._rowIndex}:${lastCol}${editingRow._rowIndex}`;
+
+    const patchUrl = `${base}/items/${config.fileId}/workbook/worksheets/${encodeURIComponent(config.sheet)}/range(address='${rangeAddr}')`;
+    await graphRequest(patchUrl, 'PATCH', { values: updatedValues });
+
+    // Actualizar data local
+    const idx = allData.findIndex(r => r._rowIndex === editingRow._rowIndex);
+    if (idx >= 0) {
+      headers.forEach(h => {
+        const input = document.getElementById(`field-${h}`);
+        if (input) allData[idx][h] = input.value;
+      });
+    }
+
+    closeModal();
+    filterTable();
+    updateDashboard();
+    showToast('✓ Expediente guardado en Excel');
+  } catch(e) {
+    showToast('Error guardando: ' + e.message, true);
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '💾 Guardar en Excel';
+    showLoading(false);
+  }
+}
+
+function colToLetter(col) {
+  let letter = '';
+  while (col >= 0) {
+    letter = String.fromCharCode(65 + (col % 26)) + letter;
+    col = Math.floor(col / 26) - 1;
+  }
+  return letter;
+}
+
+// ──────── CONFIG ────────
+function saveConfig() {
+  config = {
+    driveId: document.getElementById('cfg-driveid').value.trim() || 'me',
+    fileId:  document.getElementById('cfg-fileid').value.trim(),
+    sheet:   document.getElementById('cfg-sheet').value.trim() || 'Hoja1'
+  };
+
+  if (!config.fileId) {
+    document.getElementById('cfg-status').textContent = '⚠️ Ingresa el File ID del Excel';
+    document.getElementById('cfg-status').style.color = 'var(--danger)';
+    return;
+  }
+
+  localStorage.setItem('gestion_cfg', JSON.stringify(config));
+  document.getElementById('cfg-status').textContent = '✓ Configuración guardada. Cargando data...';
+  document.getElementById('cfg-status').style.color = 'var(--success)';
+  loadData();
+}
+
+async function testConnection() {
+  const fileId = document.getElementById('cfg-fileid').value.trim();
+  const driveId = document.getElementById('cfg-driveid').value.trim() || 'me';
+  const sheet = document.getElementById('cfg-sheet').value.trim() || 'Hoja1';
+  const status = document.getElementById('cfg-status');
+
+  if (!fileId) { status.textContent = '⚠️ Ingresa el File ID'; status.style.color='var(--danger)'; return; }
+
+  status.textContent = '⏳ Probando conexión...';
+  status.style.color = 'var(--muted)';
+  showLoading(true);
+
+  try {
+    const base = driveId === 'me' ? 'https://graph.microsoft.com/v1.0/me/drive' : `https://graph.microsoft.com/v1.0/drives/${driveId}`;
+    const data = await graphRequest(`${base}/items/${fileId}/workbook/worksheets`);
+    const sheets = data.value.map(s => s.name).join(', ');
+    status.innerHTML = `✓ Conexión OK. Hojas disponibles: <b>${sheets}</b>`;
+    status.style.color = 'var(--success)';
+  } catch(e) {
+    status.textContent = '✗ Error: ' + e.message;
+    status.style.color = 'var(--danger)';
+  } finally { showLoading(false); }
+}
+
+// ──────── EXPORT CSV ────────
+function exportCSV() {
+  if (!filteredData.length) { showToast('No hay data para exportar', true); return; }
+  const keys = Object.keys(filteredData[0]).filter(k => k !== '_rowIndex');
+  const csv  = [keys.join(','), ...filteredData.map(r => keys.map(k => `"${String(r[k]||'').replace(/"/g,'""')}"`).join(','))].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'}));
+  a.download = `Gestion2026_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('CSV exportado');
+}
+
+// ──────── UI HELPERS ────────
+function showView(name, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function showLoading(on) {
+  document.getElementById('loadingBar').style.display = on ? 'block' : 'none';
+}
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal')) closeModal();
+});
+</script>
+</body>
+</html>
