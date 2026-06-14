@@ -604,8 +604,7 @@ function updateDashboard(){
   const activados=d.filter(r=>String(r[COL_ESTGES]||'').toUpperCase().includes('ACTIVADO'));
 const clientesUniq=[...new Set(activados.map(r=>String(r['NOMBRE_RSOCIAL_CLIENTE']||'').trim()).filter(Boolean))];
 document.getElementById('kpi-clientes').textContent=clientesUniq.length.toLocaleString('es-PE');
-  // Mostramos en kpi-total-sub
-  document.getElementById('kpi-total-sub').textContent=`Clientes únicos ACTIVADO: ${clientesUniq.length}`;
+  
 
   // ✅ NETA total solo PROYE
   const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
