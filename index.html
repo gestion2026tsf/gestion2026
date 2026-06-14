@@ -585,40 +585,27 @@ function updateDashboard(){
 
   document.getElementById('kpi-total').textContent=d.length.toLocaleString('es-PE');
 
-  // ✅ LSNG = empieza con L, CRDT = empieza con C
   const lsng=d.filter(r=>String(r[COL_PROD]||'').startsWith('L'));
   const crdt=d.filter(r=>String(r[COL_PROD]||'').startsWith('C'));
-  const lsbk=d.filter(r=>String(r[COL_PROD]||'').startsWith('LSBK'));
   document.getElementById('kpi-lsng').textContent=lsng.length.toLocaleString('es-PE');
   document.getElementById('kpi-lsng-sub').textContent=`VEH:${lsng.filter(r=>String(r[COL_PROD]).includes('VEH')).length}  MAQ:${lsng.filter(r=>String(r[COL_PROD]).includes('MAQ')).length}`;
   document.getElementById('kpi-crdt').textContent=crdt.length.toLocaleString('es-PE');
   document.getElementById('kpi-crdt-sub').textContent=`VEH:${crdt.filter(r=>String(r[COL_PROD]).includes('VEH')).length}  MAQ:${crdt.filter(r=>String(r[COL_PROD]).includes('MAQ')).length}`;
-  document.getElementById('kpi-clientes').textContent=clientesUniq.length.toLocaleString('es-PE');
 
-  // ✅ FUNCIONARIOS ÚNICOS — columna FNCNR
   const funcKey=headers.includes('FNCNR')?'FNCNR':detectField(['FNCNR','FNCNE','FUNCIONARIO','ANALISTA','EJECUTIVO']);
   const funcsUniq=funcKey?[...new Set(d.map(r=>String(r[funcKey]||'').trim()).filter(Boolean))]:[];
   document.getElementById('kpi-func').textContent=funcsUniq.length.toLocaleString('es-PE');
 
-  // ✅ CLIENTES ÚNICOS — solo ACTIVADO en EST_GES
   const activados=d.filter(r=>String(r[COL_ESTGES]||'').toUpperCase().includes('ACTIVADO'));
-const clientesUniq=[...new Set(activados.map(r=>String(r['NOMBRE_RSOCIAL_CLIENTE']||'').trim()).filter(Boolean))];
-document.getElementById('kpi-clientes').textContent=clientesUniq.length.toLocaleString('es-PE');
-  
+  const clientesUniq=[...new Set(activados.map(r=>String(r['NOMBRE_RSOCIAL_CLIENTE']||'').trim()).filter(Boolean))];
+  document.getElementById('kpi-clientes').textContent=clientesUniq.length.toLocaleString('es-PE');
 
-  // ✅ NETA total solo PROYE
   const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
   const proyes=d.filter(r=>String(r[COL_ESTCOM]||'').toUpperCase().includes('PROYE'));
   let netaTotal=0;
-  if(netaKey){
-    proyes.forEach(r=>{
-      const n=parseFloat(String(r[netaKey]||'').replace(/[^0-9.\-]/g,''));
-      if(!isNaN(n))netaTotal+=n;
-    });
-  }
+  if(netaKey){proyes.forEach(r=>{const n=parseFloat(String(r[netaKey]||'').replace(/[^0-9.\-]/g,''));if(!isNaN(n))netaTotal+=n;});}
   document.getElementById('kpi-neta').textContent=fmtMonto(netaTotal);
 
-  // Charts — igual que antes
   const prods={};
   d.forEach(r=>{const p=String(r[COL_PROD]||'').trim()||'S/D';prods[p]=(prods[p]||0)+1;});
   const topP=Object.entries(prods).sort((a,b)=>b[1]-a[1]);
@@ -634,22 +621,19 @@ document.getElementById('kpi-clientes').textContent=clientesUniq.length.toLocale
   if(funcKey){
     const fMap={};
     d.forEach(r=>{const f=String(r[funcKey]||'').trim();if(f)fMap[f]=(fMap[f]||0)+1;});
-    const topF=Object.entries(fMap).sort((a,b)=>b[1]-a[1]).slice(0,12);
-    document.getElementById('chart-funcionarios').innerHTML=renderHBars(topF,'#A78BFA');
+    document.getElementById('chart-funcionarios').innerHTML=renderHBars(Object.entries(fMap).sort((a,b)=>b[1]-a[1]).slice(0,12),'#A78BFA');
   }
 
   renderNetaMes(d,netaKey);
 
   const estMap={};
   d.forEach(r=>{const e=String(r[COL_ESTGES]||'').trim()||'S/D';estMap[e]=(estMap[e]||0)+1;});
-  const topEst=Object.entries(estMap).sort((a,b)=>b[1]-a[1]);
   const estColors=['#1E6FD9','#22C55E','#F5A623','#EF4444','#A78BFA','#14B8A6','#F97316','#EC4899'];
-  document.getElementById('chart-estados').innerHTML=renderHBarsColor(topEst,estColors);
+  document.getElementById('chart-estados').innerHTML=renderHBarsColor(Object.entries(estMap).sort((a,b)=>b[1]-a[1]),estColors);
 
   const ecMap={};
   d.forEach(r=>{const e=String(r[COL_ESTCOM]||'').trim()||'S/D';ecMap[e]=(ecMap[e]||0)+1;});
-  const topEc=Object.entries(ecMap).sort((a,b)=>b[1]-a[1]);
-  document.getElementById('chart-estcom').innerHTML=renderHBarsColor(topEc,estColors);
+  document.getElementById('chart-estcom').innerHTML=renderHBarsColor(Object.entries(ecMap).sort((a,b)=>b[1]-a[1]),estColors);
 }
 
 /* ══ NETA POR MES — SOLO PROYE ══ */
