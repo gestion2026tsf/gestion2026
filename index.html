@@ -431,7 +431,24 @@ window.onload=async()=>{
   await msalInstance.initialize();
   try{await msalInstance.handleRedirectPromise();}catch(e){console.warn(e);}
   const accounts=msalInstance.getAllAccounts();
-  if(accounts.length>0){currentAccount=accounts[0];showApp();if(config.fileId)loadData();}
+  if(accounts.length>0){
+    currentAccount=accounts[0];showApp();
+    // ✅ Cargar cache primero (instantáneo)
+    const cache=localStorage.getItem('gestion_data_cache');
+    if(cache){
+      try{
+        const parsed=JSON.parse(cache);
+        allData=parsed.data;headers=parsed.headers||[];
+        applyDashFilter();filterTable();updateFiltros();updateDashFilters();
+        const hace=Math.round((Date.now()-parsed.ts)/60000);
+        showToast(`✓ Data del caché (hace ${hace} min) — actualizando…`);
+      }catch(e){console.warn('Cache inválido',e);}
+    }
+    // Luego carga en background
+    loadData(true);
+    // Auto-refresh cada 5 minutos
+    setInterval(()=>loadData(true), 5*60*1000);
+  }
   document.getElementById('cfg-driveid').value=config.driveId||'me';
   document.getElementById('cfg-fileid').value=config.fileId||'';
 };
@@ -473,14 +490,15 @@ function tableBase(){
 }
 
 /* ══ CARGAR DATA ══ */
-async function loadData(){
+async function loadData(background=false){
   if(!config.fileId){showToast('Configura el File ID primero',true);showView('config',document.querySelectorAll('.nav-btn')[2]);return;}
-  showLoading(true);showLoadProgress(true);updateLoadProgress(5,0);allData=[];
+  // Si hay cache y es background, no mostrar barra
+  if(!background){showLoading(true);showLoadProgress(true);updateLoadProgress(5,0);}
+  const tempData=[];
   try{
     const base=tableBase();
     const colData=await graphRequest(`${base}/columns?$select=name`);
     headers=colData.value.map(c=>c.name);
-    updateLoadProgress(15,0);
 
     const PAGE=100;let skip=0,totalRows=0,keepGoing=true;
     while(keepGoing){
@@ -492,26 +510,36 @@ async function loadData(){
           const v=row.values[0][i];
           obj[h]=(v===true)?'SI':(v===false)?'':(v??'');
         });
-        // Solo filas con contenido real (EXPE o PRODUCTO no vacíos)
         const expe=String(obj['EXPE']||'').trim();
         const prod=String(obj[COL_PROD]||'').trim();
-        if(expe||prod) allData.push(obj);
+        if(expe||prod)tempData.push(obj);
         totalRows++;
       }
       skip+=PAGE;
-      updateLoadProgress(Math.min(15+Math.round((totalRows/(totalRows+PAGE))*80),95),allData.length);
+      if(!background)updateLoadProgress(Math.min(15+Math.round((totalRows/(totalRows+PAGE))*80),95),tempData.length);
       if(rows.length<PAGE)keepGoing=false;
     }
-    updateLoadProgress(100,allData.length);
-    if(!allData.length){showToast('Tabla vacía o sin datos válidos',true);return;}
 
-    applyDashFilter();
-    filterTable();
-    updateFiltros();
-    updateDashFilters();
-    showToast(`✓ ${allData.length} operaciones cargadas`);
-  }catch(e){showToast('Error cargando: '+e.message,true);console.error(e);}
-  finally{showLoading(false);setTimeout(()=>showLoadProgress(false),1500);}
+    if(!tempData.length){if(!background)showToast('Tabla vacía',true);return;}
+
+    // ✅ Guardar en cache
+    localStorage.setItem('gestion_data_cache',JSON.stringify({data:tempData,headers,ts:Date.now()}));
+
+    allData=tempData;
+    applyDashFilter();filterTable();updateFiltros();updateDashFilters();
+
+    if(background){
+      showToast(`✓ Data actualizada — ${allData.length} operaciones`);
+    }else{
+      updateLoadProgress(100,allData.length);
+      showToast(`✓ ${allData.length} operaciones cargadas`);
+    }
+  }catch(e){
+    if(!background)showToast('Error: '+e.message,true);
+    console.error(e);
+  }finally{
+    if(!background){showLoading(false);setTimeout(()=>showLoadProgress(false),1500);}
+  }
 }
 
 function showLoadProgress(on){document.getElementById('loadProgress').style.display=on?'block':'none';}
@@ -890,7 +918,7 @@ async function guardarCambios(){
 }
 
 /* ══ CONFIG ══ */
-function saveConfig(){
+function loadData(){
   config={driveId:document.getElementById('cfg-driveid').value.trim()||'me',fileId:document.getElementById('cfg-fileid').value.trim()};
   if(!config.fileId){const s=document.getElementById('cfg-status');s.textContent='⚠️ Ingresa el File ID';s.style.color='var(--danger)';return;}
   localStorage.setItem('gestion_cfg',JSON.stringify(config));
