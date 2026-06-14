@@ -593,7 +593,7 @@ function updateDashboard(){
   document.getElementById('kpi-lsng-sub').textContent=`VEH:${lsng.filter(r=>String(r[COL_PROD]).includes('VEH')).length}  MAQ:${lsng.filter(r=>String(r[COL_PROD]).includes('MAQ')).length}`;
   document.getElementById('kpi-crdt').textContent=crdt.length.toLocaleString('es-PE');
   document.getElementById('kpi-crdt-sub').textContent=`VEH:${crdt.filter(r=>String(r[COL_PROD]).includes('VEH')).length}  MAQ:${crdt.filter(r=>String(r[COL_PROD]).includes('MAQ')).length}`;
-  document.getElementById('kpi-lsbk').textContent=lsbk.length.toLocaleString('es-PE');
+  document.getElementById('kpi-clientes').textContent=clientesUniq.length.toLocaleString('es-PE');
 
   // ✅ FUNCIONARIOS ÚNICOS — columna FNCNR
   const funcKey=headers.includes('FNCNR')?'FNCNR':detectField(['FNCNR','FNCNE','FUNCIONARIO','ANALISTA','EJECUTIVO']);
@@ -602,7 +602,8 @@ function updateDashboard(){
 
   // ✅ CLIENTES ÚNICOS — solo ACTIVADO en EST_GES
   const activados=d.filter(r=>String(r[COL_ESTGES]||'').toUpperCase().includes('ACTIVADO'));
-  const clientesUniq=[...new Set(activados.map(r=>String(r['NOMBRE_RSOCIAL_CLIENTE']||'').trim()).filter(Boolean))];
+const clientesUniq=[...new Set(activados.map(r=>String(r['NOMBRE_RSOCIAL_CLIENTE']||'').trim()).filter(Boolean))];
+document.getElementById('kpi-clientes').textContent=clientesUniq.length.toLocaleString('es-PE');
   // Mostramos en kpi-total-sub
   document.getElementById('kpi-total-sub').textContent=`Clientes únicos ACTIVADO: ${clientesUniq.length}`;
 
