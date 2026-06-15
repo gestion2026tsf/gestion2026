@@ -771,7 +771,7 @@ let canEdit=false;
 
 // Config: driveId resuelto + override manual
 let config = JSON.parse(localStorage.getItem('gestion_cfg') || '{}');
-if (!config.fileId) config.fileId = FIXED_FILE_ID; // siempre fijo
+if (!config.fileId) if (!config.fileId) config.fileId = FIXED_FILE_ID;
 
 /* ══ AUTH ══ */
 window.onload = async () => {
@@ -811,17 +811,27 @@ async function resolveSharedWithMeFile() {
   const resp = await graphRequest('https://graph.microsoft.com/v1.0/me/drive/sharedWithMe?$top=200');
 
   const item = (resp.value || []).find(x => {
-    const name = x.name || x.remoteItem?.name || '';
-    return name.toLowerCase() === 'gestión_2026.xlsx'.toLowerCase()
-        || name.toLowerCase() === 'gestion_2026.xlsx'.toLowerCase();
+    const name = (x.name || x.remoteItem?.name || '').toLowerCase();
+    return name === 'gestión_2026.xlsx' || name === 'gestion_2026.xlsx';
   });
 
   if (!item || !item.remoteItem) {
     throw new Error('No se encontró Gestión_2026.xlsx en Compartidos conmigo');
   }
 
-  config.driveId = item.remoteItem.parentReference.driveId;
-  config.fileId = item.remoteItem.id;
+  const remote = item.remoteItem;
+  const driveId = remote.parentReference?.driveId;
+  const fileId = remote.id;
+
+  if (!driveId || !fileId) {
+    throw new Error('El archivo compartido no devolvió driveId o fileId');
+  }
+
+  // Validar que realmente se pueda abrir la tabla antes de guardar.
+  await graphRequest(buildItemUrl(driveId, fileId) + `/workbook/tables/${TABLE_NAME}?$select=name`);
+
+  config.driveId = driveId;
+  config.fileId = fileId;
   saveConfigToStorage();
 
   setDriveStatus('ok', 'Conectado ✓ (compartido)');
@@ -833,7 +843,7 @@ async function resolveSharePointDrive() {
   // 1. Si hay un driveId guardado y funciona, usarlo
   if(config.driveId){
     try {
-      await graphRequest(buildItemUrl(config.driveId, FIXED_FILE_ID) + '/workbook/tables?$select=name');
+      await graphRequest(buildItemUrl(config.driveId, config.fileId || FIXED_FILE_ID) + '/workbook/tables?$select=name');
       setDriveStatus('ok', 'Conectado ✓');
       return true;
     } catch(e) {
@@ -843,7 +853,7 @@ async function resolveSharePointDrive() {
 
   // 2. Intentar con 'me'
   try {
-    await graphRequest(buildItemUrl('me', FIXED_FILE_ID) + '/workbook/tables?$select=name');
+    await graphRequest(buildItemUrl('me', config.fileId || FIXED_FILE_ID) + '/workbook/tables?$select=name');
     config.driveId = 'me';
     saveConfigToStorage();
     setDriveStatus('ok', 'Conectado ✓');
@@ -857,7 +867,7 @@ async function resolveSharePointDrive() {
     const drivesResp = await graphRequest('https://graph.microsoft.com/v1.0/me/drives');
     for(const drive of (drivesResp.value || [])){
       try {
-        await graphRequest(buildItemUrl(drive.id, FIXED_FILE_ID) + '/workbook/tables?$select=name');
+        await graphRequest(buildItemUrl(drive.id, config.fileId || FIXED_FILE_ID) + '/workbook/tables?$select=name');
         config.driveId = drive.id;
         saveConfigToStorage();
         setDriveStatus('ok', `Conectado ✓ (${drive.driveType || drive.id.slice(0,8)})`);
@@ -870,7 +880,7 @@ async function resolveSharePointDrive() {
 
   // 4. Buscar el archivo directamente por ID (Graph busca en todos los drives)
   try {
-    const item = await graphRequest(`https://graph.microsoft.com/v1.0/me/drive/items/${FIXED_FILE_ID}`);
+    const item = await graphRequest(`https://graph.microsoft.com/v1.0/me/drive/items/${config.fileId || FIXED_FILE_ID}`);
     if(item && item.parentReference && item.parentReference.driveId){
       config.driveId = item.parentReference.driveId;
       saveConfigToStorage();
@@ -889,7 +899,7 @@ async function resolveSharePointDrive() {
         const sitedrives = await graphRequest(`https://graph.microsoft.com/v1.0/sites/${site.id}/drives?$select=id`);
         for(const drive of (sitedrives.value || [])){
           try {
-            await graphRequest(buildItemUrl(drive.id, FIXED_FILE_ID) + '/workbook/tables?$select=name');
+            await graphRequest(buildItemUrl(drive.id, config.fileId || FIXED_FILE_ID) + '/workbook/tables?$select=name');
             config.driveId = drive.id;
             saveConfigToStorage();
             setDriveStatus('ok', `Conectado ✓ (${site.displayName || 'SharePoint'})`);
@@ -1012,7 +1022,7 @@ async function graphRequest(url, method='GET', body=null){
 async function detectRole(){
   try {
     const driveId = config.driveId || 'me';
-    const data = await graphRequest(buildItemUrl(driveId, config.fileId || FIXED_FILE_ID)) + '/permissions');
+    const data = await graphRequest(buildItemUrl(driveId, config.fileId || FIXED_FILE_ID) + '/permissions');
     const myEmail = (currentAccount.username || '').toLowerCase();
     let foundWrite = false, foundForMe = false;
 
@@ -1175,7 +1185,7 @@ async function loadData(background=false){
     if(!background) showToast('Error: ' + e.message, true);
     console.error(e);
     // Si falla, intentar re-resolver el drive
-    if(e.message.includes('404') || e.message.includes('403') || e.message.includes('ItemNotFound')){
+    if(e.message.includes('404') || e.message.includes('403') || e.message.includes('ItemNotFound') || e.message.includes('Access denied')){
       console.log('Intentando re-detectar drive…');
       delete config.driveId;
       saveConfigToStorage();
@@ -1197,7 +1207,7 @@ function saveConfig(){
   const manualDrive = document.getElementById('cfg-driveid').value.trim();
   if(manualDrive) config.driveId = manualDrive;
   else delete config.driveId;
-  config.fileId = FIXED_FILE_ID;
+  if(!config.fileId) config.fileId = FIXED_FILE_ID;
   saveConfigToStorage();
   const s = document.getElementById('cfg-status');
   s.textContent = '✓ Guardado. Re-detectando conexión…';
