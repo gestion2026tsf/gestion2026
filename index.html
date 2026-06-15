@@ -27,12 +27,31 @@
   --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
   --shadow-md:0 4px 6px -1px rgba(0,0,0,.08),0 2px 4px -1px rgba(0,0,0,.06);
   --shadow-lg:0 10px 15px -3px rgba(0,0,0,.08),0 4px 6px -2px rgba(0,0,0,.05);
+  --header-h:64px;
+  --nav-h:46px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;font-size:14px;-webkit-font-smoothing:antialiased;}
+
+/* FIX SCROLL: layout fijo sin desbordamientos */
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+body {
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  flex-direction:column;
+  font-size:14px;
+  -webkit-font-smoothing:antialiased;
+}
 
 /* ── LOGIN ── */
-#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--navy);position:relative;overflow:hidden;}
+#login-screen{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100vh;background:var(--navy);position:relative;overflow:hidden;
+}
 #login-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(37,99,235,.35),transparent);pointer-events:none;}
 #login-screen::after{content:'';position:absolute;bottom:-100px;right:-100px;width:400px;height:400px;border-radius:50%;background:rgba(37,99,235,.08);pointer-events:none;}
 .login-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(20px);border-radius:24px;padding:52px 56px;text-align:center;max-width:420px;width:90%;position:relative;z-index:1;}
@@ -42,9 +61,27 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .btn-ms{display:flex;align-items:center;justify-content:center;gap:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:12px;padding:15px 24px;font-size:14px;font-weight:500;cursor:pointer;width:100%;transition:all .2s;font-family:var(--font);}
 .btn-ms:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);transform:translateY(-1px);}
 
-/* ── APP SHELL ── */
-#app{display:none;flex-direction:column;min-height:100vh;}
-header{background:var(--navy);color:#fff;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.06);}
+/* ── APP SHELL — FIX SCROLL ── */
+#app {
+  display: none;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+header {
+  background:var(--navy);
+  color:#fff;
+  padding:0 28px;
+  height: var(--header-h);
+  min-height: var(--header-h);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-shrink: 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  z-index: 100;
+}
 .header-left{display:flex;align-items:center;gap:14px;}
 .brand-name{font-size:15px;font-weight:700;letter-spacing:-.2px;}
 .brand-sub{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.2px;margin-top:1px;}
@@ -52,15 +89,45 @@ header{background:var(--navy);color:#fff;padding:0 28px;height:64px;display:flex
 .user-pill{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:5px 14px 5px 5px;}
 .avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;}
 .user-name{font-size:13px;color:rgba(255,255,255,.8);font-weight:500;}
+
+/* Badge de rol */
+.role-badge{
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;
+  letter-spacing:.5px;text-transform:uppercase;flex-shrink:0;
+}
+.role-badge.editor{background:rgba(16,185,129,.2);color:#6EE7B7;border:1px solid rgba(16,185,129,.3);}
+.role-badge.viewer{background:rgba(148,163,184,.15);color:#94A3B8;border:1px solid rgba(148,163,184,.2);}
+
 .btn-logout{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#FCA5A5;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--font);}
 .btn-logout:hover{background:rgba(239,68,68,.2);color:#fff;}
 
-nav{background:var(--navy2);display:flex;gap:2px;padding:0 28px;border-bottom:1px solid rgba(255,255,255,.05);}
+nav {
+  background:var(--navy2);
+  display:flex;
+  gap:2px;
+  padding:0 28px;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  flex-shrink: 0;
+  height: var(--nav-h);
+}
 .nav-btn{background:none;border:none;color:rgba(255,255,255,.45);padding:0 18px;height:46px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;display:flex;align-items:center;gap:7px;font-family:var(--font);letter-spacing:.1px;}
 .nav-btn:hover{color:rgba(255,255,255,.8);}
 .nav-btn.active{color:#fff;border-bottom-color:var(--accent2);}
 
-main{flex:1;padding:24px 28px;max-width:1600px;width:100%;margin:0 auto;}
+/* ÁREA DE CONTENIDO SCROLLEABLE */
+main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bg);
+}
+.main-inner {
+  padding: 24px 28px;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
 .view{display:none;}
 .view.active{display:block;}
 
@@ -162,7 +229,59 @@ main{flex:1;padding:24px 28px;max-width:1600px;width:100%;margin:0 auto;}
 .suc-fill{height:100%;border-radius:100px;background:var(--success);transition:width .7s cubic-bezier(.4,0,.2,1);}
 .suc-amount{font-size:11px;font-weight:700;color:var(--success);min-width:44px;text-align:right;}
 
-/* ── EXPEDIENTES TABLE ── */
+/* ── EXPEDIENTES — VISTAS ── */
+.view-toggle {
+  display: flex;
+  background: var(--bg2);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 2px;
+}
+.view-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .2s;
+  font-family: var(--font);
+}
+.view-toggle-btn.active {
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+.view-toggle-btn svg { flex-shrink: 0; }
+
+/* Modo SOLO LECTURA — oculta botones de acción */
+body.viewer-mode .btn-edit,
+body.viewer-mode .btn-success,
+body.viewer-mode #btn-guardar,
+body.viewer-mode .col-accion { display: none !important; }
+
+body.viewer-mode .table-readonly-banner { display: flex !important; }
+
+.table-readonly-banner {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: var(--warn-light);
+  border: 1px solid #FDE68A;
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #92400E;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+/* ── TOOLBAR ── */
 .toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
 .search-wrapper{position:relative;flex:1;min-width:200px;}
 .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
@@ -273,6 +392,7 @@ tr:last-child td{border-bottom:none;}
       </div>
     </div>
     <div class="header-right">
+      <span class="role-badge viewer" id="roleBadge">Solo lectura</span>
       <div class="user-pill">
         <div class="avatar" id="userAvatar">?</div>
         <span class="user-name" id="userName"></span>
@@ -296,7 +416,9 @@ tr:last-child td{border-bottom:none;}
     </button>
   </nav>
 
-  <main>
+  <main id="mainScroll">
+    <div class="main-inner">
+
     <!-- ══ DASHBOARD ══ -->
     <div class="view active" id="view-dashboard">
       <div class="page-header">
@@ -319,7 +441,6 @@ tr:last-child td{border-bottom:none;}
         <div class="load-progress-bar"><div class="load-progress-fill" id="loadProgressFill" style="width:0%"></div></div>
       </div>
 
-      <!-- FILTERS -->
       <div class="filter-bar">
         <label>Estado:</label>
         <select class="filter-select-dash" id="filtroEstGes" onchange="applyDashFilter()"><option value="">Todos</option></select>
@@ -330,7 +451,6 @@ tr:last-child td{border-bottom:none;}
         <button class="btn-clear" onclick="resetDashFilters()">✕ Limpiar</button>
       </div>
 
-      <!-- KPIs -->
       <div class="kpi-grid">
         <div class="kpi-card blue">
           <div class="kpi-stripe"></div>
@@ -370,17 +490,16 @@ tr:last-child td{border-bottom:none;}
         <div class="kpi-card orange">
           <div class="kpi-stripe"></div>
           <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
-          <div class="kpi-label">Neta Total (PROYE)</div>
+          <div class="kpi-label">Neta Total (ACTIVADO)</div>
           <div class="kpi-value" id="kpi-neta">—</div>
-          <div class="kpi-sub">suma col. NETA activados</div>
+          <div class="kpi-sub">suma NETA — estado ACTIVADO</div>
         </div>
       </div>
 
-      <!-- ROW 1: Neta por Mes + Estado Comercial (donut) -->
       <div class="dash-row cols-2">
         <div class="chart-card">
           <div class="chart-head">
-            <div class="chart-title">Neta por Mes — PROYE</div>
+            <div class="chart-title">Neta por Mes — ACTIVADO</div>
             <div class="chart-badge" id="badge-neta-mes">—</div>
           </div>
           <div id="chart-neta-mes"><div class="empty-state" style="padding:16px"><p>Cargando…</p></div></div>
@@ -392,7 +511,7 @@ tr:last-child td{border-bottom:none;}
           </div>
           <div class="donut-wrap" id="chart-estcom-wrap">
             <div class="donut-chart-box">
-              <canvas id="donutEstCom" width="130" height="130" role="img" aria-label="Gráfico de dona de estado comercial">Estado comercial por cantidad de operaciones.</canvas>
+              <canvas id="donutEstCom" width="130" height="130"></canvas>
               <div class="donut-center-label">
                 <div class="dcl-val" id="donut-total">—</div>
                 <div class="dcl-sub">total</div>
@@ -403,51 +522,32 @@ tr:last-child td{border-bottom:none;}
         </div>
       </div>
 
-      <!-- ROW 2: Producto + Zona + Funcionarios -->
       <div class="dash-row cols-3">
         <div class="chart-card">
-          <div class="chart-head">
-            <div class="chart-title">Por Producto</div>
-            <div class="chart-badge" id="badge-prod">—</div>
-          </div>
+          <div class="chart-head"><div class="chart-title">Por Producto</div><div class="chart-badge" id="badge-prod">—</div></div>
           <div id="chart-producto"><div class="empty-state" style="padding:16px"><p>Cargando…</p></div></div>
         </div>
         <div class="chart-card">
-          <div class="chart-head">
-            <div class="chart-title">Por Zona</div>
-            <div class="chart-badge" id="badge-zona">—</div>
-          </div>
+          <div class="chart-head"><div class="chart-title">Por Zona</div><div class="chart-badge" id="badge-zona">—</div></div>
           <div id="chart-zonas"><div class="empty-state" style="padding:16px"><p>Cargando…</p></div></div>
         </div>
         <div class="chart-card">
-          <div class="chart-head">
-            <div class="chart-title">Top Funcionarios</div>
-            <div class="chart-badge" id="badge-func">—</div>
-          </div>
+          <div class="chart-head"><div class="chart-title">Top Funcionarios</div><div class="chart-badge" id="badge-func">—</div></div>
           <div id="chart-funcionarios"><div class="empty-state" style="padding:16px"><p>Cargando…</p></div></div>
         </div>
       </div>
 
-      <!-- ROW 3: Neta por Sucursal + Zonas vertical + Estado Gestión -->
       <div class="dash-row cols-3">
         <div class="chart-card">
-          <div class="chart-head">
-            <div class="chart-title">Neta por Sucursal</div>
-            <div class="chart-badge" id="badge-suc">—</div>
-          </div>
+          <div class="chart-head"><div class="chart-title">Neta por Sucursal</div><div class="chart-badge" id="badge-suc">—</div></div>
           <div id="chart-sucursal"><div class="empty-state" style="padding:16px"><p>Cargando…</p></div></div>
         </div>
         <div class="chart-card">
-          <div class="chart-head">
-            <div class="chart-title">Zonas — Barras</div>
-          </div>
+          <div class="chart-head"><div class="chart-title">Zonas — Barras</div></div>
           <div class="vbar-container" id="chart-zonas-v"></div>
         </div>
         <div class="chart-card">
-          <div class="chart-head">
-            <div class="chart-title">Estado de Gestión</div>
-            <div class="chart-badge" id="badge-estges">—</div>
-          </div>
+          <div class="chart-head"><div class="chart-title">Estado de Gestión</div><div class="chart-badge" id="badge-estges">—</div></div>
           <div id="chart-estados"><div class="empty-state" style="padding:16px"><p>Cargando…</p></div></div>
         </div>
       </div>
@@ -461,7 +561,24 @@ tr:last-child td{border-bottom:none;}
           Expedientes
           <span class="page-title-meta" id="exp-count"></span>
         </div>
+        <!-- Toggle vista editar / solo ver -->
+        <div class="view-toggle" id="viewToggle" style="display:none">
+          <button class="view-toggle-btn active" id="btnModoEditar" onclick="setModo('editor')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Editar
+          </button>
+          <button class="view-toggle-btn" id="btnModoVer" onclick="setModo('viewer')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Solo ver
+          </button>
+        </div>
       </div>
+
+      <div class="table-readonly-banner">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Modo solo lectura — No tienes permisos de edición en este archivo
+      </div>
+
       <div class="toolbar">
         <div class="search-wrapper">
           <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -496,7 +613,7 @@ tr:last-child td{border-bottom:none;}
             <th onclick="sortTable('CAF')" style="text-align:right">CAF</th>
             <th onclick="sortTable('EST_COM')">Est. Comercial</th>
             <th onclick="sortTable('EST_GES')">Est. Gestión</th>
-            <th>Acción</th>
+            <th class="col-accion">Acción</th>
           </tr></thead>
           <tbody id="tabla-body">
             <tr><td colspan="16"><div class="empty-state">
@@ -557,6 +674,8 @@ tr:last-child td{border-bottom:none;}
         <div id="cfg-status" style="margin-top:12px;font-size:12px;color:var(--muted)"></div>
       </div>
     </div>
+
+    </div><!-- /main-inner -->
   </main>
 </div>
 
@@ -584,9 +703,7 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <script>
-/* ══════════════════════════════════════
-   CONFIGURACIÓN MSAL
-══════════════════════════════════════ */
+/* ══ CONFIG MSAL ══ */
 const MSAL_CONFIG={
   auth:{clientId:"683e6fbc-8e43-4310-b9dc-be4c813605bd",authority:"https://login.microsoftonline.com/2e32ce4d-9718-4ed3-81d2-8de99f5e6ae3",redirectUri:window.location.href.split('?')[0]},
   cache:{cacheLocation:"localStorage",storeAuthStateInCookie:false}
@@ -594,20 +711,9 @@ const MSAL_CONFIG={
 const SCOPES=["Files.ReadWrite","User.Read"];
 const TABLE_NAME="TablaData";
 
-/* Columnas clave */
-const COL_FUNC   ='FNCNR';
-const COL_NETA   ='NETA';
-const COL_FECHA  ='FECHA';
-const COL_ESTGES ='EST_GES';
-const COL_ESTCOM ='EST_COM';
-const COL_ZONA   ='ZONA';
-const COL_PROD   ='PRODUCTO';
-const COL_SUC    ='SUCURSAL';
-
-/* Paleta de colores para gráficos */
+const COL_FUNC='FNCNR',COL_NETA='NETA',COL_FECHA='FECHA',COL_ESTGES='EST_GES',COL_ESTCOM='EST_COM',COL_ZONA='ZONA',COL_PROD='PRODUCTO',COL_SUC='SUCURSAL';
 const PALETTE=['#2563EB','#D97706','#059669','#7C3AED','#0891B2','#EA580C','#DC2626','#0D9488','#9333EA','#CA8A04'];
 
-/* Estado global */
 let msalInstance,currentAccount;
 let allData=[],filteredData=[],dashData=[];
 let sortField='',sortDir=1;
@@ -615,10 +721,9 @@ let page=1,pageSize=25;
 let editingRow=null,isNewRecord=false,headers=[];
 let config=JSON.parse(localStorage.getItem('gestion_cfg')||'{}');
 let donutChartInstance=null;
+let canEdit=false; // rol detectado por permisos del Excel
 
-/* ══════════════════════════════════════
-   AUTH
-══════════════════════════════════════ */
+/* ══ AUTH ══ */
 window.onload=async()=>{
   msalInstance=new msal.PublicClientApplication(MSAL_CONFIG);
   await msalInstance.initialize();
@@ -634,7 +739,7 @@ window.onload=async()=>{
         applyDashFilter();filterTable();updateFiltros();updateDashFilters();
         const hace=Math.round((Date.now()-parsed.ts)/60000);
         showToast(`✓ Caché cargado (hace ${hace} min) — actualizando…`);
-      }catch(e){console.warn('Cache inválido',e);}
+      }catch(e){console.warn(e);}
     }
     loadData(true);
     setInterval(()=>loadData(true),5*60*1000);
@@ -650,17 +755,19 @@ async function signIn(){
   catch(e){if(!e.message?.includes('interaction_in_progress'))showToast('Error: '+e.message,true);}
   finally{showLoading(false);loginInProgress=false;}
 }
-function signOut(){msalInstance.logoutPopup({account:currentAccount});document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';allData=[];filteredData=[];}
-
+function signOut(){
+  msalInstance.logoutPopup({account:currentAccount});
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  allData=[];filteredData=[];
+}
 function showApp(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='flex';
   document.getElementById('userAvatar').textContent=currentAccount.name?.[0]||'?';
   document.getElementById('userName').textContent=currentAccount.name||currentAccount.username;
-  const now=new Date();
-  document.getElementById('dash-fecha').textContent=now.toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('dash-fecha').textContent=new Date().toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
-
 async function getToken(){
   try{const r=await msalInstance.acquireTokenSilent({scopes:SCOPES,account:currentAccount});return r.accessToken;}
   catch{const r=await msalInstance.acquireTokenPopup({scopes:SCOPES});return r.accessToken;}
@@ -679,9 +786,70 @@ function tableBase(){
   return `${drive}/items/${config.fileId}/workbook/tables/${TABLE_NAME}`;
 }
 
-/* ══════════════════════════════════════
-   CARGA DE DATOS
-══════════════════════════════════════ */
+/* ══ DETECTAR PERMISOS (rol) ══
+   Intentamos obtener los permisos del archivo vía Graph API.
+   Si tiene 'write' o 'owner' → editor. Si solo 'read' → solo lectura.
+*/
+async function detectRole(){
+  if(!config.fileId)return;
+  try{
+    const driveId=config.driveId||'me';
+    const drive=driveId==='me'?'https://graph.microsoft.com/v1.0/me/drive':`https://graph.microsoft.com/v1.0/drives/${driveId}`;
+    const data=await graphRequest(`${drive}/items/${config.fileId}/permissions`);
+    const myEmail=(currentAccount.username||'').toLowerCase();
+    let foundWrite=false;
+    for(const p of (data.value||[])){
+      const roles=p.roles||[];
+      const grantedTo=p.grantedTo?.user?.email?.toLowerCase()||'';
+      const grantedToMe=(grantedTo===myEmail)||p.grantedToIdentitiesV2?.some(g=>g.user?.email?.toLowerCase()===myEmail);
+      if(grantedToMe&&(roles.includes('write')||roles.includes('owner'))){foundWrite=true;break;}
+      // Si tiene owner sin filtrar (es el dueño)
+      if(roles.includes('owner')&&!p.grantedTo){foundWrite=true;break;}
+    }
+    // Fallback: si no encontramos permisos específicos pero pudo cargar el archivo → puede ser dueño
+    canEdit=foundWrite;
+  }catch(e){
+    // Si falla la lectura de permisos, intentamos escribir un valor de prueba
+    // Si falla → solo lectura. Aquí asumimos editor si el token tiene Files.ReadWrite
+    canEdit=true; // Si llegó hasta acá con token ReadWrite → editor
+    console.warn('Permisos no determinados, asumiendo editor',e);
+  }
+  applyRole();
+}
+
+function applyRole(){
+  const badge=document.getElementById('roleBadge');
+  const toggle=document.getElementById('viewToggle');
+  if(canEdit){
+    badge.textContent='Editor';
+    badge.className='role-badge editor';
+    toggle.style.display='flex'; // muestra el toggle editar/ver
+    setModo('editor');
+  }else{
+    badge.textContent='Solo lectura';
+    badge.className='role-badge viewer';
+    toggle.style.display='none';
+    setModo('viewer');
+  }
+}
+
+/* Toggle entre modo editor y modo solo-lectura */
+function setModo(modo){
+  const body=document.body;
+  const btnE=document.getElementById('btnModoEditar');
+  const btnV=document.getElementById('btnModoVer');
+  if(modo==='editor'){
+    body.classList.remove('viewer-mode');
+    btnE?.classList.add('active');
+    btnV?.classList.remove('active');
+  }else{
+    body.classList.add('viewer-mode');
+    btnV?.classList.add('active');
+    btnE?.classList.remove('active');
+  }
+}
+
+/* ══ CARGA DE DATOS ══ */
 async function loadData(background=false){
   if(!config.fileId){showToast('Configura el File ID primero',true);showView('config',document.querySelectorAll('.nav-btn')[2]);return;}
   if(!background){showLoading(true);showLoadProgress(true);updateLoadProgress(5,0);}
@@ -710,6 +878,8 @@ async function loadData(background=false){
     localStorage.setItem('gestion_data_cache',JSON.stringify({data:tempData,headers,ts:Date.now()}));
     allData=tempData;
     applyDashFilter();filterTable();updateFiltros();updateDashFilters();
+    // Detectar rol después de cargar
+    await detectRole();
     if(background)showToast(`✓ Actualizado — ${allData.length} operaciones`);
     else{updateLoadProgress(100,allData.length);showToast(`✓ ${allData.length} operaciones cargadas`);}
   }catch(e){
@@ -724,20 +894,18 @@ function updateLoadProgress(pct,total){
   document.getElementById('loadProgressText').textContent=`${pct}% — ${total} ops`;
 }
 
-/* ══════════════════════════════════════
-   FILTROS DASHBOARD
-══════════════════════════════════════ */
+/* ══ FILTROS DASHBOARD ══ */
 function updateDashFilters(){
   const estados=[...new Set(allData.map(r=>String(r[COL_ESTGES]||'').trim()).filter(Boolean))].sort();
-  const zonas  =[...new Set(allData.map(r=>String(r[COL_ZONA]||'').trim()).filter(Boolean))].sort();
-  const prods  =[...new Set(allData.map(r=>String(r[COL_PROD]||'').trim()).filter(Boolean))].sort();
+  const zonas=[...new Set(allData.map(r=>String(r[COL_ZONA]||'').trim()).filter(Boolean))].sort();
+  const prods=[...new Set(allData.map(r=>String(r[COL_PROD]||'').trim()).filter(Boolean))].sort();
   document.getElementById('filtroEstGes').innerHTML='<option value="">Todos</option>'+estados.map(e=>`<option value="${e}">${e}</option>`).join('');
   document.getElementById('filtroZonaDash').innerHTML='<option value="">Todas</option>'+zonas.map(z=>`<option value="${z}">${z}</option>`).join('');
   document.getElementById('filtroProductoDash').innerHTML='<option value="">Todos</option>'+prods.map(p=>`<option value="${p}">${p}</option>`).join('');
 }
 function applyDashFilter(){
-  const estGes  =(document.getElementById('filtroEstGes')?.value||'').trim();
-  const zona    =(document.getElementById('filtroZonaDash')?.value||'').trim();
+  const estGes=(document.getElementById('filtroEstGes')?.value||'').trim();
+  const zona=(document.getElementById('filtroZonaDash')?.value||'').trim();
   const producto=(document.getElementById('filtroProductoDash')?.value||'').trim();
   dashData=allData.filter(r=>
     (!estGes||String(r[COL_ESTGES]||'').trim()===estGes)&&
@@ -753,9 +921,7 @@ function resetDashFilters(){
   applyDashFilter();
 }
 
-/* ══════════════════════════════════════
-   DASHBOARD — KPIs
-══════════════════════════════════════ */
+/* ══ DASHBOARD KPIs ══ */
 function updateDashboard(){
   const d=dashData;
   document.getElementById('kpi-total').textContent=d.length.toLocaleString('es-PE');
@@ -775,39 +941,34 @@ function updateDashboard(){
   const clientesUniq=[...new Set(activados.map(r=>String(r['NOMBRE_RSOCIAL_CLIENTE']||'').trim()).filter(Boolean))];
   document.getElementById('kpi-clientes').textContent=clientesUniq.length.toLocaleString('es-PE');
 
+  // ✅ FIX 1: Neta Total usa ACTIVADO (no PROYE)
   const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
-  const proyes=d.filter(r=>String(r[COL_ESTCOM]||'').toUpperCase().includes('PROYE'));
   let netaTotal=0;
-  if(netaKey)proyes.forEach(r=>{const n=parseFloat(String(r[netaKey]||'').replace(/[^0-9.\-]/g,''));if(!isNaN(n))netaTotal+=n;});
+  if(netaKey)activados.forEach(r=>{const n=parseFloat(String(r[netaKey]||'').replace(/[^0-9.\-]/g,''));if(!isNaN(n))netaTotal+=n;});
   document.getElementById('kpi-neta').textContent=fmtMonto(netaTotal);
 
-  /* Gráficos */
   renderProducto(d);
   renderZonas(d);
   renderFuncionarios(d,funcKey);
-  renderNetaMes(d,netaKey);
+  renderNetaMes(d,netaKey);   // ✅ pasamos netaKey
   renderEstCom(d);
   renderSucursal(d,netaKey);
   renderZonasV(d);
   renderEstGes(d);
 }
 
-/* ══════════════════════════════════════
-   HELPERS RENDER
-══════════════════════════════════════ */
+/* ══ HELPERS ══ */
 function detectField(candidates){
   for(const c of candidates)if(headers.includes(c))return c;
   for(const h of headers)for(const c of candidates)if(h.toUpperCase().includes(c.toUpperCase()))return h;
   return null;
 }
-
 function fmtMonto(n){
   if(!n&&n!==0)return '—';
   if(Math.abs(n)>=1e6)return (n/1e6).toFixed(2)+'M';
   if(Math.abs(n)>=1e3)return (n/1e3).toFixed(1)+'K';
   return n.toLocaleString('es-PE',{minimumFractionDigits:0,maximumFractionDigits:2});
 }
-
 function renderHBars(el,data,colors,showMonto=false){
   if(!el)return;
   if(!data.length){el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin datos</p></div>';return;}
@@ -819,57 +980,49 @@ function renderHBars(el,data,colors,showMonto=false){
       <span class="bar-count">${showMonto?fmtMonto(c):c}</span>
     </div>`).join('');
 }
-
 function renderVBars(el,data){
-  if(!el)return;
-  el.innerHTML='';
+  if(!el)return;el.innerHTML='';
   if(!data.length)return;
   const max=data[0][1]||1;
   data.forEach(([l,c],i)=>{
-    const col=document.createElement('div');
-    col.className='vbar-col';
+    const col=document.createElement('div');col.className='vbar-col';
     const h=Math.max(Math.round(c/max*100),4);
     col.innerHTML=`<span class="vbar-val">${c}</span><div class="vbar-fill" style="height:${h}px;background:${PALETTE[i%PALETTE.length]}"></div><span class="vbar-lbl">${l.length>8?l.slice(0,7)+'…':l}</span>`;
     el.appendChild(col);
   });
 }
 
-/* ══════════════════════════════════════
-   GRÁFICOS INDIVIDUALES
-══════════════════════════════════════ */
+/* ══ GRÁFICOS ══ */
 function renderProducto(d){
-  const map={};
-  d.forEach(r=>{const p=String(r[COL_PROD]||'').trim()||'S/D';map[p]=(map[p]||0)+1;});
+  const map={};d.forEach(r=>{const p=String(r[COL_PROD]||'').trim()||'S/D';map[p]=(map[p]||0)+1;});
   const data=Object.entries(map).sort((a,b)=>b[1]-a[1]);
   document.getElementById('badge-prod').textContent=data.length+' tipos';
   renderHBars(document.getElementById('chart-producto'),data,PALETTE);
 }
-
 function renderZonas(d){
-  const map={};
-  d.forEach(r=>{const z=String(r[COL_ZONA]||'').trim()||'S/D';map[z]=(map[z]||0)+1;});
+  const map={};d.forEach(r=>{const z=String(r[COL_ZONA]||'').trim()||'S/D';map[z]=(map[z]||0)+1;});
   const data=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,10);
   document.getElementById('badge-zona').textContent=data.length+' zonas';
   renderHBars(document.getElementById('chart-zonas'),data,'#059669');
 }
-
 function renderFuncionarios(d,funcKey){
-  if(!funcKey){document.getElementById('chart-funcionarios').innerHTML='<div class="empty-state" style="padding:12px"><p>Columna funcionario no encontrada</p></div>';return;}
-  const map={};
-  d.forEach(r=>{const f=String(r[funcKey]||'').trim();if(f)map[f]=(map[f]||0)+1;});
+  if(!funcKey){document.getElementById('chart-funcionarios').innerHTML='<div class="empty-state" style="padding:12px"><p>Columna no encontrada</p></div>';return;}
+  const map={};d.forEach(r=>{const f=String(r[funcKey]||'').trim();if(f)map[f]=(map[f]||0)+1;});
   const data=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,12);
   document.getElementById('badge-func').textContent=Object.keys(map).length+' total';
   renderHBars(document.getElementById('chart-funcionarios'),data,'#7C3AED');
 }
 
+/* ✅ FIX 1: Neta por Mes usa ACTIVADO */
 function renderNetaMes(d,netaKey){
-  const proyes=d.filter(r=>String(r[COL_ESTCOM]||'').toUpperCase().includes('PROYE'));
+  // Filtrar solo ACTIVADO
+  const activados=d.filter(r=>String(r[COL_ESTGES]||'').toUpperCase().includes('ACTIVADO'));
   const fechaKey=headers.includes(COL_FECHA)?COL_FECHA:detectField(['FECHA_APRO','FECHA_APROBACION','FECHA','FEC_APRO','FECHA_ACT','FECHA_ACTIV','FEC_ACT','FECHA_ACTIVACION']);
   const meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Set','Oct','Nov','Dic'];
   const byMes={};
 
   if(fechaKey){
-    proyes.forEach(r=>{
+    activados.forEach(r=>{
       const fv=r[fechaKey];if(!fv&&fv!==0)return;
       let dt=typeof fv==='number'?new Date(Math.round((fv-25569)*86400*1000)):new Date(fv);
       if(isNaN(dt))return;
@@ -881,9 +1034,9 @@ function renderNetaMes(d,netaKey){
   }
 
   if(!Object.keys(byMes).length){
-    /* Fallback: detectar mes desde EST_GES / EST_COM */
+    // Fallback: buscar mes en EST_GES
     const mesNames={'ENE':0,'FEB':1,'MAR':2,'ABR':3,'MAY':4,'JUN':5,'JUL':6,'AGO':7,'SET':8,'SEP':8,'OCT':9,'NOV':10,'DIC':11};
-    proyes.forEach(r=>{
+    activados.forEach(r=>{
       let mesIdx=-1;
       for(const [k,v] of Object.entries(mesNames)){
         if(String(r[COL_ESTGES]||'').toUpperCase().includes(k)||String(r[COL_ESTCOM]||'').toUpperCase().includes(k)){mesIdx=v;break;}
@@ -897,7 +1050,11 @@ function renderNetaMes(d,netaKey){
 
   const rows=Object.entries(byMes).sort((a,b)=>+a[0]-+b[0]);
   const el=document.getElementById('chart-neta-mes');
-  if(!rows.length){el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin datos PROYE</p></div>';document.getElementById('badge-neta-mes').textContent='0 meses';return;}
+  if(!rows.length){
+    el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin registros ACTIVADO</p></div>';
+    document.getElementById('badge-neta-mes').textContent='0 meses';
+    return;
+  }
   let totalOps=0,totalNeta=0;
   let html=`<table class="net-table"><thead><tr><th>Mes</th><th style="text-align:right">Operaciones</th>${netaKey?'<th style="text-align:right">Neta</th>':''}</tr></thead><tbody>`;
   rows.forEach(([,v])=>{
@@ -910,32 +1067,20 @@ function renderNetaMes(d,netaKey){
 }
 
 function renderEstCom(d){
-  const map={};
-  d.forEach(r=>{const e=String(r[COL_ESTCOM]||'').trim()||'S/D';map[e]=(map[e]||0)+1;});
+  const map={};d.forEach(r=>{const e=String(r[COL_ESTCOM]||'').trim()||'S/D';map[e]=(map[e]||0)+1;});
   const entries=Object.entries(map).sort((a,b)=>b[1]-a[1]);
   const total=entries.reduce((s,[,c])=>s+c,0);
   document.getElementById('badge-estcom').textContent=entries.length+' estados';
   document.getElementById('donut-total').textContent=total.toLocaleString('es-PE');
-
-  /* Donut con Chart.js */
   const canvas=document.getElementById('donutEstCom');
   if(donutChartInstance){donutChartInstance.destroy();donutChartInstance=null;}
   if(entries.length&&window.Chart){
     donutChartInstance=new Chart(canvas,{
       type:'doughnut',
-      data:{
-        labels:entries.map(([l])=>l),
-        datasets:[{data:entries.map(([,c])=>c),backgroundColor:PALETTE.slice(0,entries.length),borderWidth:0,hoverOffset:4}]
-      },
-      options:{
-        responsive:false,
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+ctx.raw+' ('+Math.round(ctx.raw/total*100)+'%)'}}},
-        cutout:'70%'
-      }
+      data:{labels:entries.map(([l])=>l),datasets:[{data:entries.map(([,c])=>c),backgroundColor:PALETTE.slice(0,entries.length),borderWidth:0,hoverOffset:4}]},
+      options:{responsive:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+ctx.raw+' ('+Math.round(ctx.raw/total*100)+'%)'}}},cutout:'70%'}
     });
   }
-
-  /* Leyenda */
   document.getElementById('donut-legend').innerHTML=entries.slice(0,7).map(([l,c],i)=>`
     <div class="donut-legend-item">
       <div class="donut-legend-dot" style="background:${PALETTE[i%PALETTE.length]}"></div>
@@ -964,25 +1109,19 @@ function renderSucursal(d,netaKey){
       <span class="suc-amount">${fmtMonto(v)}</span>
     </div>`).join('');
 }
-
 function renderZonasV(d){
-  const map={};
-  d.forEach(r=>{const z=String(r[COL_ZONA]||'').trim()||'S/D';map[z]=(map[z]||0)+1;});
+  const map={};d.forEach(r=>{const z=String(r[COL_ZONA]||'').trim()||'S/D';map[z]=(map[z]||0)+1;});
   const data=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,7);
   renderVBars(document.getElementById('chart-zonas-v'),data);
 }
-
 function renderEstGes(d){
-  const map={};
-  d.forEach(r=>{const e=String(r[COL_ESTGES]||'').trim()||'S/D';map[e]=(map[e]||0)+1;});
+  const map={};d.forEach(r=>{const e=String(r[COL_ESTGES]||'').trim()||'S/D';map[e]=(map[e]||0)+1;});
   const data=Object.entries(map).sort((a,b)=>b[1]-a[1]);
   document.getElementById('badge-estges').textContent=data.length+' estados';
   renderHBars(document.getElementById('chart-estados'),data,PALETTE);
 }
 
-/* ══════════════════════════════════════
-   TABLA EXPEDIENTES
-══════════════════════════════════════ */
+/* ══ TABLA EXPEDIENTES ══ */
 function filterTable(){
   const q=(document.getElementById('searchInput')?.value||'').toLowerCase();
   const prod=document.getElementById('filtroProducto')?.value||'';
@@ -1034,7 +1173,7 @@ function renderTable(){
       <td style="text-align:right;font-size:11px;color:var(--text2)">${r['CAF']||'—'}</td>
       <td><span class="badge ${ecBadge}">${estcom}</span></td>
       <td><span class="badge ${estBadge}" style="font-size:9px">${est}</span></td>
-      <td><button class="btn-edit" onclick="openEdit(${r._rowId})">Editar</button></td>
+      <td class="col-accion"><button class="btn-edit" onclick="openEdit(${r._rowId})">Editar</button></td>
     </tr>`;
   }).join('');
   const totalPages=Math.ceil(filteredData.length/pageSize);
@@ -1058,10 +1197,9 @@ function changePage(dir){goPage(page+dir);}
 function goPage(p){page=Math.max(1,Math.min(p,Math.ceil(filteredData.length/pageSize)));renderTable();}
 function sortTable(field){if(sortField===field)sortDir*=-1;else{sortField=field;sortDir=1;}filterTable();}
 
-/* ══════════════════════════════════════
-   MODAL EDITAR / NUEVO
-══════════════════════════════════════ */
+/* ══ MODAL ══ */
 function openEdit(rowId){
+  if(!canEdit){showToast('No tienes permisos de edición',true);return;}
   const row=allData.find(r=>r._rowId===rowId);if(!row)return;
   editingRow=row;isNewRecord=false;
   document.getElementById('modal-title').textContent='Editar Expediente';
@@ -1075,6 +1213,7 @@ function openEdit(rowId){
   document.getElementById('modal').classList.add('open');
 }
 function openNuevo(){
+  if(!canEdit){showToast('No tienes permisos de edición',true);return;}
   editingRow=null;isNewRecord=true;
   document.getElementById('modal-title').textContent='Nuevo Expediente';
   document.getElementById('modal-expid').textContent='Nuevo registro';
@@ -1087,12 +1226,14 @@ function closeModal(){document.getElementById('modal').classList.remove('open');
 
 async function guardarCambios(){
   if(!config.fileId){showToast('Configura el File ID primero',true);return;}
+  if(!canEdit){showToast('No tienes permisos de edición',true);return;}
+  const esNuevo=isNewRecord;
   const btn=document.getElementById('btn-guardar');
   btn.disabled=true;btn.textContent='Guardando…';showLoading(true);
   try{
     const base=tableBase();
     const values=[headers.map(h=>{const input=document.getElementById(`field-${h}`);return input?input.value:(editingRow?.[h]??'');})];
-    if(isNewRecord){
+    if(esNuevo){
       const res=await graphRequest(`${base}/rows/add`,'POST',{values});
       const newObj={_rowId:res.index};headers.forEach((h,i)=>{newObj[h]=values[0][i];});allData.push(newObj);
       closeModal();applyDashFilter();filterTable();showToast('✓ Expediente agregado');
@@ -1103,12 +1244,10 @@ async function guardarCambios(){
       closeModal();applyDashFilter();filterTable();showToast('✓ Expediente guardado');
     }
   }catch(e){showToast('Error guardando: '+e.message,true);console.error(e);}
-  finally{btn.disabled=false;btn.textContent=isNewRecord?'Agregar al Excel':'Guardar en Excel';showLoading(false);}
+  finally{btn.disabled=false;btn.textContent=esNuevo?'Agregar al Excel':'Guardar en Excel';showLoading(false);}
 }
 
-/* ══════════════════════════════════════
-   CONFIG
-══════════════════════════════════════ */
+/* ══ CONFIG ══ */
 function saveConfig(){
   config={driveId:document.getElementById('cfg-driveid').value.trim()||'me',fileId:document.getElementById('cfg-fileid').value.trim()};
   if(!config.fileId){const s=document.getElementById('cfg-status');s.textContent='⚠️ Ingresa el File ID';s.style.color='var(--danger)';return;}
@@ -1131,9 +1270,7 @@ async function testConnection(){
   finally{showLoading(false);}
 }
 
-/* ══════════════════════════════════════
-   EXPORT CSV
-══════════════════════════════════════ */
+/* ══ EXPORT CSV ══ */
 function exportCSV(){
   if(!filteredData.length){showToast('No hay datos para exportar',true);return;}
   const keys=headers.length?headers:Object.keys(filteredData[0]).filter(k=>k!=='_rowId');
@@ -1144,14 +1281,14 @@ function exportCSV(){
   showToast('✓ CSV exportado');
 }
 
-/* ══════════════════════════════════════
-   UI HELPERS
-══════════════════════════════════════ */
+/* ══ UI ══ */
 function showView(name,btn){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   btn.classList.add('active');
+  // Reset scroll al cambiar de vista
+  document.getElementById('mainScroll').scrollTop=0;
 }
 function showLoading(on){document.getElementById('loadingBar').style.display=on?'block':'none';}
 function showToast(msg,isError=false){
