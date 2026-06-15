@@ -721,8 +721,7 @@ let page=1,pageSize=25;
 let editingRow=null,isNewRecord=false,headers=[];
 let config=JSON.parse(localStorage.getItem('gestion_cfg')||'{}');
 let donutChartInstance=null;
-let canEdit=false; // rol detectado por permisos del Excel
-
+let canEdit=true; // optimista: Microsoft controla acceso real al archivo
 /* ══ AUTH ══ */
 window.onload=async()=>{
   msalInstance=new msal.PublicClientApplication(MSAL_CONFIG);
@@ -791,28 +790,48 @@ function tableBase(){
    Si tiene 'write' o 'owner' → editor. Si solo 'read' → solo lectura.
 */
 async function detectRole(){
-  if(!config.fileId)return;
+  if(!config.fileId) return;
   try{
-    const driveId=config.driveId||'me';
-    const drive=driveId==='me'?'https://graph.microsoft.com/v1.0/me/drive':`https://graph.microsoft.com/v1.0/drives/${driveId}`;
-    const data=await graphRequest(`${drive}/items/${config.fileId}/permissions`);
-    const myEmail=(currentAccount.username||'').toLowerCase();
-    let foundWrite=false;
+    const driveId = config.driveId||'me';
+    const drive = driveId==='me'
+      ? 'https://graph.microsoft.com/v1.0/me/drive'
+      : `https://graph.microsoft.com/v1.0/drives/${driveId}`;
+
+    const data = await graphRequest(`${drive}/items/${config.fileId}/permissions`);
+    const myEmail = (currentAccount.username||'').toLowerCase();
+    
+    let foundWrite = false;
+    let foundForMe = false;
+
     for(const p of (data.value||[])){
-      const roles=p.roles||[];
-      const grantedTo=p.grantedTo?.user?.email?.toLowerCase()||'';
-      const grantedToMe=(grantedTo===myEmail)||p.grantedToIdentitiesV2?.some(g=>g.user?.email?.toLowerCase()===myEmail);
-      if(grantedToMe&&(roles.includes('write')||roles.includes('owner'))){foundWrite=true;break;}
-      // Si tiene owner sin filtrar (es el dueño)
-      if(roles.includes('owner')&&!p.grantedTo){foundWrite=true;break;}
+      const roles = p.roles||[];
+      // Si es el dueño del archivo (sin grantedTo específico) → siempre editor
+      if(roles.includes('owner') && !p.grantedTo && !p.grantedToIdentitiesV2){
+        foundWrite=true; break;
+      }
+      // Verificar si el permiso aplica al usuario actual
+      const emails = [];
+      if(p.grantedTo?.user?.email) emails.push(p.grantedTo.user.email.toLowerCase());
+      if(p.grantedToIdentities) p.grantedToIdentities.forEach(g=>{ if(g.user?.email) emails.push(g.user.email.toLowerCase()); });
+      if(p.grantedToIdentitiesV2) p.grantedToIdentitiesV2.forEach(g=>{ if(g.user?.email) emails.push(g.user.email.toLowerCase()); });
+
+      const isMe = emails.includes(myEmail);
+      if(isMe){
+        foundForMe = true;
+        if(roles.includes('write')||roles.includes('owner')) foundWrite=true;
+      }
     }
-    // Fallback: si no encontramos permisos específicos pero pudo cargar el archivo → puede ser dueño
-    canEdit=foundWrite;
+
+    // Si no encontramos permiso específico para este usuario (ej: compartido con "toda la organización")
+    // → confiar en que Microsoft ya validó que puede abrir el archivo con ReadWrite
+    if(!foundForMe) foundWrite = true;
+
+    canEdit = foundWrite;
   }catch(e){
-    // Si falla la lectura de permisos, intentamos escribir un valor de prueba
-    // Si falla → solo lectura. Aquí asumimos editor si el token tiene Files.ReadWrite
-    canEdit=true; // Si llegó hasta acá con token ReadWrite → editor
-    console.warn('Permisos no determinados, asumiendo editor',e);
+    // Si no podemos leer permisos (403, falta scope, etc.) → asumir editor
+    // Microsoft bloqueará el PATCH si realmente no tiene permisos de escritura
+    console.warn('detectRole falló, asumiendo editor:', e.message);
+    canEdit = true;
   }
   applyRole();
 }
