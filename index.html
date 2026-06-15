@@ -31,6 +31,8 @@
   --nav-h:46px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
+
+/* FIX SCROLL: layout fijo sin desbordamientos */
 html, body {
   height: 100%;
   overflow: hidden;
@@ -59,7 +61,7 @@ body {
 .btn-ms{display:flex;align-items:center;justify-content:center;gap:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:12px;padding:15px 24px;font-size:14px;font-weight:500;cursor:pointer;width:100%;transition:all .2s;font-family:var(--font);}
 .btn-ms:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);transform:translateY(-1px);}
 
-/* ── APP SHELL ── */
+/* ── APP SHELL — FIX SCROLL ── */
 #app {
   display: none;
   flex-direction: column;
@@ -88,22 +90,13 @@ header {
 .avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;}
 .user-name{font-size:13px;color:rgba(255,255,255,.8);font-weight:500;}
 
+/* Badge de rol */
 .role-badge{
   font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;
   letter-spacing:.5px;text-transform:uppercase;flex-shrink:0;
 }
 .role-badge.editor{background:rgba(16,185,129,.2);color:#6EE7B7;border:1px solid rgba(16,185,129,.3);}
 .role-badge.viewer{background:rgba(148,163,184,.15);color:#94A3B8;border:1px solid rgba(148,163,184,.2);}
-
-/* Badge de estado de conexión */
-.drive-status{
-  font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;
-  display:flex;align-items:center;gap:5px;
-}
-.drive-status.ok{background:rgba(16,185,129,.15);color:#6EE7B7;border:1px solid rgba(16,185,129,.25);}
-.drive-status.error{background:rgba(239,68,68,.15);color:#FCA5A5;border:1px solid rgba(239,68,68,.25);}
-.drive-status.loading{background:rgba(99,102,241,.15);color:#A5B4FC;border:1px solid rgba(99,102,241,.25);}
-.drive-status .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
 
 .btn-logout{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#FCA5A5;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--font);}
 .btn-logout:hover{background:rgba(239,68,68,.2);color:#fff;}
@@ -121,6 +114,7 @@ nav {
 .nav-btn:hover{color:rgba(255,255,255,.8);}
 .nav-btn.active{color:#fff;border-bottom-color:var(--accent2);}
 
+/* ÁREA DE CONTENIDO SCROLLEABLE */
 main {
   flex: 1;
   overflow-y: auto;
@@ -141,15 +135,6 @@ main {
 @keyframes loading-slide{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .toast{position:fixed;bottom:28px;right:28px;background:var(--navy);color:#fff;padding:13px 20px;border-radius:12px;font-size:13px;z-index:999;display:none;box-shadow:0 8px 32px rgba(0,0,0,.25);border-left:3px solid var(--success);font-weight:500;max-width:320px;}
 .toast.error{border-left-color:var(--danger);}
-
-/* ── ALERT BANNER ── */
-.alert-banner{
-  display:none;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);
-  border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:16px;
-  font-size:12px;color:#B91C1C;line-height:1.6;
-}
-.alert-banner.show{display:block;}
-.alert-banner strong{display:block;margin-bottom:4px;font-size:13px;}
 
 /* ── PAGE HEADER ── */
 .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
@@ -272,11 +257,14 @@ main {
   color: var(--text);
   box-shadow: var(--shadow);
 }
+.view-toggle-btn svg { flex-shrink: 0; }
 
+/* Modo SOLO LECTURA — oculta botones de acción */
 body.viewer-mode .btn-edit,
 body.viewer-mode .btn-success,
 body.viewer-mode #btn-guardar,
 body.viewer-mode .col-accion { display: none !important; }
+
 body.viewer-mode .table-readonly-banner { display: flex !important; }
 
 .table-readonly-banner {
@@ -361,7 +349,7 @@ tr:last-child td{border-bottom:none;}
 .btn-edit:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
 
 /* ── CONFIG ── */
-.setup-card{background:var(--card);border-radius:var(--radius-lg);padding:32px;max-width:680px;border:1px solid var(--border);margin:0 auto;box-shadow:var(--shadow-md);}
+.setup-card{background:var(--card);border-radius:var(--radius-lg);padding:32px;max-width:600px;border:1px solid var(--border);margin:0 auto;box-shadow:var(--shadow-md);}
 .setup-card h2{font-size:18px;margin-bottom:8px;color:var(--text);font-weight:700;}
 .setup-card p{color:var(--muted);font-size:13px;margin-bottom:24px;line-height:1.6;}
 .setup-step{display:flex;gap:12px;margin-bottom:14px;padding:14px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);}
@@ -375,18 +363,6 @@ tr:last-child td{border-bottom:none;}
 .empty-icon{font-size:36px;margin-bottom:10px;opacity:.5;}
 .empty-state h3{color:var(--text2);margin-bottom:5px;font-size:14px;}
 .empty-state p{font-size:12px;line-height:1.6;}
-
-/* ── DIAGNÓSTICO CARD ── */
-.diag-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-top:16px;font-size:12px;}
-.diag-card h4{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.diag-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);color:var(--text2);}
-.diag-item:last-child{border-bottom:none;}
-.diag-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.diag-dot.ok{background:var(--success);}
-.diag-dot.warn{background:var(--warn);}
-.diag-dot.err{background:var(--danger);}
-.diag-dot.loading{background:var(--accent);animation:pulse 1s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 </style>
 </head>
 <body>
@@ -416,10 +392,6 @@ tr:last-child td{border-bottom:none;}
       </div>
     </div>
     <div class="header-right">
-      <div class="drive-status loading" id="driveStatus">
-        <div class="dot"></div>
-        <span id="driveStatusText">Conectando…</span>
-      </div>
       <span class="role-badge viewer" id="roleBadge">Solo lectura</span>
       <div class="user-pill">
         <div class="avatar" id="userAvatar">?</div>
@@ -461,8 +433,6 @@ tr:last-child td{border-bottom:none;}
         </button>
       </div>
 
-      <div id="dashAlertBanner" class="alert-banner"></div>
-
       <div class="load-progress" id="loadProgress">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <span style="font-size:12px;font-weight:600;color:var(--text2)">Cargando expedientes…</span>
@@ -482,37 +452,43 @@ tr:last-child td{border-bottom:none;}
       </div>
 
       <div class="kpi-grid">
-        <div class="kpi-card blue"><div class="kpi-stripe"></div>
+        <div class="kpi-card blue">
+          <div class="kpi-stripe"></div>
           <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
           <div class="kpi-label">Total Operaciones</div>
           <div class="kpi-value" id="kpi-total">—</div>
           <div class="kpi-sub">registros con contenido</div>
         </div>
-        <div class="kpi-card gold"><div class="kpi-stripe"></div>
+        <div class="kpi-card gold">
+          <div class="kpi-stripe"></div>
           <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-2"/></svg></div>
           <div class="kpi-label">Leasing (LSNG)</div>
           <div class="kpi-value" id="kpi-lsng">—</div>
           <div class="kpi-sub" id="kpi-lsng-sub">—</div>
         </div>
-        <div class="kpi-card green"><div class="kpi-stripe"></div>
+        <div class="kpi-card green">
+          <div class="kpi-stripe"></div>
           <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
           <div class="kpi-label">Crédito Directo (CRDT)</div>
           <div class="kpi-value" id="kpi-crdt">—</div>
           <div class="kpi-sub" id="kpi-crdt-sub">—</div>
         </div>
-        <div class="kpi-card purple"><div class="kpi-stripe"></div>
+        <div class="kpi-card purple">
+          <div class="kpi-stripe"></div>
           <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
           <div class="kpi-label">Clientes Únicos</div>
           <div class="kpi-value" id="kpi-clientes">—</div>
           <div class="kpi-sub">clientes únicos — estado ACTIVADO</div>
         </div>
-        <div class="kpi-card teal"><div class="kpi-stripe"></div>
+        <div class="kpi-card teal">
+          <div class="kpi-stripe"></div>
           <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0E7490" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg></div>
           <div class="kpi-label">Funcionarios</div>
           <div class="kpi-value" id="kpi-func">—</div>
           <div class="kpi-sub">con operaciones</div>
         </div>
-        <div class="kpi-card orange"><div class="kpi-stripe"></div>
+        <div class="kpi-card orange">
+          <div class="kpi-stripe"></div>
           <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
           <div class="kpi-label">Neta Total (ACTIVADO)</div>
           <div class="kpi-value" id="kpi-neta">—</div>
@@ -522,15 +498,24 @@ tr:last-child td{border-bottom:none;}
 
       <div class="dash-row cols-2">
         <div class="chart-card">
-          <div class="chart-head"><div class="chart-title">Neta por Mes — ACTIVADO</div><div class="chart-badge" id="badge-neta-mes">—</div></div>
+          <div class="chart-head">
+            <div class="chart-title">Neta por Mes — ACTIVADO</div>
+            <div class="chart-badge" id="badge-neta-mes">—</div>
+          </div>
           <div id="chart-neta-mes"><div class="empty-state" style="padding:16px"><p>Cargando…</p></div></div>
         </div>
         <div class="chart-card">
-          <div class="chart-head"><div class="chart-title">Estado Comercial</div><div class="chart-badge" id="badge-estcom">—</div></div>
+          <div class="chart-head">
+            <div class="chart-title">Estado Comercial</div>
+            <div class="chart-badge" id="badge-estcom">—</div>
+          </div>
           <div class="donut-wrap" id="chart-estcom-wrap">
             <div class="donut-chart-box">
               <canvas id="donutEstCom" width="130" height="130"></canvas>
-              <div class="donut-center-label"><div class="dcl-val" id="donut-total">—</div><div class="dcl-sub">total</div></div>
+              <div class="donut-center-label">
+                <div class="dcl-val" id="donut-total">—</div>
+                <div class="dcl-sub">total</div>
+              </div>
             </div>
             <div class="donut-legend" id="donut-legend"></div>
           </div>
@@ -576,6 +561,7 @@ tr:last-child td{border-bottom:none;}
           Expedientes
           <span class="page-title-meta" id="exp-count"></span>
         </div>
+        <!-- Toggle vista editar / solo ver -->
         <div class="view-toggle" id="viewToggle" style="display:none">
           <button class="view-toggle-btn active" id="btnModoEditar" onclick="setModo('editor')">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -632,8 +618,8 @@ tr:last-child td{border-bottom:none;}
           <tbody id="tabla-body">
             <tr><td colspan="16"><div class="empty-state">
               <div class="empty-icon">📁</div>
-              <h3>Conectando con el archivo…</h3>
-              <p>Espera un momento mientras se detecta la conexión.</p>
+              <h3>Sin expedientes cargados</h3>
+              <p>Configura la conexión al Excel desde ⚙️ Configurar</p>
             </div></td></tr>
           </tbody>
         </table>
@@ -655,56 +641,35 @@ tr:last-child td{border-bottom:none;}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           Configurar conexión
         </div>
-        <button class="btn-secondary" onclick="runDiag()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Diagnóstico
-        </button>
       </div>
       <div class="setup-card">
-        <h2>Conexión automática al Excel</h2>
-        <p>El sistema detecta automáticamente el archivo <b>Gestión_2026.xlsx</b> para todos los usuarios. Solo el administrador necesita configurar esto una vez.</p>
-
+        <h2>Conectar tu Excel de OneDrive</h2>
+        <p>Conectado a la tabla <b>TablaData</b> de tu Excel en OneDrive/SharePoint.</p>
         <div class="setup-step">
           <div class="step-num">1</div>
-          <div class="step-content">
-            <strong>File ID (ya configurado)</strong>
-            <p>El ID del archivo Excel está fijo en el código. No necesitas cambiarlo.</p>
-            <code>5521AE67-EB96-45E5-A3EE-D99BA7BBA769</code>
-          </div>
+          <div class="step-content"><strong>Drive ID</strong><p>Para OneDrive personal usa <code>me</code>. Para SharePoint corporativo busca el Drive ID.</p></div>
         </div>
         <div class="setup-step">
           <div class="step-num">2</div>
-          <div class="step-content">
-            <strong>Drive ID (auto-detectado)</strong>
-            <p>El sistema detecta automáticamente el Drive de SharePoint. Si falla, pega aquí el Drive ID manualmente.</p>
-          </div>
+          <div class="step-content"><strong>File ID del Excel</strong><p>Abre el Excel en OneDrive Online. En la URL busca el parámetro <code>resid=</code> o el ID largo después de <code>/items/</code></p></div>
         </div>
-
         <div class="form-group" style="margin-top:18px">
-          <label class="form-label">Drive ID manual (opcional — solo si la auto-detección falla)</label>
-          <input class="config-input" type="text" id="cfg-driveid" placeholder="Dejar vacío para auto-detectar">
+          <label class="form-label">Drive ID</label>
+          <input class="config-input" type="text" id="cfg-driveid" placeholder="me" value="me">
         </div>
-        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <div class="form-group" style="margin-top:12px">
+          <label class="form-label">File ID del Excel</label>
+          <input class="config-input" type="text" id="cfg-fileid" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+        </div>
+        <div style="margin-top:20px;display:flex;gap:10px">
           <button class="btn-primary" onclick="saveConfig()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-            Guardar y recargar
+            Guardar y cargar
           </button>
-          <button class="btn-secondary" onclick="runDiag()">
+          <button class="btn-secondary" onclick="testConnection()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            Correr diagnóstico
+            Probar conexión
           </button>
-          <button class="btn-secondary" onclick="clearCacheAndReload()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-            Limpiar caché
-          </button>
-        </div>
-
-        <div id="diag-results" class="diag-card" style="display:none">
-          <h4>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Diagnóstico del sistema
-          </h4>
-          <div id="diag-items"></div>
         </div>
         <div id="cfg-status" style="margin-top:12px;font-size:12px;color:var(--muted)"></div>
       </div>
@@ -738,275 +703,133 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <script>
-/* ══════════════════════════════════════════════
-   CONFIGURACIÓN FIJA — NO TOCAR
-   El archivo siempre es el mismo para todos los usuarios.
-   El Drive ID se auto-detecta; si falla, se puede ingresar manualmente.
-══════════════════════════════════════════════ */
-const MSAL_CONFIG = {
-  auth: {
-    clientId: "683e6fbc-8e43-4310-b9dc-be4c813605bd",
-    authority: "https://login.microsoftonline.com/2e32ce4d-9718-4ed3-81d2-8de99f5e6ae3",
-    redirectUri: window.location.href.split('?')[0]
-  },
-  cache: { cacheLocation: "localStorage", storeAuthStateInCookie: false }
+/* ══ CONFIG MSAL ══ */
+const MSAL_CONFIG={
+  auth:{clientId:"683e6fbc-8e43-4310-b9dc-be4c813605bd",authority:"https://login.microsoftonline.com/2e32ce4d-9718-4ed3-81d2-8de99f5e6ae3",redirectUri:window.location.href.split('?')[0]},
+  cache:{cacheLocation:"localStorage",storeAuthStateInCookie:false}
 };
-const SCOPES = ["Files.ReadWrite", "User.Read"];
-const TABLE_NAME = "TablaData";
+const SCOPES=["Files.ReadWrite","User.Read"];
+const TABLE_NAME="TablaData";
 
-// ══ ID FIJO DEL ARCHIVO — igual para todos los usuarios ══
-const FIXED_FILE_ID = '5521AE67-EB96-45E5-A3EE-D99BA7BBA769';
-
-const COL_FUNC='FNCNR', COL_NETA='NETA', COL_FECHA='FECHA', COL_ESTGES='EST_GES',
-      COL_ESTCOM='EST_COM', COL_ZONA='ZONA', COL_PROD='PRODUCTO', COL_SUC='SUCURSAL';
+const COL_FUNC='FNCNR',COL_NETA='NETA',COL_FECHA='FECHA',COL_ESTGES='EST_GES',COL_ESTCOM='EST_COM',COL_ZONA='ZONA',COL_PROD='PRODUCTO',COL_SUC='SUCURSAL';
 const PALETTE=['#2563EB','#D97706','#059669','#7C3AED','#0891B2','#EA580C','#DC2626','#0D9488','#9333EA','#CA8A04'];
 
-let msalInstance, currentAccount;
-let allData=[], filteredData=[], dashData=[];
-let sortField='', sortDir=1;
-let page=1, pageSize=25;
-let editingRow=null, isNewRecord=false, headers=[];
+let msalInstance,currentAccount;
+let allData=[],filteredData=[],dashData=[];
+let sortField='',sortDir=1;
+let page=1,pageSize=25;
+let editingRow=null,isNewRecord=false,headers=[];
+let config=JSON.parse(localStorage.getItem('gestion_cfg')||'{}');
 let donutChartInstance=null;
-let canEdit=false;
-
-// Config: driveId resuelto + override manual
-let config = JSON.parse(localStorage.getItem('gestion_cfg') || '{}');
-config.fileId = FIXED_FILE_ID; // siempre fijo
-
+let canEdit=true; // optimista: Microsoft controla acceso real al archivo
 /* ══ AUTH ══ */
-window.onload = async () => {
-  msalInstance = new msal.PublicClientApplication(MSAL_CONFIG);
+window.onload=async()=>{
+  msalInstance=new msal.PublicClientApplication(MSAL_CONFIG);
   await msalInstance.initialize();
-  try { await msalInstance.handleRedirectPromise(); } catch(e) { console.warn(e); }
-  const accounts = msalInstance.getAllAccounts();
-  if(accounts.length > 0){
-    currentAccount = accounts[0];
-    showApp();
-    // Cargar caché mientras se resuelve la conexión
-    const cache = localStorage.getItem('gestion_data_cache');
+  try{await msalInstance.handleRedirectPromise();}catch(e){console.warn(e);}
+  const accounts=msalInstance.getAllAccounts();
+  if(accounts.length>0){
+    currentAccount=accounts[0];showApp();
+    const cache=localStorage.getItem('gestion_data_cache');
     if(cache){
-      try {
-        const parsed = JSON.parse(cache);
-        allData = parsed.data; headers = parsed.headers || [];
-        applyDashFilter(); filterTable(); updateFiltros(); updateDashFilters();
-        const hace = Math.round((Date.now() - parsed.ts) / 60000);
+      try{
+        const parsed=JSON.parse(cache);
+        allData=parsed.data;headers=parsed.headers||[];
+        applyDashFilter();filterTable();updateFiltros();updateDashFilters();
+        const hace=Math.round((Date.now()-parsed.ts)/60000);
         showToast(`✓ Caché cargado (hace ${hace} min) — actualizando…`);
-      } catch(e) { console.warn(e); }
+      }catch(e){console.warn(e);}
     }
-    // Resolver drive y cargar datos
-    await initConnection();
-    setInterval(() => loadData(true), 5 * 60 * 1000);
+    loadData(true);
+    setInterval(()=>loadData(true),5*60*1000);
   }
-  document.getElementById('cfg-driveid').value = config.driveId || '';
+  document.getElementById('cfg-driveid').value=config.driveId||'me';
+  document.getElementById('cfg-fileid').value=config.fileId||'';
 };
 
-/* ══ RESOLUCIÓN DE DRIVE — NÚCLEO DEL FIX ══
-   Estrategia en cascada:
-   1. Usar driveId guardado en localStorage (si existe y funciona)
-   2. Intentar con 'me' (OneDrive personal del usuario actual)
-   3. Buscar en todos los drives del usuario (SharePoint sites)
-   4. Buscar el archivo por ID directamente en la API
-*/
-async function resolveSharePointDrive() {
-  setDriveStatus('loading', 'Detectando conexión…');
-
-  // 1. Si hay un driveId guardado y funciona, usarlo
-  if(config.driveId){
-    try {
-      await graphRequest(buildItemUrl(config.driveId, FIXED_FILE_ID) + '/workbook/tables?$select=name');
-      setDriveStatus('ok', 'Conectado ✓');
-      return true;
-    } catch(e) {
-      console.warn('driveId guardado no funciona, buscando…', e.message);
-    }
-  }
-
-  // 2. Intentar con 'me'
-  try {
-    await graphRequest(buildItemUrl('me', FIXED_FILE_ID) + '/workbook/tables?$select=name');
-    config.driveId = 'me';
-    saveConfigToStorage();
-    setDriveStatus('ok', 'Conectado ✓');
-    return true;
-  } catch(e) {
-    console.warn('Drive "me" no funciona:', e.message);
-  }
-
-  // 3. Buscar en drives del usuario (SharePoint/OneDrive for Business)
-  try {
-    const drivesResp = await graphRequest('https://graph.microsoft.com/v1.0/me/drives');
-    for(const drive of (drivesResp.value || [])){
-      try {
-        await graphRequest(buildItemUrl(drive.id, FIXED_FILE_ID) + '/workbook/tables?$select=name');
-        config.driveId = drive.id;
-        saveConfigToStorage();
-        setDriveStatus('ok', `Conectado ✓ (${drive.driveType || drive.id.slice(0,8)})`);
-        return true;
-      } catch(e) { /* continuar */ }
-    }
-  } catch(e) {
-    console.warn('Error listando drives:', e.message);
-  }
-
-  // 4. Buscar el archivo directamente por ID (Graph busca en todos los drives)
-  try {
-    const item = await graphRequest(`https://graph.microsoft.com/v1.0/me/drive/items/${FIXED_FILE_ID}`);
-    if(item && item.parentReference && item.parentReference.driveId){
-      config.driveId = item.parentReference.driveId;
-      saveConfigToStorage();
-      setDriveStatus('ok', 'Conectado ✓ (SharePoint)');
-      return true;
-    }
-  } catch(e) {
-    console.warn('Búsqueda directa por ID falló:', e.message);
-  }
-
-  // 5. Buscar en sitios de SharePoint de la organización
-  try {
-    const sitesResp = await graphRequest('https://graph.microsoft.com/v1.0/sites?$select=id,displayName&$top=20');
-    for(const site of (sitesResp.value || [])){
-      try {
-        const sitedrives = await graphRequest(`https://graph.microsoft.com/v1.0/sites/${site.id}/drives?$select=id`);
-        for(const drive of (sitedrives.value || [])){
-          try {
-            await graphRequest(buildItemUrl(drive.id, FIXED_FILE_ID) + '/workbook/tables?$select=name');
-            config.driveId = drive.id;
-            saveConfigToStorage();
-            setDriveStatus('ok', `Conectado ✓ (${site.displayName || 'SharePoint'})`);
-            return true;
-          } catch(e) { /* continuar */ }
-        }
-      } catch(e) { /* continuar */ }
-    }
-  } catch(e) {
-    console.warn('Búsqueda en sitios falló:', e.message);
-  }
-
-  setDriveStatus('error', 'No se encontró el archivo');
-  showDashAlert('No se pudo conectar al archivo Excel. Posibles causas: 1) No tienes acceso al archivo, 2) El archivo fue movido o eliminado. Contacta a Flor Cuba para que te comparta nuevamente.');
-  return false;
-}
-
-function buildItemUrl(driveId, fileId){
-  if(driveId === 'me'){
-    return `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}`;
-  }
-  return `https://graph.microsoft.com/v1.0/drives/${driveId}/items/${fileId}`;
-}
-
-function tableBase(){
-  return buildItemUrl(config.driveId || 'me', config.fileId) + `/workbook/tables/${TABLE_NAME}`;
-}
-
-function saveConfigToStorage(){
-  localStorage.setItem('gestion_cfg', JSON.stringify(config));
-}
-
-function setDriveStatus(state, text){
-  const el = document.getElementById('driveStatus');
-  const textEl = document.getElementById('driveStatusText');
-  el.className = 'drive-status ' + state;
-  textEl.textContent = text;
-}
-
-function showDashAlert(msg){
-  const el = document.getElementById('dashAlertBanner');
-  if(!el) return;
-  el.innerHTML = `<strong>⚠️ Error de conexión</strong>${msg}`;
-  el.classList.add('show');
-}
-
-async function initConnection(){
-  const ok = await resolveSharePointDrive();
-  if(ok){
-    await detectRole();
-    loadData(true);
-  }
-}
-
-/* ══ AUTH ══ */
-let loginInProgress = false;
+let loginInProgress=false;
 async function signIn(){
-  if(loginInProgress) return;
-  loginInProgress = true;
-  try {
-    showLoading(true);
-    const r = await msalInstance.loginPopup({ scopes: SCOPES });
-    currentAccount = r.account;
-    showApp();
-    await initConnection();
-  } catch(e) {
-    if(!e.message?.includes('interaction_in_progress')) showToast('Error: ' + e.message, true);
-  } finally {
-    showLoading(false);
-    loginInProgress = false;
-  }
+  if(loginInProgress)return;loginInProgress=true;
+  try{showLoading(true);const r=await msalInstance.loginPopup({scopes:SCOPES});currentAccount=r.account;showApp();if(config.fileId)loadData();}
+  catch(e){if(!e.message?.includes('interaction_in_progress'))showToast('Error: '+e.message,true);}
+  finally{showLoading(false);loginInProgress=false;}
 }
-
 function signOut(){
-  msalInstance.logoutPopup({ account: currentAccount });
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
-  allData = []; filteredData = [];
+  msalInstance.logoutPopup({account:currentAccount});
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  allData=[];filteredData=[];
 }
-
 function showApp(){
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-  document.getElementById('userAvatar').textContent = currentAccount.name?.[0] || '?';
-  document.getElementById('userName').textContent = currentAccount.name || currentAccount.username;
-  document.getElementById('dash-fecha').textContent = new Date().toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  document.getElementById('userAvatar').textContent=currentAccount.name?.[0]||'?';
+  document.getElementById('userName').textContent=currentAccount.name||currentAccount.username;
+  document.getElementById('dash-fecha').textContent=new Date().toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
-
 async function getToken(){
-  try {
-    const r = await msalInstance.acquireTokenSilent({ scopes: SCOPES, account: currentAccount });
-    return r.accessToken;
-  } catch {
-    const r = await msalInstance.acquireTokenPopup({ scopes: SCOPES });
-    return r.accessToken;
-  }
+  try{const r=await msalInstance.acquireTokenSilent({scopes:SCOPES,account:currentAccount});return r.accessToken;}
+  catch{const r=await msalInstance.acquireTokenPopup({scopes:SCOPES});return r.accessToken;}
+}
+async function graphRequest(url,method='GET',body=null){
+  const token=await getToken();
+  const opts={method,headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'}};
+  if(body)opts.body=JSON.stringify(body);
+  const res=await fetch(url,opts);
+  if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Error ${res.status}`);}
+  return method==='DELETE'?null:res.json();
+}
+function tableBase(){
+  const driveId=config.driveId||'me';
+  const drive=driveId==='me'?'https://graph.microsoft.com/v1.0/me/drive':`https://graph.microsoft.com/v1.0/drives/${driveId}`;
+  return `${drive}/items/${config.fileId}/workbook/tables/${TABLE_NAME}`;
 }
 
-async function graphRequest(url, method='GET', body=null){
-  const token = await getToken();
-  const opts = { method, headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }};
-  if(body) opts.body = JSON.stringify(body);
-  const res = await fetch(url, opts);
-  if(!res.ok){
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || `Error ${res.status} en ${url}`);
-  }
-  return method === 'DELETE' ? null : res.json();
-}
-
-/* ══ DETECCIÓN DE ROL ══ */
+/* ══ DETECTAR PERMISOS (rol) ══
+   Intentamos obtener los permisos del archivo vía Graph API.
+   Si tiene 'write' o 'owner' → editor. Si solo 'read' → solo lectura.
+*/
 async function detectRole(){
-  try {
-    const driveId = config.driveId || 'me';
-    const data = await graphRequest(buildItemUrl(driveId, FIXED_FILE_ID) + '/permissions');
-    const myEmail = (currentAccount.username || '').toLowerCase();
-    let foundWrite = false, foundForMe = false;
+  if(!config.fileId) return;
+  try{
+    const driveId = config.driveId||'me';
+    const drive = driveId==='me'
+      ? 'https://graph.microsoft.com/v1.0/me/drive'
+      : `https://graph.microsoft.com/v1.0/drives/${driveId}`;
 
-    for(const p of (data.value || [])){
-      const roles = p.roles || [];
+    const data = await graphRequest(`${drive}/items/${config.fileId}/permissions`);
+    const myEmail = (currentAccount.username||'').toLowerCase();
+    
+    let foundWrite = false;
+    let foundForMe = false;
+
+    for(const p of (data.value||[])){
+      const roles = p.roles||[];
+      // Si es el dueño del archivo (sin grantedTo específico) → siempre editor
       if(roles.includes('owner') && !p.grantedTo && !p.grantedToIdentitiesV2){
-        foundWrite = true; break;
+        foundWrite=true; break;
       }
+      // Verificar si el permiso aplica al usuario actual
       const emails = [];
       if(p.grantedTo?.user?.email) emails.push(p.grantedTo.user.email.toLowerCase());
-      if(p.grantedToIdentities) p.grantedToIdentities.forEach(g => { if(g.user?.email) emails.push(g.user.email.toLowerCase()); });
-      if(p.grantedToIdentitiesV2) p.grantedToIdentitiesV2.forEach(g => { if(g.user?.email) emails.push(g.user.email.toLowerCase()); });
+      if(p.grantedToIdentities) p.grantedToIdentities.forEach(g=>{ if(g.user?.email) emails.push(g.user.email.toLowerCase()); });
+      if(p.grantedToIdentitiesV2) p.grantedToIdentitiesV2.forEach(g=>{ if(g.user?.email) emails.push(g.user.email.toLowerCase()); });
 
       const isMe = emails.includes(myEmail);
       if(isMe){
         foundForMe = true;
-        if(roles.includes('write') || roles.includes('owner')) foundWrite = true;
+        if(roles.includes('write')||roles.includes('owner')) foundWrite=true;
       }
     }
+
+    // Si no encontramos permiso específico para este usuario (ej: compartido con "toda la organización")
+    // → confiar en que Microsoft ya validó que puede abrir el archivo con ReadWrite
     if(!foundForMe) foundWrite = true;
+
     canEdit = foundWrite;
-  } catch(e) {
+  }catch(e){
+    // Si no podemos leer permisos (403, falta scope, etc.) → asumir editor
+    // Microsoft bloqueará el PATCH si realmente no tiene permisos de escritura
     console.warn('detectRole falló, asumiendo editor:', e.message);
     canEdit = true;
   }
@@ -1014,194 +837,99 @@ async function detectRole(){
 }
 
 function applyRole(){
-  const badge = document.getElementById('roleBadge');
-  const toggle = document.getElementById('viewToggle');
+  const badge=document.getElementById('roleBadge');
+  const toggle=document.getElementById('viewToggle');
   if(canEdit){
-    badge.textContent = 'Editor';
-    badge.className = 'role-badge editor';
-    toggle.style.display = 'flex';
+    badge.textContent='Editor';
+    badge.className='role-badge editor';
+    toggle.style.display='flex'; // muestra el toggle editar/ver
     setModo('editor');
-  } else {
-    badge.textContent = 'Solo lectura';
-    badge.className = 'role-badge viewer';
-    toggle.style.display = 'none';
+  }else{
+    badge.textContent='Solo lectura';
+    badge.className='role-badge viewer';
+    toggle.style.display='none';
     setModo('viewer');
   }
 }
 
+/* Toggle entre modo editor y modo solo-lectura */
 function setModo(modo){
-  const body = document.body;
-  const btnE = document.getElementById('btnModoEditar');
-  const btnV = document.getElementById('btnModoVer');
-  if(modo === 'editor'){
+  const body=document.body;
+  const btnE=document.getElementById('btnModoEditar');
+  const btnV=document.getElementById('btnModoVer');
+  if(modo==='editor'){
     body.classList.remove('viewer-mode');
     btnE?.classList.add('active');
     btnV?.classList.remove('active');
-  } else {
+  }else{
     body.classList.add('viewer-mode');
     btnV?.classList.add('active');
     btnE?.classList.remove('active');
   }
 }
 
-/* ══ DIAGNÓSTICO ══ */
-async function runDiag(){
-  const diagDiv = document.getElementById('diag-results');
-  const itemsDiv = document.getElementById('diag-items');
-  diagDiv.style.display = 'block';
-
-  const addItem = (label, state, detail='') => {
-    itemsDiv.innerHTML += `
-      <div class="diag-item">
-        <div class="diag-dot ${state}"></div>
-        <span style="flex:1;font-weight:500">${label}</span>
-        <span style="color:var(--muted);font-size:11px">${detail}</span>
-      </div>`;
-  };
-
-  itemsDiv.innerHTML = '';
-  addItem('Iniciando diagnóstico…', 'loading');
-
-  // 1. Token
-  itemsDiv.innerHTML = '';
-  try {
-    const token = await getToken();
-    addItem('Autenticación Microsoft', 'ok', 'Token OK');
-  } catch(e) {
-    addItem('Autenticación Microsoft', 'err', e.message);
-    return;
-  }
-
-  // 2. Drive 'me'
-  try {
-    const d = await graphRequest('https://graph.microsoft.com/v1.0/me/drive?$select=id,driveType');
-    addItem('Drive personal (me)', 'ok', `${d.driveType} — ID: ${d.id?.slice(0,16)}…`);
-  } catch(e) {
-    addItem('Drive personal (me)', 'warn', e.message.slice(0,50));
-  }
-
-  // 3. Archivo con driveId actual
-  const driveId = config.driveId || 'me';
-  try {
-    const item = await graphRequest(buildItemUrl(driveId, FIXED_FILE_ID) + '?$select=name,size');
-    addItem(`Archivo (driveId: ${driveId.slice(0,16)}…)`, 'ok', item.name || 'OK');
-  } catch(e) {
-    addItem(`Archivo (driveId: ${driveId.slice(0,16)}…)`, 'err', e.message.slice(0,60));
-  }
-
-  // 4. Tabla
-  try {
-    const t = await graphRequest(tableBase() + '?$select=name');
-    addItem(`Tabla "${TABLE_NAME}"`, 'ok', 'Encontrada');
-  } catch(e) {
-    addItem(`Tabla "${TABLE_NAME}"`, 'err', e.message.slice(0,60));
-  }
-
-  // 5. Drive ID detectado
-  addItem('Drive ID en uso', driveId ? 'ok' : 'warn', driveId || 'No detectado');
-
-  // 6. Usuario
-  addItem('Usuario', 'ok', currentAccount?.username || '—');
-}
-
 /* ══ CARGA DE DATOS ══ */
 async function loadData(background=false){
-  if(!config.driveId){
-    const ok = await resolveSharePointDrive();
-    if(!ok) return;
-  }
-  if(!background){ showLoading(true); showLoadProgress(true); updateLoadProgress(5,0); }
-  const tempData = [];
-  try {
-    const base = tableBase();
-    const colData = await graphRequest(`${base}/columns?$select=name`);
-    headers = colData.value.map(c => c.name);
-    const PAGE = 500; let skip = 0, totalRows = 0, keepGoing = true;
+  if(!config.fileId){showToast('Configura el File ID primero',true);showView('config',document.querySelectorAll('.nav-btn')[2]);return;}
+  if(!background){showLoading(true);showLoadProgress(true);updateLoadProgress(5,0);}
+  const tempData=[];
+  try{
+    const base=tableBase();
+    const colData=await graphRequest(`${base}/columns?$select=name`);
+    headers=colData.value.map(c=>c.name);
+    const PAGE=500;let skip=0,totalRows=0,keepGoing=true;
     while(keepGoing){
-      const rowData = await graphRequest(`${base}/rows?$top=${PAGE}&$skip=${skip}`);
-      const rows = rowData.value || [];
+      const rowData=await graphRequest(`${base}/rows?$top=${PAGE}&$skip=${skip}`);
+      const rows=rowData.value||[];
       for(const row of rows){
-        const obj = { _rowId: row.index };
-        headers.forEach((h,i) => {
-          const v = row.values[0][i];
-          obj[h] = (v===true)?'SI':(v===false)?'':(v??'');
-        });
-        const expe = String(obj['EXPE']||'').trim();
-        const prod = String(obj[COL_PROD]||'').trim();
-        if(expe || prod) tempData.push(obj);
+        const obj={_rowId:row.index};
+        headers.forEach((h,i)=>{const v=row.values[0][i];obj[h]=(v===true)?'SI':(v===false)?'':(v??'');});
+        const expe=String(obj['EXPE']||'').trim();
+        const prod=String(obj[COL_PROD]||'').trim();
+        if(expe||prod)tempData.push(obj);
         totalRows++;
       }
-      skip += PAGE;
-      if(!background) updateLoadProgress(Math.min(15+Math.round((totalRows/(totalRows+PAGE))*80),95), tempData.length);
-      if(rows.length < PAGE) keepGoing = false;
+      skip+=PAGE;
+      if(!background)updateLoadProgress(Math.min(15+Math.round((totalRows/(totalRows+PAGE))*80),95),tempData.length);
+      if(rows.length<PAGE)keepGoing=false;
     }
-    if(!tempData.length){ if(!background) showToast('Tabla vacía', true); return; }
-    localStorage.setItem('gestion_data_cache', JSON.stringify({data:tempData, headers, ts:Date.now()}));
-    allData = tempData;
-    applyDashFilter(); filterTable(); updateFiltros(); updateDashFilters();
-    setDriveStatus('ok', `${allData.length} ops cargadas`);
-    if(background) showToast(`✓ Actualizado — ${allData.length} operaciones`);
-    else { updateLoadProgress(100, allData.length); showToast(`✓ ${allData.length} operaciones cargadas`); }
-  } catch(e) {
-    setDriveStatus('error', 'Error cargando datos');
-    if(!background) showToast('Error: ' + e.message, true);
-    console.error(e);
-    // Si falla, intentar re-resolver el drive
-    if(e.message.includes('404') || e.message.includes('403') || e.message.includes('ItemNotFound')){
-      console.log('Intentando re-detectar drive…');
-      delete config.driveId;
-      saveConfigToStorage();
-      await resolveSharePointDrive();
-    }
-  } finally {
-    if(!background){ showLoading(false); setTimeout(() => showLoadProgress(false), 1500); }
+    if(!tempData.length){if(!background)showToast('Tabla vacía',true);return;}
+    localStorage.setItem('gestion_data_cache',JSON.stringify({data:tempData,headers,ts:Date.now()}));
+    allData=tempData;
+    applyDashFilter();filterTable();updateFiltros();updateDashFilters();
+    // Detectar rol después de cargar
+    await detectRole();
+    if(background)showToast(`✓ Actualizado — ${allData.length} operaciones`);
+    else{updateLoadProgress(100,allData.length);showToast(`✓ ${allData.length} operaciones cargadas`);}
+  }catch(e){
+    if(!background)showToast('Error: '+e.message,true);console.error(e);
+  }finally{
+    if(!background){showLoading(false);setTimeout(()=>showLoadProgress(false),1500);}
   }
 }
-
-function showLoadProgress(on){ document.getElementById('loadProgress').style.display = on?'block':'none'; }
-function updateLoadProgress(pct, total){
-  document.getElementById('loadProgressFill').style.width = pct+'%';
-  document.getElementById('loadProgressText').textContent = `${pct}% — ${total} ops`;
-}
-
-/* ══ CONFIG ══ */
-function saveConfig(){
-  const manualDrive = document.getElementById('cfg-driveid').value.trim();
-  if(manualDrive) config.driveId = manualDrive;
-  else delete config.driveId;
-  config.fileId = FIXED_FILE_ID;
-  saveConfigToStorage();
-  const s = document.getElementById('cfg-status');
-  s.textContent = '✓ Guardado. Re-detectando conexión…';
-  s.style.color = 'var(--success)';
-  initConnection().then(() => loadData());
-}
-
-function clearCacheAndReload(){
-  localStorage.removeItem('gestion_data_cache');
-  localStorage.removeItem('gestion_cfg');
-  config = { fileId: FIXED_FILE_ID };
-  showToast('Caché borrado. Reconectando…');
-  initConnection().then(() => loadData());
+function showLoadProgress(on){document.getElementById('loadProgress').style.display=on?'block':'none';}
+function updateLoadProgress(pct,total){
+  document.getElementById('loadProgressFill').style.width=pct+'%';
+  document.getElementById('loadProgressText').textContent=`${pct}% — ${total} ops`;
 }
 
 /* ══ FILTROS DASHBOARD ══ */
 function updateDashFilters(){
-  const estados = [...new Set(allData.map(r=>String(r[COL_ESTGES]||'').trim()).filter(Boolean))].sort();
-  const zonas   = [...new Set(allData.map(r=>String(r[COL_ZONA]||'').trim()).filter(Boolean))].sort();
-  const prods   = [...new Set(allData.map(r=>String(r[COL_PROD]||'').trim()).filter(Boolean))].sort();
-  document.getElementById('filtroEstGes').innerHTML = '<option value="">Todos</option>' + estados.map(e=>`<option value="${e}">${e}</option>`).join('');
-  document.getElementById('filtroZonaDash').innerHTML = '<option value="">Todas</option>' + zonas.map(z=>`<option value="${z}">${z}</option>`).join('');
-  document.getElementById('filtroProductoDash').innerHTML = '<option value="">Todos</option>' + prods.map(p=>`<option value="${p}">${p}</option>`).join('');
+  const estados=[...new Set(allData.map(r=>String(r[COL_ESTGES]||'').trim()).filter(Boolean))].sort();
+  const zonas=[...new Set(allData.map(r=>String(r[COL_ZONA]||'').trim()).filter(Boolean))].sort();
+  const prods=[...new Set(allData.map(r=>String(r[COL_PROD]||'').trim()).filter(Boolean))].sort();
+  document.getElementById('filtroEstGes').innerHTML='<option value="">Todos</option>'+estados.map(e=>`<option value="${e}">${e}</option>`).join('');
+  document.getElementById('filtroZonaDash').innerHTML='<option value="">Todas</option>'+zonas.map(z=>`<option value="${z}">${z}</option>`).join('');
+  document.getElementById('filtroProductoDash').innerHTML='<option value="">Todos</option>'+prods.map(p=>`<option value="${p}">${p}</option>`).join('');
 }
 function applyDashFilter(){
-  const estGes  = (document.getElementById('filtroEstGes')?.value||'').trim();
-  const zona    = (document.getElementById('filtroZonaDash')?.value||'').trim();
-  const producto= (document.getElementById('filtroProductoDash')?.value||'').trim();
-  dashData = allData.filter(r=>
-    (!estGes   || String(r[COL_ESTGES]||'').trim()===estGes)&&
-    (!zona     || String(r[COL_ZONA]||'').trim()===zona)&&
-    (!producto || String(r[COL_PROD]||'').trim()===producto)
+  const estGes=(document.getElementById('filtroEstGes')?.value||'').trim();
+  const zona=(document.getElementById('filtroZonaDash')?.value||'').trim();
+  const producto=(document.getElementById('filtroProductoDash')?.value||'').trim();
+  dashData=allData.filter(r=>
+    (!estGes||String(r[COL_ESTGES]||'').trim()===estGes)&&
+    (!zona||String(r[COL_ZONA]||'').trim()===zona)&&
+    (!producto||String(r[COL_PROD]||'').trim()===producto)
   );
   updateDashboard();
 }
@@ -1214,46 +942,57 @@ function resetDashFilters(){
 
 /* ══ DASHBOARD KPIs ══ */
 function updateDashboard(){
-  const d = dashData;
-  document.getElementById('kpi-total').textContent = d.length.toLocaleString('es-PE');
-  const lsng = d.filter(r=>String(r[COL_PROD]||'').startsWith('L'));
-  const crdt = d.filter(r=>String(r[COL_PROD]||'').startsWith('C'));
-  document.getElementById('kpi-lsng').textContent = lsng.length.toLocaleString('es-PE');
-  document.getElementById('kpi-lsng-sub').textContent = `VEH: ${lsng.filter(r=>String(r[COL_PROD]).includes('VEH')).length}  ·  MAQ: ${lsng.filter(r=>String(r[COL_PROD]).includes('MAQ')).length}`;
-  document.getElementById('kpi-crdt').textContent = crdt.length.toLocaleString('es-PE');
-  document.getElementById('kpi-crdt-sub').textContent = `VEH: ${crdt.filter(r=>String(r[COL_PROD]).includes('VEH')).length}  ·  MAQ: ${crdt.filter(r=>String(r[COL_PROD]).includes('MAQ')).length}`;
-  const funcKey = headers.includes(COL_FUNC)?COL_FUNC:detectField(['FNCNR','FNCNE','FUNCIONARIO','ANALISTA','EJECUTIVO']);
-  const funcsUniq = funcKey?[...new Set(d.map(r=>String(r[funcKey]||'').trim()).filter(Boolean))]:[];
-  document.getElementById('kpi-func').textContent = funcsUniq.length.toLocaleString('es-PE');
-  const activados = d.filter(r=>String(r[COL_ESTGES]||'').toUpperCase().includes('ACTIVADO'));
-  const clientesUniq = [...new Set(activados.map(r=>String(r['NOMBRE_RSOCIAL_CLIENTE']||'').trim()).filter(Boolean))];
-  document.getElementById('kpi-clientes').textContent = clientesUniq.length.toLocaleString('es-PE');
-  const netaKey = headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
-  let netaTotal = 0;
-  if(netaKey) activados.forEach(r=>{ const n=parseFloat(String(r[netaKey]||'').replace(/[^0-9.\-]/g,'')); if(!isNaN(n)) netaTotal+=n; });
-  document.getElementById('kpi-neta').textContent = fmtMonto(netaTotal);
-  renderProducto(d); renderZonas(d); renderFuncionarios(d,funcKey);
-  renderNetaMes(d,netaKey); renderEstCom(d); renderSucursal(d,netaKey);
-  renderZonasV(d); renderEstGes(d);
+  const d=dashData;
+  document.getElementById('kpi-total').textContent=d.length.toLocaleString('es-PE');
+
+  const lsng=d.filter(r=>String(r[COL_PROD]||'').startsWith('L'));
+  const crdt=d.filter(r=>String(r[COL_PROD]||'').startsWith('C'));
+  document.getElementById('kpi-lsng').textContent=lsng.length.toLocaleString('es-PE');
+  document.getElementById('kpi-lsng-sub').textContent=`VEH: ${lsng.filter(r=>String(r[COL_PROD]).includes('VEH')).length}  ·  MAQ: ${lsng.filter(r=>String(r[COL_PROD]).includes('MAQ')).length}`;
+  document.getElementById('kpi-crdt').textContent=crdt.length.toLocaleString('es-PE');
+  document.getElementById('kpi-crdt-sub').textContent=`VEH: ${crdt.filter(r=>String(r[COL_PROD]).includes('VEH')).length}  ·  MAQ: ${crdt.filter(r=>String(r[COL_PROD]).includes('MAQ')).length}`;
+
+  const funcKey=headers.includes(COL_FUNC)?COL_FUNC:detectField(['FNCNR','FNCNE','FUNCIONARIO','ANALISTA','EJECUTIVO']);
+  const funcsUniq=funcKey?[...new Set(d.map(r=>String(r[funcKey]||'').trim()).filter(Boolean))]:[];
+  document.getElementById('kpi-func').textContent=funcsUniq.length.toLocaleString('es-PE');
+
+  const activados=d.filter(r=>String(r[COL_ESTGES]||'').toUpperCase().includes('ACTIVADO'));
+  const clientesUniq=[...new Set(activados.map(r=>String(r['NOMBRE_RSOCIAL_CLIENTE']||'').trim()).filter(Boolean))];
+  document.getElementById('kpi-clientes').textContent=clientesUniq.length.toLocaleString('es-PE');
+
+  // ✅ FIX 1: Neta Total usa ACTIVADO (no PROYE)
+  const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
+  let netaTotal=0;
+  if(netaKey)activados.forEach(r=>{const n=parseFloat(String(r[netaKey]||'').replace(/[^0-9.\-]/g,''));if(!isNaN(n))netaTotal+=n;});
+  document.getElementById('kpi-neta').textContent=fmtMonto(netaTotal);
+
+  renderProducto(d);
+  renderZonas(d);
+  renderFuncionarios(d,funcKey);
+  renderNetaMes(d,netaKey);   // ✅ pasamos netaKey
+  renderEstCom(d);
+  renderSucursal(d,netaKey);
+  renderZonasV(d);
+  renderEstGes(d);
 }
 
 /* ══ HELPERS ══ */
 function detectField(candidates){
-  for(const c of candidates) if(headers.includes(c)) return c;
-  for(const h of headers) for(const c of candidates) if(h.toUpperCase().includes(c.toUpperCase())) return h;
+  for(const c of candidates)if(headers.includes(c))return c;
+  for(const h of headers)for(const c of candidates)if(h.toUpperCase().includes(c.toUpperCase()))return h;
   return null;
 }
 function fmtMonto(n){
-  if(!n&&n!==0) return '—';
-  if(Math.abs(n)>=1e6) return (n/1e6).toFixed(2)+'M';
-  if(Math.abs(n)>=1e3) return (n/1e3).toFixed(1)+'K';
+  if(!n&&n!==0)return '—';
+  if(Math.abs(n)>=1e6)return (n/1e6).toFixed(2)+'M';
+  if(Math.abs(n)>=1e3)return (n/1e3).toFixed(1)+'K';
   return n.toLocaleString('es-PE',{minimumFractionDigits:0,maximumFractionDigits:2});
 }
 function renderHBars(el,data,colors,showMonto=false){
-  if(!el) return;
-  if(!data.length){ el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin datos</p></div>'; return; }
-  const max = data[0][1]||1;
-  el.innerHTML = data.map(([l,c],i)=>`
+  if(!el)return;
+  if(!data.length){el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin datos</p></div>';return;}
+  const max=data[0][1]||1;
+  el.innerHTML=data.map(([l,c],i)=>`
     <div class="bar-row">
       <span class="bar-label" title="${l}">${l.length>13?l.slice(0,12)+'…':l}</span>
       <div class="bar-track"><div class="bar-fill" style="width:${Math.round(c/max*100)}%;background:${Array.isArray(colors)?colors[i%colors.length]:colors}"></div></div>
@@ -1261,12 +1000,12 @@ function renderHBars(el,data,colors,showMonto=false){
     </div>`).join('');
 }
 function renderVBars(el,data){
-  if(!el) return; el.innerHTML='';
-  if(!data.length) return;
-  const max = data[0][1]||1;
+  if(!el)return;el.innerHTML='';
+  if(!data.length)return;
+  const max=data[0][1]||1;
   data.forEach(([l,c],i)=>{
-    const col = document.createElement('div'); col.className='vbar-col';
-    const h = Math.max(Math.round(c/max*100),4);
+    const col=document.createElement('div');col.className='vbar-col';
+    const h=Math.max(Math.round(c/max*100),4);
     col.innerHTML=`<span class="vbar-val">${c}</span><div class="vbar-fill" style="height:${h}px;background:${PALETTE[i%PALETTE.length]}"></div><span class="vbar-lbl">${l.length>8?l.slice(0,7)+'…':l}</span>`;
     el.appendChild(col);
   });
@@ -1275,73 +1014,113 @@ function renderVBars(el,data){
 /* ══ GRÁFICOS ══ */
 function renderProducto(d){
   const map={};
-  d.forEach(r=>{ const p=String(r[COL_PROD]||'').trim()||'S/D'; const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim(); if(!map[p]) map[p]=new Set(); if(ruc) map[p].add(ruc); });
+  d.forEach(r=>{
+    const p=String(r[COL_PROD]||'').trim()||'S/D';
+    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    if(!map[p]) map[p]=new Set();
+    if(ruc) map[p].add(ruc);
+  });
   const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]);
   document.getElementById('badge-prod').textContent=data.length+' tipos';
   renderHBars(document.getElementById('chart-producto'),data,PALETTE);
 }
 function renderZonas(d){
   const map={};
-  d.forEach(r=>{ const z=String(r[COL_ZONA]||'').trim()||'S/D'; const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim(); if(!map[z]) map[z]=new Set(); if(ruc) map[z].add(ruc); });
+  d.forEach(r=>{
+    const z=String(r[COL_ZONA]||'').trim()||'S/D';
+    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    if(!map[z]) map[z]=new Set();
+    if(ruc) map[z].add(ruc);
+  });
   const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]).slice(0,10);
   document.getElementById('badge-zona').textContent=data.length+' zonas';
   renderHBars(document.getElementById('chart-zonas'),data,'#059669');
 }
 function renderFuncionarios(d,funcKey){
-  if(!funcKey){ document.getElementById('chart-funcionarios').innerHTML='<div class="empty-state" style="padding:12px"><p>Columna no encontrada</p></div>'; return; }
+  if(!funcKey){document.getElementById('chart-funcionarios').innerHTML='<div class="empty-state" style="padding:12px"><p>Columna no encontrada</p></div>';return;}
   const map={};
-  d.forEach(r=>{ const f=String(r[funcKey]||'').trim(); const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim(); if(!f) return; if(!map[f]) map[f]=new Set(); if(ruc) map[f].add(ruc); });
+  d.forEach(r=>{
+    const f=String(r[funcKey]||'').trim();
+    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    if(!f) return;
+    if(!map[f]) map[f]=new Set();
+    if(ruc) map[f].add(ruc);
+  });
   const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]).slice(0,12);
   document.getElementById('badge-func').textContent=Object.keys(map).length+' total';
   renderHBars(document.getElementById('chart-funcionarios'),data,'#7C3AED');
 }
+
+/* ✅ FIX 1: Neta por Mes usa ACTIVADO */
 function renderNetaMes(d,netaKey){
+  // Filtrar solo ACTIVADO
   const activados=d.filter(r=>String(r[COL_ESTGES]||'').toUpperCase().includes('ACTIVADO'));
   const fechaKey=headers.includes(COL_FECHA)?COL_FECHA:detectField(['FECHA_APRO','FECHA_APROBACION','FECHA','FEC_APRO','FECHA_ACT','FECHA_ACTIV','FEC_ACT','FECHA_ACTIVACION']);
   const meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Set','Oct','Nov','Dic'];
   const byMes={};
+
   if(fechaKey){
     activados.forEach(r=>{
-      const fv=r[fechaKey]; if(!fv&&fv!==0) return;
+      const fv=r[fechaKey];if(!fv&&fv!==0)return;
       let dt=typeof fv==='number'?new Date(Math.round((fv-25569)*86400*1000)):new Date(fv);
-      if(isNaN(dt)) return;
+      if(isNaN(dt))return;
       const mes=dt.getMonth();
-      if(!byMes[mes]) byMes[mes]={label:meses[mes],count:0,suma:0};
+      if(!byMes[mes])byMes[mes]={label:meses[mes],count:0,suma:0};
       byMes[mes].count++;
-      if(netaKey){ const n=parseFloat(String(r[netaKey]||'').replace(/[^0-9.\-]/g,'')); if(!isNaN(n)) byMes[mes].suma+=n; }
+      if(netaKey){const n=parseFloat(String(r[netaKey]||'').replace(/[^0-9.\-]/g,''));if(!isNaN(n))byMes[mes].suma+=n;}
     });
   }
+
   if(!Object.keys(byMes).length){
+    // Fallback: buscar mes en EST_GES
     const mesNames={'ENE':0,'FEB':1,'MAR':2,'ABR':3,'MAY':4,'JUN':5,'JUL':6,'AGO':7,'SET':8,'SEP':8,'OCT':9,'NOV':10,'DIC':11};
     activados.forEach(r=>{
       let mesIdx=-1;
-      for(const [k,v] of Object.entries(mesNames)){ if(String(r[COL_ESTGES]||'').toUpperCase().includes(k)||String(r[COL_ESTCOM]||'').toUpperCase().includes(k)){mesIdx=v;break;} }
-      if(mesIdx<0) mesIdx=12;
-      if(!byMes[mesIdx]) byMes[mesIdx]={label:mesIdx===12?'S/Mes':meses[mesIdx],count:0,suma:0};
+      for(const [k,v] of Object.entries(mesNames)){
+        if(String(r[COL_ESTGES]||'').toUpperCase().includes(k)||String(r[COL_ESTCOM]||'').toUpperCase().includes(k)){mesIdx=v;break;}
+      }
+      if(mesIdx<0)mesIdx=12;
+      if(!byMes[mesIdx])byMes[mesIdx]={label:mesIdx===12?'S/Mes':meses[mesIdx],count:0,suma:0};
       byMes[mesIdx].count++;
-      if(netaKey){ const n=parseFloat(String(r[netaKey]||'').replace(/[^0-9.\-]/g,'')); if(!isNaN(n)) byMes[mesIdx].suma+=n; }
+      if(netaKey){const n=parseFloat(String(r[netaKey]||'').replace(/[^0-9.\-]/g,''));if(!isNaN(n))byMes[mesIdx].suma+=n;}
     });
   }
+
   const rows=Object.entries(byMes).sort((a,b)=>+a[0]-+b[0]);
   const el=document.getElementById('chart-neta-mes');
-  if(!rows.length){ el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin registros ACTIVADO</p></div>'; document.getElementById('badge-neta-mes').textContent='0 meses'; return; }
+  if(!rows.length){
+    el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin registros ACTIVADO</p></div>';
+    document.getElementById('badge-neta-mes').textContent='0 meses';
+    return;
+  }
   let totalOps=0,totalNeta=0;
   let html=`<table class="net-table"><thead><tr><th>Mes</th><th style="text-align:right">Operaciones</th>${netaKey?'<th style="text-align:right">Neta</th>':''}</tr></thead><tbody>`;
-  rows.forEach(([,v])=>{ totalOps+=v.count; totalNeta+=v.suma; html+=`<tr><td style="font-weight:600;color:var(--text)">${v.label}</td><td class="net-num" style="text-align:right">${v.count}</td>${netaKey?`<td class="net-amount" style="text-align:right">${fmtMonto(v.suma)}</td>`:''}</tr>`; });
+  rows.forEach(([,v])=>{
+    totalOps+=v.count;totalNeta+=v.suma;
+    html+=`<tr><td style="font-weight:600;color:var(--text)">${v.label}</td><td class="net-num" style="text-align:right">${v.count}</td>${netaKey?`<td class="net-amount" style="text-align:right">${fmtMonto(v.suma)}</td>`:''}</tr>`;
+  });
   html+=`</tbody><tfoot><tr class="net-tfoot"><td>TOTAL</td><td class="net-num" style="text-align:right">${totalOps}</td>${netaKey?`<td class="net-amount" style="text-align:right">${fmtMonto(totalNeta)}</td>`:''}</tr></tfoot></table>`;
   el.innerHTML=html;
   document.getElementById('badge-neta-mes').textContent=rows.length+' meses';
 }
+
 function renderEstCom(d){
+  // Contar clientes únicos por EST_COM (usando RUC como identificador único)
   const map={};
-  d.forEach(r=>{ const e=String(r[COL_ESTCOM]||'').trim()||'S/D'; const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim(); if(!map[e]) map[e]=new Set(); if(ruc) map[e].add(ruc); });
+  d.forEach(r=>{
+    const e=String(r[COL_ESTCOM]||'').trim()||'S/D';
+    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    if(!map[e]) map[e]=new Set();
+    if(ruc) map[e].add(ruc);
+  });
+  // Convertir Sets a conteos
   const entries=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]);
   const total=entries.reduce((s,[,c])=>s+c,0);
   document.getElementById('badge-estcom').textContent=entries.length+' estados';
   document.getElementById('donut-total').textContent=total.toLocaleString('es-PE');
   const canvas=document.getElementById('donutEstCom');
-  if(donutChartInstance){ donutChartInstance.destroy(); donutChartInstance=null; }
-  if(entries.length && window.Chart){
+  if(donutChartInstance){donutChartInstance.destroy();donutChartInstance=null;}
+  if(entries.length&&window.Chart){
     donutChartInstance=new Chart(canvas,{
       type:'doughnut',
       data:{labels:entries.map(([l])=>l),datasets:[{data:entries.map(([,c])=>c),backgroundColor:PALETTE.slice(0,entries.length),borderWidth:0,hoverOffset:4}]},
@@ -1355,15 +1134,20 @@ function renderEstCom(d){
       <span class="donut-legend-count">${c}</span>
     </div>`).join('');
 }
+
 function renderSucursal(d,netaKey){
-  if(!netaKey){ document.getElementById('chart-sucursal').innerHTML='<div class="empty-state" style="padding:12px"><p>Sin columna NETA</p></div>'; return; }
+  if(!netaKey){document.getElementById('chart-sucursal').innerHTML='<div class="empty-state" style="padding:12px"><p>Sin columna NETA</p></div>';return;}
   const map={};
-  d.forEach(r=>{ const s=String(r[COL_SUC]||'').trim()||'S/D'; const n=parseFloat(String(r[netaKey]||'').replace(/[^0-9.\-]/g,'')); if(!isNaN(n)) map[s]=(map[s]||0)+n; });
+  d.forEach(r=>{
+    const s=String(r[COL_SUC]||'').trim()||'S/D';
+    const n=parseFloat(String(r[netaKey]||'').replace(/[^0-9.\-]/g,''));
+    if(!isNaN(n))map[s]=(map[s]||0)+n;
+  });
   const data=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,8);
   const max=data[0]?.[1]||1;
   document.getElementById('badge-suc').textContent=Object.keys(map).length+' sucursales';
   const el=document.getElementById('chart-sucursal');
-  if(!data.length){ el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin datos</p></div>'; return; }
+  if(!data.length){el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin datos</p></div>';return;}
   el.innerHTML=data.map(([l,v])=>`
     <div class="suc-row">
       <span class="suc-label" title="${l}">${l.length>13?l.slice(0,12)+'…':l}</span>
@@ -1373,13 +1157,24 @@ function renderSucursal(d,netaKey){
 }
 function renderZonasV(d){
   const map={};
-  d.forEach(r=>{ const z=String(r[COL_ZONA]||'').trim()||'S/D'; const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim(); if(!map[z]) map[z]=new Set(); if(ruc) map[z].add(ruc); });
+  d.forEach(r=>{
+    const z=String(r[COL_ZONA]||'').trim()||'S/D';
+    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    if(!map[z]) map[z]=new Set();
+    if(ruc) map[z].add(ruc);
+  });
   const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]).slice(0,7);
   renderVBars(document.getElementById('chart-zonas-v'),data);
 }
 function renderEstGes(d){
+  // Contar clientes únicos por EST_GES
   const map={};
-  d.forEach(r=>{ const e=String(r[COL_ESTGES]||'').trim()||'S/D'; const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim(); if(!map[e]) map[e]=new Set(); if(ruc) map[e].add(ruc); });
+  d.forEach(r=>{
+    const e=String(r[COL_ESTGES]||'').trim()||'S/D';
+    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    if(!map[e]) map[e]=new Set();
+    if(ruc) map[e].add(ruc);
+  });
   const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]);
   document.getElementById('badge-estges').textContent=data.length+' estados';
   renderHBars(document.getElementById('chart-estados'),data,PALETTE);
@@ -1394,8 +1189,8 @@ function filterTable(){
     const txt=[r.EXPE,r[COL_PROD],r.RUC,r.NOMBRE_RSOCIAL_CLIENTE,r[COL_ESTGES],r[COL_ESTCOM],r[COL_ZONA],r.SUCURSAL,r[COL_FUNC]].join(' ').toLowerCase();
     return(!q||txt.includes(q))&&(!prod||String(r[COL_PROD]).includes(prod))&&(!estado||String(r[COL_ESTGES])===estado);
   });
-  if(sortField) filteredData.sort((a,b)=>String(a[sortField]||'').localeCompare(String(b[sortField]||''))*sortDir);
-  page=1; renderTable();
+  if(sortField)filteredData.sort((a,b)=>String(a[sortField]||'').localeCompare(String(b[sortField]||''))*sortDir);
+  page=1;renderTable();
   document.getElementById('exp-count').textContent=`${filteredData.length} de ${allData.length} registros`;
 }
 function updateFiltros(){
@@ -1405,16 +1200,18 @@ function updateFiltros(){
   document.getElementById('filtroEstado').innerHTML='<option value="">Todos los estados</option>'+estados.map(e=>`<option value="${e}">${e}</option>`).join('');
 }
 function renderTable(){
-  const start=(page-1)*pageSize, end=start+pageSize;
+  const start=(page-1)*pageSize,end=start+pageSize;
   const rows=filteredData.slice(start,end);
   const tbody=document.getElementById('tabla-body');
   if(!rows.length){
     tbody.innerHTML=`<tr><td colspan="16"><div class="empty-state"><div class="empty-icon">🔍</div><h3>Sin resultados</h3><p>Ajusta los filtros</p></div></td></tr>`;
-    document.getElementById('page-info').textContent='0 registros'; document.getElementById('page-nums').innerHTML=''; return;
+    document.getElementById('page-info').textContent='0 registros';document.getElementById('page-nums').innerHTML='';return;
   }
-  const fmtNum=v=>{const n=parseFloat(String(v||'').replace(/[^0-9.\-]/g,'')); return isNaN(n)?'—':n.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});};
+  const fmtNum=v=>{const n=parseFloat(String(v||'').replace(/[^0-9.\-]/g,''));return isNaN(n)?'—':n.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});};
   tbody.innerHTML=rows.map(r=>{
-    const prod=String(r[COL_PROD]||''); const est=String(r[COL_ESTGES]||''); const estcom=String(r[COL_ESTCOM]||'');
+    const prod=String(r[COL_PROD]||'');
+    const est=String(r[COL_ESTGES]||'');
+    const estcom=String(r[COL_ESTCOM]||'');
     const prodBadge=prod.startsWith('LSNG')?'badge-lsng':prod.startsWith('CRDT')?'badge-crdt':prod.startsWith('LSBK')?'badge-lsbk':'badge-grey';
     const estBadge=est.toUpperCase().includes('ACTIVADO')?'badge-act':est.toUpperCase().includes('S/D')?'badge-grey':'badge-inac';
     const ecBadge=estcom.toUpperCase().includes('PROYE')?'badge-proye':estcom.toUpperCase().includes('ACTIV')?'badge-act':'badge-grey';
@@ -1441,39 +1238,42 @@ function renderTable(){
   const totalPages=Math.ceil(filteredData.length/pageSize);
   document.getElementById('page-info').textContent=`${start+1}–${Math.min(end,filteredData.length)} de ${filteredData.length}`;
   let nums='';
-  getPaginasMostrar(page,totalPages).forEach(p=>{ if(p==='...') nums+=`<span class="page-dots">…</span>`; else nums+=`<button class="page-btn ${p===page?'active':''}" onclick="goPage(${p})">${p}</button>`; });
+  getPaginasMostrar(page,totalPages).forEach(p=>{
+    if(p==='...')nums+=`<span class="page-dots">…</span>`;
+    else nums+=`<button class="page-btn ${p===page?'active':''}" onclick="goPage(${p})">${p}</button>`;
+  });
   document.getElementById('page-nums').innerHTML=nums;
   document.getElementById('btn-prev').disabled=page<=1;
   document.getElementById('btn-next').disabled=page>=totalPages;
 }
 function getPaginasMostrar(current,total){
-  if(total<=7) return Array.from({length:total},(_,i)=>i+1);
-  const pages=[1]; if(current>3) pages.push('...');
-  for(let i=Math.max(2,current-1);i<=Math.min(total-1,current+1);i++) pages.push(i);
-  if(current<total-2) pages.push('...'); pages.push(total); return pages;
+  if(total<=7)return Array.from({length:total},(_,i)=>i+1);
+  const pages=[1];if(current>3)pages.push('...');
+  for(let i=Math.max(2,current-1);i<=Math.min(total-1,current+1);i++)pages.push(i);
+  if(current<total-2)pages.push('...');pages.push(total);return pages;
 }
-function changePage(dir){ goPage(page+dir); }
-function goPage(p){ page=Math.max(1,Math.min(p,Math.ceil(filteredData.length/pageSize))); renderTable(); }
-function sortTable(field){ if(sortField===field) sortDir*=-1; else { sortField=field; sortDir=1; } filterTable(); }
+function changePage(dir){goPage(page+dir);}
+function goPage(p){page=Math.max(1,Math.min(p,Math.ceil(filteredData.length/pageSize)));renderTable();}
+function sortTable(field){if(sortField===field)sortDir*=-1;else{sortField=field;sortDir=1;}filterTable();}
 
 /* ══ MODAL ══ */
 function openEdit(rowId){
-  if(!canEdit){ showToast('No tienes permisos de edición', true); return; }
-  const row=allData.find(r=>r._rowId===rowId); if(!row) return;
-  editingRow=row; isNewRecord=false;
+  if(!canEdit){showToast('No tienes permisos de edición',true);return;}
+  const row=allData.find(r=>r._rowId===rowId);if(!row)return;
+  editingRow=row;isNewRecord=false;
   document.getElementById('modal-title').textContent='Editar Expediente';
   document.getElementById('modal-expid').textContent=`EXP # ${row.EXPE||''}`;
   document.getElementById('btn-guardar').textContent='Guardar en Excel';
   const readonly=['EXPE','RUC'];
   document.getElementById('form-fields').innerHTML=headers.map(k=>{
-    const v=row[k]??''; const ro=readonly.includes(k);
+    const v=row[k]??'';const ro=readonly.includes(k);
     return `<div class="form-group"><label class="form-label">${k}</label><input class="form-input" id="field-${k}" value="${String(v).replace(/"/g,'&quot;')}" ${ro?'readonly':''} placeholder="${k}"></div>`;
   }).join('');
   document.getElementById('modal').classList.add('open');
 }
 function openNuevo(){
-  if(!canEdit){ showToast('No tienes permisos de edición', true); return; }
-  editingRow=null; isNewRecord=true;
+  if(!canEdit){showToast('No tienes permisos de edición',true);return;}
+  editingRow=null;isNewRecord=true;
   document.getElementById('modal-title').textContent='Nuevo Expediente';
   document.getElementById('modal-expid').textContent='Nuevo registro';
   document.getElementById('btn-guardar').textContent='Agregar al Excel';
@@ -1481,57 +1281,81 @@ function openNuevo(){
   document.getElementById('form-fields').innerHTML=cols.map(k=>`<div class="form-group"><label class="form-label">${k}</label><input class="form-input" id="field-${k}" value="" placeholder="${k}"></div>`).join('');
   document.getElementById('modal').classList.add('open');
 }
-function closeModal(){ document.getElementById('modal').classList.remove('open'); editingRow=null; isNewRecord=false; }
+function closeModal(){document.getElementById('modal').classList.remove('open');editingRow=null;isNewRecord=false;}
 
 async function guardarCambios(){
-  if(!config.fileId){ showToast('Archivo no configurado', true); return; }
-  if(!canEdit){ showToast('No tienes permisos de edición', true); return; }
+  if(!config.fileId){showToast('Configura el File ID primero',true);return;}
+  if(!canEdit){showToast('No tienes permisos de edición',true);return;}
   const esNuevo=isNewRecord;
   const btn=document.getElementById('btn-guardar');
-  btn.disabled=true; btn.textContent='Guardando…'; showLoading(true);
-  try {
+  btn.disabled=true;btn.textContent='Guardando…';showLoading(true);
+  try{
     const base=tableBase();
-    const values=[headers.map(h=>{ const input=document.getElementById(`field-${h}`); return input?input.value:(editingRow?.[h]??''); })];
+    const values=[headers.map(h=>{const input=document.getElementById(`field-${h}`);return input?input.value:(editingRow?.[h]??'');})];
     if(esNuevo){
       const res=await graphRequest(`${base}/rows/add`,'POST',{values});
-      const newObj={_rowId:res.index}; headers.forEach((h,i)=>{newObj[h]=values[0][i];}); allData.push(newObj);
-      closeModal(); applyDashFilter(); filterTable(); showToast('✓ Expediente agregado');
-    } else {
+      const newObj={_rowId:res.index};headers.forEach((h,i)=>{newObj[h]=values[0][i];});allData.push(newObj);
+      closeModal();applyDashFilter();filterTable();showToast('✓ Expediente agregado');
+    }else{
       await graphRequest(`${base}/rows/itemAt(index=${editingRow._rowId})`,'PATCH',{values});
       const idx=allData.findIndex(r=>r._rowId===editingRow._rowId);
-      if(idx>=0) headers.forEach((h,i)=>{allData[idx][h]=values[0][i];});
-      closeModal(); applyDashFilter(); filterTable(); showToast('✓ Expediente guardado');
+      if(idx>=0)headers.forEach((h,i)=>{allData[idx][h]=values[0][i];});
+      closeModal();applyDashFilter();filterTable();showToast('✓ Expediente guardado');
     }
-  } catch(e){ showToast('Error guardando: '+e.message, true); console.error(e); }
-  finally{ btn.disabled=false; btn.textContent=esNuevo?'Agregar al Excel':'Guardar en Excel'; showLoading(false); }
+  }catch(e){showToast('Error guardando: '+e.message,true);console.error(e);}
+  finally{btn.disabled=false;btn.textContent=esNuevo?'Agregar al Excel':'Guardar en Excel';showLoading(false);}
+}
+
+/* ══ CONFIG ══ */
+function saveConfig(){
+  config={driveId:document.getElementById('cfg-driveid').value.trim()||'me',fileId:document.getElementById('cfg-fileid').value.trim()};
+  if(!config.fileId){const s=document.getElementById('cfg-status');s.textContent='⚠️ Ingresa el File ID';s.style.color='var(--danger)';return;}
+  localStorage.setItem('gestion_cfg',JSON.stringify(config));
+  const s=document.getElementById('cfg-status');s.textContent='✓ Guardado. Cargando datos…';s.style.color='var(--success)';
+  loadData();
+}
+async function testConnection(){
+  const fileId=document.getElementById('cfg-fileid').value.trim();
+  const driveId=document.getElementById('cfg-driveid').value.trim()||'me';
+  const status=document.getElementById('cfg-status');
+  if(!fileId){status.textContent='⚠️ Ingresa el File ID';status.style.color='var(--danger)';return;}
+  status.textContent='Probando conexión…';status.style.color='var(--muted)';showLoading(true);
+  try{
+    const drive=driveId==='me'?'https://graph.microsoft.com/v1.0/me/drive':`https://graph.microsoft.com/v1.0/drives/${driveId}`;
+    const data=await graphRequest(`${drive}/items/${fileId}/workbook/tables`);
+    const tables=data.value.map(t=>t.name).join(', ');
+    status.innerHTML=`✓ Conexión exitosa. Tablas: <b>${tables}</b>`;status.style.color='var(--success)';
+  }catch(e){status.textContent='✗ Error: '+e.message;status.style.color='var(--danger)';}
+  finally{showLoading(false);}
 }
 
 /* ══ EXPORT CSV ══ */
 function exportCSV(){
-  if(!filteredData.length){ showToast('No hay datos para exportar', true); return; }
+  if(!filteredData.length){showToast('No hay datos para exportar',true);return;}
   const keys=headers.length?headers:Object.keys(filteredData[0]).filter(k=>k!=='_rowId');
   const csv=[keys.join(','),...filteredData.map(r=>keys.map(k=>`"${String(r[k]||'').replace(/"/g,'""')}"`).join(','))].join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));
-  a.download=`Gestion2026_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  a.download=`Gestion2026_${new Date().toISOString().slice(0,10)}.csv`;a.click();
   showToast('✓ CSV exportado');
 }
 
 /* ══ UI ══ */
-function showView(name, btn){
+function showView(name,btn){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   btn.classList.add('active');
+  // Reset scroll al cambiar de vista
   document.getElementById('mainScroll').scrollTop=0;
 }
-function showLoading(on){ document.getElementById('loadingBar').style.display=on?'block':'none'; }
-function showToast(msg, isError=false){
+function showLoading(on){document.getElementById('loadingBar').style.display=on?'block':'none';}
+function showToast(msg,isError=false){
   const t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast'+(isError?' error':''); t.style.display='block';
-  clearTimeout(t._to); t._to=setTimeout(()=>{ t.style.display='none'; }, 3800);
+  t.textContent=msg;t.className='toast'+(isError?' error':'');t.style.display='block';
+  clearTimeout(t._to);t._to=setTimeout(()=>{t.style.display='none';},3800);
 }
-document.getElementById('modal').addEventListener('click', e=>{ if(e.target===document.getElementById('modal')) closeModal(); });
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
 </script>
 </body>
 </html>
