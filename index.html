@@ -771,7 +771,7 @@ let canEdit=false;
 
 // Config: driveId resuelto + override manual
 let config = JSON.parse(localStorage.getItem('gestion_cfg') || '{}');
-if (!config.fileId) config.fileId = FIXED_FILE_ID; // siempre fijo
+config.fileId = FIXED_FILE_ID; // siempre fijo
 
 /* ══ AUTH ══ */
 window.onload = async () => {
@@ -807,26 +807,6 @@ window.onload = async () => {
    3. Buscar en todos los drives del usuario (SharePoint sites)
    4. Buscar el archivo por ID directamente en la API
 */
-async function resolveSharedWithMeFile() {
-  const resp = await graphRequest('https://graph.microsoft.com/v1.0/me/drive/sharedWithMe?$top=200');
-
-  const item = (resp.value || []).find(x => {
-    const name = x.name || x.remoteItem?.name || '';
-    return name.toLowerCase() === 'gestión_2026.xlsx'.toLowerCase()
-        || name.toLowerCase() === 'gestion_2026.xlsx'.toLowerCase();
-  });
-
-  if (!item || !item.remoteItem) {
-    throw new Error('No se encontró Gestión_2026.xlsx en Compartidos conmigo');
-  }
-
-  config.driveId = item.remoteItem.parentReference.driveId;
-  config.fileId = item.remoteItem.id;
-  saveConfigToStorage();
-
-  setDriveStatus('ok', 'Conectado ✓ (compartido)');
-  return true;
-}
 async function resolveSharePointDrive() {
   setDriveStatus('loading', 'Detectando conexión…');
 
@@ -900,14 +880,6 @@ async function resolveSharePointDrive() {
     }
   } catch(e) {
     console.warn('Búsqueda en sitios falló:', e.message);
-  }
-
-    // 6. Buscar en archivos compartidos conmigo
-  try {
-    await resolveSharedWithMeFile();
-    return true;
-  } catch(e) {
-    console.warn('sharedWithMe falló:', e.message);
   }
 
   setDriveStatus('error', 'No se encontró el archivo');
@@ -1012,7 +984,7 @@ async function graphRequest(url, method='GET', body=null){
 async function detectRole(){
   try {
     const driveId = config.driveId || 'me';
-    const data = await graphRequest(buildItemUrl(driveId, config.fileId || FIXED_FILE_ID)) + '/permissions');
+    const data = await graphRequest(buildItemUrl(driveId, FIXED_FILE_ID) + '/permissions');
     const myEmail = (currentAccount.username || '').toLowerCase();
     let foundWrite = false, foundForMe = false;
 
@@ -1111,7 +1083,7 @@ async function runDiag(){
   // 3. Archivo con driveId actual
   const driveId = config.driveId || 'me';
   try {
-    const item = await graphRequest(buildItemUrl(driveId, config.fileId || FIXED_FILE_ID) + '?$select=name,size');
+    const item = await graphRequest(buildItemUrl(driveId, FIXED_FILE_ID) + '?$select=name,size');
     addItem(`Archivo (driveId: ${driveId.slice(0,16)}…)`, 'ok', item.name || 'OK');
   } catch(e) {
     addItem(`Archivo (driveId: ${driveId.slice(0,16)}…)`, 'err', e.message.slice(0,60));
