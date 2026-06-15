@@ -1013,21 +1013,40 @@ function renderVBars(el,data){
 
 /* ══ GRÁFICOS ══ */
 function renderProducto(d){
-  const map={};d.forEach(r=>{const p=String(r[COL_PROD]||'').trim()||'S/D';map[p]=(map[p]||0)+1;});
-  const data=Object.entries(map).sort((a,b)=>b[1]-a[1]);
+  const map={};
+  d.forEach(r=>{
+    const p=String(r[COL_PROD]||'').trim()||'S/D';
+    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    if(!map[p]) map[p]=new Set();
+    if(ruc) map[p].add(ruc);
+  });
+  const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]);
   document.getElementById('badge-prod').textContent=data.length+' tipos';
   renderHBars(document.getElementById('chart-producto'),data,PALETTE);
 }
 function renderZonas(d){
-  const map={};d.forEach(r=>{const z=String(r[COL_ZONA]||'').trim()||'S/D';map[z]=(map[z]||0)+1;});
-  const data=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const map={};
+  d.forEach(r=>{
+    const z=String(r[COL_ZONA]||'').trim()||'S/D';
+    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    if(!map[z]) map[z]=new Set();
+    if(ruc) map[z].add(ruc);
+  });
+  const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]).slice(0,10);
   document.getElementById('badge-zona').textContent=data.length+' zonas';
   renderHBars(document.getElementById('chart-zonas'),data,'#059669');
 }
 function renderFuncionarios(d,funcKey){
   if(!funcKey){document.getElementById('chart-funcionarios').innerHTML='<div class="empty-state" style="padding:12px"><p>Columna no encontrada</p></div>';return;}
-  const map={};d.forEach(r=>{const f=String(r[funcKey]||'').trim();if(f)map[f]=(map[f]||0)+1;});
-  const data=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  const map={};
+  d.forEach(r=>{
+    const f=String(r[funcKey]||'').trim();
+    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    if(!f) return;
+    if(!map[f]) map[f]=new Set();
+    if(ruc) map[f].add(ruc);
+  });
+  const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]).slice(0,12);
   document.getElementById('badge-func').textContent=Object.keys(map).length+' total';
   renderHBars(document.getElementById('chart-funcionarios'),data,'#7C3AED');
 }
@@ -1137,8 +1156,14 @@ function renderSucursal(d,netaKey){
     </div>`).join('');
 }
 function renderZonasV(d){
-  const map={};d.forEach(r=>{const z=String(r[COL_ZONA]||'').trim()||'S/D';map[z]=(map[z]||0)+1;});
-  const data=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,7);
+  const map={};
+  d.forEach(r=>{
+    const z=String(r[COL_ZONA]||'').trim()||'S/D';
+    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    if(!map[z]) map[z]=new Set();
+    if(ruc) map[z].add(ruc);
+  });
+  const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]).slice(0,7);
   renderVBars(document.getElementById('chart-zonas-v'),data);
 }
 function renderEstGes(d){
