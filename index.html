@@ -478,7 +478,7 @@ tr:last-child td{border-bottom:none;}
           <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
           <div class="kpi-label">Clientes Únicos</div>
           <div class="kpi-value" id="kpi-clientes">—</div>
-          <div class="kpi-sub">estado ACTIVADO</div>
+          <div class="kpi-sub">clientes únicos — estado ACTIVADO</div>
         </div>
         <div class="kpi-card teal">
           <div class="kpi-stripe"></div>
@@ -1086,8 +1086,16 @@ function renderNetaMes(d,netaKey){
 }
 
 function renderEstCom(d){
-  const map={};d.forEach(r=>{const e=String(r[COL_ESTCOM]||'').trim()||'S/D';map[e]=(map[e]||0)+1;});
-  const entries=Object.entries(map).sort((a,b)=>b[1]-a[1]);
+  // Contar clientes únicos por EST_COM (usando RUC como identificador único)
+  const map={};
+  d.forEach(r=>{
+    const e=String(r[COL_ESTCOM]||'').trim()||'S/D';
+    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    if(!map[e]) map[e]=new Set();
+    if(ruc) map[e].add(ruc);
+  });
+  // Convertir Sets a conteos
+  const entries=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]);
   const total=entries.reduce((s,[,c])=>s+c,0);
   document.getElementById('badge-estcom').textContent=entries.length+' estados';
   document.getElementById('donut-total').textContent=total.toLocaleString('es-PE');
@@ -1097,7 +1105,7 @@ function renderEstCom(d){
     donutChartInstance=new Chart(canvas,{
       type:'doughnut',
       data:{labels:entries.map(([l])=>l),datasets:[{data:entries.map(([,c])=>c),backgroundColor:PALETTE.slice(0,entries.length),borderWidth:0,hoverOffset:4}]},
-      options:{responsive:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+ctx.raw+' ('+Math.round(ctx.raw/total*100)+'%)'}}},cutout:'70%'}
+      options:{responsive:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+ctx.raw+' clientes ('+Math.round(ctx.raw/total*100)+'%)'}}},cutout:'70%'}
     });
   }
   document.getElementById('donut-legend').innerHTML=entries.slice(0,7).map(([l,c],i)=>`
@@ -1134,8 +1142,15 @@ function renderZonasV(d){
   renderVBars(document.getElementById('chart-zonas-v'),data);
 }
 function renderEstGes(d){
-  const map={};d.forEach(r=>{const e=String(r[COL_ESTGES]||'').trim()||'S/D';map[e]=(map[e]||0)+1;});
-  const data=Object.entries(map).sort((a,b)=>b[1]-a[1]);
+  // Contar clientes únicos por EST_GES
+  const map={};
+  d.forEach(r=>{
+    const e=String(r[COL_ESTGES]||'').trim()||'S/D';
+    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    if(!map[e]) map[e]=new Set();
+    if(ruc) map[e].add(ruc);
+  });
+  const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]);
   document.getElementById('badge-estges').textContent=data.length+' estados';
   renderHBars(document.getElementById('chart-estados'),data,PALETTE);
 }
