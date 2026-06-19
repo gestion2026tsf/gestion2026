@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestión 2026 — Total Servicios Financieros</title>
-<script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.7.1/lib/msal-browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -39,9 +38,12 @@ body {font-family:var(--font);background:var(--bg);color:var(--text);display:fle
 .login-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(20px);border-radius:24px;padding:52px 56px;text-align:center;max-width:420px;width:90%;position:relative;z-index:1;}
 .login-tagline{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:12px;}
 .login-box h1{font-size:26px;font-weight:700;color:#fff;margin-bottom:8px;}
-.login-box p{color:rgba(255,255,255,.5);font-size:14px;margin-bottom:36px;line-height:1.6;}
-.btn-ms{display:flex;align-items:center;justify-content:center;gap:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:12px;padding:15px 24px;font-size:14px;font-weight:500;cursor:pointer;width:100%;transition:all .2s;font-family:var(--font);}
-.btn-ms:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);transform:translateY(-1px);}
+.login-box p{color:rgba(255,255,255,.5);font-size:14px;margin-bottom:24px;line-height:1.6;}
+.login-input{width:100%;padding:13px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:#fff;font-size:14px;outline:none;font-family:var(--font);margin-bottom:14px;}
+.login-input::placeholder{color:rgba(255,255,255,.4);}
+.login-input:focus{border-color:var(--accent2);background:rgba(255,255,255,.1);}
+.btn-ms{display:flex;align-items:center;justify-content:center;gap:12px;background:var(--accent);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:12px;padding:15px 24px;font-size:14px;font-weight:600;cursor:pointer;width:100%;transition:all .2s;font-family:var(--font);}
+.btn-ms:hover{background:#1D4ED8;transform:translateY(-1px);}
 #app {display:none;flex-direction:column;height:100vh;overflow:hidden;}
 header {background:var(--navy);color:#fff;padding:0 28px;height:var(--header-h);min-height:var(--header-h);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06);z-index:100;}
 .header-left{display:flex;align-items:center;gap:14px;}
@@ -229,11 +231,9 @@ tr:last-child td{border-bottom:none;}
   <div class="login-box">
     <div class="login-tagline">Plataforma de Gestión</div>
     <h1>Gestión 2026</h1>
-    <p>Total Servicios Financieros<br>Ingresa con tu cuenta corporativa Microsoft</p>
-    <button class="btn-ms" onclick="signIn()">
-      <svg width="18" height="18" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
-      Continuar con Microsoft
-    </button>
+    <p>Total Servicios Financieros<br>Escribe tu nombre para continuar</p>
+    <input class="login-input" type="text" id="loginNombre" placeholder="Tu nombre" onkeydown="if(event.key==='Enter')signIn()">
+    <button class="btn-ms" onclick="signIn()">Entrar</button>
   </div>
 </div>
 
@@ -345,7 +345,7 @@ tr:last-child td{border-bottom:none;}
       </div>
       <div class="table-readonly-banner">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Modo solo lectura — No tienes permisos de edición en este archivo
+        Modo solo lectura — activado manualmente con el botón "Solo ver"
       </div>
       <div class="toolbar">
         <div class="search-wrapper">
@@ -384,7 +384,7 @@ tr:last-child td{border-bottom:none;}
             <th class="col-accion">Acción</th>
           </tr></thead>
           <tbody id="tabla-body">
-            <tr><td colspan="16"><div class="empty-state"><div class="empty-icon">📁</div><h3>Cargando datos…</h3><p>Conectando con el archivo Excel compartido</p></div></td></tr>
+            <tr><td colspan="16"><div class="empty-state"><div class="empty-icon">📁</div><h3>Cargando datos…</h3><p>Conectando con el Flow de Power Automate</p></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -406,15 +406,15 @@ tr:last-child td{border-bottom:none;}
         </div>
       </div>
       <div class="setup-card">
-        <h2>Conexión al Excel compartido</h2>
-        <p>Conectado a <b>Gestión_2026.xlsx</b> — Drive ID y File ID ya están configurados por defecto. Solo haz clic en "Guardar y cargar" si necesitas cambiar el archivo.</p>
+        <h2>Conexión al Flow de Power Automate</h2>
+        <p>Ya no se usa Microsoft Graph ni inicio de sesión con Microsoft. Ahora la página llama directo a tu Flow, y el Flow es quien lee/escribe en <b>Gestión_2026.xlsx</b> usando tu propia cuenta autorizada.</p>
         <div class="form-group" style="margin-top:18px">
-          <label class="form-label">Drive ID</label>
-          <input class="config-input" type="text" id="cfg-driveid" placeholder="Drive ID">
+          <label class="form-label">URL del Flow (HTTP POST)</label>
+          <input class="config-input" type="text" id="cfg-driveid" placeholder="https://prod-00.westus.logic.azure.com/...">
         </div>
         <div class="form-group" style="margin-top:12px">
-          <label class="form-label">File ID del Excel</label>
-          <input class="config-input" type="text" id="cfg-fileid" placeholder="File ID">
+          <label class="form-label">Clave secreta (la misma que pusiste en la Condición del Flow)</label>
+          <input class="config-input" type="text" id="cfg-fileid" placeholder="TSF2026">
         </div>
         <div style="margin-top:20px;display:flex;gap:10px">
           <button class="btn-primary" onclick="saveConfig()">
@@ -457,49 +457,38 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <script>
-/* ══ VALORES FIJOS — no necesitan configurar nada ══ */
-const DEFAULT_DRIVE_ID = 'b!1Sv0hI5W4Ee85UVLqJdveQP3pS26lSJPncGSTsM5OFRi1k8pT6PdQpdcamfs87Av';
-const DEFAULT_FILE_ID  = '5521AE67-EB96-45E5-A3EE-D99BA7BBA769';
+/* ════════════════════════════════════════
+   CONFIG — Power Automate (sin Microsoft Graph / sin MSAL)
+   Pega aquí tu URL del Flow una vez creada, o ponla en la pestaña Configurar.
+   ════════════════════════════════════════ */
+const DEFAULT_FLOW_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/a30a1f18625542cd973a4803bea28799/triggers/manual/paths/invoke?api-version=1';        // <-- pega aquí la URL HTTP POST de tu Flow
+const DEFAULT_SECRET   = 'TSF2026'; // <-- debe coincidir con la clave que pusiste en la Condición del Flow
 
-const MSAL_CONFIG={
-  auth:{clientId:"683e6fbc-8e43-4310-b9dc-be4c813605bd",authority:"https://login.microsoftonline.com/2e32ce4d-9718-4ed3-81d2-8de99f5e6ae3",redirectUri:window.location.href.split('?')[0]},
-  cache:{cacheLocation:"localStorage",storeAuthStateInCookie:false}
-};
-const SCOPES=["Files.ReadWrite","User.Read"];
-const TABLE_NAME="TablaData";
 const COL_FUNC='FNCNR',COL_NETA='NETA',COL_FECHA='FECHA',COL_ESTGES='EST_GES',COL_ESTCOM='EST_COM',COL_ZONA='ZONA',COL_PROD='PRODUCTO',COL_SUC='SUCURSAL';
 const PALETTE=['#2563EB','#D97706','#059669','#7C3AED','#0891B2','#EA580C','#DC2626','#0D9488','#9333EA','#CA8A04'];
+const CAMPOS_INTERNOS=['ItemInternalId','@odata.etag','ID'];
 
-let msalInstance,currentAccount;
 let allData=[],filteredData=[],dashData=[];
 let sortField='',sortDir=1;
 let page=1,pageSize=25;
 let editingRow=null,isNewRecord=false,headers=[];
 let donutChartInstance=null;
-let canEdit=true;
+let usuarioActual='';
 
-/* Carga config desde localStorage, pero si no existe usa los valores fijos */
 function getConfig(){
   const saved=JSON.parse(localStorage.getItem('gestion_cfg')||'{}');
-  return {
-    driveId: saved.driveId || DEFAULT_DRIVE_ID,
-    fileId:  saved.fileId  || DEFAULT_FILE_ID
-  };
+  return { flowUrl: saved.flowUrl || DEFAULT_FLOW_URL, secret: saved.secret || DEFAULT_SECRET };
 }
 let config = getConfig();
 
-window.onload=async()=>{
-  msalInstance=new msal.PublicClientApplication(MSAL_CONFIG);
-  await msalInstance.initialize();
-  try{await msalInstance.handleRedirectPromise();}catch(e){console.warn(e);}
-  const accounts=msalInstance.getAllAccounts();
+window.onload=()=>{
+  document.getElementById('cfg-driveid').value=config.flowUrl;
+  document.getElementById('cfg-fileid').value=config.secret;
 
-  /* Mostrar valores actuales en el panel de config */
-  document.getElementById('cfg-driveid').value=config.driveId;
-  document.getElementById('cfg-fileid').value=config.fileId;
-
-  if(accounts.length>0){
-    currentAccount=accounts[0];showApp();
+  const nombreGuardado=localStorage.getItem('gestion_user');
+  if(nombreGuardado){
+    usuarioActual=nombreGuardado;
+    showApp();
     const cache=localStorage.getItem('gestion_data_cache');
     if(cache){
       try{
@@ -515,15 +504,17 @@ window.onload=async()=>{
   }
 };
 
-let loginInProgress=false;
-async function signIn(){
-  if(loginInProgress)return;loginInProgress=true;
-  try{showLoading(true);const r=await msalInstance.loginPopup({scopes:SCOPES});currentAccount=r.account;showApp();loadData();}
-  catch(e){if(!e.message?.includes('interaction_in_progress'))showToast('Error: '+e.message,true);}
-  finally{showLoading(false);loginInProgress=false;}
+function signIn(){
+  const nombre=document.getElementById('loginNombre').value.trim();
+  if(!nombre){showToast('Escribe tu nombre',true);return;}
+  usuarioActual=nombre;
+  localStorage.setItem('gestion_user',nombre);
+  showApp();
+  loadData();
 }
 function signOut(){
-  msalInstance.logoutPopup({account:currentAccount});
+  localStorage.removeItem('gestion_user');
+  usuarioActual='';
   document.getElementById('app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   allData=[];filteredData=[];
@@ -531,56 +522,13 @@ function signOut(){
 function showApp(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app').style.display='flex';
-  document.getElementById('userAvatar').textContent=currentAccount.name?.[0]||'?';
-  document.getElementById('userName').textContent=currentAccount.name||currentAccount.username;
+  document.getElementById('userAvatar').textContent=usuarioActual?.[0]?.toUpperCase()||'?';
+  document.getElementById('userName').textContent=usuarioActual;
   document.getElementById('dash-fecha').textContent=new Date().toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-}
-async function getToken(){
-  try{const r=await msalInstance.acquireTokenSilent({scopes:SCOPES,account:currentAccount});return r.accessToken;}
-  catch{const r=await msalInstance.acquireTokenPopup({scopes:SCOPES});return r.accessToken;}
-}
-async function graphRequest(url,method='GET',body=null){
-  const token=await getToken();
-  const opts={method,headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'}};
-  if(body)opts.body=JSON.stringify(body);
-  const res=await fetch(url,opts);
-  if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||`Error ${res.status}`);}
-  return method==='DELETE'?null:res.json();
-}
-function tableBase(){
-  const driveId=config.driveId;
-  const drive=driveId==='me'?'https://graph.microsoft.com/v1.0/me/drive':`https://graph.microsoft.com/v1.0/drives/${driveId}`;
-  return `${drive}/items/${config.fileId}/workbook/tables/${TABLE_NAME}`;
-}
-
-async function detectRole(){
-  if(!config.fileId)return;
-  try{
-    const driveId=config.driveId;
-    const drive=driveId==='me'?'https://graph.microsoft.com/v1.0/me/drive':`https://graph.microsoft.com/v1.0/drives/${driveId}`;
-    const data=await graphRequest(`${drive}/items/${config.fileId}/permissions`);
-    const myEmail=(currentAccount.username||'').toLowerCase();
-    let foundWrite=false,foundForMe=false;
-    for(const p of (data.value||[])){
-      const roles=p.roles||[];
-      if(roles.includes('owner')&&!p.grantedTo&&!p.grantedToIdentitiesV2){foundWrite=true;break;}
-      const emails=[];
-      if(p.grantedTo?.user?.email)emails.push(p.grantedTo.user.email.toLowerCase());
-      if(p.grantedToIdentities)p.grantedToIdentities.forEach(g=>{if(g.user?.email)emails.push(g.user.email.toLowerCase());});
-      if(p.grantedToIdentitiesV2)p.grantedToIdentitiesV2.forEach(g=>{if(g.user?.email)emails.push(g.user.email.toLowerCase());});
-      const isMe=emails.includes(myEmail);
-      if(isMe){foundForMe=true;if(roles.includes('write')||roles.includes('owner'))foundWrite=true;}
-    }
-    if(!foundForMe)foundWrite=true;
-    canEdit=foundWrite;
-  }catch(e){console.warn('detectRole falló, asumiendo editor:',e.message);canEdit=true;}
-  applyRole();
-}
-function applyRole(){
   const badge=document.getElementById('roleBadge');
-  const toggle=document.getElementById('viewToggle');
-  if(canEdit){badge.textContent='Editor';badge.className='role-badge editor';toggle.style.display='flex';setModo('editor');}
-  else{badge.textContent='Solo lectura';badge.className='role-badge viewer';toggle.style.display='none';setModo('viewer');}
+  badge.textContent='Editor';badge.className='role-badge editor';
+  document.getElementById('viewToggle').style.display='flex';
+  setModo('editor');
 }
 function setModo(modo){
   const body=document.body;
@@ -590,36 +538,40 @@ function setModo(modo){
   else{body.classList.add('viewer-mode');btnV?.classList.add('active');btnE?.classList.remove('active');}
 }
 
+/* ════════════════════════════════════════
+   LLAMADAS AL FLOW (reemplaza a Graph/MSAL)
+   ════════════════════════════════════════ */
+async function flowRequest(payload){
+  config=getConfig();
+  if(!config.flowUrl)throw new Error('Falta configurar la URL del Flow (pestaña Configurar)');
+  const res=await fetch(config.flowUrl,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({...payload,key:config.secret})
+  });
+  if(!res.ok)throw new Error('Error '+res.status+' al llamar al Flow');
+  const text=await res.text();
+  return text?JSON.parse(text):null;
+}
+
 async function loadData(background=false){
-  config=getConfig(); /* Siempre re-leer config por si cambió */
-  if(!config.fileId){showToast('Sin File ID configurado',true);return;}
-  if(!background){showLoading(true);showLoadProgress(true);updateLoadProgress(5,0);}
-  const tempData=[];
+  config=getConfig();
+  if(!config.flowUrl){if(!background)showToast('Falta configurar la URL del Flow',true);return;}
+  if(!background){showLoading(true);showLoadProgress(true);updateLoadProgress(10,0);}
   try{
-    const base=tableBase();
-    const colData=await graphRequest(`${base}/columns?$select=name`);
-    headers=colData.value.map(c=>c.name);
-    const PAGE=500;let skip=0,totalRows=0,keepGoing=true;
-    while(keepGoing){
-      const rowData=await graphRequest(`${base}/rows?$top=${PAGE}&$skip=${skip}`);
-      const rows=rowData.value||[];
-      for(const row of rows){
-        const obj={_rowId:row.index};
-        headers.forEach((h,i)=>{const v=row.values[0][i];obj[h]=(v===true)?'SI':(v===false)?'':(v??'');});
-        const expe=String(obj['EXPE']||'').trim();
-        const prod=String(obj[COL_PROD]||'').trim();
-        if(expe||prod)tempData.push(obj);
-        totalRows++;
-      }
-      skip+=PAGE;
-      if(!background)updateLoadProgress(Math.min(15+Math.round((totalRows/(totalRows+PAGE))*80),95),tempData.length);
-      if(rows.length<PAGE)keepGoing=false;
-    }
-    if(!tempData.length){if(!background)showToast('Tabla vacía',true);return;}
+    const data=await flowRequest({accion:'leer'});
+    const filas=Array.isArray(data)?data:(data?.value||[]);
+    if(!filas.length){if(!background)showToast('Tabla vacía',true);return;}
+    headers=Object.keys(filas[0]).filter(k=>!CAMPOS_INTERNOS.includes(k));
+    if(!background)updateLoadProgress(60,filas.length);
+    const tempData=filas.map((f,i)=>{
+      const obj={_idx:i};
+      headers.forEach(h=>{const v=f[h];obj[h]=(v===true)?'SI':(v===false)?'':(v??'');});
+      return obj;
+    }).filter(o=>String(o['EXPE']||'').trim()||String(o[COL_PROD]||'').trim());
     localStorage.setItem('gestion_data_cache',JSON.stringify({data:tempData,headers,ts:Date.now()}));
     allData=tempData;
     applyDashFilter();filterTable();updateFiltros();updateDashFilters();
-    await detectRole();
     if(background)showToast(`✓ Actualizado — ${allData.length} operaciones`);
     else{updateLoadProgress(100,allData.length);showToast(`✓ ${allData.length} operaciones cargadas`);}
   }catch(e){
@@ -805,7 +757,7 @@ function renderTable(){
     const estBadge=est.toUpperCase().includes('ACTIVADO')?'badge-act':est.toUpperCase().includes('S/D')?'badge-grey':'badge-inac';
     const ecBadge=estcom.toUpperCase().includes('PROYE')?'badge-proye':estcom.toUpperCase().includes('ACTIV')?'badge-act':'badge-grey';
     const func=r[COL_FUNC]||r['FNCNE']||'';
-    return `<tr><td style="font-weight:700;color:var(--accent)">${r.EXPE||''}</td><td><span class="badge ${prodBadge}">${prod}</span></td><td style="color:var(--muted);font-size:11px;font-family:monospace">${r.RUC||''}</td><td style="max-width:170px;overflow:hidden;text-overflow:ellipsis;font-weight:500" title="${r.NOMBRE_RSOCIAL_CLIENTE||''}">${r.NOMBRE_RSOCIAL_CLIENTE||''}</td><td style="font-size:11px;font-weight:600;color:var(--text2)">${r[COL_ZONA]||''}</td><td style="color:var(--muted);font-size:11px">${r.SUCURSAL||''}</td><td style="font-size:11px;font-weight:600;color:var(--text2);max-width:90px;overflow:hidden;text-overflow:ellipsis" title="${func}">${func}</td><td style="text-align:right;font-weight:600;color:var(--success);font-size:11px">${fmtNum(r['NETA']||r['neta'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${fmtNum(r['PESO_TEA'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${fmtNum(r['C_ADELANTO']||r['C. ADELANTO'])}</td><td style="text-align:right;font-size:11px;color:var(--warn)">${fmtNum(r['RETENCIÓN']||r['RETENCION'])}</td><td style="text-align:right;font-weight:700;font-size:11px;color:var(--accent)">${fmtNum(r['$ DESEMBOLSAR']||r['DESEMBOLSAR'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${r['CAF']||'—'}</td><td><span class="badge ${ecBadge}">${estcom}</span></td><td><span class="badge ${estBadge}" style="font-size:9px">${est}</span></td><td class="col-accion"><button class="btn-edit" onclick="openEdit(${r._rowId})">Editar</button></td></tr>`;
+    return `<tr><td style="font-weight:700;color:var(--accent)">${r.EXPE||''}</td><td><span class="badge ${prodBadge}">${prod}</span></td><td style="color:var(--muted);font-size:11px;font-family:monospace">${r.RUC||''}</td><td style="max-width:170px;overflow:hidden;text-overflow:ellipsis;font-weight:500" title="${r.NOMBRE_RSOCIAL_CLIENTE||''}">${r.NOMBRE_RSOCIAL_CLIENTE||''}</td><td style="font-size:11px;font-weight:600;color:var(--text2)">${r[COL_ZONA]||''}</td><td style="color:var(--muted);font-size:11px">${r.SUCURSAL||''}</td><td style="font-size:11px;font-weight:600;color:var(--text2);max-width:90px;overflow:hidden;text-overflow:ellipsis" title="${func}">${func}</td><td style="text-align:right;font-weight:600;color:var(--success);font-size:11px">${fmtNum(r['NETA']||r['neta'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${fmtNum(r['PESO_TEA'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${fmtNum(r['C_ADELANTO']||r['C. ADELANTO'])}</td><td style="text-align:right;font-size:11px;color:var(--warn)">${fmtNum(r['RETENCIÓN']||r['RETENCION'])}</td><td style="text-align:right;font-weight:700;font-size:11px;color:var(--accent)">${fmtNum(r['$ DESEMBOLSAR']||r['DESEMBOLSAR'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${r['CAF']||'—'}</td><td><span class="badge ${ecBadge}">${estcom}</span></td><td><span class="badge ${estBadge}" style="font-size:9px">${est}</span></td><td class="col-accion"><button class="btn-edit" onclick="openEdit(${r._idx})">Editar</button></td></tr>`;
   }).join('');
   const totalPages=Math.ceil(filteredData.length/pageSize);
   document.getElementById('page-info').textContent=`${start+1}–${Math.min(end,filteredData.length)} de ${filteredData.length}`;
@@ -820,19 +772,17 @@ function changePage(dir){goPage(page+dir);}
 function goPage(p){page=Math.max(1,Math.min(p,Math.ceil(filteredData.length/pageSize)));renderTable();}
 function sortTable(field){if(sortField===field)sortDir*=-1;else{sortField=field;sortDir=1;}filterTable();}
 
-function openEdit(rowId){
-  if(!canEdit){showToast('No tienes permisos de edición',true);return;}
-  const row=allData.find(r=>r._rowId===rowId);if(!row)return;
+function openEdit(idx){
+  const row=allData.find(r=>r._idx===idx);if(!row)return;
   editingRow=row;isNewRecord=false;
   document.getElementById('modal-title').textContent='Editar Expediente';
   document.getElementById('modal-expid').textContent=`EXP # ${row.EXPE||''}`;
   document.getElementById('btn-guardar').textContent='Guardar en Excel';
-  const readonly=['EXPE','RUC'];
+  const readonly=['EXPE'];
   document.getElementById('form-fields').innerHTML=headers.map(k=>{const v=row[k]??'';const ro=readonly.includes(k);return `<div class="form-group"><label class="form-label">${k}</label><input class="form-input" id="field-${k}" value="${String(v).replace(/"/g,'&quot;')}" ${ro?'readonly':''} placeholder="${k}"></div>`;}).join('');
   document.getElementById('modal').classList.add('open');
 }
 function openNuevo(){
-  if(!canEdit){showToast('No tienes permisos de edición',true);return;}
   editingRow=null;isNewRecord=true;
   document.getElementById('modal-title').textContent='Nuevo Expediente';
   document.getElementById('modal-expid').textContent='Nuevo registro';
@@ -844,21 +794,20 @@ function openNuevo(){
 function closeModal(){document.getElementById('modal').classList.remove('open');editingRow=null;isNewRecord=false;}
 
 async function guardarCambios(){
-  if(!canEdit){showToast('No tienes permisos de edición',true);return;}
   const esNuevo=isNewRecord;
   const btn=document.getElementById('btn-guardar');
   btn.disabled=true;btn.textContent='Guardando…';showLoading(true);
   try{
-    const base=tableBase();
-    const values=[headers.map(h=>{const input=document.getElementById(`field-${h}`);return input?input.value:(editingRow?.[h]??'');})];
+    const valores={};
+    headers.forEach(h=>{const input=document.getElementById(`field-${h}`);valores[h]=input?input.value:(editingRow?.[h]??'');});
     if(esNuevo){
-      const res=await graphRequest(`${base}/rows/add`,'POST',{values});
-      const newObj={_rowId:res.index};headers.forEach((h,i)=>{newObj[h]=values[0][i];});allData.push(newObj);
-      closeModal();applyDashFilter();filterTable();showToast('✓ Expediente agregado');
+      await flowRequest({accion:'agregar',valores});
+      closeModal();showToast('✓ Expediente agregado');
+      loadData(true); // recarga para traer el dato real ya guardado en Excel
     }else{
-      await graphRequest(`${base}/rows/itemAt(index=${editingRow._rowId})`,'PATCH',{values});
-      const idx=allData.findIndex(r=>r._rowId===editingRow._rowId);
-      if(idx>=0)headers.forEach((h,i)=>{allData[idx][h]=values[0][i];});
+      await flowRequest({accion:'actualizar',clave:editingRow['EXPE'],valores});
+      const idx=allData.findIndex(r=>r._idx===editingRow._idx);
+      if(idx>=0)headers.forEach(h=>{allData[idx][h]=valores[h];});
       closeModal();applyDashFilter();filterTable();showToast('✓ Expediente guardado');
     }
   }catch(e){showToast('Error guardando: '+e.message,true);console.error(e);}
@@ -866,30 +815,33 @@ async function guardarCambios(){
 }
 
 function saveConfig(){
-  const driveId=document.getElementById('cfg-driveid').value.trim()||DEFAULT_DRIVE_ID;
-  const fileId=document.getElementById('cfg-fileid').value.trim()||DEFAULT_FILE_ID;
-  config={driveId,fileId};
+  const flowUrl=document.getElementById('cfg-driveid').value.trim();
+  const secret=document.getElementById('cfg-fileid').value.trim()||DEFAULT_SECRET;
+  if(!flowUrl){showToast('Falta la URL del Flow',true);return;}
+  config={flowUrl,secret};
   localStorage.setItem('gestion_cfg',JSON.stringify(config));
   const s=document.getElementById('cfg-status');s.textContent='✓ Guardado. Cargando datos…';s.style.color='var(--success)';
   loadData();
 }
 async function testConnection(){
-  const fileId=document.getElementById('cfg-fileid').value.trim()||DEFAULT_FILE_ID;
-  const driveId=document.getElementById('cfg-driveid').value.trim()||DEFAULT_DRIVE_ID;
+  const flowUrl=document.getElementById('cfg-driveid').value.trim();
+  const secret=document.getElementById('cfg-fileid').value.trim()||DEFAULT_SECRET;
   const status=document.getElementById('cfg-status');
+  if(!flowUrl){status.textContent='✗ Falta la URL del Flow';status.style.color='var(--danger)';return;}
   status.textContent='Probando conexión…';status.style.color='var(--muted)';showLoading(true);
   try{
-    const drive=driveId==='me'?'https://graph.microsoft.com/v1.0/me/drive':`https://graph.microsoft.com/v1.0/drives/${driveId}`;
-    const data=await graphRequest(`${drive}/items/${fileId}/workbook/tables`);
-    const tables=data.value.map(t=>t.name).join(', ');
-    status.innerHTML=`✓ Conexión exitosa. Tablas: <b>${tables}</b>`;status.style.color='var(--success)';
+    const res=await fetch(flowUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accion:'leer',key:secret})});
+    if(!res.ok)throw new Error('Respuesta '+res.status);
+    const data=await res.json();
+    const n=Array.isArray(data)?data.length:(data?.value?.length||0);
+    status.innerHTML=`✓ Conexión exitosa. Filas recibidas: <b>${n}</b>`;status.style.color='var(--success)';
   }catch(e){status.textContent='✗ Error: '+e.message;status.style.color='var(--danger)';}
   finally{showLoading(false);}
 }
 
 function exportCSV(){
   if(!filteredData.length){showToast('No hay datos para exportar',true);return;}
-  const keys=headers.length?headers:Object.keys(filteredData[0]).filter(k=>k!=='_rowId');
+  const keys=headers.length?headers:Object.keys(filteredData[0]).filter(k=>k!=='_idx');
   const csv=[keys.join(','),...filteredData.map(r=>keys.map(k=>`"${String(r[k]||'').replace(/"/g,'""')}"`).join(','))].join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));
