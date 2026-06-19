@@ -476,8 +476,7 @@ let donutChartInstance=null;
 let usuarioActual='';
 
 function getConfig(){
-  const saved=JSON.parse(localStorage.getItem('gestion_cfg')||'{}');
-  return { flowUrl: saved.flowUrl || DEFAULT_FLOW_URL, secret: saved.secret || DEFAULT_SECRET };
+  return { flowUrl: DEFAULT_FLOW_URL, secret: DEFAULT_SECRET };
 }
 let config = getConfig();
 
