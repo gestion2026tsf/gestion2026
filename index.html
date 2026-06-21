@@ -6,37 +6,39 @@
 <title>Gestión 2026 — Total Servicios Financieros</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --navy:#2B2B2B;
-  --navy2:#333333;
-  --navy3:#424242;
-
+':root {
+  --navy:#2F2F2F;
+  --navy2:#3A3A3A;
+  --navy3:#4A4A4A;
   --accent:#F0005B;
   --accent2:#FF2B7A;
   --accent-light:#FFE3EF;
-
   --success:#5BC7C8;
   --success-light:#E6FAFA;
-
   --danger:#EF4444;
   --danger-light:#FEF2F2;
-
   --warn:#F5B000;
   --warn-light:#FFF4D6;
-
-  --bg:#EDEDED;
-  --bg2:#D9D9D9;
+  --bg:#E9E9E9;
+  --bg2:#D7D7D7;
   --card:#FFFFFF;
-
-  --border:#CFCFCF;
+  --border:#C9C9C9;
   --border2:#B8B8B8;
-
   --text:#2B2B2B;
   --text2:#444444;
   --muted:#666666;
   --muted2:#888888;
+  --font:'Montserrat',system-ui,sans-serif;
+  --radius:12px;
+  --radius-sm:8px;
+  --radius-lg:20px;
+  --shadow:0 2px 8px rgba(0,0,0,.12);
+  --shadow-md:0 6px 18px rgba(0,0,0,.18);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.24);
+  --header-h:64px;
+  --nav-h:48px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;}
@@ -306,91 +308,55 @@ tr:last-child td{border-bottom:none;}
 .empty-state h3{color:var(--text2);margin-bottom:4px;font-size:13px;font-weight:700;}
 .empty-state p{font-size:12px;line-height:1.6;}
 
-/* ESTILO TIPO DASHBOARD POWER BI */
-.chart-card {
-  padding: 0;
-  border-radius: 10px;
-  border: 1px solid #8A8A8A;
-  box-shadow: 0 6px 18px rgba(0,0,0,.25);
-  overflow: hidden;
-}
+/* ══════════════════════════════
+   TEMA EJECUTIVO TSF
+   ══════════════════════════════ */
+#login-screen{background:radial-gradient(circle at top,#39465f 0,#272727 48%,#202020 100%);}
+#login-screen::before{background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(240,0,91,.22),transparent);}
+#login-screen::after{display:none;}
+.login-box{background:rgba(58,58,58,.88);border:1px solid rgba(255,255,255,.14);box-shadow:0 28px 70px rgba(0,0,0,.38);}
+.login-logo,.brand-icon,.avatar.admin{background:linear-gradient(135deg,var(--accent),var(--accent2));}
+.login-box h1{font-size:27px;font-weight:900;}
+.login-box p{margin-bottom:26px;}
+.role-card.selected{border-color:var(--accent2);background:rgba(240,0,91,.16);box-shadow:0 0 0 1px rgba(240,0,91,.25);}
+.login-input:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(240,0,91,.16);}
+.btn-enter,.btn-primary,.btn-success{background:linear-gradient(135deg,var(--accent),#C9004A);border:0;color:#fff;}
+.btn-enter:hover,.btn-primary:hover,.btn-success:hover{background:linear-gradient(135deg,#FF2B7A,var(--accent));}
 
-.chart-head {
-  background: #F0005B;
-  color: white;
-  justify-content: center;
-  padding: 8px 12px;
-  margin-bottom: 14px;
-}
+header{background:var(--navy);}
+nav{background:var(--navy2);}
+.nav-btn.active{border-bottom-color:var(--accent);}
 
-.chart-title {
-  color: white;
-  font-size: 14px;
-  font-weight: 900;
-  text-align: center;
-}
+.chart-card{padding:0 0 14px;border:1px solid #9A9A9A;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.22);}
+.chart-head{min-height:34px;background:var(--accent);color:#fff;justify-content:center;padding:8px 12px;margin:0 0 12px;}
+.chart-title{color:#fff;font-size:13px;font-weight:900;letter-spacing:.6px;text-align:center;}
+.chart-badge{display:none;}
+.chart-card>div:not(.chart-head){padding:0 18px 14px;}
 
-.chart-badge {
-  display: none;
-}
+.kpi-card{background:#3A3A3A;color:#fff;border:1px solid #555;box-shadow:0 6px 16px rgba(0,0,0,.22);}
+.kpi-label,.kpi-sub{color:#EAEAEA;}
+.kpi-value{color:#fff!important;font-size:34px;}
+.kpi-icon{background:rgba(255,255,255,.12)!important;}
+.kpi-stripe{background:linear-gradient(90deg,var(--accent),var(--warn))!important;}
 
-.kpi-card {
-  background: #3A3A3A;
-  color: white;
-  border: 1px solid #555;
-  box-shadow: 0 6px 16px rgba(0,0,0,.25);
-}
+thead{background:var(--accent);}
+th{color:#fff;}
+th:hover{background:#C9004A;color:#fff;}
+tbody tr:nth-child(even) td{background:#EFEFEF;}
+tbody tr:hover td{background:var(--accent-light);}
 
-.kpi-label {
-  color: #EDEDED;
-}
-
-.kpi-value {
-  color: white !important;
-  font-size: 34px;
-}
-
-thead {
-  background: #F0005B;
-}
-
-th {
-  color: white;
-}
-
-tbody tr:nth-child(even) td {
-  background: #EFEFEF;
-}
-
-tbody tr:hover td {
-  background: #FFE3EF;
-}
-
-.bar-fill,
-.suc-fill,
-.estges-fill,
-.vbar-fill {
-  background: #5BC7C8 !important;
-}
-
-.btn-primary,
-.btn-success {
-  background: #F0005B;
-  border: 2px solid white;
-}
-
-.btn-primary:hover,
-.btn-success:hover {
-  background: #C9004A;
-}
-
-.btn-secondary,
-.btn-clear {
-  background: #666;
-  color: white;
-  border: 2px solid white;
-}
-
+.bar-row,.suc-row,.estges-row{height:22px;margin-bottom:5px;}
+.bar-label,.suc-label,.estges-label,.vbar-lbl,.vbar-val{font-size:10px;font-weight:700;}
+.bar-label{min-width:92px;max-width:92px;}
+.suc-label{min-width:86px;max-width:86px;}
+.estges-label{min-width:120px;max-width:120px;}
+.bar-count,.estges-count,.suc-amount{font-size:10px;min-width:42px;}
+.bar-track,.suc-track,.estges-track{height:7px;background:#D6D6D6;}
+.bar-fill,.suc-fill,.estges-fill,.vbar-fill{background:#5BC7C8!important;}
+.vbar-container{height:150px;padding:10px 18px 20px!important;align-items:flex-end;}
+.dash-row{gap:12px;}
+.dash-row.cols-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media(max-width:1100px){.dash-row.cols-3{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -403,7 +369,7 @@ tbody tr:hover td {
     <div class="login-logo">💼</div>
     <div class="login-tagline">Plataforma de Gestión</div>
     <h1>Gestión 2026</h1>
-    <p>Total Servicios Financieros<br>Selecciona tu rol e ingresa tu clave</p>
+    <p>Total Servicios Financieros<br>Selecciona tu rol e ingresa la clave</p>
     <div class="login-roles">
       <div class="role-card selected" id="card-admin" onclick="selectRol('admin')">
         <div class="role-card-icon">🔐</div>
@@ -416,7 +382,6 @@ tbody tr:hover td {
         <div class="role-card-sub">Solo visualizar</div>
       </div>
     </div>
-    <input class="login-input" type="text" id="loginNombre" placeholder="Tu nombre" autocomplete="off">
     <input class="login-input" type="password" id="loginClave" placeholder="Clave de acceso" autocomplete="off" onkeydown="if(event.key==='Enter')signIn()">
     <div class="login-err" id="loginErr">❌ Clave incorrecta. Intenta de nuevo.</div>
     <button class="btn-enter" onclick="signIn()">
@@ -705,7 +670,7 @@ const FLOW_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.a
 const FLOW_SECRET = 'TSF2026';
 
 const COL_FUNC='FNCNR',COL_NETA='NETA',COL_FECHA='FECHA',COL_ESTGES='EST_GES',COL_ESTCOM='EST_COM',COL_ZONA='ZONA',COL_PROD='PRODUCTO',COL_SUC='SUCURSAL';
-const PALETTE=['#2563EB','#D97706','#059669','#7C3AED','#0891B2','#EA580C','#DC2626','#0D9488','#9333EA','#CA8A04'];
+const PALETTE=['#5BC7C8','#F0005B','#F5B000','#7C3AED','#444444','#FF2B7A','#2F2F2F','#8A8A8A'];
 const CAMPOS_INTERNOS=['ItemInternalId','@odata.etag','ID'];
 
 let allData=[],filteredData=[],dashData=[];
@@ -722,26 +687,33 @@ function selectRol(rol){
 }
 
 function signIn(){
-  const nombre=document.getElementById('loginNombre').value.trim();
   const clave=document.getElementById('loginClave').value.trim();
   const err=document.getElementById('loginErr');
-  if(!nombre){err.textContent='❌ Escribe tu nombre.';err.style.display='block';return;}
   if(!clave){err.textContent='❌ Escribe tu clave de acceso.';err.style.display='block';return;}
+
   let rolOk=false;
   if(rolSeleccionado==='admin'&&clave===CLAVE_ADMIN){rolOk=true;rolActual='admin';}
   else if(rolSeleccionado==='viewer'&&clave===CLAVE_VIEWER){rolOk=true;rolActual='viewer';}
-  if(!rolOk){err.textContent='❌ Clave incorrecta para ese rol.';err.style.display='block';document.getElementById('loginClave').value='';return;}
+
+  if(!rolOk){
+    err.textContent='❌ Clave incorrecta para ese rol.';
+    err.style.display='block';
+    document.getElementById('loginClave').value='';
+    return;
+  }
+
   err.style.display='none';
-  usuarioActual=nombre;
-  localStorage.setItem('gestion_session',JSON.stringify({nombre,rol:rolActual,ts:Date.now()}));
-  showApp();loadData();
+  usuarioActual=rolActual==='admin'?'Administrador':'Solo lectura';
+  localStorage.setItem('gestion_session',JSON.stringify({rol:rolActual,ts:Date.now()}));
+  showApp();
+  loadData();
 }
 
 function signOut(){
   localStorage.removeItem('gestion_session');localStorage.removeItem('gestion_data_cache');
   usuarioActual='';rolActual='';
   document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';
-  document.getElementById('loginNombre').value='';document.getElementById('loginClave').value='';
+  document.getElementById('loginClave').value='';
   allData=[];filteredData=[];
 }
 
@@ -763,7 +735,7 @@ window.onload=()=>{
     try{
       const s=JSON.parse(session);
       if(Date.now()-s.ts<8*60*60*1000){
-        usuarioActual=s.nombre;rolActual=s.rol;
+        rolActual=s.rol;usuarioActual=rolActual==='admin'?'Administrador':'Solo lectura';
         showApp();
         const cache=localStorage.getItem('gestion_data_cache');
         if(cache){
