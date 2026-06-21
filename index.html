@@ -210,11 +210,6 @@ tr:last-child td{border-bottom:none;}
 .setup-card{background:var(--card);border-radius:var(--radius-lg);padding:32px;max-width:600px;border:1px solid var(--border);margin:0 auto;box-shadow:var(--shadow-md);}
 .setup-card h2{font-size:18px;margin-bottom:8px;color:var(--text);font-weight:700;}
 .setup-card p{color:var(--muted);font-size:13px;margin-bottom:24px;line-height:1.6;}
-.setup-step{display:flex;gap:12px;margin-bottom:14px;padding:14px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);}
-.step-num{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
-.step-content strong{display:block;font-size:13px;color:var(--text);margin-bottom:3px;font-weight:600;}
-.step-content p{font-size:12px;margin:0;color:var(--muted);line-height:1.5;}
-.step-content code{font-family:monospace;background:var(--navy);color:#93C5FD;padding:2px 7px;border-radius:4px;font-size:11px;display:inline-block;margin-top:3px;}
 .config-input{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:13px;margin-top:6px;outline:none;font-family:monospace;transition:all .2s;background:var(--bg);}
 .config-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.1);background:#fff;}
 .empty-state{text-align:center;padding:36px 24px;color:var(--muted);}
@@ -407,25 +402,7 @@ tr:last-child td{border-bottom:none;}
       </div>
       <div class="setup-card">
         <h2>Conexión al Flow de Power Automate</h2>
-        <p>Ya no se usa Microsoft Graph ni inicio de sesión con Microsoft. Ahora la página llama directo a tu Flow, y el Flow es quien lee/escribe en <b>Gestión_2026.xlsx</b> usando tu propia cuenta autorizada.</p>
-        <div class="form-group" style="margin-top:18px">
-          <label class="form-label">URL del Flow (HTTP POST)</label>
-          <input class="config-input" type="text" id="cfg-driveid" placeholder="https://prod-00.westus.logic.azure.com/...">
-        </div>
-        <div class="form-group" style="margin-top:12px">
-          <label class="form-label">Clave secreta (la misma que pusiste en la Condición del Flow)</label>
-          <input class="config-input" type="text" id="cfg-fileid" placeholder="TSF2026">
-        </div>
-        <div style="margin-top:20px;display:flex;gap:10px">
-          <button class="btn-primary" onclick="saveConfig()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-            Guardar y cargar
-          </button>
-          <button class="btn-secondary" onclick="testConnection()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            Probar conexión
-          </button>
-        </div>
+        <p>La URL y clave ya vienen integradas en el código. No necesitas configurar nada — los datos cargan automáticamente para todos.</p>
         <div id="cfg-status" style="margin-top:12px;font-size:12px;color:var(--muted)"></div>
       </div>
     </div>
@@ -458,11 +435,11 @@ tr:last-child td{border-bottom:none;}
 
 <script>
 /* ════════════════════════════════════════
-   CONFIG — Power Automate (sin Microsoft Graph / sin MSAL)
-   Pega aquí tu URL del Flow una vez creada, o ponla en la pestaña Configurar.
+   CONFIG — URL y clave hardcodeadas en el código
+   Todos los usuarios cargan los datos automáticamente sin configurar nada.
    ════════════════════════════════════════ */
-const DEFAULT_FLOW_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/a30a1f18625542cd973a4803bea28799/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-b1799_uGO-dPQYVeAZ0VvdlBAXHhg4iewbmm1KTjlo';        // <-- pega aquí la URL HTTP POST de tu Flow
-const DEFAULT_SECRET   = 'TSF2026'; // <-- debe coincidir con la clave que pusiste en la Condición del Flow
+const DEFAULT_FLOW_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/a30a1f18625542cd973a4803bea28799/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-b1799_uGO-dPQYVeAZ0VvdlBAXHhg4iewbmm1KTjlo';
+const DEFAULT_SECRET   = 'TSF2026';
 
 const COL_FUNC='FNCNR',COL_NETA='NETA',COL_FECHA='FECHA',COL_ESTGES='EST_GES',COL_ESTCOM='EST_COM',COL_ZONA='ZONA',COL_PROD='PRODUCTO',COL_SUC='SUCURSAL';
 const PALETTE=['#2563EB','#D97706','#059669','#7C3AED','#0891B2','#EA580C','#DC2626','#0D9488','#9333EA','#CA8A04'];
@@ -475,15 +452,16 @@ let editingRow=null,isNewRecord=false,headers=[];
 let donutChartInstance=null;
 let usuarioActual='';
 
+/* ════════════════════════════════════════
+   CORRECCIÓN CLAVE: getConfig() SIEMPRE usa las constantes del código.
+   Ya NO depende del localStorage de cada PC — todos ven los datos igual.
+   ════════════════════════════════════════ */
 function getConfig(){
   return { flowUrl: DEFAULT_FLOW_URL, secret: DEFAULT_SECRET };
 }
 let config = getConfig();
 
 window.onload=()=>{
-  document.getElementById('cfg-driveid').value=config.flowUrl;
-  document.getElementById('cfg-fileid').value=config.secret;
-
   const nombreGuardado=localStorage.getItem('gestion_user');
   if(nombreGuardado){
     usuarioActual=nombreGuardado;
@@ -537,12 +515,8 @@ function setModo(modo){
   else{body.classList.add('viewer-mode');btnV?.classList.add('active');btnE?.classList.remove('active');}
 }
 
-/* ════════════════════════════════════════
-   LLAMADAS AL FLOW (reemplaza a Graph/MSAL)
-   ════════════════════════════════════════ */
 async function flowRequest(payload){
   config=getConfig();
-  if(!config.flowUrl)throw new Error('Falta configurar la URL del Flow (pestaña Configurar)');
   const res=await fetch(config.flowUrl,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -555,7 +529,6 @@ async function flowRequest(payload){
 
 async function loadData(background=false){
   config=getConfig();
-  if(!config.flowUrl){if(!background)showToast('Falta configurar la URL del Flow',true);return;}
   if(!background){showLoading(true);showLoadProgress(true);updateLoadProgress(10,0);}
   try{
     const data=await flowRequest({accion:'leer'});
@@ -802,7 +775,7 @@ async function guardarCambios(){
     if(esNuevo){
       await flowRequest({accion:'agregar',valores});
       closeModal();showToast('✓ Expediente agregado');
-      loadData(true); // recarga para traer el dato real ya guardado en Excel
+      loadData(true);
     }else{
       await flowRequest({accion:'actualizar',clave:editingRow['EXPE'],valores});
       const idx=allData.findIndex(r=>r._idx===editingRow._idx);
@@ -811,31 +784,6 @@ async function guardarCambios(){
     }
   }catch(e){showToast('Error guardando: '+e.message,true);console.error(e);}
   finally{btn.disabled=false;btn.textContent=esNuevo?'Agregar al Excel':'Guardar en Excel';showLoading(false);}
-}
-
-function saveConfig(){
-  const flowUrl=document.getElementById('cfg-driveid').value.trim();
-  const secret=document.getElementById('cfg-fileid').value.trim()||DEFAULT_SECRET;
-  if(!flowUrl){showToast('Falta la URL del Flow',true);return;}
-  config={flowUrl,secret};
-  localStorage.setItem('gestion_cfg',JSON.stringify(config));
-  const s=document.getElementById('cfg-status');s.textContent='✓ Guardado. Cargando datos…';s.style.color='var(--success)';
-  loadData();
-}
-async function testConnection(){
-  const flowUrl=document.getElementById('cfg-driveid').value.trim();
-  const secret=document.getElementById('cfg-fileid').value.trim()||DEFAULT_SECRET;
-  const status=document.getElementById('cfg-status');
-  if(!flowUrl){status.textContent='✗ Falta la URL del Flow';status.style.color='var(--danger)';return;}
-  status.textContent='Probando conexión…';status.style.color='var(--muted)';showLoading(true);
-  try{
-    const res=await fetch(flowUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accion:'leer',key:secret})});
-    if(!res.ok)throw new Error('Respuesta '+res.status);
-    const data=await res.json();
-    const n=Array.isArray(data)?data.length:(data?.value?.length||0);
-    status.innerHTML=`✓ Conexión exitosa. Filas recibidas: <b>${n}</b>`;status.style.color='var(--success)';
-  }catch(e){status.textContent='✗ Error: '+e.message;status.style.color='var(--danger)';}
-  finally{showLoading(false);}
 }
 
 function exportCSV(){
