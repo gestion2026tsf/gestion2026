@@ -52,6 +52,117 @@ body.viewer-mode .btn-edit,body.viewer-mode .btn-success,body.viewer-mode #btn-g
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:200;align-items:center;justify-content:center;padding:24px}.modal-overlay.open{display:flex}.modal{width:min(760px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:14px;box-shadow:0 35px 80px rgba(0,0,0,.42)}.modal-header,.modal-footer{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #ddd}.modal-footer{justify-content:flex-end;gap:10px;border-top:1px solid #ddd;border-bottom:0}.modal-header h3{font-size:17px;font-weight:900}.modal-expid{margin-left:10px;background:#ffe3ef;color:var(--magenta);padding:4px 9px;border-radius:6px;font-size:11px;font-weight:900}.btn-close{width:34px;height:34px;border:0;background:#f3f3f3;border-radius:8px}.modal-body{padding:22px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.form-group{display:flex;flex-direction:column;gap:6px}.form-label{font-size:10px;font-weight:900;color:#666;text-transform:uppercase}.form-input{height:38px;border:1px solid #ccc;border-radius:8px;padding:0 11px;background:#f8f8f8;font-size:12px;font-weight:700}.form-input:focus{outline:none;border-color:var(--magenta);background:#fff}.form-input[readonly]{background:#e9e9e9;color:#777}.empty-state{text-align:center;padding:28px;color:#777}.empty-icon{font-size:32px;margin-bottom:8px}.empty-state h3{font-size:14px;color:#333;margin-bottom:4px}.empty-state p{font-size:12px}
 @media(max-width:1200px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.dash-row.cols-3{grid-template-columns:1fr 1fr}}@media(max-width:760px){.login-box{padding:34px 24px}.main-inner{padding:18px 14px}.kpi-grid,.dash-row.cols-2,.dash-row.cols-3{grid-template-columns:1fr}.filter-select-dash{min-width:100%}.form-grid{grid-template-columns:1fr}.donut-wrap{flex-direction:column}.header-right .user-pill{display:none}}
 
+
+/* AJUSTES FINALES DASHBOARD - TOTAL */
+header{
+  height:64px;
+  padding:0 30px;
+  background:linear-gradient(90deg,#242424 0%,#303030 70%,#242424 100%);
+}
+.brand-wrap{gap:14px;min-width:260px;}
+.brand-icon{
+  width:42px;height:42px;border-radius:14px;
+  background:linear-gradient(135deg,var(--yellow) 0%,var(--magenta) 100%);
+  color:#fff;font-size:22px;font-weight:900;
+  box-shadow:0 10px 24px rgba(240,0,91,.24);
+}
+.brand-name{font-size:20px;line-height:1;font-weight:900;letter-spacing:-.4px;}
+.brand-sub{font-size:12px;line-height:1.2;color:rgba(255,255,255,.78);font-weight:700;}
+.header-right{gap:12px;}
+.role-badge{padding:6px 15px;}
+.btn-logout{height:34px;border-radius:8px;background:#fff;color:var(--danger);}
+
+.main-inner{max-width:1680px;padding:24px 28px;}
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;
+  align-items:stretch;
+}
+.kpi-card{
+  border-radius:0;
+  min-height:132px;
+  padding:18px 20px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.kpi-icon{width:38px;height:38px;margin-bottom:10px;}
+.kpi-value{font-size:34px;}
+.kpi-sub,.kpi-sub-neta{font-size:11px;}
+
+.chart-card{border-radius:10px;}
+.chart-head{height:44px;}
+.chart-title{font-size:16px;}
+.chart-card>div:not(.chart-head){padding:24px 28px;}
+
+/* Arregla Neta por Mes: antes heredaba min-width de la tabla general */
+.net-table{
+  width:100%!important;
+  min-width:0!important;
+  table-layout:fixed;
+  border-collapse:collapse;
+}
+.net-table th,
+.net-table td{
+  padding:11px 14px!important;
+  font-size:13px;
+  white-space:nowrap;
+}
+.net-table th{background:#fff!important;color:#111!important;}
+.net-table th:nth-child(1),.net-table td:nth-child(1){width:32%;text-align:left;}
+.net-table th:nth-child(2),.net-table td:nth-child(2){width:28%;text-align:right;}
+.net-table th:nth-child(3),.net-table td:nth-child(3){width:40%;text-align:right;}
+.net-table tbody tr:nth-child(even) td{background:#ececec!important;}
+.net-table tfoot td{background:#fff!important;border-top:0!important;font-weight:900;}
+.net-amount,.net-tfoot .net-amount{color:var(--magenta)!important;font-weight:900;}
+
+/* Estado Comercial mas grande y centrado */
+.donut-wrap{
+  min-height:300px;
+  justify-content:center;
+  align-items:center;
+  gap:54px;
+}
+.donut-chart-box{width:220px;height:220px;}
+.dcl-val{font-size:38px;line-height:1;}
+.dcl-sub{font-size:12px;text-transform:uppercase;}
+.donut-legend{min-width:360px;max-width:430px;gap:12px;}
+.donut-legend-item{
+  grid-template-columns:16px minmax(150px,1fr) 60px 50px;
+  font-size:14px;
+}
+.donut-legend-dot{width:14px;height:14px;}
+.donut-legend-count{font-size:14px;}
+.donut-legend-pct{font-size:12px;}
+
+/* Zonas - Vista Barras centrado */
+.vbar-container{
+  min-height:240px;
+  height:240px;
+  justify-content:center;
+  align-items:flex-end;
+  gap:24px;
+  padding:26px 30px 24px!important;
+}
+.vbar-col{max-width:150px;min-width:80px;}
+.vbar-fill{width:100%;}
+.vbar-val{font-size:12px;margin-bottom:2px;}
+.vbar-lbl{font-size:12px;max-width:120px;}
+
+@media(max-width:1100px){
+  .dash-row.cols-2,.dash-row.cols-3{grid-template-columns:1fr;}
+  .donut-wrap{gap:28px;}
+}
+@media(max-width:760px){
+  header{padding:0 16px;}
+  .brand-name{font-size:17px;}
+  .brand-sub{font-size:10px;}
+  .donut-wrap{flex-direction:column;min-height:auto;}
+  .donut-legend{min-width:0;width:100%;}
+  .vbar-container{gap:10px;padding:20px 12px!important;}
+}
+
 </style>
 </head>
 <body>
@@ -90,7 +201,7 @@ body.viewer-mode .btn-edit,body.viewer-mode .btn-success,body.viewer-mode #btn-g
 <div id="app">
   <header>
     <div class="brand-wrap">
-      <div class="brand-icon">📊</div>
+      <div class="brand-icon">T</div>
       <div>
         <div class="brand-name">Gestión 2026</div>
         <div class="brand-sub">Total Servicios Financieros</div>
@@ -98,10 +209,6 @@ body.viewer-mode .btn-edit,body.viewer-mode .btn-success,body.viewer-mode #btn-g
     </div>
     <div class="header-right">
       <span class="role-badge" id="roleBadge">—</span>
-      <div class="user-pill">
-        <div class="avatar" id="userAvatar">?</div>
-        <span class="user-name" id="userName"></span>
-      </div>
       <button class="btn-logout" onclick="signOut()">Salir</button>
     </div>
   </header>
@@ -218,7 +325,7 @@ body.viewer-mode .btn-edit,body.viewer-mode .btn-success,body.viewer-mode #btn-g
             </div>
             <div class="donut-wrap">
               <div class="donut-chart-box">
-                <canvas id="donutEstCom" width="160" height="160"></canvas>
+                <canvas id="donutEstCom" width="220" height="220"></canvas>
                 <div class="donut-center-label">
                   <div class="dcl-val" id="donut-total">—</div>
                   <div class="dcl-sub">total</div>
