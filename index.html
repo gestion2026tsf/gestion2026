@@ -1384,10 +1384,16 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
             <div class="kpi-sub" id="kpi-crdt-sub">—</div>
             <div class="kpi-sub-neta" id="kpi-crdt-neta" style="display:none">—</div>
           </div>
-          <div class="kpi-card purple">
+          <div class="kpi-card orange">
+            <div class="kpi-stripe"></div>
+            <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+            <div class="kpi-label">Neta Total (ACTIVADO)</div>
+            <div class="kpi-value" id="kpi-neta">—</div>
+            <div class="kpi-sub">suma NETA</div>
+          </div>          <div class="kpi-card purple">
             <div class="kpi-stripe"></div>
             <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-            <div class="kpi-label">Clientes Únicos</div>
+            <div class="kpi-label">Clientes Únicos (ACTIVADOS)</div>
             <div class="kpi-value" id="kpi-clientes">—</div>
             <div class="kpi-sub">estado ACTIVADO</div>
             <div class="kpi-sub-neta" id="kpi-clientes-neta" style="display:none">—</div>
@@ -1399,13 +1405,7 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
             <div class="kpi-value" id="kpi-func">—</div>
             <div class="kpi-sub">con operaciones</div>
           </div>
-          <div class="kpi-card orange">
-            <div class="kpi-stripe"></div>
-            <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
-            <div class="kpi-label">Neta Total (ACTIVADO)</div>
-            <div class="kpi-value" id="kpi-neta">—</div>
-            <div class="kpi-sub">suma NETA</div>
-          </div>
+
         </div>
 
         <!-- FILA 1: Neta por Mes + Estado Comercial -->
@@ -1572,7 +1572,7 @@ const FLOW_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.a
 const FLOW_SECRET = 'TSF2026';
 
 const COL_FUNC='FNCNR',COL_NETA='NETA',COL_FECHA='FECHA',COL_ESTGES='EST_GES',COL_ESTCOM='EST_COM',COL_ZONA='ZONA',COL_PROD='PRODUCTO',COL_SUC='SUCURSAL';
-const PALETTE=['#5BC7C8','#F0005B','#F5B000','#7C3AED','#444444','#FF2B7A','#2F2F2F','#8A8A8A'];
+const PALETTE=['#5BC7C8','#F0005B','#F5B000','#7C3AED','#444444','#FF8AB8','#2F2F2F','#8A8A8A'];
 const CAMPOS_INTERNOS=['ItemInternalId','@odata.etag','ID'];
 
 let allData=[],filteredData=[],dashData=[];
@@ -2035,6 +2035,15 @@ function renderNetaMes(d,netaKey){
   document.getElementById('badge-neta-mes').textContent=rows.length+' meses';
 }
 
+function mesOrdenEstadoCom(label){
+  const txt=String(label||'').toUpperCase();
+  const meses={ENE:1,FEB:2,MAR:3,ABR:4,MAY:5,JUN:6,JUL:7,AGO:8,SET:9,SEP:9,OCT:10,NOV:11,DIC:12};
+  for(const [m,n] of Object.entries(meses)){
+    if(txt.includes(m))return n;
+  }
+  return 99;
+}
+
 function renderEstCom(d){
   const map={};
   d.forEach(r=>{
@@ -2043,7 +2052,17 @@ function renderEstCom(d){
     if(!map[e])map[e]=new Set();
     if(ruc)map[e].add(ruc);
   });
-  const entries=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]);
+
+  // Orden correcto por mes: ENE, FEB, MAR, ABR, MAY, JUN...
+  const entries=Object.entries(map)
+    .map(([k,s])=>[k,s.size])
+    .sort((a,b)=>{
+      const ma=mesOrdenEstadoCom(a[0]);
+      const mb=mesOrdenEstadoCom(b[0]);
+      if(ma!==mb)return ma-mb;
+      return String(a[0]).localeCompare(String(b[0]));
+    });
+
   const total=entries.reduce((s,[,c])=>s+c,0);
   document.getElementById('badge-estcom').textContent=entries.length+' estados';
   document.getElementById('donut-total').textContent=total.toLocaleString('es-PE');
@@ -2054,7 +2073,7 @@ function renderEstCom(d){
       type:'doughnut',
       data:{
         labels:entries.map(([l])=>l),
-        datasets:[{data:entries.map(([,c])=>c),backgroundColor:PALETTE.slice(0,entries.length),borderWidth:0,hoverOffset:6}]
+        datasets:[{data:entries.map(([,c])=>c),backgroundColor:entries.map((_,i)=>PALETTE[i%PALETTE.length]),borderWidth:0,hoverOffset:6}]
       },
       options:{responsive:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+ctx.raw+' ('+Math.round(ctx.raw/total*100)+'%)'}}},cutout:'68%'}
     });
@@ -2064,7 +2083,7 @@ function renderEstCom(d){
       <div class="donut-legend-dot" style="background:${PALETTE[i%PALETTE.length]}"></div>
       <span class="donut-legend-label" title="${l}">${l.length>18?l.slice(0,17)+'…':l}</span>
       <span class="donut-legend-count">${c}</span>
-      <span class="donut-legend-pct">${Math.round(c/total*100)}%</span>
+      <span class="donut-legend-pct">${total?Math.round(c/total*100):0}%</span>
     </div>`).join('');
 }
 
