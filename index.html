@@ -1323,6 +1323,88 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
   width:100% !important;
 }
 
+
+
+/* =========================================================
+   FIX FINAL - ZONAS VISTA BARRAS PRO
+   Pegar al final para sobreescribir estilos anteriores
+   ========================================================= */
+#chart-zonas-v{
+  width:100% !important;
+  height:280px !important;
+  display:flex !important;
+  align-items:flex-end !important;
+  justify-content:center !important;
+  gap:30px !important;
+  padding:22px 28px 36px !important;
+  overflow:visible !important;
+}
+
+#chart-zonas-v .vbar-col{
+  flex:0 1 150px !important;
+  width:150px !important;
+  max-width:150px !important;
+  min-width:95px !important;
+  height:220px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:0 !important;
+}
+
+#chart-zonas-v .vbar-neta{
+  display:block !important;
+  font-size:14px !important;
+  font-weight:900 !important;
+  color:#111 !important;
+  line-height:1 !important;
+  margin-bottom:6px !important;
+  white-space:nowrap !important;
+}
+
+#chart-zonas-v .vbar-val{
+  display:block !important;
+  font-size:11px !important;
+  font-weight:900 !important;
+  color:#F0005B !important;
+  line-height:1 !important;
+  margin-bottom:9px !important;
+  white-space:nowrap !important;
+}
+
+#chart-zonas-v .vbar-fill{
+  width:100% !important;
+  max-width:145px !important;
+  min-height:10px !important;
+  background:#5BC7C8 !important;
+  border-radius:5px 5px 0 0 !important;
+  transition:height .45s ease !important;
+}
+
+#chart-zonas-v .vbar-lbl{
+  display:block !important;
+  width:100% !important;
+  max-width:150px !important;
+  margin-top:10px !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  color:#111 !important;
+  line-height:1.1 !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+}
+
+@media(max-width:1200px){
+  #chart-zonas-v{gap:18px !important;padding-left:18px !important;padding-right:18px !important;}
+  #chart-zonas-v .vbar-col{width:120px !important;max-width:120px !important;}
+  #chart-zonas-v .vbar-fill{max-width:115px !important;}
+  #chart-zonas-v .vbar-neta{font-size:12px !important;}
+  #chart-zonas-v .vbar-lbl{font-size:10px !important;}
+}
+
 </style>
 </head>
 <body>
@@ -1425,6 +1507,10 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
               <label class="multi-option active-all">
                 <input type="checkbox" value="ACTIVADO_2026" class="estado-check" onchange="applyDashFilter()">
                 <span class="multi-option-text">Todos ACTIVADO 2026</span>
+              </label>
+              <label class="multi-option active-all">
+                <input type="checkbox" value="JUNIO_2026" class="estado-check" onchange="applyDashFilter()">
+                <span class="multi-option-text">JUNIO 2026</span>
               </label>
               <div id="estadoOpciones"></div>
             </div>
@@ -1806,7 +1892,13 @@ function updateEstadoLabel(){
   if(seleccionados.length===0){
     btn.textContent='Todos';
   }else if(seleccionados.length===1){
-    btn.textContent=seleccionados[0]==='ACTIVADO_2026'?'Todos ACTIVADO 2026':seleccionados[0];
+    if(seleccionados[0]==='ACTIVADO_2026'){
+      btn.textContent='Todos ACTIVADO 2026';
+    }else if(seleccionados[0]==='JUNIO_2026'){
+      btn.textContent='JUNIO 2026';
+    }else{
+      btn.textContent=seleccionados[0];
+    }
   }else{
     btn.textContent=seleccionados.length+' seleccionados';
   }
@@ -1825,6 +1917,9 @@ function updateDashFilters(){
 
   const activo2026=document.querySelector('.estado-check[value="ACTIVADO_2026"]');
   if(activo2026)activo2026.checked=seleccionadosPrevios.has('ACTIVADO_2026');
+
+  const junio2026=document.querySelector('.estado-check[value="JUNIO_2026"]');
+  if(junio2026)junio2026.checked=seleccionadosPrevios.has('JUNIO_2026');
 
   document.getElementById('filtroZonaDash').innerHTML =
     '<option value="">Todas</option>' +
@@ -1853,6 +1948,7 @@ function applyDashFilter(){
     const cumpleEstado =
       estGes.length===0 ||
       (estGes.includes('ACTIVADO_2026') && isActivado(r)) ||
+      (estGes.includes('JUNIO_2026') && estado.toUpperCase().includes('JUN26')) ||
       estGes.includes(estado);
 
     return cumpleEstado &&
@@ -2053,13 +2149,29 @@ function renderHBars(el,data,colors,useEstges=false){
 }
 
 function renderVBars(el,data){
-  if(!el)return;el.innerHTML='';
-  if(!data.length)return;
+  if(!el)return;
+  el.innerHTML='';
+
+  if(!data.length){
+    el.innerHTML='<div class="empty-state" style="padding:18px"><p>Sin datos</p></div>';
+    return;
+  }
+
   const max=Math.max(...data.map(x=>Math.abs(x[2]||0)),1);
-  data.forEach(([l,clientes,neta],i)=>{
-    const col=document.createElement('div');col.className='vbar-col';
-    const h=Math.max(Math.round((Math.abs(neta||0)/max)*95),6);
-    col.innerHTML=`<span class="vbar-neta">${fmtMontoRaw(neta)}</span><span class="vbar-val">${clientes}</span><div class="vbar-fill" style="height:${h}px"></div><span class="vbar-lbl" title="${l}">${l}</span>`;
+
+  data.forEach(([zona,clientes,neta])=>{
+    const col=document.createElement('div');
+    col.className='vbar-col';
+
+    const h=Math.max(Math.round((Math.abs(neta||0)/max)*135),10);
+
+    col.innerHTML=`
+      <span class="vbar-neta">${fmtMontoRaw(neta)}</span>
+      <span class="vbar-val">${clientes}</span>
+      <div class="vbar-fill" style="height:${h}px"></div>
+      <span class="vbar-lbl" title="${escHTML(zona)}">${escHTML(zona)}</span>
+    `;
+
     el.appendChild(col);
   });
 }
