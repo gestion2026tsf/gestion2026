@@ -1234,24 +1234,24 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
   color:#111 !important;
 }
 
-/* monto NETA */
+/* monto NETA: mas pequeno y limpio */
 .neta-big{
   display:block !important;
-  font-size:15px !important;
-  font-weight:900 !important;
+  font-size:11px !important;
+  font-weight:800 !important;
   color:#111 !important;
-  line-height:1.05 !important;
+  line-height:1 !important;
   white-space:nowrap !important;
 }
 
-/* cantidad de clientes, sin palabra clientes */
+/* cantidad sin palabra clientes */
 .cnt-small{
   display:block !important;
-  font-size:11px !important;
-  font-weight:900 !important;
+  font-size:9px !important;
+  font-weight:800 !important;
   color:var(--accent) !important;
   line-height:1 !important;
-  margin-top:1px !important;
+  margin-top:2px !important;
   white-space:nowrap !important;
 }
 
@@ -1262,54 +1262,65 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
   min-width:72px !important;
 }
 
-/* Vista barras centrada */
+/* Vista barras: compacta, centrada y sin textos cortados */
 #chart-zonas-v{
   display:flex !important;
   align-items:center !important;
   justify-content:center !important;
-  height:260px !important;
+  height:205px !important;
+  width:100% !important;
+  overflow:hidden !important;
 }
 
 .vbar-container{
-  height:260px !important;
+  height:185px !important;
+  width:100% !important;
   display:flex !important;
   align-items:flex-end !important;
-  justify-content:center !important;
-  gap:18px !important;
-  padding:30px 30px 34px !important;
+  justify-content:space-evenly !important;
+  gap:10px !important;
+  padding:12px 16px 22px !important;
 }
 
 .vbar-col{
-  max-width:140px !important;
+  flex:1 1 0 !important;
+  min-width:0 !important;
+  max-width:110px !important;
+  display:flex !important;
+  flex-direction:column !important;
   justify-content:flex-end !important;
   align-items:center !important;
-  flex:0 1 140px !important;
 }
 
 .vbar-neta{
-  font-size:13px !important;
-  font-weight:900 !important;
+  font-size:10px !important;
+  font-weight:800 !important;
   color:#111 !important;
   line-height:1 !important;
-  margin-bottom:4px !important;
+  margin-bottom:3px !important;
   white-space:nowrap !important;
 }
 
 .vbar-val{
-  font-size:12px !important;
-  font-weight:900 !important;
+  font-size:9px !important;
+  font-weight:800 !important;
   color:var(--accent) !important;
   line-height:1 !important;
-  margin-bottom:6px !important;
+  margin-bottom:5px !important;
+  white-space:nowrap !important;
 }
 
 .vbar-lbl{
-  font-size:11px !important;
-  font-weight:900 !important;
+  font-size:9px !important;
+  font-weight:800 !important;
   color:#111 !important;
   line-height:1 !important;
-  margin-top:7px !important;
+  margin-top:6px !important;
   text-align:center !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  width:100% !important;
 }
 
 </style>
@@ -2000,8 +2011,8 @@ function renderVBars(el,data){
   const max=Math.max(...data.map(x=>Math.abs(x[2]||0)),1);
   data.forEach(([l,clientes,neta],i)=>{
     const col=document.createElement('div');col.className='vbar-col';
-    const h=Math.max(Math.round((Math.abs(neta||0)/max)*120),8);
-    col.innerHTML=`<span class="vbar-neta">${fmtMontoRaw(neta)}</span><span class="vbar-val">${clientes}</span><div class="vbar-fill" style="height:${h}px"></div><span class="vbar-lbl">${l.length>8?l.slice(0,7)+'…':l}</span>`;
+    const h=Math.max(Math.round((Math.abs(neta||0)/max)*95),6);
+    col.innerHTML=`<span class="vbar-neta">${fmtMontoRaw(neta)}</span><span class="vbar-val">${clientes}</span><div class="vbar-fill" style="height:${h}px"></div><span class="vbar-lbl" title="${l}">${l}</span>`;
     el.appendChild(col);
   });
 }
