@@ -546,6 +546,117 @@ tbody tr:hover td{background:#f6dbe7!important;}
   .chart-card{min-height:auto;}
 }
 
+
+/* FIX: tablas pequenas dentro de tarjetas no deben heredar el min-width de la tabla principal */
+.net-table{
+  min-width:0 !important;
+  width:100% !important;
+  table-layout:fixed;
+}
+.net-table th:nth-child(1), .net-table td:nth-child(1){width:34%; text-align:left;}
+.net-table th:nth-child(2), .net-table td:nth-child(2){width:22%; text-align:right;}
+.net-table th:nth-child(3), .net-table td:nth-child(3){width:44%; text-align:right;}
+#chart-neta-mes{overflow:hidden;}
+
+
+/* Ajustes finales: centrado visual y KPIs por cliente */
+.donut-wrap{
+  min-height:210px;
+  justify-content:center!important;
+  align-items:center!important;
+  padding:2px 24px 16px!important;
+}
+.donut-chart-box{margin:0 22px 0 0;}
+.donut-legend{
+  flex:0 1 420px;
+  max-width:430px;
+}
+.donut-legend-item{
+  display:grid!important;
+  grid-template-columns:12px minmax(150px,1fr) 44px 38px;
+  column-gap:10px;
+  align-items:center;
+}
+#chart-zonas-v{
+  min-height:190px;
+  max-width:900px;
+  margin:0 auto;
+  justify-content:center!important;
+  align-items:flex-end!important;
+  gap:12px!important;
+  padding:22px 24px 28px!important;
+}
+#chart-zonas-v .vbar-col{
+  flex:0 1 210px;
+  max-width:230px;
+}
+#chart-zonas-v .vbar-fill{width:100%;}
+.kpi-card .kpi-label::after{content:' ';}
+
+
+
+/* FIX EXPEDIENTES: tabla alineada, sin descolocarse */
+#view-expedientes .table-wrap{
+  width:100%;
+  max-width:100%;
+  overflow:auto;
+  max-height:calc(100vh - 265px);
+  border:1px solid #d0d0d0;
+  border-radius:6px;
+  position:relative;
+}
+#view-expedientes table{
+  width:100%;
+  min-width:1580px;
+  table-layout:fixed;
+  border-collapse:separate;
+  border-spacing:0;
+}
+#view-expedientes thead th{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:#fff!important;
+  box-shadow:0 1px 0 #d7d7d7;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#view-expedientes td{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  vertical-align:middle;
+}
+#view-expedientes th:nth-child(1),#view-expedientes td:nth-child(1){width:72px;}
+#view-expedientes th:nth-child(2),#view-expedientes td:nth-child(2){width:100px;}
+#view-expedientes th:nth-child(3),#view-expedientes td:nth-child(3){width:110px;}
+#view-expedientes th:nth-child(4),#view-expedientes td:nth-child(4){width:210px;}
+#view-expedientes th:nth-child(5),#view-expedientes td:nth-child(5){width:90px;}
+#view-expedientes th:nth-child(6),#view-expedientes td:nth-child(6){width:105px;}
+#view-expedientes th:nth-child(7),#view-expedientes td:nth-child(7){width:105px;}
+#view-expedientes th:nth-child(8),#view-expedientes td:nth-child(8){width:100px;text-align:right;}
+#view-expedientes th:nth-child(9),#view-expedientes td:nth-child(9){width:100px;text-align:right;}
+#view-expedientes th:nth-child(10),#view-expedientes td:nth-child(10){width:110px;text-align:right;}
+#view-expedientes th:nth-child(11),#view-expedientes td:nth-child(11){width:100px;text-align:right;}
+#view-expedientes th:nth-child(12),#view-expedientes td:nth-child(12){width:125px;text-align:right;}
+#view-expedientes th:nth-child(13),#view-expedientes td:nth-child(13){width:95px;text-align:right;}
+#view-expedientes th:nth-child(14),#view-expedientes td:nth-child(14){width:130px;}
+#view-expedientes th:nth-child(15),#view-expedientes td:nth-child(15){width:140px;}
+#view-expedientes th:nth-child(16),#view-expedientes td:nth-child(16){width:80px;}
+#view-expedientes .toolbar{
+  position:sticky;
+  top:0;
+  z-index:6;
+  background:#e9e9e9;
+  padding-bottom:10px;
+}
+#view-expedientes .pagination{
+  position:sticky;
+  bottom:0;
+  z-index:6;
+}
+
 </style>
 </head>
 <body>
@@ -1021,6 +1132,14 @@ function fmtMontoRaw(n){
   if(Math.abs(n)>=1e3)return (n/1e3).toFixed(1)+'K';
   return n.toLocaleString('es-PE',{minimumFractionDigits:0,maximumFractionDigits:2});
 }
+function clienteKey(r){
+  const ruc=String(r['RUC']||'').trim();
+  const nombre=String(r['NOMBRE_RSOCIAL_CLIENTE']||'').trim().toUpperCase();
+  return ruc||nombre;
+}
+function countClientes(rows){
+  return new Set(rows.map(clienteKey).filter(Boolean)).size;
+}
 
 /* ════════════════════════════════════════
    DASHBOARD UPDATE
@@ -1032,20 +1151,20 @@ function updateDashboard(){
 
   document.getElementById('kpi-total').textContent=d.length.toLocaleString('es-PE');
 
-  // LSNG
+  // LSNG — ahora cuenta CLIENTES ÚNICOS, no operaciones
   const lsng=d.filter(r=>String(r[COL_PROD]||'').startsWith('L'));
   let lsngNeta=0;
   if(netaKey)lsng.forEach(r=>{lsngNeta+=parseNeta(r[netaKey]);});
-  document.getElementById('kpi-lsng').textContent=lsng.length.toLocaleString('es-PE');
-  document.getElementById('kpi-lsng-sub').textContent=`VEH: ${lsng.filter(r=>String(r[COL_PROD]).includes('VEH')).length}  ·  MAQ: ${lsng.filter(r=>String(r[COL_PROD]).includes('MAQ')).length}`;
+  document.getElementById('kpi-lsng').textContent=countClientes(lsng).toLocaleString('es-PE');
+  document.getElementById('kpi-lsng-sub').textContent=`VEH: ${countClientes(lsng.filter(r=>String(r[COL_PROD]).includes('VEH')))}  ·  MAQ: ${countClientes(lsng.filter(r=>String(r[COL_PROD]).includes('MAQ')))}`;
   if(netaKey&&lsngNeta){const el=document.getElementById('kpi-lsng-neta');el.style.display='block';el.textContent='Neta: '+fmtMonto(lsngNeta);}
 
-  // CRDT
+  // CRDT — ahora cuenta CLIENTES ÚNICOS, no operaciones
   const crdt=d.filter(r=>String(r[COL_PROD]||'').startsWith('C'));
   let crdtNeta=0;
   if(netaKey)crdt.forEach(r=>{crdtNeta+=parseNeta(r[netaKey]);});
-  document.getElementById('kpi-crdt').textContent=crdt.length.toLocaleString('es-PE');
-  document.getElementById('kpi-crdt-sub').textContent=`VEH: ${crdt.filter(r=>String(r[COL_PROD]).includes('VEH')).length}  ·  MAQ: ${crdt.filter(r=>String(r[COL_PROD]).includes('MAQ')).length}`;
+  document.getElementById('kpi-crdt').textContent=countClientes(crdt).toLocaleString('es-PE');
+  document.getElementById('kpi-crdt-sub').textContent=`VEH: ${countClientes(crdt.filter(r=>String(r[COL_PROD]).includes('VEH')))}  ·  MAQ: ${countClientes(crdt.filter(r=>String(r[COL_PROD]).includes('MAQ')))}`;
   if(netaKey&&crdtNeta){const el=document.getElementById('kpi-crdt-neta');el.style.display='block';el.textContent='Neta: '+fmtMonto(crdtNeta);}
 
   // Funcionarios
