@@ -1471,15 +1471,15 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
           <div class="kpi-card orange">
             <div class="kpi-stripe"></div>
             <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
-            <div class="kpi-label">Neta Total (ACTIVADO)</div>
+            <div class="kpi-label">Neta Total</div>
             <div class="kpi-value" id="kpi-neta">—</div>
             <div class="kpi-sub">suma NETA</div>
           </div>          <div class="kpi-card purple">
             <div class="kpi-stripe"></div>
             <div class="kpi-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-            <div class="kpi-label">Clientes Únicos (ACTIVADOS)</div>
+            <div class="kpi-label">Clientes Únicos</div>
             <div class="kpi-value" id="kpi-clientes">—</div>
-            <div class="kpi-sub">estado ACTIVADO</div>
+            <div class="kpi-sub">según filtro</div>
             <div class="kpi-sub-neta" id="kpi-clientes-neta" style="display:none">—</div>
           </div>
           <div class="kpi-card teal">
@@ -1496,7 +1496,7 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
         <div class="dash-row cols-2">
           <div class="chart-card">
             <div class="chart-head">
-              <div class="chart-title">Neta por Mes — ACTIVADO</div>
+              <div class="chart-title">Neta por Mes</div>
               <div class="chart-badge" id="badge-neta-mes">—</div>
             </div>
             <div id="chart-neta-mes"><div class="empty-state" style="padding:16px"><p>Cargando…</p></div></div>
@@ -1852,7 +1852,7 @@ function applyDashFilter(){
 
     const cumpleEstado =
       estGes.length===0 ||
-      (estGes.includes('ACTIVADO_2026') && estado.includes('8.ACTIVADO.')) ||
+      (estGes.includes('ACTIVADO_2026') && isActivado(r)) ||
       estGes.includes(estado);
 
     return cumpleEstado &&
@@ -1919,10 +1919,9 @@ function isActivado(r){
   return est === '8.ACTIVADO.' || est.startsWith('8.ACTIVADO');
 }
 function getSucursalKey(r){
-  let s = String(r[COL_SUC] || '').trim();
-  const zona = String(r[COL_ZONA] || '').trim().toUpperCase();
-  // Regla TSF: si la zona/canal dice CROSS, debe agruparse como CROSS aunque la sucursal venga como AREQUIPA u otra.
-  if(zona.includes('CROSS')) s = 'CROSS';
+  // Agrupa por la columna SUCURSAL real de la base.
+  // No se fuerza CROSS por ZONA, porque eso altera los totales frente a la tabla dinámica.
+  const s = String(r[COL_SUC] || '').trim();
   return s || 'S/D';
 }
 function getNetaKey(){
@@ -1970,27 +1969,26 @@ function updateDashboard(){
   const d=dashData;
   const netaKey=getNetaKey();
   const funcKey=headers.includes(COL_FUNC)?COL_FUNC:detectField(['FNCNR','FNCNE','FUNCIONARIO','ANALISTA','EJECUTIVO']);
-  const activados=d.filter(isActivado);
+  // IMPORTANTE: todo el dashboard usa exactamente la misma base filtrada: d.
+  // Si eliges "Todos", calcula todo con todos los estados.
+  // Si eliges "Todos ACTIVADO 2026", calcula todo solo con ACTIVADOS.
 
   setText('kpi-total', d.length.toLocaleString('es-PE'));
 
-  // KPIs de producto: clientes únicos por RUC/nombre normalizado. La NETA se calcula solo sobre ACTIVADOS.
   const lsng=d.filter(r=>String(r[COL_PROD]||'').toUpperCase().startsWith('L'));
-  const lsngAct=lsng.filter(isActivado);
   const lsngClientes=[...new Set(lsng.map(getClienteKey).filter(Boolean))];
   const lsngVehClientes=[...new Set(lsng.filter(r=>String(r[COL_PROD]||'').toUpperCase().includes('VEH')).map(getClienteKey).filter(Boolean))];
   const lsngMaqClientes=[...new Set(lsng.filter(r=>String(r[COL_PROD]||'').toUpperCase().includes('MAQ')).map(getClienteKey).filter(Boolean))];
-  const lsngNeta=netaKey?lsngAct.reduce((sum,r)=>sum+parseNeta(r[netaKey]),0):0;
+  const lsngNeta=netaKey?lsng.reduce((sum,r)=>sum+parseNeta(r[netaKey]),0):0;
   setText('kpi-lsng', lsngClientes.length.toLocaleString('es-PE'));
   setText('kpi-lsng-sub', `Clientes únicos · VEH: ${lsngVehClientes.length} · MAQ: ${lsngMaqClientes.length}`);
   setNetaSub('kpi-lsng-neta', lsngNeta);
 
   const crdt=d.filter(r=>String(r[COL_PROD]||'').toUpperCase().startsWith('C'));
-  const crdtAct=crdt.filter(isActivado);
   const crdtClientes=[...new Set(crdt.map(getClienteKey).filter(Boolean))];
   const crdtVehClientes=[...new Set(crdt.filter(r=>String(r[COL_PROD]||'').toUpperCase().includes('VEH')).map(getClienteKey).filter(Boolean))];
   const crdtMaqClientes=[...new Set(crdt.filter(r=>String(r[COL_PROD]||'').toUpperCase().includes('MAQ')).map(getClienteKey).filter(Boolean))];
-  const crdtNeta=netaKey?crdtAct.reduce((sum,r)=>sum+parseNeta(r[netaKey]),0):0;
+  const crdtNeta=netaKey?crdt.reduce((sum,r)=>sum+parseNeta(r[netaKey]),0):0;
   setText('kpi-crdt', crdtClientes.length.toLocaleString('es-PE'));
   setText('kpi-crdt-sub', `Clientes únicos · VEH: ${crdtVehClientes.length} · MAQ: ${crdtMaqClientes.length}`);
   setNetaSub('kpi-crdt-neta', crdtNeta);
@@ -1999,7 +1997,7 @@ function updateDashboard(){
   setText('kpi-func', funcsUniq.length.toLocaleString('es-PE'));
 
   const clientesMap={};
-  activados.forEach(r=>{
+  d.forEach(r=>{
     const key=getClienteKey(r);
     if(!key)return;
     if(!clientesMap[key])clientesMap[key]=0;
@@ -2010,17 +2008,17 @@ function updateDashboard(){
   const netaClientes=Object.values(clientesMap).reduce((a,b)=>a+b,0);
   setNetaSub('kpi-clientes-neta', netaClientes);
 
-  const netaTotal=netaKey?activados.reduce((sum,r)=>sum+parseNeta(r[netaKey]),0):0;
+  const netaTotal=netaKey?d.reduce((sum,r)=>sum+parseNeta(r[netaKey]),0):0;
   setText('kpi-neta', fmtMontoRaw(netaTotal));
 
-  // Todo lo que es ranking por NETA se alimenta con ACTIVADOS para que cuadre con el KPI Neta Total.
-  renderProducto(activados,netaKey);
-  renderZonas(activados);
-  renderFuncionarios(activados,funcKey);
+  // Todo lo que es ranking por NETA se alimenta con la misma base filtrada.
+  renderProducto(d,netaKey);
+  renderZonas(d);
+  renderFuncionarios(d,funcKey);
   renderNetaMes(d,netaKey);
   renderEstCom(d);
-  renderSucursal(activados,netaKey);
-  renderZonasV(activados);
+  renderSucursal(d,netaKey);
+  renderZonasV(d);
   renderEstGes(d,netaKey);
 }
 
@@ -2088,12 +2086,11 @@ function renderFuncionarios(d,funcKey){
 }
 
 function renderNetaMes(d,netaKey){
-  const activados=d.filter(isActivado);
   const fechaKey=headers.includes(COL_FECHA)?COL_FECHA:detectField(['FECHA_APRO','FECHA_APROBACION','FECHA','FEC_APRO','FECHA_ACT','FECHA_ACTIV','FEC_ACT','FECHA_ACTIVACION']);
   const meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Set','Oct','Nov','Dic'];
   const byMes={};
   if(fechaKey){
-    activados.forEach(r=>{
+    d.forEach(r=>{
       const fv=r[fechaKey];if(!fv&&fv!==0)return;
       let dt=typeof fv==='number'?new Date(Math.round((fv-25569)*86400*1000)):new Date(fv);
       if(isNaN(dt))return;
@@ -2105,7 +2102,7 @@ function renderNetaMes(d,netaKey){
   }
   if(!Object.keys(byMes).length){
     const mesNames={'ENE':0,'FEB':1,'MAR':2,'ABR':3,'MAY':4,'JUN':5,'JUL':6,'AGO':7,'SET':8,'SEP':8,'OCT':9,'NOV':10,'DIC':11};
-    activados.forEach(r=>{
+    d.forEach(r=>{
       let mesIdx=-1;
       // Busca en EST_GES o EST_COM si contiene el mes
       const estVal=String(r[COL_ESTGES]||'').toUpperCase()+String(r[COL_ESTCOM]||'').toUpperCase();
@@ -2118,7 +2115,7 @@ function renderNetaMes(d,netaKey){
   }
   const rows=Object.entries(byMes).sort((a,b)=>+a[0]-+b[0]);
   const el=document.getElementById('chart-neta-mes');
-  if(!rows.length){el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin registros ACTIVADO</p></div>';document.getElementById('badge-neta-mes').textContent='0 meses';return;}
+  if(!rows.length){el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin registros para el filtro seleccionado</p></div>';document.getElementById('badge-neta-mes').textContent='0 meses';return;}
   let totalOps=0,totalNeta=0;
   let html=`<table class="net-table"><thead><tr>
     <th>Mes</th>
