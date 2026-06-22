@@ -1847,17 +1847,8 @@ function applyDashFilter(){
     if(todos)todos.checked=false;
   }
 
-  const seleccionaMar26 = estGes.some(e => String(e).toUpperCase().includes('MAR26'));
-
   dashData=allData.filter(r=>{
     const estado=String(r[COL_ESTGES]||'').trim();
-    const estadoUp=estado.toUpperCase();
-    const estComUp=String(r[COL_ESTCOM]||'').trim().toUpperCase();
-
-    // CLAVE: tu tabla dinamica no esta incluyendo MAR26.
-    // La diferencia exacta contra el dashboard era 4.30M, que corresponde a 8.ACTIVADO.MAR26.
-    // Por eso, en vistas generales se excluye MAR26. Si marcas un estado MAR26 explicitamente, si lo muestra.
-    if(!seleccionaMar26 && (estadoUp.includes('MAR26') || estComUp.includes('MAR26'))) return false;
 
     const cumpleEstado =
       estGes.length===0 ||
