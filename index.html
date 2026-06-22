@@ -1181,6 +1181,30 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
   box-shadow:0 0 10px rgba(255,194,71,.28)!important;
 }
 
+
+
+/* NETAS EN GRAFICOS HORIZONTALES */
+.bar-count,.estges-count{
+  min-width:92px!important;
+  text-align:right!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-end!important;
+  gap:1px!important;
+  line-height:1.05!important;
+}
+.bar-count .cnt,.estges-count .cnt{
+  font-size:10px!important;
+  font-weight:900!important;
+  color:#111!important;
+}
+.bar-count .neta,.estges-count .neta{
+  font-size:9px!important;
+  font-weight:900!important;
+  color:var(--accent)!important;
+  white-space:nowrap!important;
+}
+
 </style>
 </head>
 <body>
@@ -1830,7 +1854,7 @@ function updateDashboard(){
   renderEstCom(d);
   renderSucursal(d,netaKey);
   renderZonasV(d);
-  renderEstGes(d);
+  renderEstGes(d,netaKey);
 }
 
 /* ════════════════════════════════════════
@@ -1840,15 +1864,19 @@ function renderHBars(el,data,colors,useEstges=false){
   if(!el)return;
   if(!data.length){el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin datos</p></div>';return;}
   const max=data[0][1]||1;
+  const renderRight=(c,neta)=>{
+    const netaHtml=(neta||neta===0)?`<span class="neta">${fmtMontoRaw(neta)}</span>`:'';
+    return `<span class="cnt">${c}</span>${netaHtml}`;
+  };
   if(useEstges){
-    el.innerHTML=data.map(([l,c],i)=>{
+    el.innerHTML=data.map(([l,c,neta],i)=>{
       const shortLabel=l.length>16?l.slice(0,15)+'…':l;
-      return `<div class="estges-row"><span class="estges-label" title="${l}">${shortLabel}</span><div class="estges-track"><div class="estges-fill" style="width:${Math.round(c/max*100)}%;background:${Array.isArray(colors)?colors[i%colors.length]:colors}"></div></div><span class="estges-count">${c}</span></div>`;
+      return `<div class="estges-row"><span class="estges-label" title="${l}">${shortLabel}</span><div class="estges-track"><div class="estges-fill" style="width:${Math.round(c/max*100)}%;background:${Array.isArray(colors)?colors[i%colors.length]:colors}"></div></div><span class="estges-count">${renderRight(c,neta)}</span></div>`;
     }).join('');
   } else {
-    el.innerHTML=data.map(([l,c],i)=>{
+    el.innerHTML=data.map(([l,c,neta],i)=>{
       const shortLabel=l.length>14?l.slice(0,13)+'…':l;
-      return `<div class="bar-row"><span class="bar-label" title="${l}">${shortLabel}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(c/max*100)}%;background:${Array.isArray(colors)?colors[i%colors.length]:colors}"></div></div><span class="bar-count">${c}</span></div>`;
+      return `<div class="bar-row"><span class="bar-label" title="${l}">${shortLabel}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(c/max*100)}%;background:${Array.isArray(colors)?colors[i%colors.length]:colors}"></div></div><span class="bar-count">${renderRight(c,neta)}</span></div>`;
     }).join('');
   }
 }
@@ -1870,38 +1898,43 @@ function renderProducto(d,netaKey){
   d.forEach(r=>{
     const p=String(r[COL_PROD]||'').trim()||'S/D';
     const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
-    if(!map[p])map[p]=new Set();
-    if(ruc)map[p].add(ruc);
+    if(!map[p])map[p]={clientes:new Set(),neta:0};
+    if(ruc)map[p].clientes.add(ruc);
+    if(netaKey)map[p].neta+=parseNeta(r[netaKey]);
   });
-  const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]);
+  const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[1]-a[1]);
   document.getElementById('badge-prod').textContent=data.length+' tipos';
   renderHBars(document.getElementById('chart-producto'),data,PALETTE);
 }
 
 function renderZonas(d){
+  const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
   const map={};
   d.forEach(r=>{
     const z=String(r[COL_ZONA]||'').trim()||'S/D';
     const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
-    if(!map[z])map[z]=new Set();
-    if(ruc)map[z].add(ruc);
+    if(!map[z])map[z]={clientes:new Set(),neta:0};
+    if(ruc)map[z].clientes.add(ruc);
+    if(netaKey)map[z].neta+=parseNeta(r[netaKey]);
   });
-  const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[1]-a[1]).slice(0,10);
   document.getElementById('badge-zona').textContent=data.length+' zonas';
   renderHBars(document.getElementById('chart-zonas'),data,'#059669');
 }
 
 function renderFuncionarios(d,funcKey){
   if(!funcKey){document.getElementById('chart-funcionarios').innerHTML='<div class="empty-state" style="padding:12px"><p>Columna no encontrada</p></div>';return;}
+  const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
   const map={};
   d.forEach(r=>{
     const f=String(r[funcKey]||'').trim();
     const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
     if(!f)return;
-    if(!map[f])map[f]=new Set();
-    if(ruc)map[f].add(ruc);
+    if(!map[f])map[f]={clientes:new Set(),neta:0};
+    if(ruc)map[f].clientes.add(ruc);
+    if(netaKey)map[f].neta+=parseNeta(r[netaKey]);
   });
-  const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[1]-a[1]).slice(0,12);
   document.getElementById('badge-func').textContent=Object.keys(map).length+' total';
   renderHBars(document.getElementById('chart-funcionarios'),data,'#7C3AED');
 }
@@ -2028,17 +2061,17 @@ function renderZonasV(d){
 }
 
 /* FIX CLAVE: Estado de Gestión con labels completos */
-function renderEstGes(d){
+function renderEstGes(d,netaKey){
   const map={};
   d.forEach(r=>{
     const e=String(r[COL_ESTGES]||'').trim()||'S/D';
     const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
-    if(!map[e])map[e]=new Set();
-    if(ruc)map[e].add(ruc);
+    if(!map[e])map[e]={clientes:new Set(),neta:0};
+    if(ruc)map[e].clientes.add(ruc);
+    if(netaKey)map[e].neta+=parseNeta(r[netaKey]);
   });
-  const data=Object.entries(map).map(([k,s])=>[k,s.size]).sort((a,b)=>b[1]-a[1]);
+  const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[1]-a[1]);
   document.getElementById('badge-estges').textContent=data.length+' estados';
-  // Usamos clase especial para labels más anchos
   renderHBars(document.getElementById('chart-estados'),data,PALETTE,true);
 }
 
