@@ -1138,6 +1138,49 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
 #view-expedientes th:nth-child(16),#view-expedientes td:nth-child(16){width:70px!important;}
 #view-expedientes .badge{font-size:8.5px!important;padding:2px 7px!important;}
 
+
+
+/* =========================================================
+   MULTISELECT BONITO PARA ESTADO
+   ========================================================= */
+.multi-select{position:relative;min-width:205px;font-family:var(--font);}
+.multi-select-btn{
+  height:31px;width:100%;min-width:205px;background:#fff;border:1px solid #c9c9c9;border-radius:3px;
+  font-size:11px;color:#111;box-shadow:0 1px 2px rgba(0,0,0,.04);cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 10px;text-align:left;font-family:var(--font);
+}
+.multi-select-btn:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,0,91,.10);}
+.multi-select-btn::after{content:'▾';font-size:11px;color:#666;line-height:1;}
+.multi-select-menu{
+  display:none;position:absolute;top:35px;left:0;z-index:300;width:260px;max-height:310px;overflow:auto;
+  background:#fff;border:1px solid #777;box-shadow:0 10px 26px rgba(0,0,0,.22);padding:6px 0;
+}
+.multi-select.open .multi-select-menu{display:block;}
+.multi-option{display:flex;align-items:center;gap:8px;padding:7px 10px;font-size:11px;color:#111;cursor:pointer;white-space:nowrap;}
+.multi-option:hover{background:#eeeeee;}
+.multi-option input{accent-color:var(--accent);width:13px;height:13px;flex:0 0 auto;}
+.multi-option-text{overflow:hidden;text-overflow:ellipsis;}
+.multi-option.all{font-weight:900;border-bottom:1px solid #e5e5e5;margin-bottom:3px;}
+.multi-option.active-all{font-weight:900;color:#F0005B;border-bottom:1px solid #e5e5e5;margin-bottom:3px;}
+
+
+
+/* Logo T amarillo en header */
+.brand-t-logo{
+  width:24px!important;
+  height:24px!important;
+  border-radius:50%!important;
+  background:#ffc247!important;
+  color:#111!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:16px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  box-shadow:0 0 10px rgba(255,194,71,.28)!important;
+}
+
 </style>
 </head>
 <body>
@@ -1176,7 +1219,7 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
 <div id="app">
   <header>
     <div class="brand-wrap">
-      <div class="brand-icon">📊</div>
+      <div class="brand-icon brand-t-logo">T</div>
       <div>
         <div class="brand-name">Gestión 2026</div>
         <div class="brand-sub">Total Servicios Financieros</div>
@@ -1230,9 +1273,20 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
 
         <div class="filter-bar">
           <label>Estado:</label>
-          <select class="filter-select-dash" id="filtroEstGes" onchange="applyDashFilter()">
-            <option value="">Todos</option>
-          </select>
+          <div class="multi-select" id="estadoMulti">
+            <button type="button" class="multi-select-btn" id="estadoMultiBtn" onclick="toggleEstadoMenu()">Todos</button>
+            <div class="multi-select-menu" id="estadoMultiMenu">
+              <label class="multi-option all">
+                <input type="checkbox" id="estadoTodos" onchange="toggleEstadoTodos(this)">
+                <span class="multi-option-text">Todos</span>
+              </label>
+              <label class="multi-option active-all">
+                <input type="checkbox" value="ACTIVADO_2026" class="estado-check" onchange="applyDashFilter()">
+                <span class="multi-option-text">Todos ACTIVADO 2026</span>
+              </label>
+              <div id="estadoOpciones"></div>
+            </div>
+          </div>
 
           <label>Zona:</label>
           <select class="filter-select-dash" id="filtroZonaDash" onchange="applyDashFilter()">
@@ -1580,50 +1634,107 @@ function updateLoadProgress(pct,total){document.getElementById('loadProgressFill
 /* ════════════════════════════════════════
    DASHBOARD FILTERS
    ════════════════════════════════════════ */
+function escHTML(v){
+  return String(v ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function getEstadosSeleccionados(){
+  return [...document.querySelectorAll('.estado-check:checked')].map(ch=>ch.value).filter(Boolean);
+}
+
+function toggleEstadoMenu(){
+  document.getElementById('estadoMulti')?.classList.toggle('open');
+}
+
+function toggleEstadoTodos(chk){
+  if(chk.checked){
+    document.querySelectorAll('.estado-check').forEach(ch=>ch.checked=false);
+  }
+  applyDashFilter();
+}
+
+function updateEstadoLabel(){
+  const seleccionados=getEstadosSeleccionados();
+  const btn=document.getElementById('estadoMultiBtn');
+  const todos=document.getElementById('estadoTodos');
+  if(!btn)return;
+
+  if(todos)todos.checked=seleccionados.length===0;
+
+  if(seleccionados.length===0){
+    btn.textContent='Todos';
+  }else if(seleccionados.length===1){
+    btn.textContent=seleccionados[0]==='ACTIVADO_2026'?'Todos ACTIVADO 2026':seleccionados[0];
+  }else{
+    btn.textContent=seleccionados.length+' seleccionados';
+  }
+}
+
 function updateDashFilters(){
   const estados=[...new Set(allData.map(r=>String(r[COL_ESTGES]||'').trim()).filter(Boolean))].sort();
   const zonas=[...new Set(allData.map(r=>String(r[COL_ZONA]||'').trim()).filter(Boolean))].sort();
   const prods=[...new Set(allData.map(r=>String(r[COL_PROD]||'').trim()).filter(Boolean))].sort();
 
-  document.getElementById('filtroEstGes').innerHTML =
-    '<option value="">Todos</option>' +
-    '<option value="ACTIVADO_2026">Todos ACTIVADO 2026</option>' +
-    estados.map(e=>`<option value="${e}">${e}</option>`).join('');
+  const seleccionadosPrevios=new Set(getEstadosSeleccionados());
+  document.getElementById('estadoOpciones').innerHTML = estados.map(e=>{
+    const checked=seleccionadosPrevios.has(e)?'checked':'';
+    return `<label class="multi-option" title="${escHTML(e)}"><input type="checkbox" class="estado-check" value="${escHTML(e)}" ${checked} onchange="applyDashFilter()"><span class="multi-option-text">${escHTML(e)}</span></label>`;
+  }).join('');
+
+  const activo2026=document.querySelector('.estado-check[value="ACTIVADO_2026"]');
+  if(activo2026)activo2026.checked=seleccionadosPrevios.has('ACTIVADO_2026');
 
   document.getElementById('filtroZonaDash').innerHTML =
     '<option value="">Todas</option>' +
-    zonas.map(z=>`<option value="${z}">${z}</option>`).join('');
+    zonas.map(z=>`<option value="${escHTML(z)}">${escHTML(z)}</option>`).join('');
 
   document.getElementById('filtroProductoDash').innerHTML =
     '<option value="">Todos</option>' +
-    prods.map(p=>`<option value="${p}">${p}</option>`).join('');
+    prods.map(p=>`<option value="${escHTML(p)}">${escHTML(p)}</option>`).join('');
+
+  updateEstadoLabel();
 }
+
 function applyDashFilter(){
-  const estGes=(document.getElementById('filtroEstGes')?.value||'').trim();
+  const estGes=getEstadosSeleccionados();
   const zona=(document.getElementById('filtroZonaDash')?.value||'').trim();
   const producto=(document.getElementById('filtroProductoDash')?.value||'').trim();
+
+  if(estGes.length>0){
+    const todos=document.getElementById('estadoTodos');
+    if(todos)todos.checked=false;
+  }
 
   dashData=allData.filter(r=>{
     const estado=String(r[COL_ESTGES]||'').trim();
 
     const cumpleEstado =
-      !estGes ||
-      (estGes==='ACTIVADO_2026' && estado.includes('8.ACTIVADO.')) ||
-      estado===estGes;
+      estGes.length===0 ||
+      (estGes.includes('ACTIVADO_2026') && estado.includes('8.ACTIVADO.')) ||
+      estGes.includes(estado);
 
     return cumpleEstado &&
       (!zona || String(r[COL_ZONA]||'').trim()===zona) &&
       (!producto || String(r[COL_PROD]||'').trim()===producto);
   });
 
+  updateEstadoLabel();
   updateDashboard();
 }
+
 function resetDashFilters(){
-  document.getElementById('filtroEstGes').value='';
+  document.querySelectorAll('.estado-check').forEach(ch=>ch.checked=false);
+  const todos=document.getElementById('estadoTodos');
+  if(todos)todos.checked=true;
   document.getElementById('filtroZonaDash').value='';
   document.getElementById('filtroProductoDash').value='';
   applyDashFilter();
 }
+
+document.addEventListener('click',function(e){
+  const box=document.getElementById('estadoMulti');
+  if(box && !box.contains(e.target))box.classList.remove('open');
+});
 
 /* ════════════════════════════════════════
    HELPERS
