@@ -1208,35 +1208,108 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
 
 
 /* =========================================================
-   AJUSTE: rankings por NETA y color rosado corporativo
+   AJUSTE FINAL: rankings limpios por NETA
+   - Barras en turquesa original
+   - NETA grande en negro
+   - Cantidad pequena sin texto "clientes"
+   - Vista barras centrada
    ========================================================= */
-.bar-fill,.suc-fill,.estges-fill,.vbar-fill{
-  background:var(--accent)!important;
+.bar-fill,
+.suc-fill,
+.estges-fill,
+.vbar-fill{
+  background:#5BC7C8 !important;
 }
-.bar-count,.estges-count,.suc-amount{
-  color:var(--accent)!important;
-  min-width:72px!important;
+
+.bar-count,
+.estges-count{
+  min-width:92px !important;
+  text-align:right !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-end !important;
+  justify-content:center !important;
+  gap:2px !important;
+  line-height:1.05 !important;
+  color:#111 !important;
 }
-.bar-count .cnt,.estges-count .cnt{
-  display:block;
-  color:var(--accent)!important;
-  font-weight:900;
-  font-size:9px;
-  line-height:1.05;
+
+/* monto NETA */
+.neta-big{
+  display:block !important;
+  font-size:15px !important;
+  font-weight:900 !important;
+  color:#111 !important;
+  line-height:1.05 !important;
+  white-space:nowrap !important;
 }
-.bar-count .neta,.estges-count .neta{
-  display:block;
-  color:var(--accent)!important;
-  font-weight:900;
-  font-size:10px;
-  line-height:1.05;
+
+/* cantidad de clientes, sin palabra clientes */
+.cnt-small{
+  display:block !important;
+  font-size:11px !important;
+  font-weight:900 !important;
+  color:var(--accent) !important;
+  line-height:1 !important;
+  margin-top:1px !important;
+  white-space:nowrap !important;
 }
-.vbar-val,.vbar-lbl{color:#111!important;}
+
+.suc-amount{
+  color:#111 !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  min-width:72px !important;
+}
+
+/* Vista barras centrada */
+#chart-zonas-v{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  height:260px !important;
+}
+
+.vbar-container{
+  height:260px !important;
+  display:flex !important;
+  align-items:flex-end !important;
+  justify-content:center !important;
+  gap:18px !important;
+  padding:30px 30px 34px !important;
+}
+
+.vbar-col{
+  max-width:140px !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  flex:0 1 140px !important;
+}
+
 .vbar-neta{
-  font-size:9px;
-  font-weight:900;
-  color:var(--accent)!important;
-  line-height:1;
+  font-size:13px !important;
+  font-weight:900 !important;
+  color:#111 !important;
+  line-height:1 !important;
+  margin-bottom:4px !important;
+  white-space:nowrap !important;
+}
+
+.vbar-val{
+  font-size:12px !important;
+  font-weight:900 !important;
+  color:var(--accent) !important;
+  line-height:1 !important;
+  margin-bottom:6px !important;
+}
+
+.vbar-lbl{
+  font-size:11px !important;
+  font-weight:900 !important;
+  color:#111 !important;
+  line-height:1 !important;
+  margin-top:7px !important;
+  text-align:center !important;
 }
 
 </style>
@@ -1902,22 +1975,21 @@ function renderHBars(el,data,colors,useEstges=false){
   const max=Math.max(...data.map(x=>Math.abs(x[2]||0)),1);
 
   const renderRight=(clientes,neta)=>{
-    const netaHtml=(neta||neta===0)?`<span class="neta">${fmtMontoRaw(neta)}</span>`:'';
-    const clientesTxt=clientes===1?'1 cliente':`${clientes} clientes`;
-    return `${netaHtml}<span class="cnt">${clientesTxt}</span>`;
+    const netaHtml=(neta||neta===0)?`<span class="neta-big">${fmtMontoRaw(neta)}</span>`:'';
+    return `${netaHtml}<span class="cnt-small">${clientes}</span>`;
   };
 
   if(useEstges){
     el.innerHTML=data.map(([l,clientes,neta],i)=>{
       const shortLabel=l.length>16?l.slice(0,15)+'…':l;
       const w=Math.round(Math.abs(neta||0)/max*100);
-      return `<div class="estges-row"><span class="estges-label" title="${l}">${shortLabel}</span><div class="estges-track"><div class="estges-fill" style="width:${w}%;background:var(--accent)!important"></div></div><span class="estges-count">${renderRight(clientes,neta)}</span></div>`;
+      return `<div class="estges-row"><span class="estges-label" title="${l}">${shortLabel}</span><div class="estges-track"><div class="estges-fill" style="width:${w}%"></div></div><span class="estges-count">${renderRight(clientes,neta)}</span></div>`;
     }).join('');
   } else {
     el.innerHTML=data.map(([l,clientes,neta],i)=>{
       const shortLabel=l.length>14?l.slice(0,13)+'…':l;
       const w=Math.round(Math.abs(neta||0)/max*100);
-      return `<div class="bar-row"><span class="bar-label" title="${l}">${shortLabel}</span><div class="bar-track"><div class="bar-fill" style="width:${w}%;background:var(--accent)!important"></div></div><span class="bar-count">${renderRight(clientes,neta)}</span></div>`;
+      return `<div class="bar-row"><span class="bar-label" title="${l}">${shortLabel}</span><div class="bar-track"><div class="bar-fill" style="width:${w}%"></div></div><span class="bar-count">${renderRight(clientes,neta)}</span></div>`;
     }).join('');
   }
 }
@@ -1928,8 +2000,8 @@ function renderVBars(el,data){
   const max=Math.max(...data.map(x=>Math.abs(x[2]||0)),1);
   data.forEach(([l,clientes,neta],i)=>{
     const col=document.createElement('div');col.className='vbar-col';
-    const h=Math.max(Math.round(Math.abs(neta||0)/max*100),4);
-    col.innerHTML=`<span class="vbar-neta">${fmtMontoRaw(neta)}</span><span class="vbar-val">${clientes}</span><div class="vbar-fill" style="height:${h}px;background:var(--accent)!important"></div><span class="vbar-lbl">${l.length>8?l.slice(0,7)+'…':l}</span>`;
+    const h=Math.max(Math.round((Math.abs(neta||0)/max)*120),8);
+    col.innerHTML=`<span class="vbar-neta">${fmtMontoRaw(neta)}</span><span class="vbar-val">${clientes}</span><div class="vbar-fill" style="height:${h}px"></div><span class="vbar-lbl">${l.length>8?l.slice(0,7)+'…':l}</span>`;
     el.appendChild(col);
   });
 }
