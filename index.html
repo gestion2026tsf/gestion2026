@@ -1230,16 +1230,20 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
 
         <div class="filter-bar">
           <label>Estado:</label>
-          <select class="filter-select-dash"
-        id="filtroEstGes"
-        multiple
-        onchange="applyDashFilter()">
-    <option value="">Todos</option>
-</select>
+          <select class="filter-select-dash" id="filtroEstGes" onchange="applyDashFilter()">
+            <option value="">Todos</option>
+          </select>
+
           <label>Zona:</label>
-          <select class="filter-select-dash" id="filtroZonaDash" onchange="applyDashFilter()"><option value="">Todas</option></select>
+          <select class="filter-select-dash" id="filtroZonaDash" onchange="applyDashFilter()">
+            <option value="">Todas</option>
+          </select>
+
           <label>Producto:</label>
-          <select class="filter-select-dash" id="filtroProductoDash" onchange="applyDashFilter()"><option value="">Todos</option></select>
+          <select class="filter-select-dash" id="filtroProductoDash" onchange="applyDashFilter()">
+            <option value="">Todos</option>
+          </select>
+
           <button class="btn-clear" onclick="resetDashFilters()">✕ Limpiar</button>
         </div>
 
@@ -1580,21 +1584,44 @@ function updateDashFilters(){
   const estados=[...new Set(allData.map(r=>String(r[COL_ESTGES]||'').trim()).filter(Boolean))].sort();
   const zonas=[...new Set(allData.map(r=>String(r[COL_ZONA]||'').trim()).filter(Boolean))].sort();
   const prods=[...new Set(allData.map(r=>String(r[COL_PROD]||'').trim()).filter(Boolean))].sort();
-  document.getElementById('filtroEstGes').innerHTML='<option value="">Todos</option>'+estados.map(e=>`<option value="${e}">${e}</option>`).join('');
-  document.getElementById('filtroZonaDash').innerHTML='<option value="">Todas</option>'+zonas.map(z=>`<option value="${z}">${z}</option>`).join('');
-  document.getElementById('filtroProductoDash').innerHTML='<option value="">Todos</option>'+prods.map(p=>`<option value="${p}">${p}</option>`).join('');
+
+  document.getElementById('filtroEstGes').innerHTML =
+    '<option value="">Todos</option>' +
+    '<option value="ACTIVADO_2026">Todos ACTIVADO 2026</option>' +
+    estados.map(e=>`<option value="${e}">${e}</option>`).join('');
+
+  document.getElementById('filtroZonaDash').innerHTML =
+    '<option value="">Todas</option>' +
+    zonas.map(z=>`<option value="${z}">${z}</option>`).join('');
+
+  document.getElementById('filtroProductoDash').innerHTML =
+    '<option value="">Todos</option>' +
+    prods.map(p=>`<option value="${p}">${p}</option>`).join('');
 }
 function applyDashFilter(){
-  const estGes = [...document.getElementById('filtroEstGes').selectedOptions]
-  .map(o => o.value)
-  .filter(Boolean);
+  const estGes=(document.getElementById('filtroEstGes')?.value||'').trim();
   const zona=(document.getElementById('filtroZonaDash')?.value||'').trim();
   const producto=(document.getElementById('filtroProductoDash')?.value||'').trim();
-  dashData=allData.filter(r=>((!estGes.length || estGes.includes(String(r[COL_ESTGES] || '').trim())))&&(!producto||String(r[COL_PROD]||'').trim()===producto));
+
+  dashData=allData.filter(r=>{
+    const estado=String(r[COL_ESTGES]||'').trim();
+
+    const cumpleEstado =
+      !estGes ||
+      (estGes==='ACTIVADO_2026' && estado.includes('8.ACTIVADO.')) ||
+      estado===estGes;
+
+    return cumpleEstado &&
+      (!zona || String(r[COL_ZONA]||'').trim()===zona) &&
+      (!producto || String(r[COL_PROD]||'').trim()===producto);
+  });
+
   updateDashboard();
 }
 function resetDashFilters(){
-  document.getElementById('filtroEstGes').value='';document.getElementById('filtroZonaDash').value='';document.getElementById('filtroProductoDash').value='';
+  document.getElementById('filtroEstGes').value='';
+  document.getElementById('filtroZonaDash').value='';
+  document.getElementById('filtroProductoDash').value='';
   applyDashFilter();
 }
 
