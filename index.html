@@ -1323,84 +1323,6 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
   width:100% !important;
 }
 
-
-
-/* =========================================================
-   FIX FINAL ZONAS VISTA BARRAS + GRUPO JUNIO
-   ========================================================= */
-.multi-option.month-group{
-  font-weight:900!important;
-  color:#111!important;
-  background:#fff!important;
-  border-bottom:1px solid #e5e5e5!important;
-}
-.multi-option.month-group:hover{background:#eeeeee!important;}
-#chart-zonas-v{
-  height:250px!important;
-  padding:18px 22px 20px!important;
-  align-items:flex-end!important;
-  justify-content:center!important;
-  overflow:hidden!important;
-}
-#chart-zonas-v.vbar-container,
-.vbar-container#chart-zonas-v{
-  display:flex!important;
-  gap:18px!important;
-  width:100%!important;
-}
-#chart-zonas-v .vbar-col{
-  height:210px!important;
-  max-width:120px!important;
-  min-width:80px!important;
-  flex:1 1 0!important;
-  display:flex!important;
-  flex-direction:column!important;
-  justify-content:flex-end!important;
-  align-items:center!important;
-  gap:0!important;
-}
-#chart-zonas-v .vbar-top{
-  height:36px!important;
-  display:flex!important;
-  flex-direction:column!important;
-  justify-content:flex-end!important;
-  align-items:center!important;
-  margin-bottom:7px!important;
-  line-height:1!important;
-}
-#chart-zonas-v .vbar-neta{
-  font-size:12px!important;
-  font-weight:900!important;
-  color:#111!important;
-  margin:0 0 5px!important;
-}
-#chart-zonas-v .vbar-val{
-  font-size:10px!important;
-  font-weight:900!important;
-  color:var(--accent)!important;
-  margin:0!important;
-}
-#chart-zonas-v .vbar-fill{
-  width:100%!important;
-  max-width:94px!important;
-  min-height:6px!important;
-  background:#5BC7C8!important;
-  border-radius:3px 3px 0 0!important;
-}
-#chart-zonas-v .vbar-lbl{
-  height:24px!important;
-  margin-top:9px!important;
-  font-size:10px!important;
-  font-weight:900!important;
-  color:#111!important;
-  text-align:center!important;
-  line-height:1.1!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-  width:100%!important;
-}
-
 </style>
 </head>
 <body>
@@ -1884,9 +1806,7 @@ function updateEstadoLabel(){
   if(seleccionados.length===0){
     btn.textContent='Todos';
   }else if(seleccionados.length===1){
-    if(seleccionados[0]==='ACTIVADO_2026') btn.textContent='Todos ACTIVADO 2026';
-    else if(seleccionados[0]==='JUNIO_2026') btn.textContent='JUNIO 2026';
-    else btn.textContent=seleccionados[0];
+    btn.textContent=seleccionados[0]==='ACTIVADO_2026'?'Todos ACTIVADO 2026':seleccionados[0];
   }else{
     btn.textContent=seleccionados.length+' seleccionados';
   }
@@ -1898,12 +1818,7 @@ function updateDashFilters(){
   const prods=[...new Set(allData.map(r=>String(r[COL_PROD]||'').trim()).filter(Boolean))].sort();
 
   const seleccionadosPrevios=new Set(getEstadosSeleccionados());
-  const tieneJunio = estados.some(e=>String(e).toUpperCase().includes('JUN26'));
-  const opcionJunio = tieneJunio
-    ? `<label class="multi-option month-group"><input type="checkbox" class="estado-check" value="JUNIO_2026" ${seleccionadosPrevios.has('JUNIO_2026')?'checked':''} onchange="applyDashFilter()"><span class="multi-option-text">JUNIO 2026</span></label>`
-    : '';
-
-  document.getElementById('estadoOpciones').innerHTML = opcionJunio + estados.map(e=>{
+  document.getElementById('estadoOpciones').innerHTML = estados.map(e=>{
     const checked=seleccionadosPrevios.has(e)?'checked':'';
     return `<label class="multi-option" title="${escHTML(e)}"><input type="checkbox" class="estado-check" value="${escHTML(e)}" ${checked} onchange="applyDashFilter()"><span class="multi-option-text">${escHTML(e)}</span></label>`;
   }).join('');
@@ -1947,7 +1862,6 @@ function applyDashFilter(){
     const cumpleEstado =
       estGes.length===0 ||
       (estGes.includes('ACTIVADO_2026') && isActivado(r)) ||
-      (estGes.includes('JUNIO_2026') && estadoUp.includes('JUN26')) ||
       estGes.includes(estado);
 
     return cumpleEstado &&
@@ -2153,8 +2067,8 @@ function renderVBars(el,data){
   const max=Math.max(...data.map(x=>Math.abs(x[2]||0)),1);
   data.forEach(([l,clientes,neta],i)=>{
     const col=document.createElement('div');col.className='vbar-col';
-    const h=Math.max(Math.round((Math.abs(neta||0)/max)*150),10);
-    col.innerHTML=`<div class="vbar-top"><span class="vbar-neta">${fmtMontoRaw(neta)}</span><span class="vbar-val">${clientes}</span></div><div class="vbar-fill" style="height:${h}px"></div><span class="vbar-lbl" title="${l}">${l}</span>`;
+    const h=Math.max(Math.round((Math.abs(neta||0)/max)*95),6);
+    col.innerHTML=`<span class="vbar-neta">${fmtMontoRaw(neta)}</span><span class="vbar-val">${clientes}</span><div class="vbar-fill" style="height:${h}px"></div><span class="vbar-lbl" title="${l}">${l}</span>`;
     el.appendChild(col);
   });
 }
