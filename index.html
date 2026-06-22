@@ -1887,8 +1887,43 @@ function detectField(candidates){
   return null;
 }
 function parseNeta(val){
-  const n=parseFloat(String(val||'').replace(/[^0-9.\-]/g,''));
-  return isNaN(n)?0:n;
+  // Soporta formatos: 1234.56, 1,234.56, 1.234,56, S/ 1 234,56 y valores numéricos de Excel/Power Automate.
+  if(typeof val === 'number') return isFinite(val) ? val : 0;
+  let s = String(val ?? '').trim();
+  if(!s) return 0;
+  s = s.replace(/\s/g,'').replace(/S\/|USD|US\$|,/gi, m => m === ',' ? ',' : '');
+  s = s.replace(/[^0-9,.-]/g,'');
+  const lastComma = s.lastIndexOf(',');
+  const lastDot = s.lastIndexOf('.');
+  if(lastComma > -1 && lastDot > -1){
+    // El último separador es el decimal; el otro es miles.
+    if(lastComma > lastDot) s = s.replace(/\./g,'').replace(',', '.');
+    else s = s.replace(/,/g,'');
+  }else if(lastComma > -1){
+    // Si tiene coma y 1-2 decimales, trátala como decimal; si no, miles.
+    const dec = s.length - lastComma - 1;
+    s = dec > 0 && dec <= 2 ? s.replace(',', '.') : s.replace(/,/g,'');
+  }
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+function getClienteKey(r){
+  // RUC manda. El nombre se usa solo si no hay RUC, normalizado para no duplicar por mayúsculas/espacios.
+  const ruc = String(r['RUC'] ?? '').replace(/\D/g,'').trim();
+  if(ruc) return ruc;
+  return String(r['NOMBRE_RSOCIAL_CLIENTE'] ?? '').trim().toUpperCase().replace(/\s+/g,' ');
+}
+function isActivado(r){
+  return String(r[COL_ESTGES] || '').toUpperCase().includes('ACTIVADO');
+}
+function setText(id,value){
+  const el=document.getElementById(id);
+  if(el)el.textContent=value;
+}
+function setNetaSub(id,neta){
+  const el=document.getElementById(id);
+  if(!el)return;
+  if(neta || neta===0){el.style.display='block';el.textContent='Neta: '+fmtMonto(neta);} else {el.style.display='none';el.textContent='—';}
 }
 function fmtMonto(n){
   if(!n&&n!==0)return '—';
@@ -1910,68 +1945,57 @@ function updateDashboard(){
   const d=dashData;
   const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
   const funcKey=headers.includes(COL_FUNC)?COL_FUNC:detectField(['FNCNR','FNCNE','FUNCIONARIO','ANALISTA','EJECUTIVO']);
+  const activados=d.filter(isActivado);
 
-  document.getElementById('kpi-total').textContent=d.length.toLocaleString('es-PE');
+  setText('kpi-total', d.length.toLocaleString('es-PE'));
 
-  // LSNG - clientes unicos, no operaciones
-  const getClienteKey = r => String(r['RUC'] || r['NOMBRE_RSOCIAL_CLIENTE'] || '').trim();
-  const lsng=d.filter(r=>String(r[COL_PROD]||'').startsWith('L'));
+  // KPIs de producto: clientes únicos por RUC/nombre normalizado. La NETA se calcula solo sobre ACTIVADOS.
+  const lsng=d.filter(r=>String(r[COL_PROD]||'').toUpperCase().startsWith('L'));
+  const lsngAct=lsng.filter(isActivado);
   const lsngClientes=[...new Set(lsng.map(getClienteKey).filter(Boolean))];
-  const lsngVehClientes=[...new Set(lsng.filter(r=>String(r[COL_PROD]||'').includes('VEH')).map(getClienteKey).filter(Boolean))];
-  const lsngMaqClientes=[...new Set(lsng.filter(r=>String(r[COL_PROD]||'').includes('MAQ')).map(getClienteKey).filter(Boolean))];
-  let lsngNeta=0;
-  if(netaKey)lsng.forEach(r=>{lsngNeta+=parseNeta(r[netaKey]);});
-  document.getElementById('kpi-lsng').textContent=lsngClientes.length.toLocaleString('es-PE');
-  document.getElementById('kpi-lsng-sub').textContent=`Clientes únicos · VEH: ${lsngVehClientes.length} · MAQ: ${lsngMaqClientes.length}`;
-  if(netaKey&&lsngNeta){const el=document.getElementById('kpi-lsng-neta');el.style.display='block';el.textContent='Neta: '+fmtMonto(lsngNeta);}
+  const lsngVehClientes=[...new Set(lsng.filter(r=>String(r[COL_PROD]||'').toUpperCase().includes('VEH')).map(getClienteKey).filter(Boolean))];
+  const lsngMaqClientes=[...new Set(lsng.filter(r=>String(r[COL_PROD]||'').toUpperCase().includes('MAQ')).map(getClienteKey).filter(Boolean))];
+  const lsngNeta=netaKey?lsngAct.reduce((sum,r)=>sum+parseNeta(r[netaKey]),0):0;
+  setText('kpi-lsng', lsngClientes.length.toLocaleString('es-PE'));
+  setText('kpi-lsng-sub', `Clientes únicos · VEH: ${lsngVehClientes.length} · MAQ: ${lsngMaqClientes.length}`);
+  setNetaSub('kpi-lsng-neta', lsngNeta);
 
-  // CRDT - clientes unicos, no operaciones
-  const crdt=d.filter(r=>String(r[COL_PROD]||'').startsWith('C'));
+  const crdt=d.filter(r=>String(r[COL_PROD]||'').toUpperCase().startsWith('C'));
+  const crdtAct=crdt.filter(isActivado);
   const crdtClientes=[...new Set(crdt.map(getClienteKey).filter(Boolean))];
-  const crdtVehClientes=[...new Set(crdt.filter(r=>String(r[COL_PROD]||'').includes('VEH')).map(getClienteKey).filter(Boolean))];
-  const crdtMaqClientes=[...new Set(crdt.filter(r=>String(r[COL_PROD]||'').includes('MAQ')).map(getClienteKey).filter(Boolean))];
-  let crdtNeta=0;
-  if(netaKey)crdt.forEach(r=>{crdtNeta+=parseNeta(r[netaKey]);});
-  document.getElementById('kpi-crdt').textContent=crdtClientes.length.toLocaleString('es-PE');
-  document.getElementById('kpi-crdt-sub').textContent=`Clientes únicos · VEH: ${crdtVehClientes.length} · MAQ: ${crdtMaqClientes.length}`;
-  if(netaKey&&crdtNeta){const el=document.getElementById('kpi-crdt-neta');el.style.display='block';el.textContent='Neta: '+fmtMonto(crdtNeta);}
+  const crdtVehClientes=[...new Set(crdt.filter(r=>String(r[COL_PROD]||'').toUpperCase().includes('VEH')).map(getClienteKey).filter(Boolean))];
+  const crdtMaqClientes=[...new Set(crdt.filter(r=>String(r[COL_PROD]||'').toUpperCase().includes('MAQ')).map(getClienteKey).filter(Boolean))];
+  const crdtNeta=netaKey?crdtAct.reduce((sum,r)=>sum+parseNeta(r[netaKey]),0):0;
+  setText('kpi-crdt', crdtClientes.length.toLocaleString('es-PE'));
+  setText('kpi-crdt-sub', `Clientes únicos · VEH: ${crdtVehClientes.length} · MAQ: ${crdtMaqClientes.length}`);
+  setNetaSub('kpi-crdt-neta', crdtNeta);
 
-  // Funcionarios
   const funcsUniq=funcKey?[...new Set(d.map(r=>String(r[funcKey]||'').trim()).filter(Boolean))]:[];
-  document.getElementById('kpi-func').textContent=funcsUniq.length.toLocaleString('es-PE');
+  setText('kpi-func', funcsUniq.length.toLocaleString('es-PE'));
 
-  // ACTIVADOS
-  const activados=d.filter(r=>String(r[COL_ESTGES]||'').toUpperCase().includes('ACTIVADO'));
-
-  // Clientes únicos + su neta
   const clientesMap={};
   activados.forEach(r=>{
-    const nombre=String(r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
-    if(!nombre)return;
-    if(!clientesMap[nombre])clientesMap[nombre]=0;
-    if(netaKey)clientesMap[nombre]+=parseNeta(r[netaKey]);
+    const key=getClienteKey(r);
+    if(!key)return;
+    if(!clientesMap[key])clientesMap[key]=0;
+    if(netaKey)clientesMap[key]+=parseNeta(r[netaKey]);
   });
   const clientesList=Object.keys(clientesMap);
-  document.getElementById('kpi-clientes').textContent=clientesList.length.toLocaleString('es-PE');
+  setText('kpi-clientes', clientesList.length.toLocaleString('es-PE'));
   const netaClientes=Object.values(clientesMap).reduce((a,b)=>a+b,0);
-  if(netaKey&&netaClientes){
-    const el=document.getElementById('kpi-clientes-neta');
-    el.style.display='block';
-    el.textContent='Neta: '+fmtMonto(netaClientes);
-  }
+  setNetaSub('kpi-clientes-neta', netaClientes);
 
-  // Neta total activados
-  let netaTotal=0;
-  if(netaKey)activados.forEach(r=>{netaTotal+=parseNeta(r[netaKey]);});
-  document.getElementById('kpi-neta').textContent=fmtMontoRaw(netaTotal);
+  const netaTotal=netaKey?activados.reduce((sum,r)=>sum+parseNeta(r[netaKey]),0):0;
+  setText('kpi-neta', fmtMontoRaw(netaTotal));
 
-  renderProducto(d,netaKey);
-  renderZonas(d);
-  renderFuncionarios(d,funcKey);
+  // Todo lo que es ranking por NETA se alimenta con ACTIVADOS para que cuadre con el KPI Neta Total.
+  renderProducto(activados,netaKey);
+  renderZonas(activados);
+  renderFuncionarios(activados,funcKey);
   renderNetaMes(d,netaKey);
   renderEstCom(d);
-  renderSucursal(d,netaKey);
-  renderZonasV(d);
+  renderSucursal(activados,netaKey);
+  renderZonasV(activados);
   renderEstGes(d,netaKey);
 }
 
@@ -2021,9 +2045,9 @@ function renderProducto(d,netaKey){
   const map={};
   d.forEach(r=>{
     const p=String(r[COL_PROD]||'').trim()||'S/D';
-    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    const cli=getClienteKey(r);
     if(!map[p])map[p]={clientes:new Set(),neta:0};
-    if(ruc)map[p].clientes.add(ruc);
+    if(cli)map[p].clientes.add(cli);
     if(netaKey)map[p].neta+=parseNeta(r[netaKey]);
   });
   const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[2]-a[2]);
@@ -2036,9 +2060,9 @@ function renderZonas(d){
   const map={};
   d.forEach(r=>{
     const z=String(r[COL_ZONA]||'').trim()||'S/D';
-    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    const cli=getClienteKey(r);
     if(!map[z])map[z]={clientes:new Set(),neta:0};
-    if(ruc)map[z].clientes.add(ruc);
+    if(cli)map[z].clientes.add(cli);
     if(netaKey)map[z].neta+=parseNeta(r[netaKey]);
   });
   const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[2]-a[2]).slice(0,10);
@@ -2052,10 +2076,10 @@ function renderFuncionarios(d,funcKey){
   const map={};
   d.forEach(r=>{
     const f=String(r[funcKey]||'').trim();
-    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    const cli=getClienteKey(r);
     if(!f)return;
     if(!map[f])map[f]={clientes:new Set(),neta:0};
-    if(ruc)map[f].clientes.add(ruc);
+    if(cli)map[f].clientes.add(cli);
     if(netaKey)map[f].neta+=parseNeta(r[netaKey]);
   });
   const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[2]-a[2]).slice(0,12);
@@ -2131,9 +2155,9 @@ function renderEstCom(d){
   const map={};
   d.forEach(r=>{
     const e=String(r[COL_ESTCOM]||'').trim()||'S/D';
-    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    const cli=getClienteKey(r);
     if(!map[e])map[e]=new Set();
-    if(ruc)map[e].add(ruc);
+    if(cli)map[e].add(cli);
   });
 
   // Orden correcto por mes: ENE, FEB, MAR, ABR, MAY, JUN...
@@ -2196,9 +2220,9 @@ function renderZonasV(d){
   const map={};
   d.forEach(r=>{
     const z=String(r[COL_ZONA]||'').trim()||'S/D';
-    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    const cli=getClienteKey(r);
     if(!map[z])map[z]={clientes:new Set(),neta:0};
-    if(ruc)map[z].clientes.add(ruc);
+    if(cli)map[z].clientes.add(cli);
     if(netaKey)map[z].neta+=parseNeta(r[netaKey]);
   });
   const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[2]-a[2]).slice(0,7);
@@ -2210,10 +2234,10 @@ function renderEstGes(d,netaKey){
   const map={};
   d.forEach(r=>{
     const e=String(r[COL_ESTGES]||'').trim()||'S/D';
-    const ruc=String(r['RUC']||r['NOMBRE_RSOCIAL_CLIENTE']||'').trim();
+    const cli=getClienteKey(r);
     if(!map[e])map[e]={clientes:new Set(),neta:0};
-    if(ruc)map[e].clientes.add(ruc);
-    if(netaKey)map[e].neta+=parseNeta(r[netaKey]);
+    if(cli)map[e].clientes.add(cli);
+    if(netaKey && isActivado(r))map[e].neta+=parseNeta(r[netaKey]);
   });
   const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[2]-a[2]);
   document.getElementById('badge-estges').textContent=data.length+' estados';
