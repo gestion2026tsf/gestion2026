@@ -1230,7 +1230,12 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
 
         <div class="filter-bar">
           <label>Estado:</label>
-          <select class="filter-select-dash" id="filtroEstGes" onchange="applyDashFilter()"><option value="">Todos</option></select>
+          <select class="filter-select-dash"
+        id="filtroEstGes"
+        multiple
+        onchange="applyDashFilter()">
+    <option value="">Todos</option>
+</select>
           <label>Zona:</label>
           <select class="filter-select-dash" id="filtroZonaDash" onchange="applyDashFilter()"><option value="">Todas</option></select>
           <label>Producto:</label>
@@ -1580,10 +1585,12 @@ function updateDashFilters(){
   document.getElementById('filtroProductoDash').innerHTML='<option value="">Todos</option>'+prods.map(p=>`<option value="${p}">${p}</option>`).join('');
 }
 function applyDashFilter(){
-  const estGes=(document.getElementById('filtroEstGes')?.value||'').trim();
+  const estGes = [...document.getElementById('filtroEstGes').selectedOptions]
+  .map(o => o.value)
+  .filter(Boolean);
   const zona=(document.getElementById('filtroZonaDash')?.value||'').trim();
   const producto=(document.getElementById('filtroProductoDash')?.value||'').trim();
-  dashData=allData.filter(r=>(!estGes||String(r[COL_ESTGES]||'').trim()===estGes)&&(!zona||String(r[COL_ZONA]||'').trim()===zona)&&(!producto||String(r[COL_PROD]||'').trim()===producto));
+  dashData=allData.filter(r=>((!estGes.length || estGes.includes(String(r[COL_ESTGES] || '').trim())))&&(!producto||String(r[COL_PROD]||'').trim()===producto));
   updateDashboard();
 }
 function resetDashFilters(){
