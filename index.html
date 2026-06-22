@@ -1914,7 +1914,32 @@ function getClienteKey(r){
   return String(r['NOMBRE_RSOCIAL_CLIENTE'] ?? '').trim().toUpperCase().replace(/\s+/g,' ');
 }
 function isActivado(r){
-  return String(r[COL_ESTGES] || '').toUpperCase().includes('ACTIVADO');
+  const est = String(r[COL_ESTGES] || '').toUpperCase().trim();
+  // ACTIVADO debe ser exacto al estado 8.ACTIVADO. No usar includes('ACTIVADO') porque jala NO ACTIVADO, DESACTIVADO o textos similares.
+  return est === '8.ACTIVADO.' || est.startsWith('8.ACTIVADO');
+}
+function getSucursalKey(r){
+  let s = String(r[COL_SUC] || '').trim();
+  const zona = String(r[COL_ZONA] || '').trim().toUpperCase();
+  // Regla TSF: si la zona/canal dice CROSS, debe agruparse como CROSS aunque la sucursal venga como AREQUIPA u otra.
+  if(zona.includes('CROSS')) s = 'CROSS';
+  return s || 'S/D';
+}
+function getNetaKey(){
+  // Usar NETA exacta primero. Evita agarrar columnas parecidas cuando la hoja trae muchos importes.
+  return headers.includes(COL_NETA) ? COL_NETA : detectField(['NETA','MONTO_NETA','MONTO NETA']);
+}
+function groupByNeta(rows,labelFn,netaKey){
+  const map={};
+  rows.forEach(r=>{
+    const label=String(labelFn(r)||'S/D').trim()||'S/D';
+    const cli=getClienteKey(r);
+    if(!map[label])map[label]={clientes:new Set(),ops:0,neta:0};
+    map[label].ops++;
+    if(cli)map[label].clientes.add(cli);
+    if(netaKey)map[label].neta += parseNeta(r[netaKey]);
+  });
+  return Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta,v.ops]).sort((a,b)=>b[2]-a[2]);
 }
 function setText(id,value){
   const el=document.getElementById(id);
@@ -1943,7 +1968,7 @@ function fmtMontoRaw(n){
    ════════════════════════════════════════ */
 function updateDashboard(){
   const d=dashData;
-  const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
+  const netaKey=getNetaKey();
   const funcKey=headers.includes(COL_FUNC)?COL_FUNC:detectField(['FNCNR','FNCNE','FUNCIONARIO','ANALISTA','EJECUTIVO']);
   const activados=d.filter(isActivado);
 
@@ -2042,53 +2067,28 @@ function renderVBars(el,data){
 }
 
 function renderProducto(d,netaKey){
-  const map={};
-  d.forEach(r=>{
-    const p=String(r[COL_PROD]||'').trim()||'S/D';
-    const cli=getClienteKey(r);
-    if(!map[p])map[p]={clientes:new Set(),neta:0};
-    if(cli)map[p].clientes.add(cli);
-    if(netaKey)map[p].neta+=parseNeta(r[netaKey]);
-  });
-  const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[2]-a[2]);
+  const data=groupByNeta(d,r=>String(r[COL_PROD]||'').trim()||'S/D',netaKey);
   document.getElementById('badge-prod').textContent=data.length+' tipos';
   renderHBars(document.getElementById('chart-producto'),data,'#F0005B');
 }
 
 function renderZonas(d){
-  const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
-  const map={};
-  d.forEach(r=>{
-    const z=String(r[COL_ZONA]||'').trim()||'S/D';
-    const cli=getClienteKey(r);
-    if(!map[z])map[z]={clientes:new Set(),neta:0};
-    if(cli)map[z].clientes.add(cli);
-    if(netaKey)map[z].neta+=parseNeta(r[netaKey]);
-  });
-  const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[2]-a[2]).slice(0,10);
+  const netaKey=getNetaKey();
+  const data=groupByNeta(d,r=>String(r[COL_ZONA]||'').trim()||'S/D',netaKey).slice(0,10);
   document.getElementById('badge-zona').textContent=data.length+' zonas';
   renderHBars(document.getElementById('chart-zonas'),data,'#F0005B');
 }
 
 function renderFuncionarios(d,funcKey){
   if(!funcKey){document.getElementById('chart-funcionarios').innerHTML='<div class="empty-state" style="padding:12px"><p>Columna no encontrada</p></div>';return;}
-  const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
-  const map={};
-  d.forEach(r=>{
-    const f=String(r[funcKey]||'').trim();
-    const cli=getClienteKey(r);
-    if(!f)return;
-    if(!map[f])map[f]={clientes:new Set(),neta:0};
-    if(cli)map[f].clientes.add(cli);
-    if(netaKey)map[f].neta+=parseNeta(r[netaKey]);
-  });
-  const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[2]-a[2]).slice(0,12);
-  document.getElementById('badge-func').textContent=Object.keys(map).length+' total';
+  const netaKey=getNetaKey();
+  const data=groupByNeta(d,r=>String(r[funcKey]||'').trim(),netaKey).filter(x=>x[0]&&x[0]!=='S/D').slice(0,12);
+  document.getElementById('badge-func').textContent=data.length+' funcionarios';
   renderHBars(document.getElementById('chart-funcionarios'),data,'#F0005B');
 }
 
 function renderNetaMes(d,netaKey){
-  const activados=d.filter(r=>String(r[COL_ESTGES]||'').toUpperCase().includes('ACTIVADO'));
+  const activados=d.filter(isActivado);
   const fechaKey=headers.includes(COL_FECHA)?COL_FECHA:detectField(['FECHA_APRO','FECHA_APROBACION','FECHA','FEC_APRO','FECHA_ACT','FECHA_ACTIV','FEC_ACT','FECHA_ACTIVACION']);
   const meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Set','Oct','Nov','Dic'];
   const byMes={};
@@ -2196,50 +2196,28 @@ function renderEstCom(d){
 
 function renderSucursal(d,netaKey){
   if(!netaKey){document.getElementById('chart-sucursal').innerHTML='<div class="empty-state" style="padding:12px"><p>Sin columna NETA</p></div>';return;}
-  const map={};
-  d.forEach(r=>{
-    const s=String(r[COL_SUC]||'').trim()||'S/D';
-    const n=parseNeta(r[netaKey]);
-    if(n)map[s]=(map[s]||0)+n;
-  });
-  const data=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  const max=data[0]?.[1]||1;
-  document.getElementById('badge-suc').textContent=Object.keys(map).length+' sucursales';
+  const data=groupByNeta(d,getSucursalKey,netaKey).slice(0,8);
+  const max=data[0]?.[2]||1;
+  document.getElementById('badge-suc').textContent=data.length+' sucursales';
   const el=document.getElementById('chart-sucursal');
   if(!data.length){el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin datos</p></div>';return;}
-  el.innerHTML=data.map(([l,v])=>`
+  el.innerHTML=data.map(([l,clientes,neta])=>`
     <div class="suc-row">
       <span class="suc-label" title="${l}">${l.length>13?l.slice(0,12)+'…':l}</span>
-      <div class="suc-track"><div class="suc-fill" style="width:${Math.round(v/max*100)}%"></div></div>
-      <span class="suc-amount">${fmtMontoRaw(v)}</span>
+      <div class="suc-track"><div class="suc-fill" style="width:${Math.round(Math.abs(neta)/Math.abs(max)*100)}%"></div></div>
+      <span class="suc-amount">${fmtMontoRaw(neta)}</span>
     </div>`).join('');
 }
 
 function renderZonasV(d){
-  const netaKey=headers.includes(COL_NETA)?COL_NETA:detectField(['NETA','MONTO_NETA','IMPORTE']);
-  const map={};
-  d.forEach(r=>{
-    const z=String(r[COL_ZONA]||'').trim()||'S/D';
-    const cli=getClienteKey(r);
-    if(!map[z])map[z]={clientes:new Set(),neta:0};
-    if(cli)map[z].clientes.add(cli);
-    if(netaKey)map[z].neta+=parseNeta(r[netaKey]);
-  });
-  const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[2]-a[2]).slice(0,7);
+  const netaKey=getNetaKey();
+  const data=groupByNeta(d,r=>String(r[COL_ZONA]||'').trim()||'S/D',netaKey).slice(0,7);
   renderVBars(document.getElementById('chart-zonas-v'),data);
 }
 
 /* FIX CLAVE: Estado de Gestión con labels completos */
 function renderEstGes(d,netaKey){
-  const map={};
-  d.forEach(r=>{
-    const e=String(r[COL_ESTGES]||'').trim()||'S/D';
-    const cli=getClienteKey(r);
-    if(!map[e])map[e]={clientes:new Set(),neta:0};
-    if(cli)map[e].clientes.add(cli);
-    if(netaKey && isActivado(r))map[e].neta+=parseNeta(r[netaKey]);
-  });
-  const data=Object.entries(map).map(([k,v])=>[k,v.clientes.size,v.neta]).sort((a,b)=>b[2]-a[2]);
+  const data=groupByNeta(d,r=>String(r[COL_ESTGES]||'').trim()||'S/D',netaKey);
   document.getElementById('badge-estges').textContent=data.length+' estados';
   renderHBars(document.getElementById('chart-estados'),data,'#F0005B',true);
 }
