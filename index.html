@@ -2025,22 +2025,35 @@ function getNetaKey(){
   return headers.includes(COL_NETA) ? COL_NETA : detectField(['NETA','MONTO_NETA','MONTO NETA']);
 }
 function getTasaKey(){
-  // Columna de tasa para el gráfico de tasa ponderada.
-  return headers.includes('PESO_TEA') ? 'PESO_TEA' : detectField(['PESO_TEA','PESO TEA','TEA','TASA_PONDERADA','TASA PONDERADA','TASA']);
+  // Para la tasa mensual se usa la TEA real, como en Power BI:
+  // Tasa % PP T = AVERAGE(Tabla[TEA])
+  // PESO_TEA queda solo como respaldo si no existe una columna TEA.
+  const exact = headers.find(h => String(h).trim().toUpperCase() === 'TEA');
+  if(exact) return exact;
+
+  const tasaExacta = headers.find(h => ['TASA','TASA_%','TASA %','TASA_PONDERADA','TASA PONDERADA'].includes(String(h).trim().toUpperCase()));
+  if(tasaExacta) return tasaExacta;
+
+  return headers.includes('PESO_TEA') ? 'PESO_TEA' : detectField(['PESO TEA','PESO_TEA']);
 }
 function parseTasa(val){
-  // Soporta 0.145, 14.5, 14,5%, 14.5% y valores numéricos de Excel/Power Automate.
+  // Devuelve la tasa en formato decimal: 14.78% => 0.1478.
+  // Soporta 0.1478, 14.78, 14,78%, y valores ya multiplicados por 1000/10000.
   if(typeof val === 'number'){
-    if(!isFinite(val)) return 0;
-    return val > 1 ? val / 100 : val;
+    if(!isFinite(val)) return null;
+    if(Math.abs(val) > 1000) return val / 100000; // ej. 14780.77 => 14.78%
+    if(Math.abs(val) > 1) return val / 100;      // ej. 14.78 => 14.78%
+    return val;                                  // ej. 0.1478 => 14.78%
   }
   let s = String(val ?? '').trim();
-  if(!s) return 0;
+  if(!s) return null;
   s = s.replace(/%/g,'').replace(/\s/g,'').replace(',', '.');
   s = s.replace(/[^0-9.-]/g,'');
   const n = parseFloat(s);
-  if(isNaN(n)) return 0;
-  return n > 1 ? n / 100 : n;
+  if(isNaN(n)) return null;
+  if(Math.abs(n) > 1000) return n / 100000;
+  if(Math.abs(n) > 1) return n / 100;
+  return n;
 }
 function getMesKeyFromRow(r){
   const meses={ENE:1,FEB:2,MAR:3,ABR:4,MAY:5,JUN:6,JUL:7,AGO:8,SET:9,SEP:9,OCT:10,NOV:11,DIC:12};
@@ -2306,9 +2319,15 @@ function renderEstCom(d){
   const entries=Object.entries(map)
     .map(([k,s])=>[k,s.size])
     .sort((a,b)=>{
+      // Primero todos los 8.ACTIVADO por mes; debajo, los demás estados.
+      const aa=String(a[0]).toUpperCase().trim().startsWith('8.ACTIVADO') ? 0 : 1;
+      const ab=String(b[0]).toUpperCase().trim().startsWith('8.ACTIVADO') ? 0 : 1;
+      if(aa!==ab)return aa-ab;
+
       const ma=mesOrdenEstadoCom(a[0]);
       const mb=mesOrdenEstadoCom(b[0]);
       if(ma!==mb)return ma-mb;
+
       const na=parseInt(String(a[0]).match(/^\s*(\d+)/)?.[1]||'99',10);
       const nb=parseInt(String(b[0]).match(/^\s*(\d+)/)?.[1]||'99',10);
       if(na!==nb)return na-nb;
@@ -2368,43 +2387,37 @@ function renderEstGes(d,netaKey){
 
   if(!tasaKey){
     document.getElementById('badge-estges').textContent='Sin tasa';
-    el.innerHTML='<div class="empty-state" style="padding:12px"><p>No se encontró la columna PESO_TEA / Tasa.</p></div>';
-    return;
-  }
-  if(!netaKey){
-    document.getElementById('badge-estges').textContent='Sin NETA';
-    el.innerHTML='<div class="empty-state" style="padding:12px"><p>No se encontró la columna NETA para ponderar.</p></div>';
+    el.innerHTML='<div class="empty-state" style="padding:12px"><p>No se encontró la columna TEA / Tasa.</p></div>';
     return;
   }
 
   const map={};
   d.forEach(r=>{
     const mes=getMesKeyFromRow(r);
-    const neta=Math.abs(parseNeta(r[netaKey]));
     const tasa=parseTasa(r[tasaKey]);
-    if(!map[mes])map[mes]={peso:0,base:0,ops:0};
-    // Tasa ponderada = sum(tasa * NETA) / sum(NETA).
-    map[mes].peso += tasa * neta;
-    map[mes].base += neta;
+    if(tasa===null)return;
+    if(!map[mes])map[mes]={suma:0,ops:0};
+    // Igual al ejemplo de Power BI: AVERAGE([TEA]) por mes.
+    map[mes].suma += tasa;
     map[mes].ops++;
   });
 
   const orden={ENE26:1,FEB26:2,MAR26:3,ABR26:4,MAY26:5,JUN26:6,JUL26:7,AGO26:8,SET26:9,OCT26:10,NOV26:11,DIC26:12,'S/Mes':99};
   const data=Object.entries(map)
-    .map(([mes,v])=>[mes, v.base ? v.peso/v.base : 0, v.ops])
+    .map(([mes,v])=>[mes, v.ops ? v.suma/v.ops : 0, v.ops])
     .sort((a,b)=>(orden[a[0]]||98)-(orden[b[0]]||98));
 
   document.getElementById('badge-estges').textContent=data.length+' meses';
   if(!data.length){
-    el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin datos</p></div>';
+    el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin datos de tasa para el filtro seleccionado</p></div>';
     return;
   }
 
-  const max=Math.max(...data.map(x=>x[1]),0.01);
+  const max=Math.max(...data.map(x=>Math.abs(x[1])),0.01);
   el.innerHTML=data.map(([mes,tasa,ops])=>`
     <div class="estges-row">
       <span class="estges-label" title="${escHTML(mes)}">${escHTML(mes)}</span>
-      <div class="estges-track"><div class="estges-fill" style="width:${Math.round((tasa/max)*100)}%"></div></div>
+      <div class="estges-track"><div class="estges-fill" style="width:${Math.round((Math.abs(tasa)/max)*100)}%"></div></div>
       <span class="estges-count" title="${ops} operaciones">${(tasa*100).toFixed(2)}%</span>
     </div>`).join('');
 }
