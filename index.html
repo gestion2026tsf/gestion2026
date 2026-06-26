@@ -1405,6 +1405,51 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
   #chart-zonas-v .vbar-lbl{font-size:10px !important;}
 }
 
+
+
+/* =========================================================
+   FIX DONUT ESTADO DE GESTION: clientes + tasa + neta
+   ========================================================= */
+.donut-legend{
+  max-width:460px !important;
+  flex:0 1 460px !important;
+}
+.donut-legend-item{
+  display:grid !important;
+  grid-template-columns:12px minmax(120px,1fr) 36px 54px 68px !important;
+  align-items:center !important;
+  gap:8px !important;
+  font-size:11px !important;
+  color:#111 !important;
+  font-weight:800 !important;
+}
+.donut-legend-label{
+  min-width:0 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+.donut-legend-count{
+  text-align:right !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  color:#111 !important;
+}
+.donut-legend-pct{
+  min-width:54px !important;
+  text-align:right !important;
+  font-size:10px !important;
+  font-weight:900 !important;
+  color:#111 !important;
+}
+.donut-legend-neta{
+  min-width:68px !important;
+  text-align:right !important;
+  font-size:10px !important;
+  font-weight:900 !important;
+  color:#F0005B !important;
+  white-space:nowrap !important;
+}
 </style>
 </head>
 <body>
@@ -2307,56 +2352,115 @@ function mesOrdenEstadoCom(label){
 }
 
 function renderEstCom(d){
-  const map={};
+  const netaKey = getNetaKey();
+  const tasaKey = getTasaKey();
+  const map = {};
+
   d.forEach(r=>{
-    // La dona ahora usa TODOS los Estados de Gestión, no Estado Comercial.
-    const e=String(r[COL_ESTGES]||'').trim()||'S/D';
-    const cli=getClienteKey(r);
-    if(!map[e])map[e]=new Set();
-    if(cli)map[e].add(cli);
+    // La dona usa Estado de Gestion y muestra clientes, tasa promedio y neta.
+    const e = String(r[COL_ESTGES] || '').trim() || 'S/D';
+    const cli = getClienteKey(r);
+    const tasa = tasaKey ? parseTasa(r[tasaKey]) : null;
+
+    if(!map[e]){
+      map[e] = {
+        clientes: new Set(),
+        ops: 0,
+        neta: 0,
+        tasaSuma: 0,
+        tasaOps: 0
+      };
+    }
+
+    map[e].ops++;
+    if(cli) map[e].clientes.add(cli);
+    if(netaKey) map[e].neta += parseNeta(r[netaKey]);
+    if(tasa !== null){
+      map[e].tasaSuma += tasa;
+      map[e].tasaOps++;
+    }
   });
 
-  const entries=Object.entries(map)
-    .map(([k,s])=>[k,s.size])
+  const entries = Object.entries(map)
+    .map(([k,v])=>[
+      k,
+      v.clientes.size,
+      v.neta,
+      v.tasaOps ? v.tasaSuma / v.tasaOps : null,
+      v.ops
+    ])
     .sort((a,b)=>{
-      // Primero todos los 8.ACTIVADO por mes; debajo, los demás estados.
-      const aa=String(a[0]).toUpperCase().trim().startsWith('8.ACTIVADO') ? 0 : 1;
-      const ab=String(b[0]).toUpperCase().trim().startsWith('8.ACTIVADO') ? 0 : 1;
-      if(aa!==ab)return aa-ab;
+      // Primero activados por mes; despues los demas estados.
+      const aa = String(a[0]).toUpperCase().trim().startsWith('8.ACTIVADO') ? 0 : 1;
+      const ab = String(b[0]).toUpperCase().trim().startsWith('8.ACTIVADO') ? 0 : 1;
+      if(aa !== ab) return aa - ab;
 
-      const ma=mesOrdenEstadoCom(a[0]);
-      const mb=mesOrdenEstadoCom(b[0]);
-      if(ma!==mb)return ma-mb;
+      const ma = mesOrdenEstadoCom(a[0]);
+      const mb = mesOrdenEstadoCom(b[0]);
+      if(ma !== mb) return ma - mb;
 
-      const na=parseInt(String(a[0]).match(/^\s*(\d+)/)?.[1]||'99',10);
-      const nb=parseInt(String(b[0]).match(/^\s*(\d+)/)?.[1]||'99',10);
-      if(na!==nb)return na-nb;
+      const na = parseInt(String(a[0]).match(/^\s*(\d+)/)?.[1] || '99',10);
+      const nb = parseInt(String(b[0]).match(/^\s*(\d+)/)?.[1] || '99',10);
+      if(na !== nb) return na - nb;
+
       return String(a[0]).localeCompare(String(b[0]));
     });
 
-  const total=entries.reduce((s,[,c])=>s+c,0);
-  document.getElementById('badge-estcom').textContent=entries.length+' estados';
-  document.getElementById('donut-total').textContent=total.toLocaleString('es-PE');
-  const canvas=document.getElementById('donutEstCom');
-  if(donutChartInstance){donutChartInstance.destroy();donutChartInstance=null;}
-  if(entries.length&&window.Chart){
-    donutChartInstance=new Chart(canvas,{
+  const total = entries.reduce((s,[,c])=>s+c,0);
+  document.getElementById('badge-estcom').textContent = entries.length + ' estados';
+  document.getElementById('donut-total').textContent = total.toLocaleString('es-PE');
+
+  const canvas = document.getElementById('donutEstCom');
+  if(donutChartInstance){
+    donutChartInstance.destroy();
+    donutChartInstance = null;
+  }
+
+  if(entries.length && window.Chart){
+    donutChartInstance = new Chart(canvas,{
       type:'doughnut',
       data:{
-        labels:entries.map(([l])=>l),
-        datasets:[{data:entries.map(([,c])=>c),backgroundColor:entries.map((_,i)=>PALETTE[i%PALETTE.length]),borderWidth:0,hoverOffset:6}]
+        labels: entries.map(([l])=>l),
+        datasets:[{
+          data: entries.map(([,c])=>c),
+          backgroundColor: entries.map((_,i)=>PALETTE[i % PALETTE.length]),
+          borderWidth:0,
+          hoverOffset:6
+        }]
       },
-      options:{responsive:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+ctx.label+': '+ctx.raw+' ('+(total?Math.round(ctx.raw/total*100):0)+'%)'}}},cutout:'68%'}
+      options:{
+        responsive:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            callbacks:{
+              label:ctx=>{
+                const item = entries[ctx.dataIndex];
+                const tasaTxt = item[3] !== null ? (item[3] * 100).toFixed(2) + '%' : 'S/T';
+                return ' ' + ctx.label + ': ' + ctx.raw + ' clientes | Tasa: ' + tasaTxt + ' | Neta: ' + fmtMonto(item[2]);
+              }
+            }
+          }
+        },
+        cutout:'68%'
+      }
     });
   }
-  document.getElementById('donut-legend').innerHTML=entries.map(([l,c],i)=>`
-    <div class="donut-legend-item">
-      <div class="donut-legend-dot" style="background:${PALETTE[i%PALETTE.length]}"></div>
-      <span class="donut-legend-label" title="${escHTML(l)}">${escHTML(l.length>24?l.slice(0,23)+'…':l)}</span>
-      <span class="donut-legend-count">${c}</span>
-      <span class="donut-legend-pct">${total?Math.round(c/total*100):0}%</span>
-    </div>`).join('');
+
+  document.getElementById('donut-legend').innerHTML = entries.map(([l,c,neta,tasa],i)=>{
+    const tasaTxt = tasa !== null ? (tasa * 100).toFixed(2) + '%' : 'S/T';
+    const label = l.length > 24 ? l.slice(0,23) + '…' : l;
+    return `
+      <div class="donut-legend-item">
+        <div class="donut-legend-dot" style="background:${PALETTE[i % PALETTE.length]}"></div>
+        <span class="donut-legend-label" title="${escHTML(l)}">${escHTML(label)}</span>
+        <span class="donut-legend-count">${c}</span>
+        <span class="donut-legend-pct">${tasaTxt}</span>
+        <span class="donut-legend-neta">${fmtMontoRaw(neta)}</span>
+      </div>`;
+  }).join('');
 }
+
 
 function renderSucursal(d,netaKey){
   if(!netaKey){document.getElementById('chart-sucursal').innerHTML='<div class="empty-state" style="padding:12px"><p>Sin columna NETA</p></div>';return;}
