@@ -1450,6 +1450,33 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
   color:#F0005B !important;
   white-space:nowrap !important;
 }
+
+
+/* =========================================================
+   COLUMNAS NUEVAS EXPEDIENTES: PROVEEDOR + MONEDA
+   ========================================================= */
+#view-expedientes table{
+  min-width:1580px!important;
+}
+#view-expedientes th:nth-child(1),#view-expedientes td:nth-child(1){width:72px!important;}
+#view-expedientes th:nth-child(2),#view-expedientes td:nth-child(2){width:105px!important;}
+#view-expedientes th:nth-child(3),#view-expedientes td:nth-child(3){width:105px!important;}
+#view-expedientes th:nth-child(4),#view-expedientes td:nth-child(4){width:190px!important;}
+#view-expedientes th:nth-child(5),#view-expedientes td:nth-child(5){width:190px!important;}
+#view-expedientes th:nth-child(6),#view-expedientes td:nth-child(6){width:70px!important;text-align:center!important;}
+#view-expedientes th:nth-child(7),#view-expedientes td:nth-child(7){width:80px!important;}
+#view-expedientes th:nth-child(8),#view-expedientes td:nth-child(8){width:95px!important;}
+#view-expedientes th:nth-child(9),#view-expedientes td:nth-child(9){width:105px!important;}
+#view-expedientes th:nth-child(10),#view-expedientes td:nth-child(10){width:95px!important;text-align:right!important;}
+#view-expedientes th:nth-child(11),#view-expedientes td:nth-child(11){width:85px!important;text-align:right!important;}
+#view-expedientes th:nth-child(12),#view-expedientes td:nth-child(12){width:95px!important;text-align:right!important;}
+#view-expedientes th:nth-child(13),#view-expedientes td:nth-child(13){width:90px!important;text-align:right!important;}
+#view-expedientes th:nth-child(14),#view-expedientes td:nth-child(14){width:110px!important;text-align:right!important;}
+#view-expedientes th:nth-child(15),#view-expedientes td:nth-child(15){width:80px!important;text-align:right!important;}
+#view-expedientes th:nth-child(16),#view-expedientes td:nth-child(16){width:120px!important;}
+#view-expedientes th:nth-child(17),#view-expedientes td:nth-child(17){width:130px!important;}
+#view-expedientes th:nth-child(18),#view-expedientes td:nth-child(18){width:70px!important;}
+
 </style>
 </head>
 <body>
@@ -1698,7 +1725,7 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
         <div class="toolbar">
           <div class="search-wrapper">
             <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input class="search-input" type="text" id="searchInput" placeholder="Buscar expediente, cliente, RUC…" oninput="filterTable()">
+            <input class="search-input" type="text" id="searchInput" placeholder="Buscar expediente, cliente, proveedor, RUC…" oninput="filterTable()">
           </div>
           <select class="filter-select" id="filtroProducto" onchange="filterTable()"><option value="">Todos los productos</option></select>
           <select class="filter-select" id="filtroEstado" onchange="filterTable()"><option value="">Todos los estados</option></select>
@@ -1718,6 +1745,8 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
               <th onclick="sortTable('PRODUCTO')">Producto</th>
               <th onclick="sortTable('RUC')">RUC</th>
               <th onclick="sortTable('NOMBRE_RSOCIAL_CLIENTE')" style="min-width:180px">Cliente</th>
+              <th onclick="sortTable('NOMBRE_PROVEEDOR')" style="min-width:180px">Proveedor</th>
+              <th onclick="sortTable('MNDA')">Moneda</th>
               <th onclick="sortTable('ZONA')">Zona</th>
               <th onclick="sortTable('SUCURSAL')">Sucursal</th>
               <th onclick="sortTable('FNCNR')">Funcionario</th>
@@ -1732,7 +1761,7 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
               <th class="col-accion">Acción</th>
             </tr></thead>
             <tbody id="tabla-body">
-              <tr><td colspan="16"><div class="empty-state"><div class="empty-icon">📁</div><h3>Cargando datos…</h3></div></td></tr>
+              <tr><td colspan="18"><div class="empty-state"><div class="empty-icon">📁</div><h3>Cargando datos…</h3></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -2552,7 +2581,7 @@ function renderTable(){
   const start=(page-1)*pageSize,end=start+pageSize;
   const rows=filteredData.slice(start,end);
   const tbody=document.getElementById('tabla-body');
-  if(!rows.length){tbody.innerHTML=`<tr><td colspan="16"><div class="empty-state"><div class="empty-icon">🔍</div><h3>Sin resultados</h3><p>Ajusta los filtros</p></div></td></tr>`;document.getElementById('page-info').textContent='0 registros';document.getElementById('page-nums').innerHTML='';return;}
+  if(!rows.length){tbody.innerHTML=`<tr><td colspan="18"><div class="empty-state"><div class="empty-icon">🔍</div><h3>Sin resultados</h3><p>Ajusta los filtros</p></div></td></tr>`;document.getElementById('page-info').textContent='0 registros';document.getElementById('page-nums').innerHTML='';return;}
   const fmtNum=v=>{const n=parseFloat(String(v||'').replace(/[^0-9.\-]/g,''));return isNaN(n)?'—':n.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});};
   tbody.innerHTML=rows.map(r=>{
     const prod=String(r[COL_PROD]||'');const est=String(r[COL_ESTGES]||'');const estcom=String(r[COL_ESTCOM]||'');
@@ -2560,7 +2589,7 @@ function renderTable(){
     const estBadge=est.toUpperCase().includes('ACTIVADO')?'badge-act':est.toUpperCase().includes('S/D')?'badge-grey':'badge-inac';
     const ecBadge=estcom.toUpperCase().includes('PROYE')?'badge-proye':estcom.toUpperCase().includes('ACTIV')?'badge-act':'badge-grey';
     const func=r[COL_FUNC]||r['FNCNE']||'';
-    return `<tr><td style="font-weight:800;color:var(--accent)">${r.EXPE||''}</td><td><span class="badge ${prodBadge}">${prod}</span></td><td style="color:var(--muted);font-size:11px;font-family:monospace">${r.RUC||''}</td><td style="max-width:170px;overflow:hidden;text-overflow:ellipsis;font-weight:500" title="${r.NOMBRE_RSOCIAL_CLIENTE||''}">${r.NOMBRE_RSOCIAL_CLIENTE||''}</td><td style="font-size:11px;font-weight:600;color:var(--text2)">${r[COL_ZONA]||''}</td><td style="color:var(--muted);font-size:11px">${r.SUCURSAL||''}</td><td style="font-size:11px;font-weight:600;color:var(--text2);max-width:90px;overflow:hidden;text-overflow:ellipsis" title="${func}">${func}</td><td style="text-align:right;font-weight:700;color:var(--success);font-size:11px">${fmtNum(r['NETA']||r['neta'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${fmtNum(r['PESO_TEA'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${fmtNum(r['C_ADELANTO']||r['C. ADELANTO'])}</td><td style="text-align:right;font-size:11px;color:var(--warn)">${fmtNum(r['RETENCIÓN']||r['RETENCION'])}</td><td style="text-align:right;font-weight:700;font-size:11px;color:var(--accent)">${fmtNum(r['$ DESEMBOLSAR']||r['DESEMBOLSAR'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${r['CAF']||'—'}</td><td><span class="badge ${ecBadge}">${estcom}</span></td><td><span class="badge ${estBadge}" style="font-size:9px">${est}</span></td><td class="col-accion"><button class="btn-edit" onclick="openEdit(${r._idx})">Editar</button></td></tr>`;
+    return `<tr><td style="font-weight:800;color:var(--accent)">${r.EXPE||''}</td><td><span class="badge ${prodBadge}">${prod}</span></td><td style="color:var(--muted);font-size:11px;font-family:monospace">${r.RUC||''}</td><td style="max-width:170px;overflow:hidden;text-overflow:ellipsis;font-weight:500" title="${r.NOMBRE_RSOCIAL_CLIENTE||''}">${r.NOMBRE_RSOCIAL_CLIENTE||''}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;font-weight:500" title="${r.NOMBRE_PROVEEDOR||''}">${r.NOMBRE_PROVEEDOR||''}</td><td style="font-size:11px;font-weight:800;color:var(--text2);text-align:center">${r.MNDA||''}</td><td style="font-size:11px;font-weight:600;color:var(--text2)">${r[COL_ZONA]||''}</td><td style="color:var(--muted);font-size:11px">${r.SUCURSAL||''}</td><td style="font-size:11px;font-weight:600;color:var(--text2);max-width:90px;overflow:hidden;text-overflow:ellipsis" title="${func}">${func}</td><td style="text-align:right;font-weight:700;color:var(--success);font-size:11px">${fmtNum(r['NETA']||r['neta'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${fmtNum(r['PESO_TEA'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${fmtNum(r['C_ADELANTO']||r['C. ADELANTO'])}</td><td style="text-align:right;font-size:11px;color:var(--warn)">${fmtNum(r['RETENCIÓN']||r['RETENCION'])}</td><td style="text-align:right;font-weight:700;font-size:11px;color:var(--accent)">${fmtNum(r['$ DESEMBOLSAR']||r['DESEMBOLSAR'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${r['CAF']||'—'}</td><td><span class="badge ${ecBadge}">${estcom}</span></td><td><span class="badge ${estBadge}" style="font-size:9px">${est}</span></td><td class="col-accion"><button class="btn-edit" onclick="openEdit(${r._idx})">Editar</button></td></tr>`;
   }).join('');
   const totalPages=Math.ceil(filteredData.length/pageSize);
   document.getElementById('page-info').textContent=`${start+1}–${Math.min(end,filteredData.length)} de ${filteredData.length}`;
