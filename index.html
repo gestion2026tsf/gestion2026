@@ -1477,6 +1477,34 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
 #view-expedientes th:nth-child(17),#view-expedientes td:nth-child(17){width:130px!important;}
 #view-expedientes th:nth-child(18),#view-expedientes td:nth-child(18){width:70px!important;}
 
+
+
+/* =========================================================
+   EXPEDIENTES: filtro Estado multiselección + columnas Proveedor/Moneda
+   ========================================================= */
+#estadoExpMulti{min-width:205px!important;}
+#estadoExpMulti .multi-select-btn{min-width:205px!important;height:32px!important;border-radius:4px!important;}
+#estadoExpMulti .multi-select-menu{top:36px!important;}
+#view-expedientes table{min-width:1580px!important;}
+#view-expedientes th:nth-child(1),#view-expedientes td:nth-child(1){width:72px!important;}
+#view-expedientes th:nth-child(2),#view-expedientes td:nth-child(2){width:105px!important;}
+#view-expedientes th:nth-child(3),#view-expedientes td:nth-child(3){width:105px!important;}
+#view-expedientes th:nth-child(4),#view-expedientes td:nth-child(4){width:180px!important;}
+#view-expedientes th:nth-child(5),#view-expedientes td:nth-child(5){width:180px!important;}
+#view-expedientes th:nth-child(6),#view-expedientes td:nth-child(6){width:70px!important;text-align:center!important;}
+#view-expedientes th:nth-child(7),#view-expedientes td:nth-child(7){width:80px!important;}
+#view-expedientes th:nth-child(8),#view-expedientes td:nth-child(8){width:95px!important;}
+#view-expedientes th:nth-child(9),#view-expedientes td:nth-child(9){width:105px!important;}
+#view-expedientes th:nth-child(10),#view-expedientes td:nth-child(10){width:95px!important;text-align:right!important;}
+#view-expedientes th:nth-child(11),#view-expedientes td:nth-child(11){width:85px!important;text-align:right!important;}
+#view-expedientes th:nth-child(12),#view-expedientes td:nth-child(12){width:95px!important;text-align:right!important;}
+#view-expedientes th:nth-child(13),#view-expedientes td:nth-child(13){width:90px!important;text-align:right!important;}
+#view-expedientes th:nth-child(14),#view-expedientes td:nth-child(14){width:110px!important;text-align:right!important;}
+#view-expedientes th:nth-child(15),#view-expedientes td:nth-child(15){width:80px!important;text-align:right!important;}
+#view-expedientes th:nth-child(16),#view-expedientes td:nth-child(16){width:120px!important;}
+#view-expedientes th:nth-child(17),#view-expedientes td:nth-child(17){width:130px!important;}
+#view-expedientes th:nth-child(18),#view-expedientes td:nth-child(18){width:70px!important;}
+
 </style>
 </head>
 <body>
@@ -1728,7 +1756,24 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
             <input class="search-input" type="text" id="searchInput" placeholder="Buscar expediente, cliente, proveedor, RUC…" oninput="filterTable()">
           </div>
           <select class="filter-select" id="filtroProducto" onchange="filterTable()"><option value="">Todos los productos</option></select>
-          <select class="filter-select" id="filtroEstado" onchange="filterTable()"><option value="">Todos los estados</option></select>
+          <div class="multi-select" id="estadoExpMulti">
+            <button type="button" class="multi-select-btn" id="estadoExpMultiBtn" onclick="toggleEstadoExpMenu()">Todos los estados</button>
+            <div class="multi-select-menu" id="estadoExpMultiMenu">
+              <label class="multi-option all">
+                <input type="checkbox" id="estadoExpTodos" onchange="toggleEstadoExpTodos(this)">
+                <span class="multi-option-text">Todos los estados</span>
+              </label>
+              <label class="multi-option active-all">
+                <input type="checkbox" value="ACTIVADO_2026" class="estado-exp-check" onchange="filterTable()">
+                <span class="multi-option-text">Todos ACTIVADO 2026</span>
+              </label>
+              <label class="multi-option active-all">
+                <input type="checkbox" value="JUNIO_2026" class="estado-exp-check" onchange="filterTable()">
+                <span class="multi-option-text">JUNIO 2026</span>
+              </label>
+              <div id="estadoExpOpciones"></div>
+            </div>
+          </div>
           <button class="btn-success" onclick="openNuevo()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Nuevo
@@ -2559,14 +2604,54 @@ function renderEstGes(d,netaKey){
 /* ════════════════════════════════════════
    TABLA EXPEDIENTES
    ════════════════════════════════════════ */
+function getEstadosExpSeleccionados(){
+  return [...document.querySelectorAll('.estado-exp-check:checked')].map(ch=>ch.value).filter(Boolean);
+}
+function toggleEstadoExpMenu(){
+  document.getElementById('estadoExpMulti')?.classList.toggle('open');
+}
+function toggleEstadoExpTodos(chk){
+  if(chk.checked){
+    document.querySelectorAll('.estado-exp-check').forEach(ch=>ch.checked=false);
+  }
+  filterTable();
+}
+function updateEstadoExpLabel(){
+  const seleccionados=getEstadosExpSeleccionados();
+  const btn=document.getElementById('estadoExpMultiBtn');
+  const todos=document.getElementById('estadoExpTodos');
+  if(!btn)return;
+  if(todos)todos.checked=seleccionados.length===0;
+  if(seleccionados.length===0){
+    btn.textContent='Todos los estados';
+  }else if(seleccionados.length===1){
+    if(seleccionados[0]==='ACTIVADO_2026')btn.textContent='Todos ACTIVADO 2026';
+    else if(seleccionados[0]==='JUNIO_2026')btn.textContent='JUNIO 2026';
+    else btn.textContent=seleccionados[0];
+  }else{
+    btn.textContent=seleccionados.length+' seleccionados';
+  }
+}
+
 function filterTable(){
   const q=(document.getElementById('searchInput')?.value||'').toLowerCase();
   const prod=document.getElementById('filtroProducto')?.value||'';
-  const estado=document.getElementById('filtroEstado')?.value||'';
+  const estados=getEstadosExpSeleccionados();
+  if(estados.length>0){
+    const todos=document.getElementById('estadoExpTodos');
+    if(todos)todos.checked=false;
+  }
   filteredData=allData.filter(r=>{
-    const txt=[r.EXPE,r[COL_PROD],r.RUC,r.NOMBRE_RSOCIAL_CLIENTE,r[COL_ESTGES],r[COL_ESTCOM],r[COL_ZONA],r.SUCURSAL,r[COL_FUNC]].join(' ').toLowerCase();
-    return(!q||txt.includes(q))&&(!prod||String(r[COL_PROD]).includes(prod))&&(!estado||String(r[COL_ESTGES])===estado);
+    const est=String(r[COL_ESTGES]||'').trim();
+    const txt=[r.EXPE,r[COL_PROD],r.RUC,r.NOMBRE_RSOCIAL_CLIENTE,r.NOMBRE_PROVEEDOR,r.MNDA,r[COL_ESTGES],r[COL_ESTCOM],r[COL_ZONA],r.SUCURSAL,r[COL_FUNC]].join(' ').toLowerCase();
+    const cumpleEstado =
+      estados.length===0 ||
+      (estados.includes('ACTIVADO_2026') && isActivado(r)) ||
+      (estados.includes('JUNIO_2026') && est.toUpperCase().includes('JUN26')) ||
+      estados.includes(est);
+    return(!q||txt.includes(q))&&(!prod||String(r[COL_PROD]).includes(prod))&&cumpleEstado;
   });
+  updateEstadoExpLabel();
   if(sortField)filteredData.sort((a,b)=>String(a[sortField]||'').localeCompare(String(b[sortField]||''))*sortDir);
   page=1;renderTable();
   document.getElementById('exp-count').textContent=`${filteredData.length} de ${allData.length} registros`;
@@ -2574,9 +2659,23 @@ function filterTable(){
 function updateFiltros(){
   const productos=[...new Set(allData.map(r=>String(r[COL_PROD]||'')).filter(Boolean))].sort();
   const estados=[...new Set(allData.map(r=>String(r[COL_ESTGES]||'')).filter(Boolean))].sort();
-  document.getElementById('filtroProducto').innerHTML='<option value="">Todos los productos</option>'+productos.map(p=>`<option value="${p}">${p}</option>`).join('');
-  document.getElementById('filtroEstado').innerHTML='<option value="">Todos los estados</option>'+estados.map(e=>`<option value="${e}">${e}</option>`).join('');
+  const seleccionadosPrevios=new Set(getEstadosExpSeleccionados());
+  document.getElementById('filtroProducto').innerHTML='<option value="">Todos los productos</option>'+productos.map(p=>`<option value="${escHTML(p)}">${escHTML(p)}</option>`).join('');
+  document.getElementById('estadoExpOpciones').innerHTML=estados.map(e=>{
+    const checked=seleccionadosPrevios.has(e)?'checked':'';
+    return `<label class="multi-option" title="${escHTML(e)}"><input type="checkbox" class="estado-exp-check" value="${escHTML(e)}" ${checked} onchange="filterTable()"><span class="multi-option-text">${escHTML(e)}</span></label>`;
+  }).join('');
+  const activo=document.querySelector('.estado-exp-check[value="ACTIVADO_2026"]');
+  if(activo)activo.checked=seleccionadosPrevios.has('ACTIVADO_2026');
+  const junio=document.querySelector('.estado-exp-check[value="JUNIO_2026"]');
+  if(junio)junio.checked=seleccionadosPrevios.has('JUNIO_2026');
+  updateEstadoExpLabel();
 }
+
+document.addEventListener('click',function(e){
+  const box=document.getElementById('estadoExpMulti');
+  if(box && !box.contains(e.target))box.classList.remove('open');
+});
 function renderTable(){
   const start=(page-1)*pageSize,end=start+pageSize;
   const rows=filteredData.slice(start,end);
