@@ -1962,11 +1962,29 @@ async function loadData(background=false){
     if(!filas.length){if(!background)showToast('Tabla vacía',true);return;}
     headers=Object.keys(filas[0]).filter(k=>!CAMPOS_INTERNOS.includes(k));
     if(!background)updateLoadProgress(60,filas.length);
-    const tempData=filas.map((f,i)=>{
-      const obj={_idx:i};
-      headers.forEach(h=>{const v=f[h];obj[h]=(v===true)?'SI':(v===false)?'':(v??'');});
-      return obj;
-    }).filter(o=>String(o['EXPE']||'').trim()||String(o[COL_PROD]||'').trim());
+    const tempData=filas
+      .map((f,i)=>{
+        const obj={_idx:i};
+        headers.forEach(h=>{
+          const v=f[h];
+          obj[h]=(v===true)?'SI':(v===false)?'':(v??'');
+        });
+        return obj;
+      })
+      .filter(o=>{
+        // Mantener solo filas con expediente o producto.
+        const tieneDatos =
+          String(o['EXPE']||'').trim() ||
+          String(o[COL_PROD]||'').trim();
+
+        if(!tieneDatos) return false;
+
+        // Excluir totalmente los desistidos: no cuentan, no suman y no aparecen.
+        const estadoGestion = String(o[COL_ESTGES]||'').trim().toUpperCase();
+        if(estadoGestion === '9.DESISTIDO.JUN26') return false;
+
+        return true;
+      });
     localStorage.setItem('gestion_data_cache',JSON.stringify({data:tempData,headers,ts:Date.now()}));
     allData=tempData;
     applyDashFilter();filterTable();updateFiltros();updateDashFilters();
