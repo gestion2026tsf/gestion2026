@@ -2162,52 +2162,43 @@ function normalizeHeaderName(h){
     .trim()
     .toUpperCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/[().%]/g,' ')
-    .replace(/[_\-\/]+/g,' ')
+    .replace(/[()\.\-_%]/g,' ')
     .replace(/\s+/g,' ')
     .trim();
 }
 function findHeaderExact(names){
-  const targets = names.map(normalizeHeaderName);
-  return headers.find(h => targets.includes(normalizeHeaderName(h))) || null;
+  const wanted = names.map(normalizeHeaderName);
+  return headers.find(h => wanted.includes(normalizeHeaderName(h))) || null;
 }
-function findHeaderContains(requiredWords, forbiddenWords=[]){
-  const req = requiredWords.map(w=>normalizeHeaderName(w));
-  const forb = forbiddenWords.map(w=>normalizeHeaderName(w));
+function findHeaderContains(required, excluded=[]){
+  const req = required.map(normalizeHeaderName);
+  const exc = excluded.map(normalizeHeaderName);
   return headers.find(h=>{
-    const n=normalizeHeaderName(h);
-    return req.every(w=>n.includes(w)) && !forb.some(w=>n.includes(w));
+    const n = normalizeHeaderName(h);
+    return req.every(x=>n.includes(x)) && !exc.some(x=>n.includes(x));
   }) || null;
 }
 function getNetaKey(){
-  // NETA correcta: columna AC / Coloc. Neta.
-  // No usar importes parecidos como DESEMBOLSAR, CAF, PESO_TEA, etc.
+  // NETA correcta: Coloc. Neta / NETA AC. No tomar DESEMBOLSAR, CAF ni PESO_TEA.
   const exact = findHeaderExact([
     'NETA','NETA AC','NETA(AC)','COLOC NETA','COLOC. NETA','COLOCACION NETA','COLOCACIÓN NETA',
     'COLOC_NETA','COLOCACION_NETA','COLOCACIÓN_NETA','COLOCACIONES NETA','COLOCACIONES_NETA'
   ]);
   if(exact) return exact;
 
-  const colocNeta = findHeaderContains(['COLOC','NETA'], ['PESO','TEA','TASA']);
+  const colocNeta = findHeaderContains(['COLOC','NETA'], ['PESO','TEA','TASA','DESEMBOLSAR','CAF']);
   if(colocNeta) return colocNeta;
 
-  return findHeaderContains(['NETA'], ['PESO','TEA','TASA']);
+  return findHeaderContains(['NETA'], ['PESO','TEA','TASA','DESEMBOLSAR','CAF']);
 }
 function getTeaKey(){
-  // TEA real de la fila. La tasa ponderada se calcula con NETA * TEA.
-  const exact = findHeaderExact([
-    'TEA','TASA TEA','TASA_TEA','TASA %','TASA_%','TASA','TASA EFECTIVA ANUAL','TASA_EFECTIVA_ANUAL'
-  ]);
+  // TEA real de la fila. No usar Tasa % PP ni Tasa Ponderada como entrada.
+  const exact = findHeaderExact(['TEA','TASA TEA','TASA_TEA','TASA EFECTIVA ANUAL','TASA_EFECTIVA_ANUAL']);
   if(exact) return exact;
-
-  const tea = findHeaderContains(['TEA'], ['PESO']);
-  if(tea) return tea;
-
-  return findHeaderContains(['TASA'], ['PESO']);
+  return findHeaderContains(['TEA'], ['PESO','PP','PONDERADA']);
 }
 function getPesoTeaKey(){
-  // Respaldo: si existe PESO_TEA ya calculado en Excel, tambien se puede usar.
-  // No se busca una columna generica llamada PESO porque puede jalar otra cosa.
+  // Respaldo si el Excel ya trae PESO_TEA. Solo se usa si no existe TEA.
   return findHeaderExact(['PESO_TEA','PESO TEA','PESO_TASA','PESO TASA']);
 }
 function parseTasaDecimal(val){
@@ -2219,17 +2210,16 @@ function parseTasaDecimal(val){
   let s = String(val ?? '').trim();
   if(!s) return null;
   s = s.replace(/%/g,'').replace(/\s/g,'');
-
-  const lastComma=s.lastIndexOf(',');
-  const lastDot=s.lastIndexOf('.');
-  if(lastComma>-1 && lastDot>-1){
-    if(lastComma>lastDot) s=s.replace(/\./g,'').replace(',', '.');
-    else s=s.replace(/,/g,'');
-  }else if(lastComma>-1){
-    s=s.replace(',', '.');
+  const lastComma = s.lastIndexOf(',');
+  const lastDot = s.lastIndexOf('.');
+  if(lastComma > -1 && lastDot > -1){
+    if(lastComma > lastDot) s = s.replace(/\./g,'').replace(',', '.');
+    else s = s.replace(/,/g,'');
+  }else if(lastComma > -1){
+    s = s.replace(',', '.');
   }
-  s=s.replace(/[^0-9.-]/g,'');
-  const n=parseFloat(s);
+  s = s.replace(/[^0-9.-]/g,'');
+  const n = parseFloat(s);
   if(!isFinite(n)) return null;
   return Math.abs(n) > 1 ? n / 100 : n;
 }
@@ -2245,32 +2235,33 @@ function getFilaTasaPartes(r,netaKey){
     }
   }
 
-  // Respaldo si no hay TEA: usar PESO_TEA ya calculado.
   const pesoTeaKey = getPesoTeaKey();
   if(pesoTeaKey){
     const pesoTea = parseNeta(r[pesoTeaKey]);
-    if(isFinite(pesoTea)){
-      return {neta, pesoTea, tea:pesoTea/neta};
-    }
+    if(isFinite(pesoTea)) return {neta, pesoTea, tea:pesoTea/neta};
   }
 
   return null;
 }
 function calcTasaPonderada(rows,netaKey){
-  // Fórmula general para cualquier filtro, estado, mes o grupo:
-  // Tasa % PP = Σ(PESO_TEA) / Σ(Coloc. Neta)
-  // Donde PESO_TEA se calcula como Coloc. Neta * TEA cuando existe la TEA.
+  // Formula general: Tasa % PP = SUM(PESO_TEA) / SUM(Coloc. Neta)
+  // PESO_TEA = Coloc. Neta * TEA por cada fila valida.
   let sumaPesoTea = 0;
   let sumaNeta = 0;
-
   rows.forEach(r=>{
     const t = getFilaTasaPartes(r,netaKey);
     if(!t) return;
     sumaPesoTea += t.pesoTea;
     sumaNeta += t.neta;
   });
-
   return sumaNeta > 0 ? sumaPesoTea / sumaNeta : null;
+}
+function getTasaKey(){
+  // Compatibilidad con funciones antiguas: devuelve TEA si existe.
+  return getTeaKey() || getPesoTeaKey();
+}
+function parseTasa(val){
+  return parseTasaDecimal(val);
 }
 function getMesKeyFromRow(r){
   const meses={ENE:1,FEB:2,MAR:3,ABR:4,MAY:5,JUN:6,JUL:7,AGO:8,SET:9,SEP:9,OCT:10,NOV:11,DIC:12};
@@ -2547,8 +2538,7 @@ function renderEstCom(d){
     if(cli) map[e].clientes.add(cli);
     if(netaKey) map[e].neta += netaFila;
 
-    // Tasa ponderada por estado: Σ(NETA * TEA) / Σ(NETA).
-    // Si no hay TEA, usa PESO_TEA como respaldo.
+    // Tasa ponderada por estado: SUM(NETA * TEA) / SUM(NETA).
     if(tasaPartes){
       map[e].pesoTea += tasaPartes.pesoTea;
       map[e].netaValidaTasa += tasaPartes.neta;
@@ -2602,41 +2592,52 @@ function renderEstCom(d){
         }]
       },
       options:{
-        responsive:true,
-        maintainAspectRatio:false,
-        cutout:'68%',
+        responsive:false,
         plugins:{
           legend:{display:false},
           tooltip:{
             callbacks:{
-              label:function(ctx){
+              label:ctx=>{
                 const item = entries[ctx.dataIndex];
-                const label = item[0];
-                const clientes = item[1];
-                const neta = item[2];
-                const tasa = item[3];
-                const tasaTxt = tasa===null ? 'S/Tasa' : (tasa*100).toFixed(2)+'%';
-                return `${label}: ${clientes} clientes · ${tasaTxt} · ${fmtMonto(neta)}`;
+                const tasaTxt = item[3] !== null ? (item[3] * 100).toFixed(2) + '%' : 'S/T';
+                return ' ' + ctx.label + ': ' + ctx.raw + ' clientes | Tasa: ' + tasaTxt + ' | Neta: ' + fmtMonto(item[2]);
               }
             }
           }
-        }
+        },
+        cutout:'68%'
       }
     });
   }
 
-  const legend=document.getElementById('donut-legend');
-  legend.innerHTML=entries.map(([l,c,neta,tasa],i)=>{
-    const pct=total?Math.round(c/total*100):0;
-    const tasaTxt=tasa===null?'S/Tasa':(tasa*100).toFixed(2)+'%';
-    return `<div class="donut-legend-item" title="${escHTML(l)}">
-      <span class="donut-legend-dot" style="background:${PALETTE[i%PALETTE.length]}"></span>
-      <span class="donut-legend-label">${escHTML(l)}</span>
-      <span class="donut-legend-count">${c}</span>
-      <span class="donut-legend-pct">${tasaTxt}</span>
-      <span class="donut-legend-neta">${fmtMontoRaw(neta)}</span>
-    </div>`;
+  document.getElementById('donut-legend').innerHTML = entries.map(([l,c,neta,tasa],i)=>{
+    const tasaTxt = tasa !== null ? (tasa * 100).toFixed(2) + '%' : 'S/T';
+    const label = l.length > 24 ? l.slice(0,23) + '…' : l;
+    return `
+      <div class="donut-legend-item">
+        <div class="donut-legend-dot" style="background:${PALETTE[i % PALETTE.length]}"></div>
+        <span class="donut-legend-label" title="${escHTML(l)}">${escHTML(label)}</span>
+        <span class="donut-legend-count">${c}</span>
+        <span class="donut-legend-pct">${tasaTxt}</span>
+        <span class="donut-legend-neta">${fmtMontoRaw(neta)}</span>
+      </div>`;
   }).join('');
+}
+
+
+function renderSucursal(d,netaKey){
+  if(!netaKey){document.getElementById('chart-sucursal').innerHTML='<div class="empty-state" style="padding:12px"><p>Sin columna NETA</p></div>';return;}
+  const data=groupByNeta(d,getSucursalKey,netaKey).slice(0,8);
+  const max=data[0]?.[2]||1;
+  document.getElementById('badge-suc').textContent=data.length+' sucursales';
+  const el=document.getElementById('chart-sucursal');
+  if(!data.length){el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin datos</p></div>';return;}
+  el.innerHTML=data.map(([l,clientes,neta])=>`
+    <div class="suc-row">
+      <span class="suc-label" title="${l}">${l.length>13?l.slice(0,12)+'…':l}</span>
+      <div class="suc-track"><div class="suc-fill" style="width:${Math.round(Math.abs(neta)/Math.abs(max)*100)}%"></div></div>
+      <span class="suc-amount">${fmtMontoRaw(neta)}</span>
+    </div>`).join('');
 }
 
 function renderZonasV(d){
@@ -2647,67 +2648,47 @@ function renderZonasV(d){
 
 /* FIX CLAVE: Estado de Gestión con labels completos */
 function renderEstGes(d,netaKey){
-  const el = document.getElementById('chart-estados');
-  if(!el) return;
+  const el=document.getElementById('chart-estados');
+  if(!el)return;
 
   if(!netaKey){
-    document.getElementById('badge-estges').textContent = 'Sin NETA';
-    el.innerHTML = '<div class="empty-state" style="padding:12px"><p>No se encontró la columna NETA / Coloc. Neta.</p></div>';
+    document.getElementById('badge-estges').textContent='Sin NETA';
+    el.innerHTML='<div class="empty-state" style="padding:12px"><p>No se encontro la columna NETA / Coloc. Neta.</p></div>';
     return;
   }
 
-  const map = {};
-
+  const map={};
   d.forEach(r=>{
-    const mes = getMesKeyFromRow(r);
-    const t = getFilaTasaPartes(r,netaKey);
-    if(!t) return;
+    const mes=getMesKeyFromRow(r);
+    const t=getFilaTasaPartes(r,netaKey);
+    if(!t)return;
+    if(!map[mes])map[mes]={pesoTea:0,neta:0,ops:0};
 
-    if(!map[mes]){
-      map[mes] = {
-        sumaPesoTea: 0,
-        sumaNeta: 0,
-        ops: 0
-      };
-    }
-
-    // Tasa ponderada por mes: Σ(NETA * TEA) / Σ(NETA).
-    // Es la misma lógica para ENE, FEB, MAR, ABR, MAY, JUN, etc.
-    map[mes].sumaPesoTea += t.pesoTea;
-    map[mes].sumaNeta += t.neta;
+    // Misma formula para TODOS los meses/filtros:
+    // SUM(PESO_TEA) / SUM(Coloc. Neta), donde PESO_TEA = NETA * TEA.
+    map[mes].pesoTea += t.pesoTea;
+    map[mes].neta += t.neta;
     map[mes].ops++;
   });
 
-  const orden = {
-    ENE26:1,FEB26:2,MAR26:3,ABR26:4,MAY26:5,JUN26:6,
-    JUL26:7,AGO26:8,SET26:9,OCT26:10,NOV26:11,DIC26:12,
-    'S/Mes':99
-  };
-
-  const data = Object.entries(map)
-    .map(([mes,v])=>[
-      mes,
-      v.sumaNeta > 0 ? v.sumaPesoTea / v.sumaNeta : null,
-      v.ops,
-      v.sumaNeta
-    ])
+  const orden={ENE26:1,FEB26:2,MAR26:3,ABR26:4,MAY26:5,JUN26:6,JUL26:7,AGO26:8,SET26:9,OCT26:10,NOV26:11,DIC26:12,'S/Mes':99};
+  const data=Object.entries(map)
+    .map(([mes,v])=>[mes, v.neta > 0 ? v.pesoTea / v.neta : null, v.ops, v.neta])
     .filter(x=>x[1] !== null)
-    .sort((a,b)=>(orden[a[0]] || 98) - (orden[b[0]] || 98));
+    .sort((a,b)=>(orden[a[0]]||98)-(orden[b[0]]||98));
 
-  document.getElementById('badge-estges').textContent = data.length + ' meses';
-
+  document.getElementById('badge-estges').textContent=data.length+' meses';
   if(!data.length){
-    el.innerHTML = '<div class="empty-state" style="padding:12px"><p>Sin datos válidos de NETA y TEA para el filtro seleccionado</p></div>';
+    el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin datos validos de NETA y TEA para el filtro seleccionado</p></div>';
     return;
   }
 
-  const max = Math.max(...data.map(x=>Math.abs(x[1])),0.01);
-
-  el.innerHTML = data.map(([mes,tasa,ops,neta])=>`
+  const max=Math.max(...data.map(x=>Math.abs(x[1])),0.01);
+  el.innerHTML=data.map(([mes,tasa,ops,neta])=>`
     <div class="estges-row" title="${ops} operaciones · NETA ${fmtMonto(neta)}">
-      <span class="estges-label">${escHTML(mes)}</span>
+      <span class="estges-label" title="${escHTML(mes)}">${escHTML(mes)}</span>
       <div class="estges-track"><div class="estges-fill" style="width:${Math.round((Math.abs(tasa)/max)*100)}%"></div></div>
-      <span class="estges-count">${(tasa*100).toFixed(2)}%</span>
+      <span class="estges-count" title="${ops} operaciones">${(tasa*100).toFixed(2)}%</span>
     </div>`).join('');
 }
 
