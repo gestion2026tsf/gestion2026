@@ -1609,8 +1609,8 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
                 <span class="multi-option-text">Todos ACTIVADO 2026</span>
               </label>
               <label class="multi-option active-all">
-                <input type="checkbox" value="JUNIO_2026" class="estado-check" onchange="applyDashFilter()">
-                <span class="multi-option-text">JUNIO 2026</span>
+                <input type="checkbox" value="JULIO_2026" class="estado-check" onchange="applyDashFilter()">
+                <span class="multi-option-text">JULIO 2026</span>
               </label>
               <div id="estadoOpciones"></div>
             </div>
@@ -1768,8 +1768,8 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
                 <span class="multi-option-text">Todos ACTIVADO 2026</span>
               </label>
               <label class="multi-option active-all">
-                <input type="checkbox" value="JUNIO_2026" class="estado-exp-check" onchange="filterTable()">
-                <span class="multi-option-text">JUNIO 2026</span>
+                <input type="checkbox" value="JULIO_2026" class="estado-exp-check" onchange="filterTable()">
+                <span class="multi-option-text">JULIO 2026</span>
               </label>
               <div id="estadoExpOpciones"></div>
             </div>
@@ -2031,8 +2031,8 @@ function updateEstadoLabel(){
   }else if(seleccionados.length===1){
     if(seleccionados[0]==='ACTIVADO_2026'){
       btn.textContent='Todos ACTIVADO 2026';
-    }else if(seleccionados[0]==='JUNIO_2026'){
-      btn.textContent='JUNIO 2026';
+    }else if(seleccionados[0]==='JULIO_2026'){
+      btn.textContent='JULIO 2026';
     }else{
       btn.textContent=seleccionados[0];
     }
@@ -2055,8 +2055,8 @@ function updateDashFilters(){
   const activo2026=document.querySelector('.estado-check[value="ACTIVADO_2026"]');
   if(activo2026)activo2026.checked=seleccionadosPrevios.has('ACTIVADO_2026');
 
-  const junio2026=document.querySelector('.estado-check[value="JUNIO_2026"]');
-  if(junio2026)junio2026.checked=seleccionadosPrevios.has('JUNIO_2026');
+  const julio2026=document.querySelector('.estado-check[value="JULIO_2026"]');
+  if(julio2026)julio2026.checked=seleccionadosPrevios.has('JULIO_2026');
 
   document.getElementById('filtroZonaDash').innerHTML =
     '<option value="">Todas</option>' +
@@ -2085,7 +2085,7 @@ function applyDashFilter(){
     const cumpleEstado =
       estGes.length===0 ||
       (estGes.includes('ACTIVADO_2026') && isActivado(r)) ||
-      (estGes.includes('JUNIO_2026') && estado.toUpperCase().includes('JUN26')) ||
+      (estGes.includes('JULIO_2026') && estado.toUpperCase().includes('JUL26')) ||
       estGes.includes(estado);
 
     return cumpleEstado &&
@@ -2719,7 +2719,7 @@ function updateEstadoExpLabel(){
     btn.textContent='Todos los estados';
   }else if(seleccionados.length===1){
     if(seleccionados[0]==='ACTIVADO_2026')btn.textContent='Todos ACTIVADO 2026';
-    else if(seleccionados[0]==='JUNIO_2026')btn.textContent='JUNIO 2026';
+    else if(seleccionados[0]==='JULIO_2026')btn.textContent='JULIO 2026';
     else btn.textContent=seleccionados[0];
   }else{
     btn.textContent=seleccionados.length+' seleccionados';
@@ -2740,7 +2740,7 @@ function filterTable(){
     const cumpleEstado =
       estados.length===0 ||
       (estados.includes('ACTIVADO_2026') && isActivado(r)) ||
-      (estados.includes('JUNIO_2026') && est.toUpperCase().includes('JUN26')) ||
+      (estados.includes('JULIO_2026') && est.toUpperCase().includes('JUL26')) ||
       estados.includes(est);
     return(!q||txt.includes(q))&&(!prod||String(r[COL_PROD]).includes(prod))&&cumpleEstado;
   });
@@ -2760,8 +2760,8 @@ function updateFiltros(){
   }).join('');
   const activo=document.querySelector('.estado-exp-check[value="ACTIVADO_2026"]');
   if(activo)activo.checked=seleccionadosPrevios.has('ACTIVADO_2026');
-  const junio=document.querySelector('.estado-exp-check[value="JUNIO_2026"]');
-  if(junio)junio.checked=seleccionadosPrevios.has('JUNIO_2026');
+  const julio=document.querySelector('.estado-exp-check[value="JULIO_2026"]');
+  if(julio)julio.checked=seleccionadosPrevios.has('JULIO_2026');
   updateEstadoExpLabel();
 }
 
