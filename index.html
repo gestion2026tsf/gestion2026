@@ -1741,6 +1741,238 @@ body.dash-zoom-200 .chart-title{font-size:18px!important;}
   #chart-zonas-v{height:170px!important;padding:10px 12px 22px!important;gap:12px!important;}
 }
 
+
+/* =========================================================
+   AJUSTE FINAL FLOR - ZONAS + PDF UNA SOLA HOJA
+   ========================================================= */
+/* Zonas vista barras: no corta CENTRO ni etiquetas inferiores */
+#chart-zonas-v{
+  width:100% !important;
+  height:250px !important;
+  padding:34px 34px 34px !important;
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(92px,1fr)) !important;
+  align-items:end !important;
+  justify-items:center !important;
+  gap:16px !important;
+  overflow:hidden !important;
+}
+#chart-zonas-v .vbar-col{
+  width:100% !important;
+  max-width:130px !important;
+  min-width:0 !important;
+  height:178px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  overflow:visible !important;
+}
+#chart-zonas-v .vbar-neta{
+  width:100% !important;
+  text-align:center !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  color:#111 !important;
+  line-height:1 !important;
+  margin:0 0 4px !important;
+  white-space:nowrap !important;
+  overflow:visible !important;
+}
+#chart-zonas-v .vbar-val{
+  width:100% !important;
+  text-align:center !important;
+  font-size:10px !important;
+  font-weight:900 !important;
+  color:#F0005B !important;
+  line-height:1 !important;
+  margin:0 0 7px !important;
+  white-space:nowrap !important;
+}
+#chart-zonas-v .vbar-fill{
+  width:100% !important;
+  max-width:120px !important;
+  min-height:12px !important;
+  background:#5BC7C8 !important;
+  border-radius:5px 5px 0 0 !important;
+}
+#chart-zonas-v .vbar-lbl{
+  width:100% !important;
+  max-width:130px !important;
+  text-align:center !important;
+  font-size:11px !important;
+  font-weight:900 !important;
+  color:#111 !important;
+  line-height:1.05 !important;
+  margin-top:9px !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+body.dash-zoom-200 #chart-zonas-v{
+  height:305px !important;
+  padding:42px 44px 42px !important;
+  grid-template-columns:repeat(4,minmax(140px,1fr)) !important;
+  gap:24px !important;
+}
+body.dash-zoom-200 #chart-zonas-v .vbar-col{max-width:180px!important;height:215px!important;}
+body.dash-zoom-200 #chart-zonas-v .vbar-fill{max-width:170px!important;}
+body.dash-zoom-200 #chart-zonas-v .vbar-neta{font-size:16px!important;}
+body.dash-zoom-200 #chart-zonas-v .vbar-val{font-size:13px!important;}
+body.dash-zoom-200 #chart-zonas-v .vbar-lbl{font-size:14px!important;max-width:180px!important;}
+
+@media print{
+  @page{size:A4 landscape;margin:4mm;}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  html,body{
+    position:static!important;
+    width:100%!important;
+    height:auto!important;
+    overflow:visible!important;
+    background:#e7e7e7!important;
+  }
+  #login-screen,header,nav,.loading-bar,.toast,.modal-overlay,.dashboard-actions,.btn-clear,.load-progress{display:none!important;}
+  #app,main,.main-inner,#view-dashboard,#dashboardZoomArea{
+    display:block!important;
+    position:static!important;
+    width:100%!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    padding:0!important;
+    margin:0!important;
+    background:#e7e7e7!important;
+    transform:none!important;
+  }
+  .view{display:none!important;}
+  #view-dashboard{display:block!important;}
+
+  /* Cabecera y filtros compactos */
+  .page-header{margin:0 0 5px!important;min-height:18px!important;}
+  .page-title{font-size:12px!important;line-height:1!important;gap:5px!important;}
+  .page-title svg{width:12px!important;height:12px!important;}
+  .page-title-meta{font-size:8px!important;}
+  .filter-bar{
+    display:flex!important;
+    gap:7px!important;
+    align-items:center!important;
+    padding:0 0 6px!important;
+    margin:0 0 6px!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+  }
+  .filter-bar label{font-size:8px!important;font-weight:900!important;letter-spacing:.4px!important;}
+  .filter-select-dash,.multi-select-btn{
+    height:22px!important;
+    min-width:116px!important;
+    width:116px!important;
+    padding:0 6px!important;
+    font-size:8px!important;
+    border:1px solid #bdbdbd!important;
+    background:#fff!important;
+    box-shadow:none!important;
+  }
+  .multi-select{min-width:116px!important;}
+  .multi-select-menu{display:none!important;}
+
+  /* KPIs: una fila para ahorrar alto y mantener colores */
+  .kpi-grid{
+    display:grid!important;
+    grid-template-columns:repeat(6,1fr)!important;
+    gap:5px!important;
+    margin:0 0 6px!important;
+  }
+  .kpi-card{
+    background:#3a3a3a!important;
+    color:#fff!important;
+    min-height:66px!important;
+    height:66px!important;
+    padding:7px 8px!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:0 2px 5px rgba(0,0,0,.18)!important;
+    overflow:hidden!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  .kpi-icon{width:18px!important;height:18px!important;border-radius:5px!important;margin-bottom:4px!important;background:#555!important;color:#5BC7C8!important;}
+  .kpi-icon svg{width:11px!important;height:11px!important;}
+  .kpi-label{font-size:6.6px!important;line-height:1.05!important;color:#fff!important;margin-bottom:2px!important;letter-spacing:.2px!important;}
+  .kpi-value{font-size:18px!important;line-height:.95!important;color:#fff!important;letter-spacing:-.4px!important;}
+  .kpi-sub{font-size:6.4px!important;line-height:1.05!important;color:#fff!important;margin-top:3px!important;}
+  .kpi-sub-neta{font-size:6.8px!important;line-height:1.05!important;color:#F0005B!important;margin-top:2px!important;}
+
+  /* Graficos compactos para entrar en una sola hoja */
+  .dash-row{
+    display:grid!important;
+    gap:5px!important;
+    margin-bottom:5px!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  .dash-row.cols-2{grid-template-columns:1fr 1fr!important;}
+  .dash-row.cols-3{grid-template-columns:1fr 1fr 1fr!important;}
+  .chart-card{
+    background:#fff!important;
+    border:1px solid #9f9f9f!important;
+    border-radius:6px!important;
+    min-height:92px!important;
+    height:92px!important;
+    box-shadow:0 2px 5px rgba(0,0,0,.12)!important;
+    overflow:hidden!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  .dash-row.cols-2 .chart-card{height:118px!important;min-height:118px!important;}
+  .dash-row.cols-3 .chart-card{height:102px!important;min-height:102px!important;}
+  .chart-head{
+    height:20px!important;
+    min-height:20px!important;
+    margin:0 0 4px!important;
+    padding:3px 6px!important;
+    background:#F0005B!important;
+    border-radius:6px 6px 0 0!important;
+  }
+  .chart-title{font-size:9px!important;color:#fff!important;font-weight:900!important;line-height:1!important;}
+  .chart-card>div:not(.chart-head){padding:0 8px 4px!important;}
+
+  .net-table th,.net-table td{font-size:7px!important;padding:3px 6px!important;line-height:1.05!important;}
+  .net-mes-label,.net-ops,.net-amount{font-size:7px!important;}
+  .donut-wrap{min-height:88px!important;height:88px!important;gap:10px!important;align-items:center!important;}
+  .donut-chart-box{width:82px!important;height:82px!important;}
+  #donutEstCom{width:82px!important;height:82px!important;}
+  .donut-center-label .dcl-val{font-size:14px!important;}
+  .donut-center-label .dcl-sub{font-size:6px!important;}
+  .donut-legend{max-width:260px!important;flex:0 1 260px!important;gap:3px!important;}
+  .donut-legend-item{font-size:6.5px!important;grid-template-columns:7px minmax(75px,1fr) 18px 30px 40px!important;gap:3px!important;line-height:1!important;}
+  .donut-legend-dot{width:7px!important;height:7px!important;}
+  .donut-legend-count,.donut-legend-pct,.donut-legend-neta{font-size:6.5px!important;}
+
+  .bar-row,.suc-row,.estges-row{height:13px!important;margin-bottom:2px!important;gap:4px!important;}
+  .bar-label,.suc-label,.estges-label{font-size:6.4px!important;min-width:46px!important;max-width:46px!important;}
+  .bar-track,.suc-track,.estges-track{height:4px!important;}
+  .bar-count,.estges-count{min-width:42px!important;}
+  .neta-big,.suc-amount{font-size:6.6px!important;}
+  .cnt-small{font-size:6px!important;}
+
+  /* Zonas en PDF: centrado, sin cortes y con altura pequeña */
+  #chart-zonas-v{
+    height:78px!important;
+    padding:8px 12px 11px!important;
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(45px,1fr))!important;
+    gap:8px!important;
+    align-items:end!important;
+    overflow:hidden!important;
+  }
+  #chart-zonas-v .vbar-col{height:62px!important;max-width:62px!important;width:100%!important;}
+  #chart-zonas-v .vbar-neta{font-size:6.8px!important;margin-bottom:2px!important;text-align:center!important;}
+  #chart-zonas-v .vbar-val{font-size:6.2px!important;margin-bottom:3px!important;text-align:center!important;}
+  #chart-zonas-v .vbar-fill{max-width:58px!important;min-height:5px!important;}
+  #chart-zonas-v .vbar-lbl{font-size:6.4px!important;margin-top:3px!important;max-width:62px!important;text-align:center!important;}
+}
+
 </style>
 </head>
 <body>
