@@ -2085,7 +2085,7 @@ function applyDashFilter(){
     const cumpleEstado =
       estGes.length===0 ||
       (estGes.includes('ACTIVADO_2026') && isActivado(r)) ||
-      (estGes.includes('JULIO_2026') && estado.toUpperCase().includes('JUL26')) ||
+      (estGes.includes('JULIO_2026') && getMesKeyFromRow(r) === 'JUL26') ||
       estGes.includes(estado);
 
     return cumpleEstado &&
@@ -2748,7 +2748,7 @@ function filterTable(){
     const cumpleEstado =
       estados.length===0 ||
       (estados.includes('ACTIVADO_2026') && isActivado(r)) ||
-      (estados.includes('JULIO_2026') && est.toUpperCase().includes('JUL26')) ||
+      (estados.includes('JULIO_2026') && getMesKeyFromRow(r) === 'JUL26') ||
       estados.includes(est);
     return(!q||txt.includes(q))&&(!prod||String(r[COL_PROD]).includes(prod))&&cumpleEstado;
   });
