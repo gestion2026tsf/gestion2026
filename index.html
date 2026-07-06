@@ -1618,6 +1618,129 @@ body.print-dashboard-mode #dashboardZoomArea{
   #chart-zonas-v .vbar-lbl{font-size:8px!important;}
 }
 
+
+
+/* =========================================================
+   FIX FINAL PDF + TAMANO DASHBOARD
+   - No escala con transform para que no se corte
+   - 200% mantiene los 6 KPIs bonitos en 3 columnas x 2 filas
+   - PDF imprime colores y mantiene formato del sistema
+   ========================================================= */
+html, body, #app, main, .main-inner, #dashboardZoomArea, #dashboardZoomArea *{
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+#dashboardZoomArea{
+  transform:none !important;
+  width:100% !important;
+  max-width:100% !important;
+  transition:none !important;
+}
+body.dash-zoom-100 #dashboardZoomArea{font-size:100%;}
+body.dash-zoom-125 #dashboardZoomArea{font-size:112%;}
+body.dash-zoom-150 #dashboardZoomArea{font-size:122%;}
+body.dash-zoom-200 #dashboardZoomArea{font-size:135%;}
+
+body.dash-zoom-125 .kpi-grid,
+body.dash-zoom-150 .kpi-grid,
+body.dash-zoom-200 .kpi-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+}
+body.dash-zoom-125 .kpi-card{min-height:150px!important;padding:24px 24px 20px!important;}
+body.dash-zoom-150 .kpi-card{min-height:175px!important;padding:30px 28px 24px!important;}
+body.dash-zoom-200 .kpi-card{min-height:205px!important;padding:36px 34px 28px!important;}
+body.dash-zoom-200 .kpi-icon{width:52px!important;height:52px!important;border-radius:14px!important;margin-bottom:18px!important;}
+body.dash-zoom-200 .kpi-label{font-size:14px!important;line-height:1.15!important;}
+body.dash-zoom-200 .kpi-value{font-size:48px!important;}
+body.dash-zoom-200 .kpi-sub{font-size:12px!important;}
+body.dash-zoom-200 .kpi-sub-neta{font-size:13px!important;}
+body.dash-zoom-200 .filter-bar label{font-size:15px!important;}
+body.dash-zoom-200 .filter-select-dash,
+body.dash-zoom-200 .multi-select-btn{height:48px!important;font-size:16px!important;min-width:260px!important;}
+body.dash-zoom-200 .page-title{font-size:20px!important;}
+body.dash-zoom-200 .chart-card{min-height:245px!important;}
+body.dash-zoom-200 .chart-head{height:44px!important;min-height:44px!important;}
+body.dash-zoom-200 .chart-title{font-size:18px!important;}
+
+@media(max-width:900px){
+  body.dash-zoom-125 .kpi-grid,
+  body.dash-zoom-150 .kpi-grid,
+  body.dash-zoom-200 .kpi-grid{grid-template-columns:1fr!important;}
+}
+
+@media print{
+  @page{size:A4 landscape;margin:7mm;}
+  *{
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  html,body{
+    position:static!important;
+    width:auto!important;
+    height:auto!important;
+    overflow:visible!important;
+    background:#e7e7e7!important;
+  }
+  #login-screen,header,nav,.loading-bar,.toast,.modal-overlay,.dashboard-actions,.btn-clear,.load-progress{display:none!important;}
+  #app,main,.main-inner,#view-dashboard,#dashboardZoomArea{
+    display:block!important;
+    position:static!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    background:#e7e7e7!important;
+    padding:0!important;
+    margin:0!important;
+    transform:none!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+  .view{display:none!important;}
+  #view-dashboard{display:block!important;}
+  .page-header{margin:0 0 8px!important;}
+  .filter-bar{background:transparent!important;padding:0 0 10px!important;margin-bottom:8px!important;border:0!important;box-shadow:none!important;}
+  .filter-select-dash,.multi-select-btn{background:#fff!important;border:1px solid #c9c9c9!important;box-shadow:0 1px 2px rgba(0,0,0,.04)!important;}
+  .multi-select-menu{display:none!important;}
+
+  /* En PDF se mantiene formato bonito: 6 tarjetas en 3 x 2, no una fila pequeñita */
+  .kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;margin-bottom:10px!important;}
+  .kpi-card{
+    background:#3a3a3a!important;
+    color:#fff!important;
+    border:0!important;
+    border-radius:0!important;
+    min-height:118px!important;
+    padding:16px 18px 14px!important;
+    box-shadow:0 4px 10px rgba(0,0,0,.20)!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  .kpi-label,.kpi-sub{color:#fff!important;}
+  .kpi-value{color:#fff!important;font-size:30px!important;}
+  .kpi-icon{background:#555!important;color:#5BC7C8!important;width:34px!important;height:34px!important;margin-bottom:9px!important;}
+  .kpi-sub-neta{color:#F0005B!important;}
+
+  .dash-row{gap:8px!important;margin-bottom:9px!important;break-inside:avoid!important;page-break-inside:avoid!important;}
+  .dash-row.cols-2{grid-template-columns:1fr 1fr!important;}
+  .dash-row.cols-3{grid-template-columns:1fr 1fr 1fr!important;}
+  .chart-card{
+    background:#fff!important;
+    border:1px solid #9f9f9f!important;
+    border-radius:7px!important;
+    box-shadow:0 3px 8px rgba(0,0,0,.14)!important;
+    min-height:170px!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  .chart-head{height:32px!important;min-height:32px!important;background:#F0005B!important;margin-bottom:10px!important;border-radius:7px 7px 0 0!important;}
+  .chart-title{color:#fff!important;font-size:13px!important;font-weight:900!important;}
+  .net-table th,.net-table td{font-size:10px!important;padding:6px 10px!important;}
+  .donut-wrap{min-height:160px!important;gap:16px!important;}
+  .donut-chart-box{width:135px!important;height:135px!important;}
+  .donut-legend-item{font-size:9px!important;grid-template-columns:10px minmax(90px,1fr) 28px 44px 58px!important;gap:5px!important;}
+  #chart-zonas-v{height:170px!important;padding:10px 12px 22px!important;gap:12px!important;}
+}
+
 </style>
 </head>
 <body>
@@ -2973,22 +3096,24 @@ async function guardarCambios(){
 }
 
 
+function clearDashboardZoomClasses(){
+  document.body.classList.remove('dash-zoom-100','dash-zoom-125','dash-zoom-150','dash-zoom-200');
+}
+
 function setDashboardZoom(value){
   const zoom = Math.max(1, parseFloat(value || '1'));
-  document.documentElement.style.setProperty('--dash-zoom', zoom);
-  document.documentElement.style.setProperty('--pdf-scale', zoom);
+  const pct = Math.round(zoom * 100);
+  clearDashboardZoomClasses();
+  document.body.classList.add('dash-zoom-' + pct);
   localStorage.setItem('dashboard_zoom', String(zoom));
   const main = document.getElementById('mainScroll');
   if(main) main.scrollTop = 0;
-  showToast('✓ Vista del dashboard en '+Math.round(zoom*100)+'%');
+  showToast('✓ Vista del dashboard en ' + pct + '%');
 }
 
 function downloadDashboardPDF(){
-  const zoomSel = document.getElementById('dashboardZoom');
-  const zoom = Math.max(1, parseFloat(zoomSel?.value || '1'));
-  document.documentElement.style.setProperty('--pdf-scale', zoom);
   document.body.classList.add('print-dashboard-mode');
-  showToast('Se abrirá la ventana para guardar en PDF');
+  showToast('Se abrirá la ventana para guardar en PDF. Elige Guardar como PDF y orientación Horizontal.');
   setTimeout(()=>window.print(),120);
 }
 
@@ -2998,8 +3123,9 @@ window.addEventListener('afterprint',()=>{
 
 (function initDashboardZoom(){
   const z = localStorage.getItem('dashboard_zoom') || '1';
-  document.documentElement.style.setProperty('--dash-zoom', z);
-  document.documentElement.style.setProperty('--pdf-scale', z);
+  const pct = Math.round(Math.max(1, parseFloat(z || '1')) * 100);
+  clearDashboardZoomClasses();
+  document.body.classList.add('dash-zoom-' + pct);
   window.addEventListener('load',()=>{
     const sel=document.getElementById('dashboardZoom');
     if(sel) sel.value=z;
