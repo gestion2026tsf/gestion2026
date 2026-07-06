@@ -1505,6 +1505,119 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
 #view-expedientes th:nth-child(17),#view-expedientes td:nth-child(17){width:130px!important;}
 #view-expedientes th:nth-child(18),#view-expedientes td:nth-child(18){width:70px!important;}
 
+
+
+/* =========================================================
+   DESCARGA PDF + ZOOM DASHBOARD
+   ========================================================= */
+.dashboard-actions{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  flex-wrap:wrap!important;
+}
+.zoom-control{
+  height:31px!important;
+  background:#fff!important;
+  border:1px solid #c9c9c9!important;
+  border-radius:5px!important;
+  padding:0 8px!important;
+  font-family:var(--font)!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  color:#111!important;
+  cursor:pointer!important;
+}
+.btn-pdf{
+  height:31px!important;
+  background:#F0005B!important;
+  color:#fff!important;
+  border:0!important;
+  border-radius:5px!important;
+  padding:0 13px!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  font-family:var(--font)!important;
+  cursor:pointer!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  box-shadow:none!important;
+}
+.btn-pdf:hover{background:#c9004a!important;}
+#dashboardZoomArea{
+  transform:scale(var(--dash-zoom,1));
+  transform-origin:top left;
+  width:calc(100% / var(--dash-zoom,1));
+  transition:transform .18s ease;
+}
+body.print-dashboard-mode #dashboardZoomArea{
+  transform:scale(var(--pdf-scale,1))!important;
+  width:calc(100% / var(--pdf-scale,1))!important;
+}
+
+@media print{
+  @page{size:A4 landscape;margin:7mm;}
+  html,body{
+    position:static!important;
+    width:auto!important;
+    height:auto!important;
+    overflow:visible!important;
+    background:#fff!important;
+  }
+  #login-screen,header,nav,.loading-bar,.toast,.modal-overlay,.dashboard-actions,.btn-clear,.load-progress{
+    display:none!important;
+  }
+  #app,main,.main-inner,#view-dashboard{
+    display:block!important;
+    position:static!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    background:#fff!important;
+    padding:0!important;
+    margin:0!important;
+  }
+  .view{display:none!important;}
+  #view-dashboard{display:block!important;}
+  .page-header{margin-bottom:8px!important;}
+  .page-title{font-size:16px!important;}
+  .filter-bar{
+    background:#fff!important;
+    padding:0 0 8px!important;
+    margin-bottom:8px!important;
+    border:0!important;
+    box-shadow:none!important;
+  }
+  .filter-select-dash,.multi-select-btn{
+    border:1px solid #aaa!important;
+    background:#fff!important;
+    box-shadow:none!important;
+  }
+  .multi-select-menu{display:none!important;}
+  .kpi-grid{grid-template-columns:repeat(6,1fr)!important;gap:7px!important;margin-bottom:8px!important;}
+  .kpi-card{min-height:90px!important;padding:10px 12px!important;box-shadow:none!important;break-inside:avoid!important;}
+  .kpi-icon{width:24px!important;height:24px!important;margin-bottom:6px!important;}
+  .kpi-label{font-size:8px!important;}
+  .kpi-value{font-size:22px!important;}
+  .kpi-sub,.kpi-sub-neta{font-size:8px!important;}
+  .dash-row{gap:7px!important;margin-bottom:7px!important;break-inside:avoid!important;}
+  .dash-row.cols-2{grid-template-columns:1fr 1fr!important;}
+  .dash-row.cols-3{grid-template-columns:1fr 1fr 1fr!important;}
+  .chart-card{box-shadow:none!important;border:1px solid #999!important;min-height:130px!important;break-inside:avoid!important;}
+  .chart-head{height:25px!important;min-height:25px!important;margin-bottom:7px!important;}
+  .chart-title{font-size:10px!important;}
+  .donut-wrap{min-height:145px!important;gap:14px!important;}
+  .donut-chart-box{width:125px!important;height:125px!important;}
+  .donut-center-label .dcl-val{font-size:20px!important;}
+  .donut-legend-item{font-size:8px!important;grid-template-columns:10px minmax(85px,1fr) 28px 44px 58px!important;gap:5px!important;}
+  #chart-zonas-v{height:160px!important;padding:8px 12px 20px!important;gap:12px!important;}
+  #chart-zonas-v .vbar-col{height:135px!important;width:90px!important;max-width:90px!important;}
+  #chart-zonas-v .vbar-neta{font-size:9px!important;}
+  #chart-zonas-v .vbar-val{font-size:8px!important;}
+  #chart-zonas-v .vbar-lbl{font-size:8px!important;}
+}
+
 </style>
 </head>
 <body>
@@ -1581,10 +1694,22 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
             Dashboard General
             <span class="page-title-meta" id="dash-fecha"></span>
           </div>
-          <button class="btn-secondary" onclick="loadData()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-            Actualizar
-          </button>
+          <div class="dashboard-actions">
+            <select class="zoom-control" id="dashboardZoom" onchange="setDashboardZoom(this.value)" title="Tamaño de vista y PDF">
+              <option value="1">100%</option>
+              <option value="1.25">125%</option>
+              <option value="1.5">150%</option>
+              <option value="2">200%</option>
+            </select>
+            <button class="btn-pdf" onclick="downloadDashboardPDF()" title="Descargar dashboard como PDF">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>
+              Descargar PDF
+            </button>
+            <button class="btn-secondary" onclick="loadData()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              Actualizar
+            </button>
+          </div>
         </div>
 
         <div class="load-progress" id="loadProgress">
@@ -1594,6 +1719,8 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
           </div>
           <div class="load-progress-bar"><div class="load-progress-fill" id="loadProgressFill" style="width:0%"></div></div>
         </div>
+
+        <div id="dashboardZoomArea">
 
         <div class="filter-bar">
           <label>Estado:</label>
@@ -1737,6 +1864,7 @@ main{height:calc(100dvh - var(--header-h) - var(--nav-h))!important;overflow:hid
             <div class="chart-head"><div class="chart-title">Tasa ponderada por mes</div><div class="chart-badge" id="badge-estges">—</div></div>
             <div id="chart-estados"><div class="empty-state" style="padding:16px"><p>Cargando…</p></div></div>
           </div>
+        </div>
         </div>
       </div>
 
@@ -2843,6 +2971,40 @@ async function guardarCambios(){
   }catch(e){showToast('Error guardando: '+e.message,true);console.error(e);}
   finally{btn.disabled=false;btn.textContent=esNuevo?'Agregar al Excel':'Guardar en Excel';showLoading(false);}
 }
+
+
+function setDashboardZoom(value){
+  const zoom = Math.max(1, parseFloat(value || '1'));
+  document.documentElement.style.setProperty('--dash-zoom', zoom);
+  document.documentElement.style.setProperty('--pdf-scale', zoom);
+  localStorage.setItem('dashboard_zoom', String(zoom));
+  const main = document.getElementById('mainScroll');
+  if(main) main.scrollTop = 0;
+  showToast('✓ Vista del dashboard en '+Math.round(zoom*100)+'%');
+}
+
+function downloadDashboardPDF(){
+  const zoomSel = document.getElementById('dashboardZoom');
+  const zoom = Math.max(1, parseFloat(zoomSel?.value || '1'));
+  document.documentElement.style.setProperty('--pdf-scale', zoom);
+  document.body.classList.add('print-dashboard-mode');
+  showToast('Se abrirá la ventana para guardar en PDF');
+  setTimeout(()=>window.print(),120);
+}
+
+window.addEventListener('afterprint',()=>{
+  document.body.classList.remove('print-dashboard-mode');
+});
+
+(function initDashboardZoom(){
+  const z = localStorage.getItem('dashboard_zoom') || '1';
+  document.documentElement.style.setProperty('--dash-zoom', z);
+  document.documentElement.style.setProperty('--pdf-scale', z);
+  window.addEventListener('load',()=>{
+    const sel=document.getElementById('dashboardZoom');
+    if(sel) sel.value=z;
+  });
+})();
 
 function exportCSV(){
   if(!filteredData.length){showToast('No hay datos para exportar',true);return;}
