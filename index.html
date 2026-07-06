@@ -2266,17 +2266,30 @@ function parseTasa(val){
 function getMesKeyFromRow(r){
   const meses={ENE:1,FEB:2,MAR:3,ABR:4,MAY:5,JUN:6,JUL:7,AGO:8,SET:9,SEP:9,OCT:10,NOV:11,DIC:12};
   const etiquetas={1:'ENE26',2:'FEB26',3:'MAR26',4:'ABR26',5:'MAY26',6:'JUN26',7:'JUL26',8:'AGO26',9:'SET26',10:'OCT26',11:'NOV26',12:'DIC26'};
-  const texto = (String(r[COL_ESTGES]||'')+' '+String(r[COL_ESTCOM]||'')).toUpperCase();
-  for(const [m,n] of Object.entries(meses)){
-    if(texto.includes(m)) return etiquetas[n];
-  }
-  const fechaKey=headers.includes(COL_FECHA)?COL_FECHA:detectField(['FECHA_APRO','FECHA_APROBACION','FECHA','FEC_APRO','FECHA_ACT','FECHA_ACTIV','FEC_ACT','FECHA_ACTIVACION']);
-  if(fechaKey){
-    const fv=r[fechaKey];
-    const dt=typeof fv==='number'?new Date(Math.round((fv-25569)*86400*1000)):new Date(fv);
-    if(!isNaN(dt)) return etiquetas[dt.getMonth()+1] || 'S/Mes';
-  }
-  return 'S/Mes';
+
+  // FIX CLAVE:
+  // El mes debe salir primero de EST_GES. Si EST_GES dice 7.TESORERIA.JUL26,
+  // la fila pertenece a JULIO, aunque EST_COM u otra columna diga JUN26.
+  // Antes se unian EST_GES + EST_COM y se buscaba por orden ENE..DIC;
+  // por eso una fila JUL26 con EST_COM JUN26 terminaba apareciendo como JUN.
+  const extractMes = (txt)=>{
+    txt = String(txt || '').toUpperCase();
+    const match = txt.match(/(ENE|FEB|MAR|ABR|MAY|JUN|JUL|AGO|SET|SEP|OCT|NOV|DIC)\s*\.?\s*(26|2026)?/);
+    if(!match) return null;
+    return etiquetas[meses[match[1]]] || null;
+  };
+
+  return extractMes(r[COL_ESTGES]) ||
+         extractMes(r[COL_ESTCOM]) ||
+         (()=>{
+           const fechaKey=headers.includes(COL_FECHA)?COL_FECHA:detectField(['FECHA_APRO','FECHA_APROBACION','FECHA','FEC_APRO','FECHA_ACT','FECHA_ACTIV','FEC_ACT','FECHA_ACTIVACION']);
+           if(fechaKey){
+             const fv=r[fechaKey];
+             const dt=typeof fv==='number'?new Date(Math.round((fv-25569)*86400*1000)):new Date(fv);
+             if(!isNaN(dt)) return etiquetas[dt.getMonth()+1] || 'S/Mes';
+           }
+           return 'S/Mes';
+         })();
 }
 function groupByNeta(rows,labelFn,netaKey){
   const map={};
