@@ -2452,33 +2452,19 @@ function renderFuncionarios(d,funcKey){
 }
 
 function renderNetaMes(d,netaKey){
-  const fechaKey=headers.includes(COL_FECHA)?COL_FECHA:detectField(['FECHA_APRO','FECHA_APROBACION','FECHA','FEC_APRO','FECHA_ACT','FECHA_ACTIV','FEC_ACT','FECHA_ACTIVACION']);
   const meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Set','Oct','Nov','Dic'];
+  const mesIndexMap={ENE26:0,FEB26:1,MAR26:2,ABR26:3,MAY26:4,JUN26:5,JUL26:6,AGO26:7,SET26:8,SEP26:8,OCT26:9,NOV26:10,DIC26:11};
   const byMes={};
-  if(fechaKey){
-    d.forEach(r=>{
-      const fv=r[fechaKey];if(!fv&&fv!==0)return;
-      let dt=typeof fv==='number'?new Date(Math.round((fv-25569)*86400*1000)):new Date(fv);
-      if(isNaN(dt))return;
-      const mes=dt.getMonth();
-      if(!byMes[mes])byMes[mes]={label:meses[mes],count:0,suma:0};
-      byMes[mes].count++;
-      if(netaKey)byMes[mes].suma+=parseNeta(r[netaKey]);
-    });
-  }
-  if(!Object.keys(byMes).length){
-    const mesNames={'ENE':0,'FEB':1,'MAR':2,'ABR':3,'MAY':4,'JUN':5,'JUL':6,'AGO':7,'SET':8,'SEP':8,'OCT':9,'NOV':10,'DIC':11};
-    d.forEach(r=>{
-      let mesIdx=-1;
-      // Busca en EST_GES o EST_COM si contiene el mes
-      const estVal=String(r[COL_ESTGES]||'').toUpperCase()+String(r[COL_ESTCOM]||'').toUpperCase();
-      for(const[k,v]of Object.entries(mesNames)){if(estVal.includes(k)){mesIdx=v;break;}}
-      if(mesIdx<0)mesIdx=12;
-      if(!byMes[mesIdx])byMes[mesIdx]={label:mesIdx===12?'S/Mes':meses[mesIdx],count:0,suma:0};
-      byMes[mesIdx].count++;
-      if(netaKey)byMes[mesIdx].suma+=parseNeta(r[netaKey]);
-    });
-  }
+
+  d.forEach(r=>{
+    const mesKey=getMesKeyFromRow(r);
+    const mesIdx=(mesKey in mesIndexMap)?mesIndexMap[mesKey]:12;
+    const label=mesIdx===12?'S/Mes':meses[mesIdx];
+    if(!byMes[mesIdx])byMes[mesIdx]={label,count:0,suma:0};
+    byMes[mesIdx].count++;
+    if(netaKey)byMes[mesIdx].suma+=parseNeta(r[netaKey]);
+  });
+
   const rows=Object.entries(byMes).sort((a,b)=>+a[0]-+b[0]);
   const el=document.getElementById('chart-neta-mes');
   if(!rows.length){el.innerHTML='<div class="empty-state" style="padding:12px"><p>Sin registros para el filtro seleccionado</p></div>';document.getElementById('badge-neta-mes').textContent='0 meses';return;}
@@ -2518,8 +2504,13 @@ function renderEstCom(d){
   const netaKey = getNetaKey();
   const map = {};
 
+  // Tasa por MES: debe ser exactamente la misma que aparece en "Tasa ponderada por mes".
+  // Asi, por ejemplo, la fila 8.ACTIVADO.JUN26 mostrara la tasa JUN26 del grafico de arriba.
+  const tasaMesMap = {};
+
   d.forEach(r=>{
     const e = String(r[COL_ESTGES] || '').trim() || 'S/D';
+    const mes = getMesKeyFromRow(r);
     const cli = getClienteKey(r);
     const netaFila = netaKey ? parseNeta(r[netaKey]) : 0;
     const tasaPartes = getFilaTasaPartes(r,netaKey);
@@ -2528,9 +2519,7 @@ function renderEstCom(d){
       map[e] = {
         clientes: new Set(),
         ops: 0,
-        neta: 0,
-        pesoTea: 0,
-        netaValidaTasa: 0
+        neta: 0
       };
     }
 
@@ -2538,19 +2527,25 @@ function renderEstCom(d){
     if(cli) map[e].clientes.add(cli);
     if(netaKey) map[e].neta += netaFila;
 
-    // Tasa ponderada por estado: SUM(NETA * TEA) / SUM(NETA).
     if(tasaPartes){
-      map[e].pesoTea += tasaPartes.pesoTea;
-      map[e].netaValidaTasa += tasaPartes.neta;
+      if(!tasaMesMap[mes]) tasaMesMap[mes] = {pesoTea:0,neta:0};
+      tasaMesMap[mes].pesoTea += tasaPartes.pesoTea;
+      tasaMesMap[mes].neta += tasaPartes.neta;
     }
   });
+
+  const getTasaMes = (estado)=>{
+    const mes = getMesKeyFromRow({[COL_ESTGES]:estado,[COL_ESTCOM]:''});
+    const v = tasaMesMap[mes];
+    return v && v.neta > 0 ? v.pesoTea / v.neta : null;
+  };
 
   const entries = Object.entries(map)
     .map(([k,v])=>[
       k,
       v.clientes.size,
       v.neta,
-      v.netaValidaTasa > 0 ? v.pesoTea / v.netaValidaTasa : null,
+      getTasaMes(k),
       v.ops
     ])
     .sort((a,b)=>{
