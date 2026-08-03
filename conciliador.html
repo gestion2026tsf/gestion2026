@@ -795,21 +795,65 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     XLSX.utils.book_append_sheet(wb, wsDetalle, 'Detalle');
 
     // Premium sheet: copia completa de la base A con controles adicionales.
-    // Se agregan:
-    // 1) VAL_SERI después de Documento_8: diferencia contra el documento anterior.
-    // 2) REV IGV, % IGV y VARIACIÓN después de ImpGnrlVenta_16.
+    // Se agregan valores calculados (no formulas) para que se vean inmediatamente:
+    // 1) VAL_SERI después de Documento_8.
+    // 2) REV IGV, % IGV y VARIACIÓN después de ImpGnrlVenta_16,
+    //    calculados usando BaseImponible_OperGrav_14.
     const premiumHeadersOriginal = r.A.headers.map(h=> String(h ?? '').trim());
-    const normHeader = h=> String(h ?? '').trim().toLowerCase().replace(/\s+/g, '');
-    const docIdx = premiumHeadersOriginal.findIndex(h=> normHeader(h) === 'documento_8');
-    const baseIdx = premiumHeadersOriginal.findIndex(h=> normHeader(h) === 'baseimponible_opergrav_14');
-    const igvIdx = premiumHeadersOriginal.findIndex(h=> normHeader(h) === 'impgnrlventa_16');
+    const normHeader = h=> String(h ?? '')
+      .trim()
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/\s+/g,'')
+      .replace(/[^a-z0-9_]/g,'');
+
+    const normalizedHeaders = premiumHeadersOriginal.map(normHeader);
+    const findHeader = candidates => normalizedHeaders.findIndex(h =>
+      candidates.some(c => h === c || h.startsWith(c) || h.includes(c))
+    );
+
+    const docIdx = findHeader(['documento_8','documento8']);
+    const serieIdx = findHeader(['serie_7','serie7']);
+    const baseIdx = findHeader([
+      'baseimponible_opergrav_14',
+      'baseimponible_opergrav14',
+      'baseimponible_opergrav'
+    ]);
+    const igvIdx = findHeader([
+      'impgnrlventa_16',
+      'impgnrlventa16',
+      'impgnrlventa'
+    ]);
+
+    const toNumber = value => {
+      if(typeof value === 'number' && Number.isFinite(value)) return value;
+      if(value === null || value === undefined || value === '') return 0;
+      let text = String(value).trim();
+      if(!text || text === '-') return 0;
+      text = text.replace(/\s/g,'');
+      // Admite 1,234.56 y 1.234,56.
+      if(text.includes(',') && text.includes('.')){
+        if(text.lastIndexOf(',') > text.lastIndexOf('.')){
+          text = text.replace(/\./g,'').replace(',','.');
+        }else{
+          text = text.replace(/,/g,'');
+        }
+      }else if(text.includes(',')){
+        const parts = text.split(',');
+        text = parts.length === 2 && parts[1].length <= 2
+          ? parts[0].replace(/\./g,'') + '.' + parts[1]
+          : text.replace(/,/g,'');
+      }
+      const n = Number(text);
+      return Number.isFinite(n) ? n : 0;
+    };
+
+    const round2 = n => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
 
     const premiumHeaders = [];
-    const originalToOutput = new Map();
     let valSeriOutIdx = -1, revIgvOutIdx = -1, pctIgvOutIdx = -1, variacionOutIdx = -1;
 
     premiumHeadersOriginal.forEach((h, originalIdx)=>{
-      originalToOutput.set(originalIdx, premiumHeaders.length);
       premiumHeaders.push(h || `Columna_${originalIdx+1}`);
 
       if(originalIdx === docIdx){
@@ -827,39 +871,59 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     });
 
     const premiumAOA = [premiumHeaders];
-    r.A.rows.forEach(srcRow=>{
+    let previousDocument = null;
+    let previousSerie = null;
+
+    r.A.rows.forEach((srcRow, rowIndex)=>{
+      const currentDocument = docIdx >= 0 ? toNumber(srcRow[docIdx]) : 0;
+      const currentSerie = serieIdx >= 0 ? String(srcRow[serieIdx] ?? '').trim() : '';
+
+      let valSerie = '';
+      if(docIdx >= 0 && currentDocument !== 0){
+        // La primera fila o el inicio de una serie nueva se valida como 1.
+        if(previousDocument === null || (serieIdx >= 0 && currentSerie !== previousSerie)){
+          valSerie = 1;
+        }else{
+          valSerie = currentDocument - previousDocument;
+        }
+      }
+
+      const baseImponible = baseIdx >= 0 ? toNumber(srcRow[baseIdx]) : 0;
+      const igvRegistrado = igvIdx >= 0 ? toNumber(srcRow[igvIdx]) : 0;
+      const revIgv = round2(baseImponible * 0.18);
+      const pctIgv = baseImponible !== 0 ? igvRegistrado / baseImponible : 0;
+      const variacion = round2(igvRegistrado - revIgv);
+
       const outRow = [];
       premiumHeadersOriginal.forEach((_, originalIdx)=>{
         outRow.push(srcRow[originalIdx] ?? '');
-        if(originalIdx === docIdx) outRow.push('');
-        if(originalIdx === igvIdx) outRow.push('', '', '');
+        if(originalIdx === docIdx) outRow.push(valSerie);
+        if(originalIdx === igvIdx) outRow.push(revIgv, pctIgv, variacion);
       });
       premiumAOA.push(outRow);
+
+      if(currentDocument !== 0){
+        previousDocument = currentDocument;
+        previousSerie = currentSerie;
+      }
     });
 
     const wsPremium = XLSX.utils.aoa_to_sheet(premiumAOA);
     const excelCol = idx=> XLSX.utils.encode_col(idx);
 
-    // Fórmulas de validación por cada fila de datos.
+    // Formatos numéricos de las columnas calculadas.
     for(let excelRow=2; excelRow<=premiumAOA.length; excelRow++){
-      if(docIdx >= 0 && valSeriOutIdx >= 0){
-        const docCol = excelCol(originalToOutput.get(docIdx));
-        const valCell = `${excelCol(valSeriOutIdx)}${excelRow}`;
-        wsPremium[valCell] = excelRow === 2
-          ? {t:'s', v:''}
-          : {t:'n', f:`IFERROR(VALUE(${docCol}${excelRow})-VALUE(${docCol}${excelRow-1}),"")`};
+      if(valSeriOutIdx >= 0){
+        const ref = `${excelCol(valSeriOutIdx)}${excelRow}`;
+        if(wsPremium[ref]) wsPremium[ref].z = '0';
       }
-
-      if(baseIdx >= 0 && igvIdx >= 0 && revIgvOutIdx >= 0){
-        const baseCol = excelCol(originalToOutput.get(baseIdx));
-        const igvCol = excelCol(originalToOutput.get(igvIdx));
-        const revCell = `${excelCol(revIgvOutIdx)}${excelRow}`;
-        const pctCell = `${excelCol(pctIgvOutIdx)}${excelRow}`;
-        const varCell = `${excelCol(variacionOutIdx)}${excelRow}`;
-
-        wsPremium[revCell] = {t:'n', f:`IFERROR(ROUND(VALUE(${baseCol}${excelRow})*18%,2),0)`};
-        wsPremium[pctCell] = {t:'n', f:`IFERROR(VALUE(${igvCol}${excelRow})/VALUE(${baseCol}${excelRow}),0)`, z:'0%'};
-        wsPremium[varCell] = {t:'n', f:`IFERROR(ROUND(VALUE(${igvCol}${excelRow})-${revCell},2),0)`};
+      if(revIgvOutIdx >= 0){
+        const revRef = `${excelCol(revIgvOutIdx)}${excelRow}`;
+        const pctRef = `${excelCol(pctIgvOutIdx)}${excelRow}`;
+        const varRef = `${excelCol(variacionOutIdx)}${excelRow}`;
+        if(wsPremium[revRef]) wsPremium[revRef].z = '#,##0.00';
+        if(wsPremium[pctRef]) wsPremium[pctRef].z = '0%';
+        if(wsPremium[varRef]) wsPremium[varRef].z = '#,##0.00';
       }
     }
 
