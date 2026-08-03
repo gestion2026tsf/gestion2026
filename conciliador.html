@@ -198,6 +198,38 @@
 
   <div class="grid3" id="cards"></div>
 
+  <div class="card" id="cardTipoCambio" style="margin-bottom:24px;">
+    <div class="card-label">Archivo auxiliar</div>
+    <input type="text" value="Histórico de tipo de cambio SUNAT" readonly />
+    <p class="footnote" style="margin:0;">Se utilizará para buscar el tipo de cambio compra y venta según la fecha del comprobante. No participa en el cruce Premium, SIRE y TCI.</p>
+    <label class="drop" id="dropTipoCambio">
+      Haz clic o arrastra el Excel histórico aquí
+      <input type="file" id="fileTipoCambio" accept=".xlsx,.xls,.csv" />
+    </label>
+    <div id="configTipoCambio" style="display:none; flex-direction:column; gap:10px;">
+      <div>
+        <label class="fld">Hoja</label>
+        <select id="sheetTipoCambio"></select>
+      </div>
+      <div class="grid3" style="margin:0;">
+        <div>
+          <label class="fld">Columna fecha</label>
+          <select id="colFechaTipoCambio"></select>
+        </div>
+        <div>
+          <label class="fld">Columna compra</label>
+          <select id="colCompraTipoCambio"></select>
+        </div>
+        <div>
+          <label class="fld">Columna venta</label>
+          <select id="colVentaTipoCambio"></select>
+        </div>
+      </div>
+      <div class="raw-preview"><table class="rawtbl" id="previewTipoCambio"></table></div>
+      <div class="footnote" id="estadoTipoCambio" style="margin:0;">Todavía no se ha cargado el histórico.</div>
+    </div>
+  </div>
+
   <div class="actions">
     <button class="primary" id="btnProcesar" disabled>Conciliar</button>
     <span class="status-msg" id="statusMsg">Sube los 3 archivos para continuar.</span>
@@ -234,7 +266,11 @@ const state = {
      keyMode:'single', keyCol:null, keyCol2:null, pad1:0, pad2:0, sep:'-', statusCol:null},
     {id:'C', label:'TCI',     wb:null, sheet:null, headers:[], rows:[], rowsRaw:[], headerRowIdx:0,
      keyMode:'single', keyCol:null, keyCol2:null, pad1:0, pad2:0, sep:'-', statusCol:null},
-  ]
+  ],
+  tipoCambio: {
+    wb:null, sheet:null, fileName:'', headers:[], rows:[], mapa:new Map(),
+    fechaCol:null, compraCol:null, ventaCol:null
+  }
 };
 
 function colLetter(i){
@@ -1008,7 +1044,180 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
   }, 30);
 });
 
+
+/* ================================================================
+   HISTÓRICO DE TIPO DE CAMBIO SUNAT
+   Archivo auxiliar independiente de Premium, SIRE y TCI.
+   ================================================================ */
+function normalizarEncabezadoTC(value){
+  return String(value ?? '')
+    .trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/\s+/g,' ');
+}
+
+function normalizarFechaTC(value){
+  if(value === null || value === undefined || value === '') return '';
+
+  if(value instanceof Date && !Number.isNaN(value.getTime())){
+    const y = value.getFullYear();
+    const m = String(value.getMonth()+1).padStart(2,'0');
+    const d = String(value.getDate()).padStart(2,'0');
+    return `${y}-${m}-${d}`;
+  }
+
+  if(typeof value === 'number' && Number.isFinite(value) && window.XLSX?.SSF){
+    const p = XLSX.SSF.parse_date_code(value);
+    if(p) return `${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`;
+  }
+
+  const txt = String(value).trim().split(' ')[0];
+  let m = txt.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  if(m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  m = txt.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
+  if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+  return '';
+}
+
+function convertirTipoCambio(value){
+  if(value === null || value === undefined || value === '' || value instanceof Date) return null;
+  let n;
+  if(typeof value === 'number') n = value;
+  else {
+    let t = String(value).trim().replace(/\s/g,'');
+    if(t.includes(',') && t.includes('.')){
+      t = t.lastIndexOf(',') > t.lastIndexOf('.')
+        ? t.replace(/\./g,'').replace(',','.')
+        : t.replace(/,/g,'');
+    } else if(t.includes(',')) t = t.replace(',','.');
+    n = Number(t);
+  }
+  if(!Number.isFinite(n)) return null;
+  if(n > 100) n = n / 1000; // 3998 -> 3.998 en el archivo entregado
+  return Math.round(n * 1000) / 1000;
+}
+
+function iniciarHistoricoTC(){
+  const input = document.getElementById('fileTipoCambio');
+  const drop = document.getElementById('dropTipoCambio');
+  const hoja = document.getElementById('sheetTipoCambio');
+
+  drop.addEventListener('dragover', e=>e.preventDefault());
+  drop.addEventListener('drop', e=>{
+    e.preventDefault();
+    if(e.dataTransfer.files.length) cargarArchivoTC(e.dataTransfer.files[0]);
+  });
+  input.addEventListener('change', ()=>{
+    if(input.files.length) cargarArchivoTC(input.files[0]);
+  });
+  hoja.addEventListener('change', ()=>cargarHojaTC(hoja.value));
+  ['colFechaTipoCambio','colCompraTipoCambio','colVentaTipoCambio'].forEach(id=>
+    document.getElementById(id).addEventListener('change', construirMapaTC)
+  );
+}
+
+function cargarArchivoTC(file){
+  const estado = document.getElementById('estadoTipoCambio');
+  if(!window.XLSX){
+    estado.textContent = 'El motor de Excel todavía no ha terminado de cargar. Vuelve a seleccionar el archivo.';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array', cellDates:true});
+      state.tipoCambio.wb = wb;
+      state.tipoCambio.fileName = file.name;
+      const sel = document.getElementById('sheetTipoCambio');
+      sel.innerHTML = wb.SheetNames.map(s=>`<option value="${s}">${s}</option>`).join('');
+      document.getElementById('configTipoCambio').style.display = 'flex';
+      document.getElementById('cardTipoCambio').classList.add('ready');
+      const drop = document.getElementById('dropTipoCambio');
+      drop.classList.add('filled');
+      drop.childNodes[0].textContent = '✓ ' + file.name + ' ';
+      cargarHojaTC(wb.SheetNames[0]);
+    }catch(err){
+      console.error(err);
+      estado.textContent = 'No se pudo leer el histórico de tipo de cambio.';
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function cargarHojaTC(sheetName){
+  const tc = state.tipoCambio;
+  tc.sheet = sheetName;
+  const ws = tc.wb.Sheets[sheetName];
+  const data = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:''});
+  if(!data.length){
+    document.getElementById('estadoTipoCambio').textContent = 'La hoja está vacía.';
+    return;
+  }
+  tc.headers = data[0].map(v=>String(v ?? '').trim());
+  tc.rows = data.slice(1).filter(r=>r.some(v=>String(v ?? '').trim()!==''));
+
+  const opts = tc.headers.map((h,i)=>`<option value="${i}">${colLetter(i)} — ${h || '(sin nombre)'}</option>`).join('');
+  const f = document.getElementById('colFechaTipoCambio');
+  const c = document.getElementById('colCompraTipoCambio');
+  const v = document.getElementById('colVentaTipoCambio');
+  f.innerHTML = c.innerHTML = v.innerHTML = opts;
+
+  const nh = tc.headers.map(normalizarEncabezadoTC);
+  let fi = nh.findIndex(h=>h === 'fecha' || h.includes('fecha'));
+  let ci = nh.findIndex(h=>h.includes('compra'));
+  let vi = nh.findIndex(h=>h.includes('venta'));
+  if(fi < 0) fi = 0;
+  if(ci < 0) ci = Math.min(1, tc.headers.length-1);
+  if(vi < 0) vi = Math.min(2, tc.headers.length-1);
+  f.value=String(fi); c.value=String(ci); v.value=String(vi);
+
+  renderPreviewTC();
+  construirMapaTC();
+}
+
+function renderPreviewTC(){
+  const tc=state.tipoCambio;
+  const tbl=document.getElementById('previewTipoCambio');
+  const headers=tc.headers.slice(0,6);
+  const rows=tc.rows.slice(0,5);
+  tbl.innerHTML = `<thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`+
+    rows.map(r=>`<tr>${headers.map((_,i)=>`<td>${r[i] ?? ''}</td>`).join('')}</tr>`).join('')+
+    '</tbody>';
+}
+
+function construirMapaTC(){
+  const tc = state.tipoCambio;
+  if(!tc.rows.length) return;
+  tc.fechaCol = Number(document.getElementById('colFechaTipoCambio').value);
+  tc.compraCol = Number(document.getElementById('colCompraTipoCambio').value);
+  tc.ventaCol = Number(document.getElementById('colVentaTipoCambio').value);
+  tc.mapa = new Map();
+  let validas=0, observadas=0, duplicadas=0;
+
+  tc.rows.forEach(row=>{
+    const fecha = normalizarFechaTC(row[tc.fechaCol]);
+    const compra = convertirTipoCambio(row[tc.compraCol]);
+    const venta = convertirTipoCambio(row[tc.ventaCol]);
+    if(!fecha || venta === null){ observadas++; return; }
+    if(tc.mapa.has(fecha)) duplicadas++;
+    tc.mapa.set(fecha,{compra,venta});
+    validas++;
+  });
+
+  document.getElementById('estadoTipoCambio').textContent =
+    `Histórico listo: ${validas.toLocaleString('es-PE')} fechas válidas`+
+    ` · ${tc.mapa.size.toLocaleString('es-PE')} fechas únicas`+
+    (observadas ? ` · ${observadas} filas observadas` : '')+
+    (duplicadas ? ` · ${duplicadas} fechas duplicadas` : '');
+}
+
+function obtenerTipoCambioSUNAT(fecha){
+  const k = normalizarFechaTC(fecha);
+  return k ? (state.tipoCambio.mapa.get(k) || null) : null;
+}
+
 buildCards();
+iniciarHistoricoTC();
 </script>
 
 
