@@ -812,17 +812,15 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       candidates.some(c => h === c || h.startsWith(c) || h.includes(c))
     );
 
-    const docIdx = findHeader(['documento_8','documento8']);
+    const docIdx = findHeader(['documento_','documento']);
     const serieIdx = findHeader(['serie_7','serie7']);
     const baseIdx = findHeader([
-      'baseimponible_opergrav_14',
-      'baseimponible_opergrav14',
-      'baseimponible_opergrav'
+      'baseimponible_opergrav_' ,
+      'baseimponible_opergrav' 
     ]);
     const igvIdx = findHeader([
-      'impgnrlventa_16',
-      'impgnrlventa16',
-      'impgnrlventa'
+      'impgnrlventa_' ,
+      'impgnrlventa' 
     ]);
 
     const toNumber = value => {
@@ -911,21 +909,58 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     const wsPremium = XLSX.utils.aoa_to_sheet(premiumAOA);
     const excelCol = idx=> XLSX.utils.encode_col(idx);
 
-    // Formatos numéricos de las columnas calculadas.
+    // Fórmulas directas en Excel para garantizar que nunca queden vacías.
+    // Se usan las posiciones reales de las columnas, aunque cambie el número final del encabezado.
+    const originalToOutput = new Map();
+    let outPos = 0;
+    premiumHeadersOriginal.forEach((_, originalIdx)=>{
+      originalToOutput.set(originalIdx, outPos);
+      outPos += 1;
+      if(originalIdx === docIdx) outPos += 1;
+      if(originalIdx === igvIdx) outPos += 3;
+    });
+
+    const docOutIdx = originalToOutput.get(docIdx);
+    const serieOutIdx = serieIdx >= 0 ? originalToOutput.get(serieIdx) : -1;
+    const baseOutIdx = originalToOutput.get(baseIdx);
+    const igvOutIdx = originalToOutput.get(igvIdx);
+
     for(let excelRow=2; excelRow<=premiumAOA.length; excelRow++){
-      if(valSeriOutIdx >= 0){
+      // VAL_SERI: documento actual menos documento anterior.
+      if(valSeriOutIdx >= 0 && docOutIdx >= 0){
         const ref = `${excelCol(valSeriOutIdx)}${excelRow}`;
-        if(wsPremium[ref]) wsPremium[ref].z = '0';
+        const docActual = `${excelCol(docOutIdx)}${excelRow}`;
+        if(excelRow === 2){
+          wsPremium[ref] = {t:'n', v:0, f:`IF(${docActual}="","",0)`, z:'0'};
+        }else{
+          const docAnterior = `${excelCol(docOutIdx)}${excelRow-1}`;
+          let formula = `IF(OR(${docActual}="",${docAnterior}=""),"",${docActual}-${docAnterior})`;
+          if(serieOutIdx >= 0){
+            const serieActual = `${excelCol(serieOutIdx)}${excelRow}`;
+            const serieAnterior = `${excelCol(serieOutIdx)}${excelRow-1}`;
+            formula = `IF(${docActual}="","",IF(${serieActual}<>${serieAnterior},0,${docActual}-${docAnterior}))`;
+          }
+          wsPremium[ref] = {t:'n', v:0, f:formula, z:'0'};
+        }
       }
-      if(revIgvOutIdx >= 0){
+
+      // Tres columnas amarillas basadas en BaseImponible_OperGrav_* e ImpGnrlVenta_*.
+      if(revIgvOutIdx >= 0 && baseOutIdx >= 0 && igvOutIdx >= 0){
+        const baseRef = `${excelCol(baseOutIdx)}${excelRow}`;
+        const igvRef = `${excelCol(igvOutIdx)}${excelRow}`;
         const revRef = `${excelCol(revIgvOutIdx)}${excelRow}`;
         const pctRef = `${excelCol(pctIgvOutIdx)}${excelRow}`;
         const varRef = `${excelCol(variacionOutIdx)}${excelRow}`;
-        if(wsPremium[revRef]) wsPremium[revRef].z = '#,##0.00';
-        if(wsPremium[pctRef]) wsPremium[pctRef].z = '0%';
-        if(wsPremium[varRef]) wsPremium[varRef].z = '#,##0.00';
+
+        wsPremium[revRef] = {t:'n', v:0, f:`IF(${baseRef}="","",${baseRef}*0.18)`, z:'#,##0.00'};
+        wsPremium[pctRef] = {t:'n', v:0, f:`IF(OR(${baseRef}="",${baseRef}=0),"",${igvRef}/${baseRef})`, z:'0%'};
+        wsPremium[varRef] = {t:'n', v:0, f:`IF(${igvRef}="","",${igvRef}-${revRef})`, z:'#,##0.00'};
       }
     }
+
+    // Fuerza recálculo automático al abrir el archivo en Excel.
+    wb.Workbook = wb.Workbook || {};
+    wb.Workbook.CalcPr = {calcMode:'auto'};
 
     // Resaltar las columnas nuevas para identificarlas fácilmente.
     const columnasAgregadas = [valSeriOutIdx, revIgvOutIdx, pctIgvOutIdx, variacionOutIdx]
