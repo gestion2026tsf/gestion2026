@@ -6,7 +6,7 @@
 <title>Conciliador de Comprobantes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
     --bg:#FFFFFF;
@@ -910,6 +910,17 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
 });
 
 buildCards();
+</script>
+
+<script>
+// Carga opcional de estilos sin bloquear la pantalla.
+(function(){
+  const sc=document.createElement('script');
+  sc.src='https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js';
+  sc.async=true;
+  sc.onerror=function(){ console.warn('No se pudo cargar el complemento de estilos; el conciliador seguirá funcionando.'); };
+  document.body.appendChild(sc);
+})();
 </script>
 </body>
 </html>
