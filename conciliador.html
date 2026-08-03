@@ -6,7 +6,7 @@
 <title>Conciliador de Comprobantes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <style>
   :root{
     --bg:#FFFFFF;
@@ -863,9 +863,43 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       }
     }
 
+    // Resaltar las columnas nuevas para identificarlas fácilmente.
+    const columnasAgregadas = [valSeriOutIdx, revIgvOutIdx, pctIgvOutIdx, variacionOutIdx]
+      .filter(idx => idx >= 0);
+    const bordeSuave = {
+      top:{style:'thin', color:{rgb:'D6B656'}},
+      bottom:{style:'thin', color:{rgb:'D6B656'}},
+      left:{style:'thin', color:{rgb:'D6B656'}},
+      right:{style:'thin', color:{rgb:'D6B656'}}
+    };
+
+    columnasAgregadas.forEach(colIdx=>{
+      const col = excelCol(colIdx);
+      for(let excelRow=1; excelRow<=premiumAOA.length; excelRow++){
+        const ref = `${col}${excelRow}`;
+        if(!wsPremium[ref]) wsPremium[ref] = {t:'s', v:''};
+        wsPremium[ref].s = excelRow === 1
+          ? {
+              fill:{fgColor:{rgb:'FFF200'}},
+              font:{bold:true, color:{rgb:'000000'}},
+              alignment:{horizontal:'center', vertical:'center'},
+              border:bordeSuave
+            }
+          : {
+              fill:{fgColor:{rgb:'FFF8CC'}},
+              font:{color:{rgb:'000000'}},
+              alignment:{horizontal:'center', vertical:'center'},
+              border:bordeSuave
+            };
+      }
+    });
+
     wsPremium['!autofilter'] = {ref:`A1:${excelCol(premiumHeaders.length-1)}${premiumAOA.length}`};
     wsPremium['!freeze'] = {xSplit:0, ySplit:1, topLeftCell:'A2', activePane:'bottomLeft', state:'frozen'};
-    wsPremium['!cols'] = premiumHeaders.map(h=>({wch: Math.min(28, Math.max(11, String(h).length + 2))}));
+    wsPremium['!cols'] = premiumHeaders.map((h, idx)=>({
+      wch: columnasAgregadas.includes(idx) ? Math.max(13, String(h).length + 3) : Math.min(28, Math.max(11, String(h).length + 2))
+    }));
+    wsPremium['!rows'] = [{hpt:24}];
 
     XLSX.utils.book_append_sheet(wb, wsPremium, 'Premium');
 
