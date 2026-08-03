@@ -224,8 +224,8 @@
     <p class="footnote">El Excel descargado incluye el detalle completo de todas las llaves, no solo esta vista previa.</p>
   </section>
 
-  <div class="section-title" style="margin-top:56px;">Validación de correlativo (huecos y saltos)</div>
-  <p class="footnote" style="margin:-4px 0 14px;">Sube la base del sistema (Premium) y valida que la numeración de cada Serie sea consecutiva, agrupando por Tipo de Documento + Serie. Detecta números faltantes (huecos), duplicados, y valores no numéricos (por ejemplo un sufijo como "K").</p>
+  <div class="section-title" style="margin-top:56px;">Validación de correlativo (huecos, duplicados y variación de IGV)</div>
+  <p class="footnote" style="margin:-4px 0 14px;">Sube la base del sistema (Premium) y valida que la numeración de cada Serie sea consecutiva, agrupando por Tipo de Documento + Serie. Detecta números faltantes (huecos), duplicados, valores no numéricos (por ejemplo un sufijo como "K"), y opcionalmente compara el IGV registrado contra el 18% de la Base Imponible para marcar variaciones.</p>
 
   <div class="grid3" style="grid-template-columns:1fr 1.4fr;">
     <div class="card" id="corrCard">
@@ -265,6 +265,26 @@
           <label class="fld">Columna Número</label>
           <select id="corrNumCol"></select>
         </div>
+        <div class="combine-block">
+          <label class="fld" style="margin:0;">Variación de IGV (opcional)</label>
+          <div>
+            <label class="fld">Columna Base Imponible</label>
+            <select id="corrBaseCol"><option value="">— ninguna —</option></select>
+          </div>
+          <div>
+            <label class="fld">Columna IGV registrado</label>
+            <select id="corrIgvCol"><option value="">— ninguna —</option></select>
+          </div>
+          <div class="combine-line">
+            <span class="tag" style="width:auto;">Tasa IGV</span>
+            <input type="number" min="0" max="100" step="0.1" value="18" id="corrIgvRate" style="width:70px; flex:none;" />
+            <span class="tag" style="width:auto;">%</span>
+            <span class="tag" style="width:auto; margin-left:10px;">Umbral</span>
+            <input type="number" min="0" step="0.01" value="0.50" id="corrIgvThreshold" style="width:80px; flex:none;" />
+            <span class="tag" style="width:auto;">S/</span>
+          </div>
+          <div class="footnote" style="margin:0;">Si eliges las 2 columnas, se calcula el IGV a la tasa indicada y se compara contra el IGV registrado. Se marcan las filas cuya diferencia (en valor absoluto) supere el umbral.</div>
+        </div>
       </div>
     </div>
     <div class="card" id="corrResultsCard" style="display:none;">
@@ -285,8 +305,14 @@
     <div class="section-title">Huecos detectados (números faltantes)</div>
     <div class="detail-wrap" style="height:260px;"><table class="detail" id="corrGapsTable"></table></div>
 
+    <div class="section-title">Duplicados detectados</div>
+    <div class="detail-wrap" style="height:200px;"><table class="detail" id="corrDupTable"></table></div>
+
     <div class="section-title">Valores no numéricos / anómalos</div>
     <div class="detail-wrap" style="height:200px;"><table class="detail" id="corrAnomTable"></table></div>
+
+    <div class="section-title">Variación de IGV (fuera del umbral)</div>
+    <div class="detail-wrap" style="height:260px;"><table class="detail" id="corrIgvTable"></table></div>
 
     <div class="download-row">
       <button class="ghost" id="btnCorrDescargar">Descargar Excel de validación (.xlsx)</button>
@@ -865,6 +891,439 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     XLSX.utils.book_append_sheet(wb, wsDetalle, 'Detalle');
 
     const fname = `Conciliacion_${r.A.label}_${r.B.label}_${r.C.label}.xlsx`.replace(/\s+/g,'_');
+    XLSX.writeFile(wb, fname);
+    msg.textContent = 'Descargado: ' + fname;
+  }, 30);
+});
+
+/* ============================================================
+   VALIDACIÓN DE CORRELATIVO + DUPLICADOS + VARIACIÓN DE IGV
+   (base única, ej. Premium). Sección independiente de la
+   conciliación de 3 bases de arriba.
+============================================================ */
+const corr = {
+  wb:null, sheet:null, headers:[], rows:[], rowsRaw:[], headerRowIdx:0,
+  tipoCol:null, mode:'combine', docCol:null, serieCol:null, numCol:null,
+  baseCol:null, igvCol:null
+};
+let corrResult = null;
+
+function splitSerieNum(raw){
+  const s = String(raw ?? '').trim();
+  if(!s) return {serie:'', num:''};
+  // Con separador explícito: F002-191912, F002 191912, F002/191912
+  let m = s.match(/^([A-Za-z0-9]+?)[\s\-\/]+(\d+)$/);
+  if(m) return {serie:m[1].toUpperCase(), num:m[2]};
+  // Sin separador: toma el bloque numérico final como número, el resto como serie
+  m = s.match(/^(.*?)(\d+)$/);
+  if(m && m[1]) return {serie:m[1].toUpperCase(), num:m[2]};
+  return {serie:'', num:s};
+}
+
+document.getElementById('corrDrop').addEventListener('click', ()=> document.getElementById('corrFile').click());
+document.getElementById('corrDrop').addEventListener('dragover', e=> e.preventDefault());
+document.getElementById('corrDrop').addEventListener('drop', e=>{
+  e.preventDefault();
+  if(e.dataTransfer.files.length){
+    document.getElementById('corrFile').files = e.dataTransfer.files;
+    handleCorrFile(e.dataTransfer.files[0]);
+  }
+});
+document.getElementById('corrFile').addEventListener('change', e=>{
+  if(e.target.files.length) handleCorrFile(e.target.files[0]);
+});
+
+function handleCorrFile(file){
+  const reader = new FileReader();
+  reader.onload = evt=>{
+    const data = new Uint8Array(evt.target.result);
+    const wb = XLSX.read(data, {type:'array'});
+    corr.wb = wb;
+    document.getElementById('corrDrop').classList.add('filled');
+    document.getElementById('corrDrop').firstChild.textContent = '✓ ' + file.name;
+    document.getElementById('corrConfig').style.display = 'flex';
+    const sheetSel = document.getElementById('corrSheet');
+    sheetSel.innerHTML = wb.SheetNames.map(s=>`<option value="${s}">${s}</option>`).join('');
+    loadCorrSheet(wb.SheetNames[0]);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function loadCorrSheet(sheetName){
+  corr.sheet = sheetName;
+  const ws = corr.wb.Sheets[sheetName];
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false, defval:''});
+  corr.rowsRaw = rows;
+  renderCorrRawTable();
+  const guessIdx = guessHeaderRow(rows);
+  document.getElementById('corrHeaderRow').value = guessIdx + 1;
+  applyCorrHeaderRow(guessIdx + 1);
+}
+
+function renderCorrRawTable(){
+  const tbl = document.getElementById('corrRawTbl');
+  const rows = corr.rowsRaw.slice(0, 10);
+  const maxCols = Math.min(12, Math.max(...rows.map(r=>r.length), 1));
+  let html = '<thead><tr><th></th>' + Array.from({length:maxCols}, (_,i)=>`<th>${colLetter(i)}</th>`).join('') + '</tr></thead><tbody>';
+  rows.forEach((r,i)=>{
+    html += `<tr data-rownum="${i+1}"><td class="rownum" data-role="rownumcell">${i+1}</td>` +
+      Array.from({length:maxCols}, (_,c)=> `<td>${(r[c] ?? '')}</td>`).join('') + '</tr>';
+  });
+  html += '</tbody>';
+  tbl.innerHTML = html;
+  tbl.querySelectorAll('tr[data-rownum]').forEach(tr=>{
+    tr.querySelector('[data-role="rownumcell"]').addEventListener('click', ()=>{
+      const n = parseInt(tr.dataset.rownum,10);
+      document.getElementById('corrHeaderRow').value = n;
+      applyCorrHeaderRow(n);
+    });
+  });
+}
+
+function highlightCorrHeaderRow(rowNum){
+  const tbl = document.getElementById('corrRawTbl');
+  tbl.querySelectorAll('tr').forEach(tr=> tr.classList.remove('hdr-row'));
+  const tr = tbl.querySelector(`tr[data-rownum="${rowNum}"]`);
+  if(tr) tr.classList.add('hdr-row');
+}
+
+function findBaseImponibleIdx(headers, sampleRows){
+  const candidates = headers
+    .map((h,i)=>({h,i}))
+    .filter(({h})=> /base.*imponib/i.test(String(h)) && !/^desc/i.test(String(h)));
+  for(const {i} of candidates){ if(looksNumericColumn(sampleRows, i)) return i; }
+  return -1;
+}
+function findIgvRegistradoIdx(headers, sampleRows){
+  const candidates = headers
+    .map((h,i)=>({h,i}))
+    .filter(({h})=> (/imp.*gnrl.*vent/i.test(String(h)) || /\bigv\b/i.test(String(h))) && !/^desc/i.test(String(h)));
+  for(const {i} of candidates){ if(looksNumericColumn(sampleRows, i)) return i; }
+  return -1;
+}
+
+function applyCorrHeaderRow(rowNum){
+  const idx = rowNum - 1;
+  const headers = corr.rowsRaw[idx] || [];
+  corr.headers = headers;
+  corr.headerRowIdx = idx;
+  corr.rows = corr.rowsRaw.slice(idx+1).filter(r=> r.some(c=> String(c).trim() !== ''));
+
+  highlightCorrHeaderRow(rowNum);
+
+  const opts = headers.map((h,i)=> `<option value="${i}">${colLetter(i)} — ${h || '(sin nombre)'}</option>`).join('');
+  const tipoSel = document.getElementById('corrTipoCol');
+  const docSel = document.getElementById('corrDocCol');
+  const serieSel = document.getElementById('corrSerieCol');
+  const numSel = document.getElementById('corrNumCol');
+  const baseSel = document.getElementById('corrBaseCol');
+  const igvSel = document.getElementById('corrIgvCol');
+  tipoSel.innerHTML = opts;
+  docSel.innerHTML = opts;
+  serieSel.innerHTML = opts;
+  numSel.innerHTML = opts;
+  baseSel.innerHTML = '<option value="">— ninguna —</option>' + opts;
+  igvSel.innerHTML = '<option value="">— ninguna —</option>' + opts;
+
+  const tipoIdx = headers.findIndex(h=> /tipo.*doc/i.test(String(h)) || /^tipodoc/i.test(String(h)));
+  corr.tipoCol = tipoIdx >= 0 ? tipoIdx : 0;
+  tipoSel.value = corr.tipoCol;
+
+  const serieIdx = headers.findIndex(h=> /^serie/i.test(String(h).trim()) || /\bserie\b/i.test(String(h)));
+  const numIdx = findNumIdx(headers, serieIdx, corr.rows);
+
+  if(serieIdx >= 0 && numIdx >= 0 && serieIdx !== numIdx){
+    corr.mode = 'combine';
+    document.getElementById('corrMode').value = 'combine';
+    document.getElementById('corrSingleBlock').style.display = 'none';
+    document.getElementById('corrCombineBlock').style.display = 'flex';
+    corr.serieCol = serieIdx; corr.numCol = numIdx;
+    serieSel.value = serieIdx; numSel.value = numIdx;
+  } else {
+    corr.mode = 'single';
+    document.getElementById('corrMode').value = 'single';
+    document.getElementById('corrSingleBlock').style.display = 'block';
+    document.getElementById('corrCombineBlock').style.display = 'none';
+    let guess = numIdx >= 0 ? numIdx : 0;
+    corr.docCol = guess;
+    docSel.value = guess;
+  }
+
+  const baseIdx = findBaseImponibleIdx(headers, corr.rows);
+  corr.baseCol = baseIdx >= 0 ? baseIdx : '';
+  baseSel.value = corr.baseCol;
+
+  const igvIdx = findIgvRegistradoIdx(headers, corr.rows);
+  corr.igvCol = igvIdx >= 0 ? igvIdx : '';
+  igvSel.value = corr.igvCol;
+
+  updateCorrStatus();
+}
+
+document.getElementById('corrSheet').addEventListener('change', e=> loadCorrSheet(e.target.value));
+document.getElementById('corrHeaderRow').addEventListener('change', e=>{
+  let v = parseInt(e.target.value,10); if(!v || v<1) v=1;
+  applyCorrHeaderRow(v);
+});
+document.getElementById('corrTipoCol').addEventListener('change', e=>{ corr.tipoCol = parseInt(e.target.value,10); updateCorrStatus(); });
+document.getElementById('corrMode').addEventListener('change', e=>{
+  corr.mode = e.target.value;
+  document.getElementById('corrSingleBlock').style.display = corr.mode==='single' ? 'block' : 'none';
+  document.getElementById('corrCombineBlock').style.display = corr.mode==='combine' ? 'flex' : 'none';
+  updateCorrStatus();
+});
+document.getElementById('corrDocCol').addEventListener('change', e=>{ corr.docCol = parseInt(e.target.value,10); updateCorrStatus(); });
+document.getElementById('corrSerieCol').addEventListener('change', e=>{ corr.serieCol = parseInt(e.target.value,10); updateCorrStatus(); });
+document.getElementById('corrNumCol').addEventListener('change', e=>{ corr.numCol = parseInt(e.target.value,10); updateCorrStatus(); });
+document.getElementById('corrBaseCol').addEventListener('change', e=>{ corr.baseCol = e.target.value; });
+document.getElementById('corrIgvCol').addEventListener('change', e=>{ corr.igvCol = e.target.value; });
+
+function updateCorrStatus(){
+  const ready = corr.wb && corr.tipoCol !== null &&
+    (corr.mode === 'single' ? corr.docCol !== null : (corr.serieCol !== null && corr.numCol !== null));
+  document.getElementById('btnCorrValidar').disabled = !ready;
+  document.getElementById('corrStatusMsg').textContent = ready
+    ? 'Listo para validar (' + corr.rows.length + ' filas)'
+    : 'Sube un archivo y confirma Tipo de Documento + Serie/Número.';
+}
+
+function buildCorrRecord(row, idx){
+  const tipo = String(row[corr.tipoCol] ?? '').trim().toUpperCase();
+  let serieRaw, numRaw;
+  if(corr.mode === 'single'){
+    const parsed = splitSerieNum(row[corr.docCol]);
+    serieRaw = parsed.serie; numRaw = parsed.num;
+  } else {
+    serieRaw = row[corr.serieCol]; numRaw = row[corr.numCol];
+  }
+  const serie = String(serieRaw ?? '').trim().toUpperCase();
+  let numStr = String(numRaw ?? '').trim().replace(/\.0$/, '');
+  const isNumeric = /^\d+$/.test(numStr);
+  const numInt = isNumeric ? parseInt(numStr, 10) : null;
+
+  let base = null, igv = null;
+  if(corr.baseCol !== '' && corr.baseCol != null){
+    const v = row[corr.baseCol];
+    base = v === '' || v == null ? null : parseFloat(String(v).replace(/,/g,'')) || 0;
+  }
+  if(corr.igvCol !== '' && corr.igvCol != null){
+    const v = row[corr.igvCol];
+    igv = v === '' || v == null ? null : parseFloat(String(v).replace(/,/g,'')) || 0;
+  }
+
+  return {rowIdx:idx, tipo, serie, numStr, numInt, isNumeric, base, igv};
+}
+
+document.getElementById('btnCorrValidar').addEventListener('click', ()=>{
+  const btn = document.getElementById('btnCorrValidar');
+  btn.disabled = true; btn.classList.add('is-loading'); btn.textContent = 'Validando…';
+
+  requestAnimationFrame(()=>{
+    const rate = (parseFloat(document.getElementById('corrIgvRate').value) || 18) / 100;
+    const threshold = parseFloat(document.getElementById('corrIgvThreshold').value) || 0.5;
+    const useIgv = corr.baseCol !== '' && corr.baseCol != null && corr.igvCol !== '' && corr.igvCol != null;
+
+    const recs = corr.rows.map((r,i)=> buildCorrRecord(r,i)).filter(r=> r.serie || r.numStr);
+
+    // Agrupar por Tipo + Serie
+    const groups = new Map();
+    recs.forEach(rec=>{
+      const key = rec.tipo + ' | ' + rec.serie;
+      if(!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(rec);
+    });
+
+    const perSerie = [];
+    const gaps = [];
+    const dups = [];
+    const anomalies = [];
+
+    groups.forEach((list, key)=>{
+      const [tipo, serie] = key.split(' | ');
+      const numericos = list.filter(r=> r.isNumeric);
+      const noNumericos = list.filter(r=> !r.isNumeric);
+
+      noNumericos.forEach(r=> anomalies.push({tipo, serie, valor:r.numStr || '(vacío)'}));
+
+      // Duplicados: mismo numInt repetido dentro del grupo
+      const countByNum = new Map();
+      numericos.forEach(r=> countByNum.set(r.numInt, (countByNum.get(r.numInt)||0)+1));
+      let dupCount = 0;
+      countByNum.forEach((cnt, num)=>{
+        if(cnt > 1){ dupCount += (cnt - 1); dups.push({tipo, serie, numero:num, veces:cnt}); }
+      });
+
+      // Huecos: entre min y max, cuáles números no aparecen
+      let gapCount = 0;
+      if(numericos.length){
+        const uniqueNums = [...new Set(numericos.map(r=> r.numInt))].sort((a,b)=>a-b);
+        const min = uniqueNums[0], max = uniqueNums[uniqueNums.length-1];
+        const presentSet = new Set(uniqueNums);
+        for(let n = min; n <= max; n++){
+          if(!presentSet.has(n)){ gaps.push({tipo, serie, numero:n}); gapCount++; }
+        }
+        perSerie.push({
+          tipo, serie, cantidad:list.length, min, max,
+          rangoEsperado:(max-min+1), huecos:gapCount, duplicados:dupCount, anomalos:noNumericos.length
+        });
+      } else {
+        perSerie.push({
+          tipo, serie, cantidad:list.length, min:'-', max:'-',
+          rangoEsperado:'-', huecos:0, duplicados:dupCount, anomalos:noNumericos.length
+        });
+      }
+    });
+
+    // Variación de IGV (a nivel de fila, no de grupo)
+    const igvFlagged = [];
+    let igvSumaVariacion = 0, igvContados = 0;
+    if(useIgv){
+      recs.forEach(rec=>{
+        if(rec.base == null || rec.igv == null) return;
+        igvContados++;
+        const revIgv = rec.base * rate;
+        const variacion = rec.igv - revIgv;
+        igvSumaVariacion += variacion;
+        if(Math.abs(variacion) > threshold){
+          igvFlagged.push({tipo:rec.tipo, serie:rec.serie, numero:rec.numStr, base:rec.base, igvReg:rec.igv, revIgv, variacion});
+        }
+      });
+    }
+
+    perSerie.sort((a,b)=> a.tipo.localeCompare(b.tipo) || a.serie.localeCompare(b.serie));
+
+    corrResult = {
+      totalFilas: recs.length, perSerie, gaps, dups, anomalies,
+      useIgv, rate, threshold, igvFlagged, igvSumaVariacion, igvContados
+    };
+
+    renderCorrResults(corrResult);
+
+    document.getElementById('corrResultsCard').style.display = 'flex';
+    document.getElementById('corrDetailWrap').style.display = 'block';
+
+    btn.classList.remove('is-loading'); btn.textContent = 'Validar nuevamente'; btn.disabled = false;
+  });
+});
+
+function renderCorrResults(res){
+  const totalHuecos = res.gaps.length;
+  const totalDupOcc = res.dups.reduce((s,d)=> s + (d.veces - 1), 0);
+  const totalAnom = res.anomalies.length;
+
+  document.getElementById('corrSummaryHolder').innerHTML = `
+    <div class="footnote" style="margin:0 0 8px;"><b style="color:var(--text);">${res.totalFilas}</b> filas válidas · <b style="color:var(--text);">${res.perSerie.length}</b> series (Tipo+Serie)</div>
+    <div class="venn-legend">
+      <div class="row ${totalHuecos>0?'warn':'good'}"><span>Huecos (números faltantes)</span><span>${totalHuecos}</span></div>
+      <div class="row ${totalDupOcc>0?'warn':'good'}"><span>Duplicados (filas de más)</span><span>${totalDupOcc}</span></div>
+      <div class="row ${totalAnom>0?'warn':'good'}"><span>Valores no numéricos</span><span>${totalAnom}</span></div>
+      ${res.useIgv ? `
+      <div class="row ${res.igvFlagged.length>0?'warn':'good'}"><span>Filas con variación de IGV &gt; umbral</span><span>${res.igvFlagged.length}</span></div>
+      <div class="row"><span>Filas comparadas (Base + IGV)</span><span>${res.igvContados}</span></div>
+      <div class="row"><span>Suma de variación (S/)</span><span>${res.igvSumaVariacion.toFixed(2)}</span></div>
+      ` : `<div class="row"><span>Variación de IGV</span><span>(no configurada)</span></div>`}
+    </div>
+  `;
+
+  const perSerieHtml = `
+  <table class="report" style="min-width:680px;">
+    <thead><tr>
+      <th>Tipo</th><th>Serie</th><th>Cantidad</th><th>Mín</th><th>Máx</th><th>Rango esperado</th><th>Huecos</th><th>Duplicados</th><th>Anómalos</th>
+    </tr></thead>
+    <tbody>
+      ${res.perSerie.map(p=>`
+        <tr>
+          <td>${p.tipo}</td><td>${p.serie}</td><td>${p.cantidad}</td><td>${p.min}</td><td>${p.max}</td><td>${p.rangoEsperado}</td>
+          <td class="${p.huecos>0?'hi':''}">${p.huecos}</td>
+          <td class="${p.duplicados>0?'neg':''}">${p.duplicados}</td>
+          <td class="${p.anomalos>0?'neg':''}">${p.anomalos}</td>
+        </tr>`).join('')}
+    </tbody>
+  </table>`;
+  document.getElementById('corrPerSerieHolder').innerHTML = perSerieHtml;
+
+  const gapsShown = res.gaps.slice(0, 500);
+  document.getElementById('corrGapsTable').innerHTML = `
+    <thead><tr><th>Tipo</th><th>Serie</th><th>Número faltante</th></tr></thead>
+    <tbody>${gapsShown.map(g=>`<tr><td>${g.tipo}</td><td>${g.serie}</td><td>${g.numero}</td></tr>`).join('') || '<tr><td colspan="3">Sin huecos detectados.</td></tr>'}</tbody>
+    ${res.gaps.length > 500 ? `<tfoot><tr><td colspan="3" class="footnote">Mostrando 500 de ${res.gaps.length}. El Excel descargado trae el detalle completo.</td></tr></tfoot>` : ''}
+  `;
+
+  document.getElementById('corrDupTable').innerHTML = `
+    <thead><tr><th>Tipo</th><th>Serie</th><th>Número</th><th>Veces que aparece</th></tr></thead>
+    <tbody>${res.dups.map(d=>`<tr><td>${d.tipo}</td><td>${d.serie}</td><td>${d.numero}</td><td class="neg">${d.veces}</td></tr>`).join('') || '<tr><td colspan="4">Sin duplicados detectados.</td></tr>'}</tbody>
+  `;
+
+  document.getElementById('corrAnomTable').innerHTML = `
+    <thead><tr><th>Tipo</th><th>Serie</th><th>Valor original</th></tr></thead>
+    <tbody>${res.anomalies.map(a=>`<tr><td>${a.tipo}</td><td>${a.serie}</td><td>${a.valor}</td></tr>`).join('') || '<tr><td colspan="3">Sin valores anómalos.</td></tr>'}</tbody>
+  `;
+
+  if(res.useIgv){
+    document.getElementById('corrIgvTable').innerHTML = `
+      <thead><tr><th>Tipo</th><th>Serie</th><th>Número</th><th>Base Imponible</th><th>IGV registrado</th><th>IGV recalculado</th><th>Variación</th></tr></thead>
+      <tbody>${res.igvFlagged.map(f=>`
+        <tr>
+          <td>${f.tipo}</td><td>${f.serie}</td><td>${f.numero}</td>
+          <td>${f.base.toFixed(2)}</td><td>${f.igvReg.toFixed(2)}</td><td>${f.revIgv.toFixed(2)}</td>
+          <td class="${f.variacion<0?'neg':'hi'}">${f.variacion.toFixed(2)}</td>
+        </tr>`).join('') || '<tr><td colspan="7">Ninguna fila supera el umbral configurado.</td></tr>'}</tbody>
+    `;
+  } else {
+    document.getElementById('corrIgvTable').innerHTML = `<thead><tr><th>Variación de IGV</th></tr></thead><tbody><tr><td>Elige columnas de Base Imponible e IGV registrado arriba para activar esta validación.</td></tr></tbody>`;
+  }
+}
+
+document.getElementById('btnCorrDescargar').addEventListener('click', ()=>{
+  if(!corrResult){ return; }
+  const res = corrResult;
+  const msg = document.getElementById('corrDownloadMsg');
+  msg.textContent = 'Generando archivo…';
+
+  setTimeout(()=>{
+    const wb = XLSX.utils.book_new();
+
+    const resumenAOA = [
+      ['Validación de Correlativo — ' + (corr.sheet || '')],
+      ['Generado', new Date().toLocaleString('es-PE')],
+      ['Filas válidas', res.totalFilas],
+      ['Series (Tipo+Serie)', res.perSerie.length],
+      ['Huecos', res.gaps.length],
+      ['Duplicados (filas de más)', res.dups.reduce((s,d)=> s + (d.veces-1), 0)],
+      ['Valores no numéricos', res.anomalies.length],
+    ];
+    if(res.useIgv){
+      resumenAOA.push(['Tasa IGV usada', (res.rate*100).toFixed(1) + '%']);
+      resumenAOA.push(['Umbral de variación (S/)', res.threshold]);
+      resumenAOA.push(['Filas comparadas (Base + IGV)', res.igvContados]);
+      resumenAOA.push(['Filas con variación > umbral', res.igvFlagged.length]);
+      resumenAOA.push(['Suma de variación (S/)', Number(res.igvSumaVariacion.toFixed(2))]);
+    }
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resumenAOA), 'Resumen');
+
+    const perSerieAOA = [['Tipo','Serie','Cantidad','Mín','Máx','Rango esperado','Huecos','Duplicados','Anómalos']];
+    res.perSerie.forEach(p=> perSerieAOA.push([p.tipo,p.serie,p.cantidad,p.min,p.max,p.rangoEsperado,p.huecos,p.duplicados,p.anomalos]));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(perSerieAOA), 'Resumen por serie');
+
+    const gapsAOA = [['Tipo','Serie','Número faltante']];
+    res.gaps.forEach(g=> gapsAOA.push([g.tipo, g.serie, g.numero]));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(gapsAOA), 'Huecos');
+
+    const dupsAOA = [['Tipo','Serie','Número','Veces que aparece']];
+    res.dups.forEach(d=> dupsAOA.push([d.tipo, d.serie, d.numero, d.veces]));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(dupsAOA), 'Duplicados');
+
+    const anomAOA = [['Tipo','Serie','Valor original']];
+    res.anomalies.forEach(a=> anomAOA.push([a.tipo, a.serie, a.valor]));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(anomAOA), 'Anomalos');
+
+    if(res.useIgv){
+      const igvAOA = [['Tipo','Serie','Número','Base Imponible','IGV registrado','IGV recalculado','Variación']];
+      res.igvFlagged.forEach(f=> igvAOA.push([f.tipo, f.serie, f.numero, f.base, f.igvReg, Number(f.revIgv.toFixed(2)), Number(f.variacion.toFixed(2))]));
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(igvAOA), 'Variacion IGV');
+    }
+
+    const fname = `Validacion_Correlativo_${(corr.sheet||'Premium')}.xlsx`.replace(/\s+/g,'_');
     XLSX.writeFile(wb, fname);
     msg.textContent = 'Descargado: ' + fname;
   }, 30);
