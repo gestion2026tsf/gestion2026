@@ -932,17 +932,16 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       return dato && Number.isFinite(dato.venta) ? dato.venta : '';
     };
 
-    // Convierte cualquier fecha de Premium a una FECHA REAL de Excel.
-    // La fuente Premium se interpreta como dia/mes/anio y NO como mes/dia/anio.
-    // Asi 06/07/2026 siempre significa 6 de julio de 2026.
-    const fechaPremiumExcel = value => {
+    // Convierte cualquier fecha de Premium al NUMERO DE SERIE DE EXCEL (entero).
+    // Esto evita por completo que Excel/Windows reinterprete dd/mm como mm/dd.
+    // Ejemplo: 06/07/2026 siempre queda como el serial correspondiente a 6-jul-2026.
+    const fechaAExcelSerial = value => {
       const k = normalizarFechaTC(value);
       if(!k) return String(value ?? '').trim();
       const m = k.match(/^(\d{4})-(\d{2})-(\d{2})$/);
       if(!m) return String(value ?? '').trim();
       const y = Number(m[1]), mes = Number(m[2]), d = Number(m[3]);
-      // Mediodia evita desplazamientos de un dia por zona horaria.
-      return new Date(y, mes - 1, d, 12, 0, 0);
+      return Math.floor(Date.UTC(y, mes - 1, d) / 86400000) + 25569;
     };
 
     const premiumHeaders = [];
@@ -1040,7 +1039,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
         const rawValue = srcRow[originalIdx] ?? '';
         outRow.push(
           (originalIdx === fechaEmisionIdx || originalIdx === fechaOrigenIdx)
-            ? fechaPremiumExcel(rawValue)
+            ? fechaAExcelSerial(rawValue)
             : rawValue
         );
         if(originalIdx === docIdx) outRow.push(valSerie);
@@ -1098,10 +1097,9 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       }
     });
 
-    // Convierte la fecha Premium a una FECHA NUMERICA DE EXCEL para el BUSCARV.
-    // IMPORTANTE: ahora Premium y "Tipo de cambio Sunat" usan el mismo tipo de dato
-    // (fecha real de Excel), evitando el error texto vs fecha que hacia fallar el cruce.
-    // Si la celda Premium llegara como texto, SIEMPRE se interpreta dd/mm/aaaa.
+    // La fecha ya se exporta como serial entero de Excel. Para BUSCARV usamos INT(ref),
+    // de modo que el cruce sea exacto y no dependa del idioma/formato regional de Excel.
+    // Si excepcionalmente llega texto, se interpreta SIEMPRE como dd/mm/aaaa.
     const formulaFechaLookup = ref => {
       const limpio = `TRIM(${ref}&"")`;
       const p1 = `FIND("/",${limpio})`;
@@ -1109,7 +1107,6 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       const dia = `VALUE(LEFT(${limpio},${p1}-1))`;
       const mes = `VALUE(MID(${limpio},${p1}+1,${p2}-${p1}-1))`;
       const anio = `VALUE(RIGHT(${limpio},LEN(${limpio})-${p2}))`;
-      // Para fechas reales usa INT(ref). Para texto crea DATE(anio,mes,dia).
       return `IF(${ref}="","",IF(ISNUMBER(${ref}),INT(${ref}),IFERROR(DATE(${anio},${mes},${dia}),"")))`;
     };
 
@@ -1230,9 +1227,9 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
 
     XLSX.utils.book_append_sheet(wb, wsPremium, 'Premium');
 
-    // Copia el historico utilizado dentro del mismo Excel para dejar trazabilidad del calculo.
-    // La columna FECHA se guarda como FECHA REAL DE EXCEL (no como texto), pero se muestra yyyy-mm-dd.
-    // De esta forma BUSCARV compara fecha contra fecha y no depende de la configuracion regional.
+    // Copia el historico utilizado dentro del mismo Excel para dejar trazabilidad.
+    // CLAVE DEL ARREGLO: la FECHA se guarda como el MISMO serial entero de Excel que Premium.
+    // Asi BUSCARV compara numero contra numero exactamente, sin texto, sin horas y sin mm/dd.
     if(state.tipoCambio.mapa && state.tipoCambio.mapa.size){
       const tcAOA = [['FECHA','TIPO DE CAMBIO COMPRA','TIPO DE CAMBIO VENTA']];
       [...state.tipoCambio.mapa.entries()]
@@ -1240,12 +1237,12 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
         .forEach(([fecha, dato])=>{
           const m = String(fecha).match(/^(\d{4})-(\d{2})-(\d{2})$/);
           const fechaExcel = m
-            ? new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), 12, 0, 0)
+            ? Math.floor(Date.UTC(Number(m[1]), Number(m[2])-1, Number(m[3])) / 86400000) + 25569
             : fecha;
           tcAOA.push([fechaExcel, dato.compra ?? '', dato.venta ?? '']);
         });
-      const wsTC = XLSX.utils.aoa_to_sheet(tcAOA, {cellDates:true});
-      // Mostrar como anio-mes-dia sin convertir la fecha en texto.
+      const wsTC = XLSX.utils.aoa_to_sheet(tcAOA);
+      // Solo cambia la visualizacion; internamente sigue siendo numero de fecha Excel.
       for(let fila=2; fila<=tcAOA.length; fila++){
         const ref = `A${fila}`;
         if(wsTC[ref]) wsTC[ref].z = 'yyyy-mm-dd';
