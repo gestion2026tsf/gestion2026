@@ -392,7 +392,7 @@ function handleFile(b, card, file){
   const reader = new FileReader();
   reader.onload = evt=>{
     const data = new Uint8Array(evt.target.result);
-    const wb = XLSX.read(data, {type:'array'});
+    const wb = XLSX.read(data, {type:'array', cellDates:true});
     b.wb = wb;
     card.classList.add('ready');
     card.querySelector('[data-role="drop"]').classList.add('filled');
@@ -408,7 +408,7 @@ function handleFile(b, card, file){
 function loadSheet(b, card, sheetName){
   b.sheet = sheetName;
   const ws = b.wb.Sheets[sheetName];
-  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false, defval:''});
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:''});
   b.rowsRaw = rows;
 
   renderRawTable(b, card);
@@ -1153,9 +1153,9 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
 
         if(fechaEmisionOutIdx >= 0){
           const fechaRef = `${excelCol(fechaEmisionOutIdx)}${excelRow}`;
-          const fechaKey = formulaFechaLookup(fechaRef);
+          // FechaEmision se exporta como fecha real de Excel, por eso BUSCARV usa la celda directamente.
           const formulaGeneral =
-            `IF(UPPER(TRIM(${monedaRef}))="PEN",1,IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaKey},'Tipo de cambio Sunat'!$A:$C,3,FALSE),""),""))`;
+            `IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaRef},'Tipo de cambio Sunat'!$A:$C,3,FALSE),0),1)`;
           const cachedGeneral = premiumAOA[excelRow-1][tcGeneralOutIdx];
           wsPremium[tcGeneralRef] = {t:'n', v:Number(cachedGeneral)||0, f:formulaGeneral, z:'0.000'};
           const cachedDifGeneral = premiumAOA[excelRow-1][difTcGeneralOutIdx];
@@ -1168,10 +1168,9 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
           const tipoDocRef = `${excelCol(tipoDocumentoOutIdx)}${excelRow}`;
           const tcEspRef = `${excelCol(tcEspecificoOutIdx)}${excelRow}`;
           const difEspRef = `${excelCol(difTcEspecificoOutIdx)}${excelRow}`;
-          const fechaOrigenKey = formulaFechaLookup(fechaOrigenRef);
           const esNotaFormula = `OR(IFERROR(VALUE(${tipoDocRef}),0)=7,IFERROR(VALUE(${tipoDocRef}),0)=8)`;
           const formulaEspecifico =
-            `IF(${esNotaFormula},IF(UPPER(TRIM(${monedaRef}))="PEN",1,IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaOrigenKey},'Tipo de cambio Sunat'!$A:$C,3,FALSE),""),"")),"")`;
+            `IF(${esNotaFormula},IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaOrigenRef},'Tipo de cambio Sunat'!$A:$C,3,FALSE),0),1),0)`;
           const cachedEsp = premiumAOA[excelRow-1][tcEspecificoOutIdx];
           wsPremium[tcEspRef] = {t:'n', v:Number(cachedEsp)||0, f:formulaEspecifico, z:'0.000'};
           const cachedDifEsp = premiumAOA[excelRow-1][difTcEspecificoOutIdx];
@@ -1272,7 +1271,6 @@ function normalizarEncabezadoTC(value){
 function normalizarFechaTC(value){
   if(value === null || value === undefined || value === '') return '';
 
-  // 1) Fecha real de JavaScript
   if(value instanceof Date && !Number.isNaN(value.getTime())){
     const y = value.getFullYear();
     const m = String(value.getMonth()+1).padStart(2,'0');
@@ -1280,32 +1278,23 @@ function normalizarFechaTC(value){
     return `${y}-${m}-${d}`;
   }
 
-  // 2) Serial numerico real de Excel
   if(typeof value === 'number' && Number.isFinite(value) && window.XLSX?.SSF){
     const p = XLSX.SSF.parse_date_code(value);
     if(p) return `${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`;
   }
 
   const txt = String(value).trim().split(' ')[0];
-  let m;
-
-  // 3) dd/mm/aaaa o d/m/aaaa
-  m = txt.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  let m = txt.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
   if(m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
-
-  // 4) yyyy-mm-dd
   m = txt.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
   if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
-
-  // 5) dd/mm/aa o d/m/aa. SheetJS con raw:false entrega, por ejemplo, 06/07/2026 como "7/6/26".
-  //    Este era el motivo por el que BUSCARV no encontraba la fecha del historico.
+  // Respaldo para texto corto dd/mm/aa. No se usa para fechas reales de Excel porque ahora se leen con raw:true + cellDates:true.
   m = txt.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2})$/);
   if(m){
     const yy = Number(m[3]);
     const yyyy = yy >= 70 ? 1900 + yy : 2000 + yy;
     return `${yyyy}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
   }
-
   return '';
 }
 
