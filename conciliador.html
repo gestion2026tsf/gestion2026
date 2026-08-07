@@ -1092,19 +1092,23 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       for(let excelRow=2; excelRow<=premiumAOA.length; excelRow++){
         const ref = `${col}${excelRow}`;
         if(wsPremium[ref] && (wsPremium[ref].t === 'd' || wsPremium[ref].t === 'n')){
-          wsPremium[ref].z = 'd/m/yyyy';
+          wsPremium[ref].z = 'dd/mm/yyyy';
         }
       }
     });
 
-    // IMPORTANTE: Premium y la hoja "Tipo de cambio Sunat" usan FECHAS REALES DE EXCEL.
-    // Por eso la formula puede hacer BUSCARV directamente con la celda FechaEmision_4,
-    // exactamente como lo hace Contabilidad en su archivo manual. Excel mostrara la formula
-    // localizada como SI / SI.ERROR / BUSCARV cuando se abra en Excel en espanol.
-    const ultimaFilaTC = (state.tipoCambio.mapa && state.tipoCambio.mapa.size)
-      ? state.tipoCambio.mapa.size + 1
-      : 2;
-    const rangoTC = `'Tipo de cambio Sunat'!$A$2:$C$${ultimaFilaTC}`;
+    // La fecha ya se exporta como serial entero de Excel. Para BUSCARV usamos INT(ref),
+    // de modo que el cruce sea exacto y no dependa del idioma/formato regional de Excel.
+    // Si excepcionalmente llega texto, se interpreta SIEMPRE como dd/mm/aaaa.
+    const formulaFechaLookup = ref => {
+      const limpio = `TRIM(${ref}&"")`;
+      const p1 = `FIND("/",${limpio})`;
+      const p2 = `FIND("/",${limpio},${p1}+1)`;
+      const dia = `VALUE(LEFT(${limpio},${p1}-1))`;
+      const mes = `VALUE(MID(${limpio},${p1}+1,${p2}-${p1}-1))`;
+      const anio = `VALUE(RIGHT(${limpio},LEN(${limpio})-${p2}))`;
+      return `IF(${ref}="","",IF(ISNUMBER(${ref}),INT(${ref}),IFERROR(DATE(${anio},${mes},${dia}),"")))`;
+    };
 
     for(let excelRow=2; excelRow<=premiumAOA.length; excelRow++){
       // VAL_SERI: documento actual menos documento anterior.
@@ -1149,16 +1153,14 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
 
         if(fechaEmisionOutIdx >= 0){
           const fechaRef = `${excelCol(fechaEmisionOutIdx)}${excelRow}`;
-          // Equivalente visual en Excel ES:
-          // =SI(AD2="USD";SI.ERROR(BUSCARV(E2;'Tipo de cambio Sunat'!$A$2:$C$1827;3;FALSO);0);1)
-          // Las letras reales se calculan segun la posicion final de las columnas.
+          const fechaKey = formulaFechaLookup(fechaRef);
           const formulaGeneral =
-            `IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaRef},${rangoTC},3,FALSE),0),1)`;
+            `IF(UPPER(TRIM(${monedaRef}))="PEN",1,IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaKey},'Tipo de cambio Sunat'!$A:$C,3,FALSE),""),""))`;
           const cachedGeneral = premiumAOA[excelRow-1][tcGeneralOutIdx];
           wsPremium[tcGeneralRef] = {t:'n', v:Number(cachedGeneral)||0, f:formulaGeneral, z:'0.000'};
           const cachedDifGeneral = premiumAOA[excelRow-1][difTcGeneralOutIdx];
           wsPremium[difGeneralRef] = {t:'n', v:Number(cachedDifGeneral)||0,
-            f:`${tcRegistradoRef}-${tcGeneralRef}`, z:'0.000'};
+            f:`IF(${tcGeneralRef}="","",ROUND(${tcRegistradoRef}-${tcGeneralRef},3))`, z:'0.000'};
         }
 
         if(fechaOrigenOutIdx >= 0 && tipoDocumentoOutIdx >= 0){
@@ -1166,15 +1168,15 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
           const tipoDocRef = `${excelCol(tipoDocumentoOutIdx)}${excelRow}`;
           const tcEspRef = `${excelCol(tcEspecificoOutIdx)}${excelRow}`;
           const difEspRef = `${excelCol(difTcEspecificoOutIdx)}${excelRow}`;
+          const fechaOrigenKey = formulaFechaLookup(fechaOrigenRef);
           const esNotaFormula = `OR(IFERROR(VALUE(${tipoDocRef}),0)=7,IFERROR(VALUE(${tipoDocRef}),0)=8)`;
-          // Para NC/ND se usa directamente la fecha del comprobante de origen.
           const formulaEspecifico =
-            `IF(${esNotaFormula},IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaOrigenRef},${rangoTC},3,FALSE),0),1),0)`;
+            `IF(${esNotaFormula},IF(UPPER(TRIM(${monedaRef}))="PEN",1,IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaOrigenKey},'Tipo de cambio Sunat'!$A:$C,3,FALSE),""),"")),"")`;
           const cachedEsp = premiumAOA[excelRow-1][tcEspecificoOutIdx];
           wsPremium[tcEspRef] = {t:'n', v:Number(cachedEsp)||0, f:formulaEspecifico, z:'0.000'};
           const cachedDifEsp = premiumAOA[excelRow-1][difTcEspecificoOutIdx];
           wsPremium[difEspRef] = {t:'n', v:Number(cachedDifEsp)||0,
-            f:`${tcRegistradoRef}-${tcEspRef}`, z:'0.000'};
+            f:`IF(${tcEspRef}="","",ROUND(${tcRegistradoRef}-${tcEspRef},3))`, z:'0.000'};
         }
       }
     }
@@ -1240,10 +1242,10 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
           tcAOA.push([fechaExcel, dato.compra ?? '', dato.venta ?? '']);
         });
       const wsTC = XLSX.utils.aoa_to_sheet(tcAOA);
-      // La fecha se muestra como en el archivo real de Contabilidad (1/1/2022, 2/1/2022, etc.); internamente sigue siendo fecha Excel.
+      // Solo cambia la visualizacion; internamente sigue siendo numero de fecha Excel.
       for(let fila=2; fila<=tcAOA.length; fila++){
         const ref = `A${fila}`;
-        if(wsTC[ref]) wsTC[ref].z = 'd/m/yyyy';
+        if(wsTC[ref]) wsTC[ref].z = 'yyyy-mm-dd';
       }
       wsTC['!cols'] = [{wch:14},{wch:24},{wch:24}];
       XLSX.utils.book_append_sheet(wb, wsTC, 'Tipo de cambio Sunat');
