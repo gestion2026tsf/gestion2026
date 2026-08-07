@@ -928,7 +928,8 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     };
     const tcVentaPorFecha = fecha => {
       const dato = obtenerTipoCambioSUNAT(fecha);
-      return dato && Number.isFinite(dato.venta) ? dato.venta : 0;
+      // Si no existe la fecha en el historico, dejar vacio para que el error sea visible.
+      return dato && Number.isFinite(dato.venta) ? dato.venta : '';
     };
 
     // Convierte cualquier fecha de Premium a una FECHA REAL de Excel.
@@ -1097,18 +1098,19 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       }
     });
 
-    // Convierte la fecha Premium a yyyy-mm-dd SIN depender de la región de Excel.
-    // Para texto se interpreta SIEMPRE como dd/mm/aaaa.
-    const formulaFechaKey = ref => {
-      // Caso normal: la celda ya es una fecha real de Excel.
-      // Fallback: si por algun motivo llega texto, se lee SIEMPRE como dd/mm/aaaa.
+    // Convierte la fecha Premium a una FECHA NUMERICA DE EXCEL para el BUSCARV.
+    // IMPORTANTE: ahora Premium y "Tipo de cambio Sunat" usan el mismo tipo de dato
+    // (fecha real de Excel), evitando el error texto vs fecha que hacia fallar el cruce.
+    // Si la celda Premium llegara como texto, SIEMPRE se interpreta dd/mm/aaaa.
+    const formulaFechaLookup = ref => {
       const limpio = `TRIM(${ref}&"")`;
       const p1 = `FIND("/",${limpio})`;
       const p2 = `FIND("/",${limpio},${p1}+1)`;
       const dia = `VALUE(LEFT(${limpio},${p1}-1))`;
       const mes = `VALUE(MID(${limpio},${p1}+1,${p2}-${p1}-1))`;
       const anio = `VALUE(RIGHT(${limpio},LEN(${limpio})-${p2}))`;
-      return `IF(${ref}="","",IF(ISNUMBER(${ref}),TEXT(${ref},"yyyy-mm-dd"),IFERROR(TEXT(${anio},"0000")&"-"&TEXT(${mes},"00")&"-"&TEXT(${dia},"00"),"")))`;
+      // Para fechas reales usa INT(ref). Para texto crea DATE(anio,mes,dia).
+      return `IF(${ref}="","",IF(ISNUMBER(${ref}),INT(${ref}),IFERROR(DATE(${anio},${mes},${dia}),"")))`;
     };
 
     for(let excelRow=2; excelRow<=premiumAOA.length; excelRow++){
@@ -1154,7 +1156,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
 
         if(fechaEmisionOutIdx >= 0){
           const fechaRef = `${excelCol(fechaEmisionOutIdx)}${excelRow}`;
-          const fechaKey = formulaFechaKey(fechaRef);
+          const fechaKey = formulaFechaLookup(fechaRef);
           const formulaGeneral =
             `IF(UPPER(TRIM(${monedaRef}))="PEN",1,IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaKey},'Tipo de cambio Sunat'!$A:$C,3,FALSE),""),""))`;
           const cachedGeneral = premiumAOA[excelRow-1][tcGeneralOutIdx];
@@ -1169,7 +1171,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
           const tipoDocRef = `${excelCol(tipoDocumentoOutIdx)}${excelRow}`;
           const tcEspRef = `${excelCol(tcEspecificoOutIdx)}${excelRow}`;
           const difEspRef = `${excelCol(difTcEspecificoOutIdx)}${excelRow}`;
-          const fechaOrigenKey = formulaFechaKey(fechaOrigenRef);
+          const fechaOrigenKey = formulaFechaLookup(fechaOrigenRef);
           const esNotaFormula = `OR(IFERROR(VALUE(${tipoDocRef}),0)=7,IFERROR(VALUE(${tipoDocRef}),0)=8)`;
           const formulaEspecifico =
             `IF(${esNotaFormula},IF(UPPER(TRIM(${monedaRef}))="PEN",1,IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaOrigenKey},'Tipo de cambio Sunat'!$A:$C,3,FALSE),""),"")),"")`;
@@ -1229,12 +1231,25 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     XLSX.utils.book_append_sheet(wb, wsPremium, 'Premium');
 
     // Copia el historico utilizado dentro del mismo Excel para dejar trazabilidad del calculo.
+    // La columna FECHA se guarda como FECHA REAL DE EXCEL (no como texto), pero se muestra yyyy-mm-dd.
+    // De esta forma BUSCARV compara fecha contra fecha y no depende de la configuracion regional.
     if(state.tipoCambio.mapa && state.tipoCambio.mapa.size){
       const tcAOA = [['FECHA','TIPO DE CAMBIO COMPRA','TIPO DE CAMBIO VENTA']];
       [...state.tipoCambio.mapa.entries()]
         .sort((a,b)=>a[0].localeCompare(b[0]))
-        .forEach(([fecha, dato])=> tcAOA.push([fecha, dato.compra ?? '', dato.venta ?? '']));
-      const wsTC = XLSX.utils.aoa_to_sheet(tcAOA);
+        .forEach(([fecha, dato])=>{
+          const m = String(fecha).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+          const fechaExcel = m
+            ? new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), 12, 0, 0)
+            : fecha;
+          tcAOA.push([fechaExcel, dato.compra ?? '', dato.venta ?? '']);
+        });
+      const wsTC = XLSX.utils.aoa_to_sheet(tcAOA, {cellDates:true});
+      // Mostrar como anio-mes-dia sin convertir la fecha en texto.
+      for(let fila=2; fila<=tcAOA.length; fila++){
+        const ref = `A${fila}`;
+        if(wsTC[ref]) wsTC[ref].z = 'yyyy-mm-dd';
+      }
       wsTC['!cols'] = [{wch:14},{wch:24},{wch:24}];
       XLSX.utils.book_append_sheet(wb, wsTC, 'Tipo de cambio Sunat');
     }
