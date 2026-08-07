@@ -1104,13 +1104,13 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
         if(!wsPremium[ref]) wsPremium[ref] = {t:'s', v:''};
         wsPremium[ref].s = excelRow === 1
           ? {
-              fill:{fgColor:{rgb:'FFF200'}},
+              fill:{patternType:'solid', fgColor:{rgb:'FFF200'}, bgColor:{rgb:'FFF200'}},
               font:{bold:true, color:{rgb:'000000'}},
-              alignment:{horizontal:'center', vertical:'center'},
+              alignment:{horizontal:'center', vertical:'center', wrapText:true},
               border:bordeSuave
             }
           : {
-              fill:{fgColor:{rgb:'FFF8CC'}},
+              fill:{patternType:'solid', fgColor:{rgb:'FFFFFF'}, bgColor:{rgb:'FFFFFF'}},
               font:{color:{rgb:'000000'}},
               alignment:{horizontal:'center', vertical:'center'},
               border:bordeSuave
@@ -1328,6 +1328,7 @@ iniciarHistoricoTC();
   const status = document.getElementById('statusMsg');
   const fuentes = [
     'https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js',
+    'https://unpkg.com/xlsx-js-style@1.2.0/dist/xlsx.bundle.js',
     'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
   ];
   let i = 0;
