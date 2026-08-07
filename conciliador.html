@@ -844,7 +844,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     XLSX.utils.book_append_sheet(wb, wsDetalle, 'Detalle');
 
     // Premium sheet: copia completa de la base A con controles adicionales.
-    // Se agregan valores calculados (no formulas) para que se vean inmediatamente:
+    // Se agregan controles con valores cacheados y formulas visibles en Excel:
     // 1) VAL_SERI después de Documento_8.
     // 2) REV IGV, % IGV y VARIACIÓN después de ImpGnrlVenta_16,
     //    calculados usando BaseImponible_OperGrav_14.
@@ -929,6 +929,19 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     const tcVentaPorFecha = fecha => {
       const dato = obtenerTipoCambioSUNAT(fecha);
       return dato && Number.isFinite(dato.venta) ? dato.venta : 0;
+    };
+
+    // Convierte cualquier fecha de Premium a una FECHA REAL de Excel.
+    // La fuente Premium se interpreta como dia/mes/anio y NO como mes/dia/anio.
+    // Asi 06/07/2026 siempre significa 6 de julio de 2026.
+    const fechaPremiumExcel = value => {
+      const k = normalizarFechaTC(value);
+      if(!k) return String(value ?? '').trim();
+      const m = k.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if(!m) return String(value ?? '').trim();
+      const y = Number(m[1]), mes = Number(m[2]), d = Number(m[3]);
+      // Mediodia evita desplazamientos de un dia por zona horaria.
+      return new Date(y, mes - 1, d, 12, 0, 0);
     };
 
     const premiumHeaders = [];
@@ -1023,7 +1036,12 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
 
       const outRow = [];
       premiumHeadersOriginal.forEach((_, originalIdx)=>{
-        outRow.push(srcRow[originalIdx] ?? '');
+        const rawValue = srcRow[originalIdx] ?? '';
+        outRow.push(
+          (originalIdx === fechaEmisionIdx || originalIdx === fechaOrigenIdx)
+            ? fechaPremiumExcel(rawValue)
+            : rawValue
+        );
         if(originalIdx === docIdx) outRow.push(valSerie);
         if(originalIdx === igvIdx) outRow.push(revIgv, pctIgv, variacion);
         if(originalIdx === tcRegistradoIdx) outRow.push(tcGeneral, difTcGeneral);
@@ -1040,7 +1058,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       }
     });
 
-    const wsPremium = XLSX.utils.aoa_to_sheet(premiumAOA);
+    const wsPremium = XLSX.utils.aoa_to_sheet(premiumAOA, {cellDates:true});
     const excelCol = idx=> XLSX.utils.encode_col(idx);
 
     // Fórmulas directas en Excel para garantizar que nunca queden vacías.
@@ -1066,10 +1084,32 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     const fechaOrigenOutIdx = fechaOrigenIdx >= 0 ? originalToOutput.get(fechaOrigenIdx) : -1;
     const tipoDocumentoOutIdx = tipoDocumentoIdx >= 0 ? originalToOutput.get(tipoDocumentoIdx) : -1;
 
-    // Convierte una fecha del Premium a la llave yyyy-mm-dd usada en la hoja SUNAT.
-    // Funciona tanto si Excel interpreta la celda como fecha real como si llega como texto.
-    const formulaFechaKey = ref =>
-      `TEXT(IF(ISNUMBER(${ref}),${ref},DATEVALUE(${ref})),\"yyyy-mm-dd\")`;
+    // Fuerza la visualizacion de fechas como dd/mm/aaaa en Premium.
+    // Aunque Windows/Excel este en configuracion regional de EE.UU.,
+    // la celda conserva el dia, mes y anio correctos.
+    [fechaEmisionOutIdx, fechaOrigenOutIdx].filter(idx=>idx >= 0).forEach(colIdx=>{
+      const col = excelCol(colIdx);
+      for(let excelRow=2; excelRow<=premiumAOA.length; excelRow++){
+        const ref = `${col}${excelRow}`;
+        if(wsPremium[ref] && (wsPremium[ref].t === 'd' || wsPremium[ref].t === 'n')){
+          wsPremium[ref].z = 'dd/mm/yyyy';
+        }
+      }
+    });
+
+    // Convierte la fecha Premium a yyyy-mm-dd SIN depender de la región de Excel.
+    // Para texto se interpreta SIEMPRE como dd/mm/aaaa.
+    const formulaFechaKey = ref => {
+      // Caso normal: la celda ya es una fecha real de Excel.
+      // Fallback: si por algun motivo llega texto, se lee SIEMPRE como dd/mm/aaaa.
+      const limpio = `TRIM(${ref}&"")`;
+      const p1 = `FIND("/",${limpio})`;
+      const p2 = `FIND("/",${limpio},${p1}+1)`;
+      const dia = `VALUE(LEFT(${limpio},${p1}-1))`;
+      const mes = `VALUE(MID(${limpio},${p1}+1,${p2}-${p1}-1))`;
+      const anio = `VALUE(RIGHT(${limpio},LEN(${limpio})-${p2}))`;
+      return `IF(${ref}="","",IF(ISNUMBER(${ref}),TEXT(${ref},"yyyy-mm-dd"),IFERROR(TEXT(${anio},"0000")&"-"&TEXT(${mes},"00")&"-"&TEXT(${dia},"00"),"")))`;
+    };
 
     for(let excelRow=2; excelRow<=premiumAOA.length; excelRow++){
       // VAL_SERI: documento actual menos documento anterior.
@@ -1116,7 +1156,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
           const fechaRef = `${excelCol(fechaEmisionOutIdx)}${excelRow}`;
           const fechaKey = formulaFechaKey(fechaRef);
           const formulaGeneral =
-            `IF(UPPER(TRIM(${monedaRef}))="PEN",1,IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaKey},'Tipo de cambio Sunat'!$A:$C,3,FALSE),0),""))`;
+            `IF(UPPER(TRIM(${monedaRef}))="PEN",1,IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaKey},'Tipo de cambio Sunat'!$A:$C,3,FALSE),""),""))`;
           const cachedGeneral = premiumAOA[excelRow-1][tcGeneralOutIdx];
           wsPremium[tcGeneralRef] = {t:'n', v:Number(cachedGeneral)||0, f:formulaGeneral, z:'0.000'};
           const cachedDifGeneral = premiumAOA[excelRow-1][difTcGeneralOutIdx];
@@ -1132,7 +1172,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
           const fechaOrigenKey = formulaFechaKey(fechaOrigenRef);
           const esNotaFormula = `OR(IFERROR(VALUE(${tipoDocRef}),0)=7,IFERROR(VALUE(${tipoDocRef}),0)=8)`;
           const formulaEspecifico =
-            `IF(${esNotaFormula},IF(UPPER(TRIM(${monedaRef}))="PEN",1,IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaOrigenKey},'Tipo de cambio Sunat'!$A:$C,3,FALSE),0),"")),"")`;
+            `IF(${esNotaFormula},IF(UPPER(TRIM(${monedaRef}))="PEN",1,IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaOrigenKey},'Tipo de cambio Sunat'!$A:$C,3,FALSE),""),"")),"")`;
           const cachedEsp = premiumAOA[excelRow-1][tcEspecificoOutIdx];
           wsPremium[tcEspRef] = {t:'n', v:Number(cachedEsp)||0, f:formulaEspecifico, z:'0.000'};
           const cachedDifEsp = premiumAOA[excelRow-1][difTcEspecificoOutIdx];
