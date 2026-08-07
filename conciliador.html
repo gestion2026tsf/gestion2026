@@ -392,7 +392,7 @@ function handleFile(b, card, file){
   const reader = new FileReader();
   reader.onload = evt=>{
     const data = new Uint8Array(evt.target.result);
-    const wb = XLSX.read(data, {type:'array', cellDates:true});
+    const wb = XLSX.read(data, {type:'array'});
     b.wb = wb;
     card.classList.add('ready');
     card.querySelector('[data-role="drop"]').classList.add('filled');
@@ -408,7 +408,7 @@ function handleFile(b, card, file){
 function loadSheet(b, card, sheetName){
   b.sheet = sheetName;
   const ws = b.wb.Sheets[sheetName];
-  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:''});
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false, defval:''});
   b.rowsRaw = rows;
 
   renderRawTable(b, card);
@@ -1272,7 +1272,7 @@ function normalizarEncabezadoTC(value){
 function normalizarFechaTC(value){
   if(value === null || value === undefined || value === '') return '';
 
-  // Fecha real de JavaScript (cuando XLSX se lee con cellDates:true).
+  // 1) Fecha real de JavaScript
   if(value instanceof Date && !Number.isNaN(value.getTime())){
     const y = value.getFullYear();
     const m = String(value.getMonth()+1).padStart(2,'0');
@@ -1280,23 +1280,25 @@ function normalizarFechaTC(value){
     return `${y}-${m}-${d}`;
   }
 
-  // Serial numerico de Excel.
+  // 2) Serial numerico real de Excel
   if(typeof value === 'number' && Number.isFinite(value) && window.XLSX?.SSF){
     const p = XLSX.SSF.parse_date_code(value);
     if(p) return `${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`;
   }
 
   const txt = String(value).trim().split(' ')[0];
+  let m;
 
-  // dd/mm/yyyy o dd-mm-yyyy
-  let m = txt.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  // 3) dd/mm/aaaa o d/m/aaaa
+  m = txt.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
   if(m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
 
-  // yyyy/mm/dd o yyyy-mm-dd
+  // 4) yyyy-mm-dd
   m = txt.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
   if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
 
-  // dd/mm/yy o dd-mm-yy. Respaldo para archivos que muestran el anio con 2 digitos.
+  // 5) dd/mm/aa o d/m/aa. SheetJS con raw:false entrega, por ejemplo, 06/07/2026 como "7/6/26".
+  //    Este era el motivo por el que BUSCARV no encontraba la fecha del historico.
   m = txt.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2})$/);
   if(m){
     const yy = Number(m[3]);
