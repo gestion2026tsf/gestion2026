@@ -1980,6 +1980,91 @@ body.dash-zoom-200 #chart-zonas-v .vbar-lbl{font-size:14px!important;max-width:1
 .suc-right{min-width:92px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:2px;line-height:1.05;}
 .vbar-val{white-space:nowrap!important;}
 
+
+
+/* =========================================================
+   FIX FINAL ZONAS — FLEXIBLE, CENTRADO Y RESPONSIVE
+   ========================================================= */
+#chart-zonas-v{
+  width:100% !important;
+  min-height:250px !important;
+  height:auto !important;
+  padding:24px 18px 28px !important;
+  display:flex !important;
+  flex-wrap:wrap !important;
+  justify-content:center !important;
+  align-items:flex-end !important;
+  align-content:center !important;
+  gap:18px 22px !important;
+  overflow:visible !important;
+  box-sizing:border-box !important;
+}
+#chart-zonas-v .vbar-col{
+  flex:0 1 clamp(84px, 22vw, 130px) !important;
+  width:clamp(84px, 22vw, 130px) !important;
+  min-width:84px !important;
+  max-width:130px !important;
+  height:178px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  overflow:visible !important;
+}
+#chart-zonas-v .vbar-fill{
+  width:100% !important;
+  max-width:none !important;
+}
+#chart-zonas-v .vbar-lbl,
+#chart-zonas-v .vbar-neta,
+#chart-zonas-v .vbar-val{
+  width:100% !important;
+  text-align:center !important;
+}
+
+@media(max-width:700px){
+  #chart-zonas-v{
+    min-height:190px !important;
+    padding:18px 10px 22px !important;
+    gap:14px 14px !important;
+  }
+  #chart-zonas-v .vbar-col{
+    flex-basis:clamp(72px, 28vw, 108px) !important;
+    width:clamp(72px, 28vw, 108px) !important;
+    min-width:72px !important;
+    max-width:108px !important;
+    height:150px !important;
+  }
+  #chart-zonas-v .vbar-neta{font-size:11px !important;}
+  #chart-zonas-v .vbar-val{font-size:9px !important;}
+  #chart-zonas-v .vbar-lbl{font-size:10px !important;}
+}
+
+@media print{
+  #chart-zonas-v{
+    min-height:78px !important;
+    height:auto !important;
+    padding:8px 8px 10px !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    justify-content:center !important;
+    align-items:flex-end !important;
+    gap:8px !important;
+    overflow:visible !important;
+  }
+  #chart-zonas-v .vbar-col{
+    flex:1 1 0 !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:72px !important;
+    height:62px !important;
+  }
+  #chart-zonas-v .vbar-neta{font-size:6.8px !important;margin-bottom:2px !important;}
+  #chart-zonas-v .vbar-val{font-size:6.2px !important;margin-bottom:3px !important;}
+  #chart-zonas-v .vbar-fill{min-height:5px !important;}
+  #chart-zonas-v .vbar-lbl{font-size:6.4px !important;margin-top:3px !important;max-width:none !important;}
+}
+
 </style>
 </head>
 <body>
