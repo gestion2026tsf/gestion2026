@@ -1748,19 +1748,20 @@ body.dash-zoom-200 .chart-title{font-size:18px!important;}
 /* Zonas vista barras: no corta CENTRO ni etiquetas inferiores */
 #chart-zonas-v{
   width:100% !important;
-  height:250px !important;
+  min-height:250px !important;
   padding:34px 34px 34px !important;
   display:grid !important;
-  grid-template-columns:repeat(4,minmax(92px,1fr)) !important;
+  grid-template-columns:repeat(auto-fit,minmax(130px,130px)) !important;
+  justify-content:center !important;
   align-items:end !important;
   justify-items:center !important;
-  gap:16px !important;
+  gap:18px !important;
   overflow:hidden !important;
 }
 #chart-zonas-v .vbar-col{
-  width:100% !important;
+  width:130px !important;
   max-width:130px !important;
-  min-width:0 !important;
+  min-width:130px !important;
   height:178px !important;
   display:flex !important;
   flex-direction:column !important;
@@ -3018,13 +3019,11 @@ function renderEstCom(d){
   const netaKey = getNetaKey();
   const map = {};
 
-  // Tasa por MES: debe ser exactamente la misma que aparece en "Tasa ponderada por mes".
-  // Asi, por ejemplo, la fila 8.ACTIVADO.JUN26 mostrara la tasa JUN26 del grafico de arriba.
-  const tasaMesMap = {};
-
+  // Tasa ponderada POR CADA ESTADO DE GESTION.
+  // Cada fila acumula su propio PESO_TEA (= NETA * TEA) y NETA valida.
+  // Por eso 8.ACTIVADO.AGO26, 2.REGISTRO.AGO26, etc. pueden mostrar tasas distintas.
   d.forEach(r=>{
     const e = String(r[COL_ESTGES] || '').trim() || 'S/D';
-    const mes = getMesKeyFromRow(r);
     const cli = getClienteKey(r);
     const netaFila = netaKey ? parseNeta(r[netaKey]) : 0;
     const tasaPartes = getFilaTasaPartes(r,netaKey);
@@ -3033,7 +3032,9 @@ function renderEstCom(d){
       map[e] = {
         clientes: new Set(),
         ops: 0,
-        neta: 0
+        neta: 0,
+        pesoTea: 0,
+        netaTasa: 0
       };
     }
 
@@ -3042,24 +3043,17 @@ function renderEstCom(d){
     if(netaKey) map[e].neta += netaFila;
 
     if(tasaPartes){
-      if(!tasaMesMap[mes]) tasaMesMap[mes] = {pesoTea:0,neta:0};
-      tasaMesMap[mes].pesoTea += tasaPartes.pesoTea;
-      tasaMesMap[mes].neta += tasaPartes.neta;
+      map[e].pesoTea += tasaPartes.pesoTea;
+      map[e].netaTasa += tasaPartes.neta;
     }
   });
-
-  const getTasaMes = (estado)=>{
-    const mes = getMesKeyFromRow({[COL_ESTGES]:estado,[COL_ESTCOM]:''});
-    const v = tasaMesMap[mes];
-    return v && v.neta > 0 ? v.pesoTea / v.neta : null;
-  };
 
   const entries = Object.entries(map)
     .map(([k,v])=>[
       k,
       v.clientes.size,
       v.neta,
-      getTasaMes(k),
+      v.netaTasa > 0 ? v.pesoTea / v.netaTasa : null,
       v.ops
     ])
     .sort((a,b)=>{
