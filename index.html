@@ -2065,6 +2065,104 @@ body.dash-zoom-200 #chart-zonas-v .vbar-lbl{font-size:14px!important;max-width:1
   #chart-zonas-v .vbar-lbl{font-size:6.4px !important;margin-top:3px !important;max-width:none !important;}
 }
 
+
+
+/* =========================================================
+   FIX FINAL ZONAS — UNA SOLA LINEA, CENTRADO Y BONITO
+   ========================================================= */
+#chart-zonas-v{
+  width:100% !important;
+  min-height:250px !important;
+  height:auto !important;
+  padding:28px 14px 30px !important;
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  justify-content:center !important;
+  align-items:flex-end !important;
+  align-content:flex-end !important;
+  gap:clamp(10px,2vw,28px) !important;
+  overflow:visible !important;
+  box-sizing:border-box !important;
+}
+#chart-zonas-v .vbar-col{
+  flex:1 1 0 !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:170px !important;
+  height:178px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  overflow:visible !important;
+}
+#chart-zonas-v .vbar-fill{
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+}
+#chart-zonas-v .vbar-neta,
+#chart-zonas-v .vbar-val,
+#chart-zonas-v .vbar-lbl{
+  width:100% !important;
+  text-align:center !important;
+}
+
+@media(max-width:900px){
+  #chart-zonas-v{
+    min-height:210px !important;
+    padding:22px 8px 24px !important;
+    gap:clamp(6px,1.4vw,14px) !important;
+  }
+  #chart-zonas-v .vbar-col{
+    max-width:130px !important;
+    height:155px !important;
+  }
+  #chart-zonas-v .vbar-neta{font-size:11px !important;}
+  #chart-zonas-v .vbar-val{font-size:9px !important;}
+  #chart-zonas-v .vbar-lbl{font-size:10px !important;}
+}
+
+@media(max-width:640px){
+  #chart-zonas-v{
+    min-height:180px !important;
+    padding:18px 6px 20px !important;
+    gap:6px !important;
+  }
+  #chart-zonas-v .vbar-col{
+    max-width:100px !important;
+    height:132px !important;
+  }
+  #chart-zonas-v .vbar-neta{font-size:9px !important;}
+  #chart-zonas-v .vbar-val{font-size:7.8px !important;}
+  #chart-zonas-v .vbar-lbl{font-size:8.5px !important;}
+}
+
+@media print{
+  #chart-zonas-v{
+    min-height:78px !important;
+    height:auto !important;
+    padding:8px 8px 10px !important;
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    justify-content:center !important;
+    align-items:flex-end !important;
+    gap:8px !important;
+    overflow:visible !important;
+  }
+  #chart-zonas-v .vbar-col{
+    flex:1 1 0 !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:72px !important;
+    height:62px !important;
+  }
+  #chart-zonas-v .vbar-neta{font-size:6.8px !important;margin-bottom:2px !important;}
+  #chart-zonas-v .vbar-val{font-size:6.2px !important;margin-bottom:3px !important;}
+  #chart-zonas-v .vbar-fill{min-height:5px !important;}
+  #chart-zonas-v .vbar-lbl{font-size:6.4px !important;margin-top:3px !important;max-width:none !important;}
+}
+
 </style>
 </head>
 <body>
