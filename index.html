@@ -245,6 +245,7 @@ body.viewer-mode .readonly-banner{display:flex!important;}
 /* ── TABLA EXPEDIENTES ── */
 .toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
 .search-wrapper{position:relative;flex:1;min-width:200px;}
+.funcionario-wrapper{flex:0 1 250px;min-width:220px;}
 .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;}
 .search-input{width:100%;padding:0 12px 0 34px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:13px;color:var(--text);background:var(--card);outline:none;transition:all .2s;font-family:var(--font);height:36px;}
 .search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.1);}
@@ -2429,6 +2430,11 @@ body.dash-zoom-200 #chart-zonas-v .vbar-lbl{font-size:14px!important;max-width:1
             <input class="search-input" type="text" id="searchInput" placeholder="Buscar expediente, cliente, proveedor, RUC…" oninput="filterTable()">
           </div>
           <select class="filter-select" id="filtroProducto" onchange="filterTable()"><option value="">Todos los productos</option></select>
+          <div class="search-wrapper funcionario-wrapper">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" type="text" id="filtroFuncionario" list="listaFuncionarios" placeholder="Buscar funcionario…" oninput="filterTable()">
+            <datalist id="listaFuncionarios"></datalist>
+          </div>
           <div class="multi-select" id="estadoExpMulti">
             <button type="button" class="multi-select-btn" id="estadoExpMultiBtn" onclick="toggleEstadoExpMenu()">Todos los estados</button>
             <div class="multi-select-menu" id="estadoExpMultiMenu">
@@ -2470,9 +2476,6 @@ body.dash-zoom-200 #chart-zonas-v .vbar-lbl{font-size:14px!important;max-width:1
               <th onclick="sortTable('FNCNR')">Funcionario</th>
               <th onclick="sortTable('NETA')" style="text-align:right">Neta</th>
               <th onclick="sortTable(getTeaKey()||'TEA')" style="text-align:right">TEA</th>
-              <th onclick="sortTable('PESO_TEA')" style="text-align:right">Peso TEA</th>
-              <th onclick="sortTable('C_ADELANTO')" style="text-align:right">C. Adelanto</th>
-              <th onclick="sortTable('RETENCIÓN')" style="text-align:right">Retención</th>
               <th onclick="sortTable('DESEMBOLSAR')" style="text-align:right">$ Desembolsar</th>
               <th onclick="sortTable('CAF')" style="text-align:right">CAF</th>
               <th onclick="sortTable('EST_COM')">Est. Comercial</th>
@@ -2480,7 +2483,7 @@ body.dash-zoom-200 #chart-zonas-v .vbar-lbl{font-size:14px!important;max-width:1
               <th class="col-accion">Acción</th>
             </tr></thead>
             <tbody id="tabla-body">
-              <tr><td colspan="19"><div class="empty-state"><div class="empty-icon">📁</div><h3>Cargando datos…</h3></div></td></tr>
+              <tr><td colspan="16"><div class="empty-state"><div class="empty-icon">📁</div><h3>Cargando datos…</h3></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -3416,6 +3419,7 @@ function updateEstadoExpLabel(){
 function filterTable(){
   const q=(document.getElementById('searchInput')?.value||'').toLowerCase();
   const prod=document.getElementById('filtroProducto')?.value||'';
+  const funcQ=(document.getElementById('filtroFuncionario')?.value||'').toLowerCase().trim();
   const estados=getEstadosExpSeleccionados();
   if(estados.length>0){
     const todos=document.getElementById('estadoExpTodos');
@@ -3423,13 +3427,15 @@ function filterTable(){
   }
   filteredData=allData.filter(r=>{
     const est=String(r[COL_ESTGES]||'').trim();
-    const txt=[r.EXPE,r[COL_PROD],r.RUC,r.NOMBRE_RSOCIAL_CLIENTE,r.NOMBRE_PROVEEDOR,r.MNDA,r[COL_ESTGES],r[COL_ESTCOM],r[COL_ZONA],r.SUCURSAL,r[COL_FUNC]].join(' ').toLowerCase();
+    const func=String(r[COL_FUNC]||r['FNCNE']||'').trim();
+    const txt=[r.EXPE,r[COL_PROD],r.RUC,r.NOMBRE_RSOCIAL_CLIENTE,r.NOMBRE_PROVEEDOR,r.MNDA,r[COL_ESTGES],r[COL_ESTCOM],r[COL_ZONA],r.SUCURSAL,func].join(' ').toLowerCase();
     const cumpleEstado =
       estados.length===0 ||
       (estados.includes('ACTIVADO_2026') && isActivado(r)) ||
       (estados.includes('AGOSTO_2026') && getMesKeyFromRow(r) === 'AGO26') ||
       estados.includes(est);
-    return(!q||txt.includes(q))&&(!prod||String(r[COL_PROD]).includes(prod))&&cumpleEstado;
+    const cumpleFuncionario = !funcQ || func.toLowerCase().includes(funcQ);
+    return(!q||txt.includes(q))&&(!prod||String(r[COL_PROD]).includes(prod))&&cumpleFuncionario&&cumpleEstado;
   });
   updateEstadoExpLabel();
   if(sortField)filteredData.sort((a,b)=>String(a[sortField]||'').localeCompare(String(b[sortField]||''))*sortDir);
@@ -3439,8 +3445,14 @@ function filterTable(){
 function updateFiltros(){
   const productos=[...new Set(allData.map(r=>String(r[COL_PROD]||'')).filter(Boolean))].sort();
   const estados=[...new Set(allData.map(r=>String(r[COL_ESTGES]||'')).filter(Boolean))].sort();
+  const funcionarios=[...new Set(allData.map(r=>String(r[COL_FUNC]||r['FNCNE']||'').trim()).filter(Boolean))].sort();
   const seleccionadosPrevios=new Set(getEstadosExpSeleccionados());
+  const funcionarioPrevio=document.getElementById('filtroFuncionario')?.value||'';
   document.getElementById('filtroProducto').innerHTML='<option value="">Todos los productos</option>'+productos.map(p=>`<option value="${escHTML(p)}">${escHTML(p)}</option>`).join('');
+  const listaFuncionarios=document.getElementById('listaFuncionarios');
+  if(listaFuncionarios)listaFuncionarios.innerHTML=funcionarios.map(f=>`<option value="${escHTML(f)}"></option>`).join('');
+  const inputFuncionario=document.getElementById('filtroFuncionario');
+  if(inputFuncionario)inputFuncionario.value=funcionarioPrevio;
   document.getElementById('estadoExpOpciones').innerHTML=estados.map(e=>{
     const checked=seleccionadosPrevios.has(e)?'checked':'';
     return `<label class="multi-option" title="${escHTML(e)}"><input type="checkbox" class="estado-exp-check" value="${escHTML(e)}" ${checked} onchange="filterTable()"><span class="multi-option-text">${escHTML(e)}</span></label>`;
@@ -3460,7 +3472,7 @@ function renderTable(){
   const start=(page-1)*pageSize,end=start+pageSize;
   const rows=filteredData.slice(start,end);
   const tbody=document.getElementById('tabla-body');
-  if(!rows.length){tbody.innerHTML=`<tr><td colspan="19"><div class="empty-state"><div class="empty-icon">🔍</div><h3>Sin resultados</h3><p>Ajusta los filtros</p></div></td></tr>`;document.getElementById('page-info').textContent='0 registros';document.getElementById('page-nums').innerHTML='';return;}
+  if(!rows.length){tbody.innerHTML=`<tr><td colspan="16"><div class="empty-state"><div class="empty-icon">🔍</div><h3>Sin resultados</h3><p>Ajusta los filtros</p></div></td></tr>`;document.getElementById('page-info').textContent='0 registros';document.getElementById('page-nums').innerHTML='';return;}
   const fmtNum=v=>{const n=parseFloat(String(v||'').replace(/[^0-9.\-]/g,''));return isNaN(n)?'—':n.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});};
   tbody.innerHTML=rows.map(r=>{
     const prod=String(r[COL_PROD]||'');const est=String(r[COL_ESTGES]||'');const estcom=String(r[COL_ESTCOM]||'');
@@ -3471,7 +3483,7 @@ function renderTable(){
     const teaKey=getTeaKey();
     const tea=teaKey?parseTasaDecimal(r[teaKey]):null;
     const teaTxt=tea!==null&&isFinite(tea)?(tea*100).toFixed(2)+'%':'—';
-    return `<tr><td style="font-weight:800;color:var(--accent)">${r.EXPE||''}</td><td><span class="badge ${prodBadge}">${prod}</span></td><td style="color:var(--muted);font-size:11px;font-family:monospace">${r.RUC||''}</td><td style="max-width:170px;overflow:hidden;text-overflow:ellipsis;font-weight:500" title="${r.NOMBRE_RSOCIAL_CLIENTE||''}">${r.NOMBRE_RSOCIAL_CLIENTE||''}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;font-weight:500" title="${r.NOMBRE_PROVEEDOR||''}">${r.NOMBRE_PROVEEDOR||''}</td><td style="font-size:11px;font-weight:800;color:var(--text2);text-align:center">${r.MNDA||''}</td><td style="font-size:11px;font-weight:600;color:var(--text2)">${r[COL_ZONA]||''}</td><td style="color:var(--muted);font-size:11px">${r.SUCURSAL||''}</td><td style="font-size:11px;font-weight:600;color:var(--text2);max-width:90px;overflow:hidden;text-overflow:ellipsis" title="${func}">${func}</td><td style="text-align:right;font-weight:700;color:var(--success);font-size:11px">${fmtNum(r['NETA']||r['neta'])}</td><td style="text-align:right;font-weight:800;color:var(--accent);font-size:11px">${teaTxt}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${fmtNum(r['PESO_TEA'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${fmtNum(r['C_ADELANTO']||r['C. ADELANTO'])}</td><td style="text-align:right;font-size:11px;color:var(--warn)">${fmtNum(r['RETENCIÓN']||r['RETENCION'])}</td><td style="text-align:right;font-weight:700;font-size:11px;color:var(--accent)">${fmtNum(r['$ DESEMBOLSAR']||r['DESEMBOLSAR'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${r['CAF']||'—'}</td><td><span class="badge ${ecBadge}">${estcom}</span></td><td><span class="badge ${estBadge}" style="font-size:9px">${est}</span></td><td class="col-accion"><button class="btn-edit" onclick="openEdit(${r._idx})">Editar</button></td></tr>`;
+    return `<tr><td style="font-weight:800;color:var(--accent)">${r.EXPE||''}</td><td><span class="badge ${prodBadge}">${prod}</span></td><td style="color:var(--muted);font-size:11px;font-family:monospace">${r.RUC||''}</td><td style="max-width:170px;overflow:hidden;text-overflow:ellipsis;font-weight:500" title="${r.NOMBRE_RSOCIAL_CLIENTE||''}">${r.NOMBRE_RSOCIAL_CLIENTE||''}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;font-weight:500" title="${r.NOMBRE_PROVEEDOR||''}">${r.NOMBRE_PROVEEDOR||''}</td><td style="font-size:11px;font-weight:800;color:var(--text2);text-align:center">${r.MNDA||''}</td><td style="font-size:11px;font-weight:600;color:var(--text2)">${r[COL_ZONA]||''}</td><td style="color:var(--muted);font-size:11px">${r.SUCURSAL||''}</td><td style="font-size:11px;font-weight:600;color:var(--text2);max-width:90px;overflow:hidden;text-overflow:ellipsis" title="${func}">${func}</td><td style="text-align:right;font-weight:700;color:var(--success);font-size:11px">${fmtNum(r['NETA']||r['neta'])}</td><td style="text-align:right;font-weight:800;color:var(--accent);font-size:11px">${teaTxt}</td><td style="text-align:right;font-weight:700;font-size:11px;color:var(--accent)">${fmtNum(r['$ DESEMBOLSAR']||r['DESEMBOLSAR'])}</td><td style="text-align:right;font-size:11px;color:var(--text2)">${r['CAF']||'—'}</td><td><span class="badge ${ecBadge}">${estcom}</span></td><td><span class="badge ${estBadge}" style="font-size:9px">${est}</span></td><td class="col-accion"><button class="btn-edit" onclick="openEdit(${r._idx})">Editar</button></td></tr>`;
   }).join('');
   const totalPages=Math.ceil(filteredData.length/pageSize);
   document.getElementById('page-info').textContent=`${start+1}–${Math.min(end,filteredData.length)} de ${filteredData.length}`;
