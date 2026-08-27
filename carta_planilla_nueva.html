@@ -604,9 +604,15 @@
       const inv = group[i];
       if(inv){
         planRows += `<tr>
-          <td>${i+1}</td><td class="left">${inv.acepNombre}</td><td></td><td></td>
-          <td>${inv.acepRuc}</td><td></td><td>${inv.id}</td><td></td><td></td>
-          <td>${fmtDate(inv.dueDate)}</td><td>${fmtMoney(inv.importe)}</td>
+          <td>${i+1}</td>
+          <td class="left">${inv.acepNombre}</td>
+          <td></td><td></td>
+          <td>${inv.acepRuc}</td>
+          <td></td>
+          <td>${inv.id}</td>
+          <td></td><td></td>
+          <td>${fmtDate(inv.dueDate)}</td>
+          <td>${fmtMoney(inv.importe)}</td>
         </tr>`;
       } else {
         planRows += `<tr><td>${i+1}</td><td class="left">&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
@@ -639,87 +645,120 @@
 </xml>
 <![endif]-->
 <style>
-  @page CartaPage { size:21cm 29.7cm; margin:1.4cm 1.5cm 1.45cm 1.5cm; mso-page-orientation:portrait; }
-  @page PlanillaPage { size:29.7cm 21cm; margin:1.0cm 1.0cm 1.05cm 1.0cm; mso-page-orientation:landscape; }
-  div.CartaSection { page:CartaPage; }
-  div.PlanillaSection { page:PlanillaPage; page-break-before:always; }
+  /* WORD: dos secciones reales, cada una con su orientación */
+  @page Section1 {
+    size: 595.3pt 841.9pt;
+    margin: 34pt 42pt 34pt 42pt;
+    mso-page-orientation: portrait;
+  }
+  @page Section2 {
+    size: 841.9pt 595.3pt;
+    margin: 28pt 34pt 28pt 34pt;
+    mso-page-orientation: landscape;
+  }
+  div.Section1 { page: Section1; }
+  div.Section2 { page: Section2; }
 
-  body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#2f2f2f;font-size:10pt;line-height:1.42;background:#ffffff;}
+  body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;background:#fff;font-size:9.4pt;line-height:1.35;}
   table{border-collapse:collapse;}
-  p{margin:0 0 10pt 0;line-height:1.42;}
+  p{margin:0 0 8pt 0;line-height:1.35;text-align:left;}
 
-  .shell-carta{width:510pt;margin:0 auto;}
-  .shell-planilla{width:760pt;margin:0 auto;}
+  .portrait-wrap{width:511pt;margin:0 auto;}
+  .landscape-wrap{width:754pt;margin:0 auto;}
 
-  .head-table{width:100%;margin:0 0 2pt 0;}
+  .head-table{width:100%;margin:0 0 4pt 0;}
   .head-table td{border:none;padding:0;vertical-align:middle;}
-  .head-logo{width:32%;}
-  .head-logo img{display:block;width:110pt;height:auto;}
-  .head-title{width:68%;text-align:right;}
-  .doctype-title{font-size:11.5pt;line-height:1.05;font-weight:800;color:#e6005a;letter-spacing:.35pt;}
-  .doctype-sub{font-size:7.8pt;line-height:1.2;font-weight:700;color:#666;margin-top:3pt;letter-spacing:.8pt;}
-  .brand-line{width:100%;height:2.5pt;margin:0 0 12pt 0;}
-  .brand-line td{padding:0;border:none;height:2.5pt;line-height:1pt;font-size:1pt;}
+  .head-logo{width:31%;text-align:left;}
+  .head-logo img{display:block;width:104pt;height:auto;}
+  .head-title{width:69%;text-align:right;}
+  .doctype-title{font-size:10.7pt;line-height:1.05;font-weight:800;color:#e6005a;letter-spacing:.3pt;}
+  .doctype-sub{font-size:7.2pt;line-height:1.2;font-weight:700;color:#666;margin-top:4pt;letter-spacing:.7pt;}
+  .brand-line{width:100%;margin:0 0 11pt 0;height:2.5pt;}
+  .brand-line td{height:2.5pt;padding:0;border:none;font-size:1pt;line-height:1pt;}
   .brand-line .gold{background:#f9ae00;width:82%;}
   .brand-line .pink{background:#e6005a;width:18%;}
 
-  .section-bar{width:100%;margin:0 0 1.5pt 0;}
-  .section-bar td{padding:8pt 10pt;font-size:9.6pt;font-weight:800;border:none;}
-  .section-bar .lbl{background:#2f2f2f;color:#ffffff;text-transform:uppercase;letter-spacing:.2pt;width:72%;}
-  .section-bar .val{background:#f6efdc;color:#2f2f2f;text-align:center;width:28%;white-space:nowrap;}
+  .section-bar{width:100%;margin:0;}
+  .section-bar td{padding:7pt 9pt;border:none;font-size:9pt;font-weight:800;}
+  .section-bar .lbl{width:72%;background:#2f2f2f;color:#fff;text-transform:uppercase;letter-spacing:.15pt;}
+  .section-bar .val{width:28%;background:#fff7e5;text-align:center;color:#222;white-space:nowrap;}
 
-  .info-line{width:100%;}
-  .info-line td{border:1px solid #dddddd;background:#f6f6f6;padding:7pt 10pt;font-size:9.2pt;line-height:1.35;}
+  .info-line{width:100%;margin-top:1pt;}
+  .info-line td{border:1px solid #d9d9d9;background:#f5f5f5;padding:6pt 9pt;font-size:8.8pt;line-height:1.25;}
 
-  .doc-table{width:100%;margin:9pt 0 12pt 0;}
-  .doc-table th{background:#2f2f2f;color:#ffffff;border:1px solid #2f2f2f;padding:7pt 8pt;font-size:8.8pt;font-weight:800;text-transform:uppercase;letter-spacing:.15pt;}
-  .doc-table td{border:1px solid #d6d6d6;padding:7pt 8pt;text-align:center;font-size:9pt;font-weight:700;color:#e6005a;}
+  .doc-table{width:100%;margin:8pt 0 10pt 0;}
+  .doc-table th{background:#2f2f2f;color:#fff;border:1px solid #2f2f2f;padding:6pt;font-size:8.2pt;font-weight:800;text-transform:uppercase;}
+  .doc-table td{border:1px solid #d3d3d3;padding:6pt;text-align:center;font-size:8.6pt;font-weight:700;color:#e6005a;}
 
-  .accounts{width:100%;margin:7pt 0 12pt 0;border:1px solid #dddddd;border-radius:8px;}
-  .accounts td{width:50%;border:1px solid #dddddd;background:#f7f7f7;padding:9pt 12pt;vertical-align:top;font-size:8.8pt;line-height:1.45;}
+  .accounts{width:100%;margin:7pt 0 10pt 0;}
+  .accounts td{width:50%;border:1px solid #d8d8d8;background:#f6f6f6;padding:7pt 10pt;vertical-align:top;font-size:8pt;line-height:1.35;}
   .accounts b{display:block;color:#e6005a;margin-bottom:2pt;}
 
-  .sign-row{width:100%;margin-top:24pt;}
-  .sign-row td{width:48%;font-size:8.8pt;text-align:center;padding-top:5pt;border-top:1px solid #444444;}
-  .sign-gap{width:4%;border-top:none!important;padding:0!important;}
-  .sheet-footer{text-align:center;color:#777777;font-size:7.8pt;margin-top:12pt;letter-spacing:.1pt;}
+  .sign-row{width:100%;margin-top:22pt;}
+  .sign-row td{width:47%;border-top:1px solid #444;padding-top:4pt;text-align:center;font-size:8pt;}
+  .sign-row td.gap{width:6%;border-top:none;padding:0;}
+  .sheet-footer{text-align:center;font-size:7.2pt;color:#777;margin-top:10pt;}
 
-  .plan-title{text-align:center;color:#e6005a;font-size:13pt;font-weight:800;letter-spacing:.35pt;margin:3pt 0 10pt 0;text-transform:uppercase;}
+  /* PLANILLA */
+  .plan-title{text-align:center;color:#e6005a;font-size:12.5pt;font-weight:800;letter-spacing:.25pt;margin:2pt 0 9pt 0;}
   .info-table{width:100%;margin:0 0 7pt 0;}
-  .info-table td{border:1px solid #dddddd;padding:5.5pt 7pt;font-size:8.3pt;line-height:1.35;vertical-align:middle;}
-  .info-table .lbl{background:#2f2f2f;color:#ffffff;font-weight:700;text-transform:uppercase;font-size:7.7pt;letter-spacing:.15pt;white-space:nowrap;}
-  .info-table .hl{background:#f6efdc;font-weight:700;white-space:nowrap;}
-  .info-table .section-row td{background:#e6005a;color:#ffffff;font-weight:800;text-transform:uppercase;font-size:8.2pt;letter-spacing:.15pt;padding-top:4.5pt;padding-bottom:4.5pt;}
-  .info-table .plain-row td{font-size:7.7pt;color:#666666;background:#f9f9f9;}
+  .info-table td{border:1px solid #d7d7d7;padding:4.6pt 6pt;font-size:7.7pt;line-height:1.2;vertical-align:middle;}
+  .info-table .lbl{background:#2f2f2f;color:#fff;font-weight:700;text-transform:uppercase;font-size:7.2pt;white-space:nowrap;}
+  .info-table .hl{background:#fff7e5;font-weight:700;white-space:nowrap;}
+  .info-table .section-row td{background:#e6005a;color:#fff;font-weight:800;text-transform:uppercase;font-size:7.6pt;letter-spacing:.12pt;padding-top:4pt;padding-bottom:4pt;}
+  .info-table .plain-row td{background:#fff;font-size:7.2pt;color:#555;}
 
-  .planilla{width:100%;table-layout:fixed;margin:7pt 0 9pt 0;}
-  .planilla th{background:#2f2f2f;color:#ffffff;border:1px solid #2f2f2f;padding:4pt 2pt;font-size:6.4pt;text-transform:uppercase;font-weight:800;line-height:1.15;}
-  .planilla td{border:1px solid #d2d2d2;padding:4pt 2pt;text-align:center;font-size:7pt;line-height:1.15;height:14pt;}
+  .planilla{width:100%;table-layout:fixed;margin:7pt 0 8pt 0;}
+  .planilla th{background:#2f2f2f;color:#fff;border:1px solid #2f2f2f;padding:3.5pt 2pt;font-size:6.1pt;text-transform:uppercase;font-weight:800;line-height:1.05;}
+  .planilla td{border:1px solid #d0d0d0;padding:3.4pt 2pt;text-align:center;font-size:6.6pt;line-height:1.05;height:13pt;}
   .planilla td.left{text-align:left;}
-  .planilla th:nth-child(1){width:3%;}.planilla th:nth-child(2){width:23%;}.planilla th:nth-child(3){width:4%;}.planilla th:nth-child(4){width:4%;}.planilla th:nth-child(5){width:10%;}.planilla th:nth-child(6){width:4%;}.planilla th:nth-child(7){width:9%;}.planilla th:nth-child(8){width:8%;}.planilla th:nth-child(9){width:7%;}.planilla th:nth-child(10){width:9%;}.planilla th:nth-child(11){width:8%;}
-  .tot-row td{background:#f6efdc;font-weight:700;}
+  .planilla th:nth-child(1){width:3%;}
+  .planilla th:nth-child(2){width:29%;}
+  .planilla th:nth-child(3){width:4%;}
+  .planilla th:nth-child(4){width:4%;}
+  .planilla th:nth-child(5){width:10%;}
+  .planilla th:nth-child(6){width:5%;}
+  .planilla th:nth-child(7){width:10%;}
+  .planilla th:nth-child(8){width:8%;}
+  .planilla th:nth-child(9){width:8%;}
+  .planilla th:nth-child(10){width:10%;}
+  .planilla th:nth-child(11){width:9%;}
+  .tot-row td{background:#fff7e5;font-weight:700;}
 
   .foot-table{width:100%;margin-top:8pt;}
-  .foot-box{width:50%;border:1px solid #dddddd;background:#f7f7f7;padding:8pt 10pt;font-size:7.4pt;line-height:1.35;vertical-align:top;}
-  .foot-box b{display:block;color:#2f2f2f;margin-bottom:2pt;}
-  .auth-box{border:1px solid #dddddd;background:#f7f7f7;padding:8pt 10pt;font-size:7.4pt;line-height:1.35;margin-top:8pt;}
+  .foot-box{width:50%;border:1px solid #d8d8d8;background:#f6f6f6;padding:7pt 9pt;font-size:7pt;line-height:1.25;vertical-align:top;}
+  .foot-box b{display:block;margin-bottom:3pt;color:#222;}
+  .auth-box{border:1px solid #d8d8d8;background:#f6f6f6;padding:7pt 9pt;font-size:7pt;line-height:1.25;margin-top:8pt;}
   .auth-box b{color:#e6005a;text-transform:uppercase;}
+
+  /* fuerza el salto como NUEVA SECCIÓN en Word */
+  .section-break{page-break-before:always;mso-break-type:section-break;}
 </style>
 </head>
 <body>
 
-<div class="CartaSection">
-  <table class="shell-carta" align="center" cellspacing="0" cellpadding="0"><tr><td>
+<div class="Section1">
+  <table class="portrait-wrap" align="center" cellspacing="0" cellpadding="0"><tr><td>
     ${header}
 
-    <table class="section-bar" cellspacing="0" cellpadding="0"><tr><td class="lbl">COMUNICACIÓN DE CESIÓN</td><td class="val">Lima, ${meta.FL}</td></tr></table>
-    <table class="info-line" cellspacing="0" cellpadding="0"><tr><td><b>Señores:</b>&nbsp; ${meta.ACEP}</td></tr><tr><td><b>Dirección:</b>&nbsp; ${meta.DIR_ACEP}</td></tr></table>
+    <table class="section-bar" cellspacing="0" cellpadding="0"><tr>
+      <td class="lbl">COMUNICACIÓN DE CESIÓN</td>
+      <td class="val">Lima, ${meta.FL}</td>
+    </tr></table>
 
-    <p style="margin-top:12pt;">Presente.-</p>
+    <table class="info-line" cellspacing="0" cellpadding="0">
+      <tr><td><b>Señores:</b>&nbsp; ${meta.ACEP}</td></tr>
+      <tr><td><b>Dirección:</b>&nbsp; ${meta.DIR_ACEP}</td></tr>
+    </table>
+
+    <p style="margin-top:11pt;">Presente.-</p>
     <p>De nuestra consideración:</p>
     <p>Por medio de la presente nos es grato saludarlos y manifestarles que hemos suscrito con TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, con RUC No. 20377892918 y domicilio en Av. Circunvalación Golf Los Incas Nro. 134, Torre 2 Piso 16, Santiago de Surco – Lima, empresa creada bajo el ámbito de la Ley General del Sistema Financiero y del Sistema de Seguros y Orgánica de la Superintendencia de Banca, Seguros y AFP; y cuyo objeto, entre otros, es financiar a las pequeñas y medianas empresas a través de operaciones de descuento y factoring, un Contrato de Descuento, en mérito del cual se ha procedido a anotar en cuenta en CAVALI y transferir a favor de dicha empresa con fecha Lima, ${meta.FLS}, el/los siguiente(s) documento(s):</p>
 
-    <table class="doc-table" cellspacing="0" cellpadding="0"><thead><tr><th>NRO. DE DOCUMENTO</th></tr></thead><tbody>${cartaRows}</tbody></table>
+    <table class="doc-table" cellspacing="0" cellpadding="0">
+      <thead><tr><th>NRO. DE DOCUMENTO</th></tr></thead>
+      <tbody>${cartaRows}</tbody>
+    </table>
 
     <p>En ese orden de ideas, agradeceremos que todo pago que se genere o derive del documento antes mencionado sea realizado a favor de TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, en sus cuentas recaudadoras:</p>
 
@@ -739,13 +778,17 @@
     <p>Sin otro particular, agradecemos la atención prestada a la presente.</p>
     <p>Atentamente,</p>
 
-    <table class="sign-row" cellspacing="0" cellpadding="0"><tr><td>Firma y sello del cliente</td><td class="sign-gap"></td><td>Recepción TOTAL Servicios Financieros</td></tr></table>
+    <table class="sign-row" cellspacing="0" cellpadding="0"><tr>
+      <td>Firma y sello del cliente</td><td class="gap"></td><td>Recepción TOTAL Servicios Financieros</td>
+    </tr></table>
     <div class="sheet-footer">TOTAL SERVICIOS FINANCIEROS &nbsp;•&nbsp; Gestión de descuento de facturas</div>
   </td></tr></table>
 </div>
 
-<div class="PlanillaSection">
-  <table class="shell-planilla" align="center" cellspacing="0" cellpadding="0"><tr><td>
+<br clear="all" class="section-break">
+
+<div class="Section2">
+  <table class="landscape-wrap" align="center" cellspacing="0" cellpadding="0"><tr><td>
     ${header}
     <div class="plan-title">PLANILLA DE DESCUENTO</div>
 
@@ -760,8 +803,13 @@
     </table>
 
     <table class="planilla" cellspacing="0" cellpadding="0">
-      <thead><tr><th>#</th><th>Nombre / Razón Social</th><th>Det.</th><th>Ret.</th><th>RUC / DNI</th><th>Aval</th><th>N° Doc.</th><th>Contacto</th><th>Teléfono</th><th>Vencimiento</th><th>Importe</th></tr></thead>
-      <tbody>${planRows}<tr class="tot-row"><td colspan="6">Cantidad de documentos: ${meta.CNT}</td><td colspan="4" style="text-align:right;">TOTAL</td><td>${meta.MON_SIMBOLO} ${meta.TOT}</td></tr></tbody>
+      <thead><tr>
+        <th>#</th><th>Nombre / Razón Social</th><th>Det.</th><th>Ret.</th><th>RUC / DNI</th><th>Aval</th><th>N° Doc.</th><th>Contacto</th><th>Teléfono</th><th>Vencimiento</th><th>Importe</th>
+      </tr></thead>
+      <tbody>
+        ${planRows}
+        <tr class="tot-row"><td colspan="6">Cantidad de documentos: ${meta.CNT}</td><td colspan="4" style="text-align:right;">TOTAL</td><td>${meta.MON_SIMBOLO} ${meta.TOT}</td></tr>
+      </tbody>
     </table>
 
     <table class="foot-table" cellspacing="0" cellpadding="0"><tr>
@@ -771,7 +819,9 @@
 
     <div class="auth-box"><b>Autorización.</b> ${meta.CLI} autoriza de manera expresa que los documentos objeto de la presente planilla, entregados con algunos campos en blanco, puedan ser completados por TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad. El(los) firmante(s) declara(n) haber leído en su integridad, encontrado conforme y aceptar todas las condiciones que constan en este documento.</div>
 
-    <table class="sign-row" cellspacing="0" cellpadding="0"><tr><td>Sellos y firmas autorizadas por el cliente</td><td class="sign-gap"></td><td>Sello y firma del recibidor por Total Servicios</td></tr></table>
+    <table class="sign-row" cellspacing="0" cellpadding="0"><tr>
+      <td>Sellos y firmas autorizadas por el cliente</td><td class="gap"></td><td>Sello y firma del recibidor por Total Servicios</td>
+    </tr></table>
     <div class="sheet-footer">TOTAL SERVICIOS FINANCIEROS &nbsp;•&nbsp; Gestión de descuento de facturas</div>
   </td></tr></table>
 </div>
