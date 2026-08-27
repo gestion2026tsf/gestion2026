@@ -597,48 +597,6 @@
 
   // ---------- WORD (.doc) EXPORT ----------
   function buildStandaloneHTML(group, meta){
-    const styleBlock = `
-      body{font-family:Arial, Helvetica, sans-serif;font-size:12.5px;color:#2f2f2f;}
-      .sheet{padding:10px 6px;max-width:100%;}
-      .letterhead td{border:none;vertical-align:top;}
-      .logo-img{width:180px;height:auto;}
-      .doctype-title{font-size:13px;font-weight:800;color:#e6005a;text-transform:uppercase;letter-spacing:.3px;}
-      .doctype-sub{font-size:9.5px;font-weight:700;color:#666666;text-transform:uppercase;margin-top:3px;}
-      .brand-rule td{border:none;font-size:1px;line-height:1px;padding:0;height:3px;}
-       .brand-rule .gold{background:#f9ae00;width:82%;}
-       .brand-rule .pink{background:#e6005a;width:18%;}
-      .section-bar td{border:none;padding:9px 12px;font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:.02em;}
-      .section-bar .lbl{background:#2f2f2f;color:#ffffff;}
-      .section-bar .val{background:#fff8e6;color:#2f2f2f;text-align:center;font-weight:700;text-transform:none;}
-      .info-box{background:#f5f5f5;border:1px solid #dcdcdc;padding:8px 12px;font-size:12px;}
-      .doc-title{font-size:14px;font-weight:800;color:#e6005a;text-align:center;text-transform:uppercase;letter-spacing:.03em;margin:4px 0 14px;}
-      p{margin:10px 0;}
-      table{border-collapse:collapse;width:100%;}
-      .doc-table{margin:10px 0 16px;}
-      .doc-table th,.doc-table td{border:1px solid #999;padding:6px 8px;}
-      .doc-table th{background:#2f2f2f;color:#fff;text-transform:uppercase;font-size:10.5px;}
-      .doc-table td{text-align:center;font-weight:700;color:#e6005a;}
-      .accounts td{border:1px solid #ccc;padding:6px 10px;font-size:11px;vertical-align:top;background:#f5f5f5;}
-      .accounts b{color:#e6005a;}
-      .sign-row td{width:50%;text-align:center;font-size:11px;border-top:1px solid #333;padding-top:6px;}
-      .info-table td{border:1px solid #dcdcdc;padding:6px 10px;font-size:11px;}
-      .info-table .lbl{background:#2f2f2f;color:#fff;font-weight:700;font-size:10px;text-transform:uppercase;width:17%;}
-      .info-table .hl{background:#fff8e6;font-weight:700;}
-      .info-table .section-row td{background:#e6005a;color:#fff;font-weight:800;text-transform:uppercase;font-size:10.5px;}
-      .info-table .plain-row td{font-size:10.5px;color:#666666;}
-      table.planilla th{background:#2f2f2f;color:#fff;padding:4px;font-size:9px;text-transform:uppercase;}
-      table.planilla td{border:1px solid #999;padding:4px;text-align:center;font-size:9.5px;}
-      table.planilla td.left{text-align:left;}
-      .tot-row td{background:#fff8e6;}
-      .foot-box{border:1px solid #dcdcdc;padding:8px 10px;font-size:10px;vertical-align:top;background:#f5f5f5;}
-      .auth-box{border:1px solid #dcdcdc;padding:10px;font-size:10.5px;margin-top:10px;background:#f5f5f5;}
-      .auth-box b{color:#e6005a;text-transform:uppercase;}
-      .sheet-footer{font-size:10px;color:#666666;text-align:center;margin-top:20px;}
-      .pagebreak{page-break-before:always;}
-      .word-page-break{page-break-before:always;mso-break-before:page;height:0;line-height:0;font-size:0;}
-      .page2-head{page-break-before:always;mso-break-before:page;}
-    `;
-
     const cartaRows = group.map(inv => `<tr><td>${inv.id}</td></tr>`).join('');
 
     let planRows = '';
@@ -655,121 +613,147 @@
       }
     }
 
-    const letterheadTable = `
-    <table style="margin-bottom:5px;"><tr class="letterhead">
-      <td style="width:52%;vertical-align:middle;"><img class="logo-img" src="${LOGO_DATA_URI}" alt="Total Servicios Financieros"></td>
-      <td style="width:48%;text-align:right;vertical-align:middle;">
-        <div class="doctype-title">Documentación de descuento</div>
-        <div class="doctype-sub">Total Servicios Financieros</div>
-      </td>
-    </tr></table>
-    <table style="margin-bottom:14px;"><tr class="brand-rule"><td class="gold">&nbsp;</td><td class="pink">&nbsp;</td></tr></table>`;
+    const header = `
+      <table class="head-table" cellspacing="0" cellpadding="0">
+        <tr>
+          <td class="head-logo"><img src="${LOGO_DATA_URI}" alt="Total Servicios Financieros"></td>
+          <td class="head-title">
+            <div class="doctype-title">DOCUMENTACIÓN DE DESCUENTO</div>
+            <div class="doctype-sub">TOTAL SERVICIOS FINANCIEROS</div>
+          </td>
+        </tr>
+      </table>
+      <table class="brand-line" cellspacing="0" cellpadding="0"><tr><td class="gold">&nbsp;</td><td class="pink">&nbsp;</td></tr></table>`;
 
     return `<!DOCTYPE html>
 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
 <head>
 <meta charset="utf-8">
 <!--[if gte mso 9]>
-<xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml>
+<xml>
+  <w:WordDocument><w:View>Print</w:View><w:Zoom>95</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument>
+</xml>
 <![endif]-->
-<style>${styleBlock}</style>
+<style>
+  @page CartaPage { size:21cm 29.7cm; margin:1.25cm 1.45cm 1.25cm 1.45cm; mso-page-orientation:portrait; }
+  @page PlanillaPage { size:29.7cm 21cm; margin:1.0cm 1.15cm 1.0cm 1.15cm; mso-page-orientation:landscape; }
+  div.CartaSection { page:CartaPage; }
+  div.PlanillaSection { page:PlanillaPage; page-break-before:always; }
+
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#2f2f2f;font-size:10.5pt;line-height:1.25;}
+  table{border-collapse:collapse;width:100%;}
+  p{margin:5pt 0;text-align:justify;}
+
+  .head-table{width:100%;margin:0 0 3pt 0;}
+  .head-table td{border:none;padding:0;vertical-align:middle;}
+  .head-logo{width:54%;text-align:left;}
+  .head-logo img{width:118px;height:auto;display:block;}
+  .head-title{width:46%;text-align:right;padding-right:2pt!important;}
+  .doctype-title{font-size:11.5pt;line-height:1.05;font-weight:800;color:#e6005a;letter-spacing:.2pt;}
+  .doctype-sub{font-size:7.7pt;line-height:1.1;font-weight:700;color:#666;margin-top:4pt;}
+  .brand-line{height:3pt;margin:0 0 10pt 0;}
+  .brand-line td{padding:0;border:none;height:3pt;font-size:1pt;line-height:1pt;}
+  .brand-line .gold{width:84%;background:#f9ae00;}
+  .brand-line .pink{width:16%;background:#e6005a;}
+
+  .section-bar td{padding:7pt 9pt;border:none;font-size:9.3pt;font-weight:800;}
+  .section-bar .lbl{background:#2f2f2f;color:#fff;text-transform:uppercase;letter-spacing:.15pt;width:70%;}
+  .section-bar .val{background:#fff7e5;color:#2f2f2f;text-align:center;width:30%;white-space:nowrap;}
+  .info-box{background:#f6f6f6;border:1px solid #dddddd;padding:6pt 9pt;font-size:9.4pt;}
+
+  .doc-table{margin:7pt 0 9pt 0;}
+  .doc-table th{background:#2f2f2f;color:#fff;border:1px solid #2f2f2f;padding:5pt;font-size:8.5pt;text-transform:uppercase;}
+  .doc-table td{border:1px solid #d5d5d5;padding:5pt;text-align:center;color:#e6005a;font-weight:700;font-size:9pt;}
+
+  .accounts{margin:6pt 0 8pt 0;}
+  .accounts td{width:50%;border:1px solid #d8d8d8;background:#f7f7f7;padding:6pt 8pt;vertical-align:top;font-size:8.6pt;line-height:1.25;}
+  .accounts b{color:#e6005a;}
+
+  .sign-row{margin-top:21pt;}
+  .sign-row td{width:50%;text-align:center;border-top:1px solid #555;padding-top:5pt;font-size:8.5pt;}
+  .sheet-footer{text-align:center;color:#777;font-size:7.5pt;margin-top:10pt;}
+
+  .plan-title{text-align:center;color:#e6005a;font-size:13pt;font-weight:800;letter-spacing:.2pt;margin:2pt 0 9pt 0;}
+  .info-table td{border:1px solid #dddddd;padding:5pt 7pt;font-size:8.4pt;vertical-align:middle;}
+  .info-table .lbl{background:#2f2f2f;color:#fff;font-weight:700;text-transform:uppercase;font-size:7.8pt;width:16%;}
+  .info-table .hl{background:#fff7e5;font-weight:700;white-space:nowrap;}
+  .info-table .section-row td{background:#e6005a;color:#fff;font-weight:800;text-transform:uppercase;font-size:8.2pt;letter-spacing:.15pt;}
+  .info-table .plain-row td{font-size:7.8pt;color:#666;}
+
+  .planilla{margin-top:7pt;table-layout:fixed;}
+  .planilla th{background:#2f2f2f;color:#fff;border:1px solid #2f2f2f;padding:4pt 2pt;font-size:6.7pt;text-transform:uppercase;line-height:1.1;}
+  .planilla td{border:1px solid #d0d0d0;padding:4pt 2pt;text-align:center;font-size:7pt;line-height:1.1;height:15pt;}
+  .planilla td.left{text-align:left;}
+  .planilla th:nth-child(1){width:3%;}.planilla th:nth-child(2){width:24%;}.planilla th:nth-child(3){width:5%;}.planilla th:nth-child(4){width:5%;}.planilla th:nth-child(5){width:12%;}.planilla th:nth-child(6){width:5%;}.planilla th:nth-child(7){width:10%;}.planilla th:nth-child(8){width:10%;}.planilla th:nth-child(9){width:9%;}.planilla th:nth-child(10){width:9%;}.planilla th:nth-child(11){width:10%;}
+  .tot-row td{background:#fff7e5;font-weight:700;}
+
+  .foot-table{margin-top:7pt;}
+  .foot-box{width:50%;border:1px solid #dddddd;background:#f7f7f7;padding:6pt 8pt;font-size:7.3pt;vertical-align:top;line-height:1.2;}
+  .foot-box b{color:#2f2f2f;}
+  .auth-box{border:1px solid #dddddd;background:#f7f7f7;padding:7pt 8pt;font-size:7.5pt;line-height:1.22;margin-top:7pt;}
+  .auth-box b{color:#e6005a;text-transform:uppercase;}
+</style>
 </head>
 <body>
-  <div class="sheet">
-    ${letterheadTable}
-    <table style="margin-top:14px;"><tr class="section-bar">
-      <td class="lbl" style="width:65%;">Comunicación de cesión</td>
-      <td class="val">Lima, ${meta.FL}</td>
-    </tr></table>
-    <table style="margin-top:2px;"><tr><td class="info-box"><b>Señores:</b>&nbsp; ${meta.ACEP}</td></tr>
-    <tr><td class="info-box">Dirección: ${meta.DIR_ACEP}</td></tr></table>
-    <p>Presente.-</p>
-    <p>De nuestra consideración:</p>
-    <p>Por medio de la presente nos es grato saludarlos y manifestarles que hemos suscrito con TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, con RUC No. 20377892918 y domicilio en Av. Circunvalación Golf Los Incas Nro. 134, Torre 2 Piso 16, Santiago de Surco – Lima, empresa creada bajo el ámbito de la Ley General del Sistema Financiero y del Sistema de Seguros y Orgánica de la Superintendencia de Banca, Seguros y AFP; y cuyo objeto, entre otros, es financiar a las pequeñas y medianas empresas a través de operaciones de descuento y factoring, un Contrato de Descuento, en mérito del cual se ha procedido a anotar en cuenta en CAVALI y transferir a favor de dicha empresa con fecha Lima, ${meta.FLS}, el/los siguiente(s) documento(s):</p>
-    <table class="doc-table"><thead><tr><th>Nro. de documento</th></tr></thead><tbody>${cartaRows}</tbody></table>
-    <p>En ese orden de ideas, agradeceremos que todo pago que se genere o derive del documento antes mencionado sea realizado a favor de TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, en sus cuentas recaudadoras:</p>
-    <table class="accounts"><tr>
-      <td><b>Banco de Crédito del Perú</b><br>Dólares: 194-1117114-1-89<br>Soles: 193-1134731-0-28</td>
-      <td><b>BBVA Continental</b><br>Dólares: 0011-0661-0100037763<br>Soles: 0011-0661-0100037755</td>
-    </tr><tr>
-      <td><b>Scotiabank</b><br>Dólares: 000-2256011<br>Soles: 000-0654108</td>
-      <td><b>Interbank</b><br>Dólares: 205-0010107543<br>Soles: 205-0010107560</td>
-    </tr></table>
-    <p>Nuestra empresa continuará asumiendo toda obligación y/o responsabilidad que se genere dentro del desarrollo de las relaciones comerciales que ustedes mantienen.</p>
-    <p>En este sentido quedamos a su disposición para realizar cualquier coordinación que sea necesaria, en especial respecto a la mejor forma para ustedes de cumplir con lo indicado en la presente comunicación.</p>
-    <p>Sin otro particular, agradecemos la atención prestada a la presente.</p>
-    <p>Atentamente,</p>
-    <table class="sign-row" style="margin-top:40px;"><tr>
-      <td style="border-top:1px solid #333;">Firma y sello del cliente</td>
-      <td style="border-top:1px solid #333;">Recepción TOTAL Servicios Financieros</td>
-    </tr></table>
-    <div class="sheet-footer">TOTAL SERVICIOS FINANCIEROS &nbsp;•&nbsp; Gestión de descuento de facturas</div>
-  </div>
 
-  <div class="sheet">
-    <table class="page2-head" style="margin-bottom:0;page-break-before:always;mso-break-before:page;"><tr class="letterhead">
-      <td style="width:60%;"><img class="logo-img" src="${LOGO_DATA_URI}" alt="Total Servicios Financieros"></td>
-      <td style="text-align:right;">
-        <div class="doctype-title">Documentación de descuento</div>
-        <div class="doctype-sub">Total Servicios Financieros</div>
-      </td>
-    </tr></table>
-    <table><tr class="gold-rule"><td colspan="2">&nbsp;</td></tr></table>
-    <div class="doc-title">Planilla de descuento</div>
-    <table class="info-table">
-      <tr>
-        <td class="lbl">Producto / Modalidad</td>
-        <td colspan="3">Descuento sobre Facturas</td>
-        <td class="lbl">Fecha</td>
-        <td class="hl">${meta.FC}</td>
-      </tr>
-      <tr class="section-row"><td colspan="6">Información del cliente</td></tr>
-      <tr>
-        <td class="lbl">Oficial de Negocios</td>
-        <td colspan="2">${meta.FUNC}</td>
-        <td class="lbl">Planilla de</td>
-        <td colspan="2">Facturas</td>
-      </tr>
-      <tr>
-        <td class="lbl">Razón Social</td>
-        <td colspan="2">${meta.CLI}</td>
-        <td class="lbl">Moneda</td>
-        <td colspan="2">${meta.MON}</td>
-      </tr>
-      <tr>
-        <td class="lbl">RUC</td>
-        <td colspan="2">${meta.RUC_CLI}</td>
-        <td class="lbl">Domicilio</td>
-        <td colspan="2">${meta.DIR_CLI}</td>
-      </tr>
-      <tr class="plain-row"><td colspan="6"><b>Teléfono:</b> ____________________ &nbsp;&nbsp; <b>Email:</b> ____________________ &nbsp;&nbsp; <b>Contacto:</b> ____________________</td></tr>
-      <tr class="plain-row"><td colspan="6"><b>N° Cta. Cte.:</b> ____________________ &nbsp;&nbsp; <b>Banco:</b> ____________________ &nbsp; <i>(cuenta en la misma moneda de la planilla — a llenar por el cliente)</i></td></tr>
-    </table>
-    <table class="planilla">
-      <thead><tr>
-        <th>#</th><th>Nombre / Razón Social</th><th>Det.</th><th>Ret.</th><th>RUC / DNI</th><th>Aval</th>
-        <th>N° Doc.</th><th>Contacto</th><th>Teléfono</th><th>Vencimiento</th><th>Importe</th>
-      </tr></thead>
-      <tbody>
-        ${planRows}
-        <tr class="tot-row">
-          <td colspan="6"><b>Cantidad de documentos: ${meta.CNT}</b></td>
-          <td colspan="4" style="text-align:right"><b>Total</b></td>
-          <td><b>${meta.MON_SIMBOLO} ${meta.TOT}</b></td>
-        </tr>
-      </tbody>
-    </table>
-    <table><tr>
-      <td class="foot-box"><b>Consideraciones.</b> Todos los campos se deben llenar sin tachones ni enmendaduras. (d) Detracción / (e) Retención. Para Aval, Det. y Ret. marcar con X cuando corresponda.</td>
-      <td class="foot-box"><b>Disposiciones.</b> 30 días antes del vencimiento para plazas sin oficinas de TOTAL. 21 días antes del vencimiento para plazas con oficinas de TOTAL. Las disposiciones de esta Planilla se encuentran contenidas en el Contrato Marco suscrito entre TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS y el CLIENTE (Cláusula TERCERA).</td>
-    </tr></table>
-    <div class="auth-box"><b>Autorización.</b> ${meta.CLI} autoriza de manera expresa que los documentos objeto de la presente planilla, entregados con algunos campos en blanco, puedan ser completados por TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad. El(los) firmante(s) declara(n) haber leído en su integridad, encontrado conforme y aceptar todas las condiciones que constan en este documento.</div>
-    <table class="sign-row" style="margin-top:34px;"><tr>
-      <td style="border-top:1px solid #333;">Sellos y firmas autorizadas por el cliente</td>
-      <td style="border-top:1px solid #333;">Sello y firma del recibidor por Total Servicios</td>
-    </tr></table>
-    <div class="sheet-footer">TOTAL SERVICIOS FINANCIEROS &nbsp;•&nbsp; Gestión de descuento de facturas</div>
-  </div>
+<div class="CartaSection">
+  ${header}
+  <table class="section-bar"><tr><td class="lbl">COMUNICACIÓN DE CESIÓN</td><td class="val">Lima, ${meta.FL}</td></tr></table>
+  <table style="margin-top:2pt;"><tr><td class="info-box"><b>Señores:</b>&nbsp; ${meta.ACEP}</td></tr><tr><td class="info-box"><b>Dirección:</b>&nbsp; ${meta.DIR_ACEP}</td></tr></table>
+
+  <p style="margin-top:8pt;">Presente.-</p>
+  <p>De nuestra consideración:</p>
+  <p>Por medio de la presente nos es grato saludarlos y manifestarles que hemos suscrito con TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, con RUC No. 20377892918 y domicilio en Av. Circunvalación Golf Los Incas Nro. 134, Torre 2 Piso 16, Santiago de Surco – Lima, empresa creada bajo el ámbito de la Ley General del Sistema Financiero y del Sistema de Seguros y Orgánica de la Superintendencia de Banca, Seguros y AFP; y cuyo objeto, entre otros, es financiar a las pequeñas y medianas empresas a través de operaciones de descuento y factoring, un Contrato de Descuento, en mérito del cual se ha procedido a anotar en cuenta en CAVALI y transferir a favor de dicha empresa con fecha Lima, ${meta.FLS}, el/los siguiente(s) documento(s):</p>
+
+  <table class="doc-table"><thead><tr><th>NRO. DE DOCUMENTO</th></tr></thead><tbody>${cartaRows}</tbody></table>
+
+  <p>En ese orden de ideas, agradeceremos que todo pago que se genere o derive del documento antes mencionado sea realizado a favor de TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, en sus cuentas recaudadoras:</p>
+  <table class="accounts"><tr>
+    <td><b>Banco de Crédito del Perú</b><br>Dólares: 194-1117114-1-89<br>Soles: 193-1134731-0-28</td>
+    <td><b>BBVA Continental</b><br>Dólares: 0011-0661-0100037763<br>Soles: 0011-0661-0100037755</td>
+  </tr><tr>
+    <td><b>Scotiabank</b><br>Dólares: 000-2256011<br>Soles: 000-0654108</td>
+    <td><b>Interbank</b><br>Dólares: 205-0010107543<br>Soles: 205-0010107560</td>
+  </tr></table>
+
+  <p>Nuestra empresa continuará asumiendo toda obligación y/o responsabilidad que se genere dentro del desarrollo de las relaciones comerciales que ustedes mantienen.</p>
+  <p>En este sentido quedamos a su disposición para realizar cualquier coordinación que sea necesaria, en especial respecto a la mejor forma para ustedes de cumplir con lo indicado en la presente comunicación.</p>
+  <p>Sin otro particular, agradecemos la atención prestada a la presente.</p>
+  <p>Atentamente,</p>
+
+  <table class="sign-row"><tr><td>Firma y sello del cliente</td><td>Recepción TOTAL Servicios Financieros</td></tr></table>
+  <div class="sheet-footer">TOTAL SERVICIOS FINANCIEROS &nbsp;•&nbsp; Gestión de descuento de facturas</div>
+</div>
+
+<div class="PlanillaSection">
+  ${header}
+  <div class="plan-title">PLANILLA DE DESCUENTO</div>
+
+  <table class="info-table">
+    <tr><td class="lbl">Producto / Modalidad</td><td colspan="3">Descuento sobre Facturas</td><td class="lbl">Fecha</td><td class="hl">${meta.FC}</td></tr>
+    <tr class="section-row"><td colspan="6">INFORMACIÓN DEL CLIENTE</td></tr>
+    <tr><td class="lbl">Oficial de Negocios</td><td colspan="2">${meta.FUNC}</td><td class="lbl">Planilla de</td><td colspan="2">Facturas</td></tr>
+    <tr><td class="lbl">Razón Social</td><td colspan="2">${meta.CLI}</td><td class="lbl">Moneda</td><td colspan="2">${meta.MON}</td></tr>
+    <tr><td class="lbl">RUC</td><td colspan="2">${meta.RUC_CLI}</td><td class="lbl">Domicilio</td><td colspan="2">${meta.DIR_CLI}</td></tr>
+    <tr class="plain-row"><td colspan="6"><b>Teléfono:</b> ____________________ &nbsp;&nbsp;&nbsp; <b>Email:</b> ____________________ &nbsp;&nbsp;&nbsp; <b>Contacto:</b> ____________________</td></tr>
+    <tr class="plain-row"><td colspan="6"><b>N° Cta. Cte.:</b> ____________________ &nbsp;&nbsp;&nbsp; <b>Banco:</b> ____________________ &nbsp;&nbsp; <i>(cuenta en la misma moneda de la planilla — a llenar por el cliente)</i></td></tr>
+  </table>
+
+  <table class="planilla">
+    <thead><tr><th>#</th><th>Nombre / Razón Social</th><th>Det.</th><th>Ret.</th><th>RUC / DNI</th><th>Aval</th><th>N° Doc.</th><th>Contacto</th><th>Teléfono</th><th>Vencimiento</th><th>Importe</th></tr></thead>
+    <tbody>${planRows}<tr class="tot-row"><td colspan="6">Cantidad de documentos: ${meta.CNT}</td><td colspan="4" style="text-align:right;">TOTAL</td><td>${meta.MON_SIMBOLO} ${meta.TOT}</td></tr></tbody>
+  </table>
+
+  <table class="foot-table"><tr>
+    <td class="foot-box"><b>Consideraciones.</b> Todos los campos se deben llenar sin tachones ni enmendaduras. (d) Detracción / (e) Retención. Para Aval, Det. y Ret. marcar con X cuando corresponda.</td>
+    <td class="foot-box"><b>Disposiciones.</b> 30 días antes del vencimiento para plazas sin oficinas de TOTAL. 21 días antes del vencimiento para plazas con oficinas de TOTAL. Las disposiciones de esta Planilla se encuentran contenidas en el Contrato Marco suscrito entre TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS y el CLIENTE (Cláusula TERCERA).</td>
+  </tr></table>
+
+  <div class="auth-box"><b>Autorización.</b> ${meta.CLI} autoriza de manera expresa que los documentos objeto de la presente planilla, entregados con algunos campos en blanco, puedan ser completados por TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad. El(los) firmante(s) declara(n) haber leído en su integridad, encontrado conforme y aceptar todas las condiciones que constan en este documento.</div>
+  <table class="sign-row"><tr><td>Sellos y firmas autorizadas por el cliente</td><td>Sello y firma del recibidor por Total Servicios</td></tr></table>
+  <div class="sheet-footer">TOTAL SERVICIOS FINANCIEROS &nbsp;•&nbsp; Gestión de descuento de facturas</div>
+</div>
+
 </body>
 </html>`;
   }
