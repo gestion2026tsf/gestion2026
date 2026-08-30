@@ -153,6 +153,14 @@
         <label>Fecha del documento</label>
         <input type="date" id="fechaInput">
       </div>
+      <div class="field">
+        <label>N.º de cuenta corriente</label>
+        <input type="text" id="cuentaInput" placeholder="Ej. 193-1134731-0-28">
+      </div>
+      <div class="field">
+        <label>Banco</label>
+        <input type="text" id="bancoInput" placeholder="Ej. Banco de Crédito del Perú">
+      </div>
     </div>
 
     <table class="invlist" id="invTable" style="display:none">
@@ -208,6 +216,8 @@
   const statusMsg = document.getElementById('statusMsg');
   const funcInput = document.getElementById('funcInput');
   const fechaInput = document.getElementById('fechaInput');
+  const cuentaInput = document.getElementById('cuentaInput');
+  const bancoInput = document.getElementById('bancoInput');
   const resultsPanel = document.getElementById('resultsPanel');
   const tabsBar = document.getElementById('tabsBar');
   const docFrame = document.getElementById('docFrame');
@@ -441,6 +451,8 @@
     const funcionario = funcInput.value.trim() || '____________________';
     const fechaISO = fechaInput.value || new Date().toISOString().slice(0,10);
     const fecha = fmtDate(fechaISO);
+    const cuenta = cuentaInput.value.trim() || '____________________';
+    const banco = bancoInput.value.trim() || '____________________';
     const total = group.reduce((s,i) => s + i.importe, 0);
     return {
       FL: fecha,
@@ -449,6 +461,8 @@
       FLS: fecha,
       FC: fecha,
       FUNC: funcionario,
+      CTA_CTE: cuenta,
+      BANCO: banco,
       CLI: first.cliNombre,
       MON: first.currency,
       RUC_CLI: first.cliRuc,
@@ -560,7 +574,7 @@
           <td colspan="2">${meta.DIR_CLI}</td>
         </tr>
         <tr class="plain-row"><td colspan="6"><b>Teléfono:</b> ____________________ &nbsp;&nbsp; <b>Email:</b> ____________________ &nbsp;&nbsp; <b>Contacto:</b> ____________________</td></tr>
-        <tr class="plain-row"><td colspan="6"><b>N° Cta. Cte.:</b> ____________________ &nbsp;&nbsp; <b>Banco:</b> ____________________ &nbsp; <i>(cuenta en la misma moneda de la planilla — a llenar por el cliente)</i></td></tr>
+        <tr class="plain-row"><td colspan="6"><b>N° Cta. Cte.:</b> ${meta.CTA_CTE} &nbsp;&nbsp; <b>Banco:</b> ${meta.BANCO} &nbsp; <i>(cuenta en la misma moneda de la planilla)</i></td></tr>
       </table>
       <table class="planilla">
         <thead><tr>
@@ -800,7 +814,7 @@
       <tr><td class="lbl">Razón Social</td><td colspan="2">${meta.CLI}</td><td class="lbl">Moneda</td><td colspan="2">${meta.MON}</td></tr>
       <tr><td class="lbl">RUC</td><td colspan="2">${meta.RUC_CLI}</td><td class="lbl">Domicilio</td><td colspan="2">${meta.DIR_CLI}</td></tr>
       <tr class="plain-row"><td colspan="6"><b>Teléfono:</b> ____________________ &nbsp;&nbsp;&nbsp; <b>Email:</b> ____________________ &nbsp;&nbsp;&nbsp; <b>Contacto:</b> ____________________</td></tr>
-      <tr class="plain-row"><td colspan="6"><b>N° Cta. Cte.:</b> ____________________ &nbsp;&nbsp;&nbsp; <b>Banco:</b> ____________________ &nbsp;&nbsp; <i>(cuenta en la misma moneda de la planilla — a llenar por el cliente)</i></td></tr>
+      <tr class="plain-row"><td colspan="6"><b>N° Cta. Cte.:</b> ${meta.CTA_CTE} &nbsp;&nbsp;&nbsp; <b>Banco:</b> ${meta.BANCO} &nbsp;&nbsp; <i>(cuenta en la misma moneda de la planilla)</i></td></tr>
     </table>
 
     <table class="planilla" cellspacing="0" cellpadding="0">
