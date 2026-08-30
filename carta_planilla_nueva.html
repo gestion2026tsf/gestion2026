@@ -46,6 +46,50 @@
   .field label{display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px;}
   .field input, .field select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;font-family:inherit;}
   .field input:focus, .field select:focus{outline:2px solid var(--pink);outline-offset:1px;}
+  #datosGrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px 20px;
+    margin-top:18px;
+    padding:18px;
+    background:linear-gradient(135deg,#fafafa 0%,#fffdf8 100%);
+    border:1px solid var(--line);
+    border-radius:12px;
+  }
+  /* Respaldo para versiones anteriores del HTML que todavía usan class="row". */
+  .panel .row:has(#funcInput){
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+    gap:18px 20px !important;
+    width:100%;
+    padding:18px;
+    background:linear-gradient(135deg,#fafafa 0%,#fffdf8 100%);
+    border:1px solid var(--line);
+    border-radius:12px;
+  }
+  .panel .row:has(#funcInput) .field{min-width:0 !important;width:100%;}
+  .panel .row:has(#funcInput) .field input{width:100%;height:46px;}
+  #datosGrid .field{min-width:0;width:100%;}
+  #datosGrid .field label{min-height:15px;margin-bottom:7px;color:#565656;white-space:normal;}
+  #datosGrid .field input{
+    height:46px;
+    padding:10px 13px;
+    background:#fff;
+    border:1px solid #d9d9d9;
+    border-radius:9px;
+    box-shadow:0 1px 2px rgba(20,30,50,.03);
+  }
+  #datosGrid .field input:hover{border-color:#c8c8c8;}
+  #datosGrid .field input:focus{
+    outline:none;
+    border-color:var(--pink);
+    box-shadow:0 0 0 3px rgba(230,0,90,.10);
+  }
+  @media(max-width:760px){
+    #datosGrid{grid-template-columns:1fr;padding:15px;gap:15px;}
+    .panel .row:has(#funcInput){grid-template-columns:1fr !important;padding:15px;gap:15px !important;}
+    #datosGrid .field label{min-height:auto;}
+  }
   .btn{appearance:none;border:none;border-radius:9px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;}
   .btn-primary{background:var(--pink);color:#fff;}
   .btn-primary:hover{background:var(--pink-dark);}
@@ -144,7 +188,7 @@
       <input type="file" id="fileInput" accept=".xml" multiple>
     </div>
 
-    <div class="row">
+    <div class="form-grid" id="datosGrid">
       <div class="field">
         <label>Oficial de negocios / Funcionario</label>
         <input type="text" id="funcInput" placeholder="Ej. María Belén Ramírez">
