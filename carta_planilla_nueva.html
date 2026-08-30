@@ -135,6 +135,10 @@
   .accounts b{display:block;color:var(--pink);margin-bottom:2px;}
   .sign-row{display:flex;justify-content:space-between;margin-top:46px;gap:30px;}
   .sign-box{flex:1;text-align:center;font-size:11.5px;border-top:1px solid #333;padding-top:6px;}
+  .single-sign{width:52%;margin:82px auto 0;text-align:center;font-size:11.5px;border-top:1px solid #333;padding-top:7px;}
+  .signature-grid{display:grid;grid-template-columns:1fr 1fr;margin-top:18px;min-height:125px;border:1px solid #777;}
+  .signature-grid .signature-cell{display:flex;align-items:flex-end;justify-content:center;padding:12px 10px;font-size:11px;font-weight:700;text-align:center;}
+  .signature-grid .signature-cell:first-child{border-right:1px solid #777;}
   .info-table{width:100%;border-collapse:collapse;font-size:11px;margin:2px 0 14px;}
   .info-table td{border:1px solid var(--line);padding:6px 10px;vertical-align:middle;}
   .info-table td.lbl{background:var(--dark);color:#fff;font-weight:700;width:17%;font-size:10px;text-transform:uppercase;letter-spacing:.02em;}
@@ -238,7 +242,6 @@
     <div class="doc-actions">
       <button class="btn btn-gold btn-sm" id="downloadCartaBtn">⬇ Word Carta de Cesión</button>
       <button class="btn btn-primary btn-sm" id="downloadPlanillaBtn">⬇ Word Planilla de Descuento</button>
-      <button class="btn btn-ghost btn-sm" id="printBtn">🖨 Imprimir / Guardar como PDF</button>
     </div>
     <div class="warn-box">Se descargarán dos archivos Word independientes: la Carta de Cesión en vertical y la Planilla de Descuento en horizontal.</div>
     <div class="doc-frame" id="docFrame"></div>
@@ -268,7 +271,6 @@
   const docFrame = document.getElementById('docFrame');
   const downloadCartaBtn = document.getElementById('downloadCartaBtn');
   const downloadPlanillaBtn = document.getElementById('downloadPlanillaBtn');
-  const printBtn = document.getElementById('printBtn');
 
   fechaInput.value = new Date().toISOString().slice(0,10);
 
@@ -561,10 +563,7 @@
       <p>En este sentido quedamos a su disposición para realizar cualquier coordinación que sea necesaria, en especial respecto a la mejor forma para ustedes de cumplir con lo indicado en la presente comunicación.</p>
       <p>Sin otro particular, agradecemos la atención prestada a la presente.</p>
       <p>Atentamente,</p>
-      <div class="sign-row">
-        <div class="sign-box">Firma y sello del cliente</div>
-        <div class="sign-box">Recepción TOTAL Servicios Financieros</div>
-      </div>
+      <div class="single-sign">Firma del aceptante</div>
       ${SHEET_FOOTER}
     </div>`;
   }
@@ -641,9 +640,9 @@
         <div class="box"><b>Disposiciones</b>30 días antes del vencimiento para plazas sin oficinas de TOTAL. 21 días antes del vencimiento para plazas con oficinas de TOTAL. Las disposiciones de esta Planilla se encuentran contenidas en el Contrato Marco suscrito entre TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS y el CLIENTE (Cláusula TERCERA).</div>
       </div>
       <div class="auth-box"><b>Autorización.</b> ${meta.CLI} autoriza de manera expresa que los documentos objeto de la presente planilla, entregados con algunos campos en blanco, puedan ser completados por TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad. El(los) firmante(s) declara(n) haber leído en su integridad, encontrado conforme y aceptar todas las condiciones que constan en este documento.</div>
-      <div class="sign-row">
-        <div class="sign-box">Sellos y firmas autorizadas por el cliente</div>
-        <div class="sign-box">Sello y firma del recibidor por Total Servicios</div>
+      <div class="signature-grid">
+        <div class="signature-cell">Sellos y firmas autorizadas por el cliente</div>
+        <div class="signature-cell">Sello y firma del recibidor por Total Servicios</div>
       </div>
       ${SHEET_FOOTER}
     </div>`;
@@ -759,6 +758,12 @@
   .sign-row td.gap{width:6%;border-top:none;padding:0;}
   .sheet-footer{text-align:center;font-size:7.2pt;color:#777;margin-top:10pt;}
   .PlanillaSection .sign-row{margin-top:18pt;}
+  .single-sign-table{width:100%;margin-top:70pt;}
+  .single-sign-table td{border:none;text-align:center;font-size:8pt;}
+  .single-sign-table .side{width:24%;}
+  .single-sign-table .firma{width:52%;border-top:1px solid #444;padding-top:5pt;}
+  .signature-boxes{width:100%;margin-top:14pt;table-layout:fixed;}
+  .signature-boxes td{width:50%;height:82pt;border:1px solid #777;padding:8pt;text-align:center;vertical-align:bottom;font-size:7.5pt;font-weight:700;}
 
   /* PLANILLA */
   .plan-title{text-align:center;color:#e6005a;font-size:12.5pt;font-weight:800;letter-spacing:.25pt;margin:2pt 0 9pt 0;}
@@ -839,8 +844,8 @@
     <p>Sin otro particular, agradecemos la atención prestada a la presente.</p>
     <p>Atentamente,</p>
 
-    <table class="sign-row" cellspacing="0" cellpadding="0"><tr>
-      <td>Firma y sello del cliente</td><td class="gap"></td><td>Recepción TOTAL Servicios Financieros</td>
+    <table class="single-sign-table" cellspacing="0" cellpadding="0"><tr>
+      <td class="side"></td><td class="firma">Firma del aceptante</td><td class="side"></td>
     </tr></table>
     <div class="sheet-footer"><span style="color:#777777;text-decoration:none;">TOTAL SERVICIOS FINANCIEROS &nbsp;•&nbsp; Gestión de descuento de facturas</span></div>
   </td></tr></table>
@@ -880,8 +885,8 @@
 
     <div class="auth-box"><b>Autorización.</b> ${meta.CLI} autoriza de manera expresa que los documentos objeto de la presente planilla, entregados con algunos campos en blanco, puedan ser completados por TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad. El(los) firmante(s) declara(n) haber leído en su integridad, encontrado conforme y aceptar todas las condiciones que constan en este documento.</div>
 
-    <table class="sign-row" cellspacing="0" cellpadding="0"><tr>
-      <td>Sellos y firmas autorizadas por el cliente</td><td class="gap"></td><td>Sello y firma del recibidor por Total Servicios</td>
+    <table class="signature-boxes" cellspacing="0" cellpadding="0"><tr>
+      <td>Sellos y firmas autorizadas por el cliente</td><td>Sello y firma del recibidor por Total Servicios</td>
     </tr></table>
     <div class="sheet-footer"><span style="color:#777777;text-decoration:none;">TOTAL SERVICIOS FINANCIEROS &nbsp;•&nbsp; Gestión de descuento de facturas</span></div>
   </td></tr></table>
@@ -929,8 +934,6 @@
 
   downloadCartaBtn.addEventListener('click', () => descargarWord('carta'));
   downloadPlanillaBtn.addEventListener('click', () => descargarWord('planilla'));
-
-  printBtn.addEventListener('click', () => window.print());
 
 })();
 </script>
