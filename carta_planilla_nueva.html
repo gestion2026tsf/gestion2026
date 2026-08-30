@@ -146,11 +146,20 @@
   .info-table td.hl{background:var(--highlight);font-weight:700;}
   .info-table tr.section-row td{background:var(--pink);color:#fff;font-weight:800;text-transform:uppercase;font-size:10.5px;letter-spacing:.03em;text-align:left;}
   .info-table tr.plain-row td{background:#fff;font-size:10.5px;color:var(--muted);}
+  .bank-notes{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin:-6px 0 12px;padding:8px 10px;border:1px solid var(--line);border-top:none;background:#f7f7f7;font-size:10.5px;color:#555;}
   table.planilla{width:100%;border-collapse:collapse;font-size:10.3px;margin-bottom:12px;}
   table.planilla th{background:var(--dark);color:#fff;padding:5px 4px;font-size:9px;text-transform:uppercase;}
   table.planilla td{border:1px solid #d8d8d8;padding:5px 4px;text-align:center;}
   table.planilla td.left{text-align:left;}
   .tot-row td{background:var(--highlight);font-weight:700;}
+  .plan-note-row td{background:#f7f7f7;text-align:left!important;font-size:9.5px!important;font-weight:600;}
+  .fill-warning{font-size:11px;font-weight:800;margin:7px 2px 12px;}
+  .plan-section{margin-top:8px;border:1px solid var(--line);font-size:10.5px;}
+  .plan-section-title{background:#2f2f2f;color:#fff;padding:3px 7px;font-weight:800;font-family:Georgia,"Times New Roman",serif;}
+  .plan-section-body{padding:5px 7px;line-height:1.35;background:#fff;}
+  .client-highlight{background:#fff200;color:#000;font-weight:800;padding:0 2px;}
+  .client-tag{background:#23d9e6;color:#000;font-weight:800;padding:0 2px;}
+  .plan-declaration{margin:15px 4px 6px;font-size:10.5px;font-weight:800;text-transform:uppercase;line-height:1.3;}
   .foot-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:16px;font-size:10.6px;margin-top:10px;}
   .foot-grid .box{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--graybg);}
   .foot-grid .box b{display:block;color:var(--dark);margin-bottom:4px;}
@@ -622,6 +631,10 @@
         <tr class="plain-row"><td colspan="6"><b>Teléfono:</b> ____________________ &nbsp;&nbsp; <b>Email:</b> ____________________ &nbsp;&nbsp; <b>Contacto:</b> ____________________</td></tr>
         <tr class="plain-row"><td colspan="6"><b>N° Cta. Cte.:</b> ${meta.CTA_CTE} &nbsp;&nbsp; <b>Banco:</b> ${meta.BANCO} &nbsp; <i>(cuenta en la misma moneda de la planilla)</i></td></tr>
       </table>
+      <div class="bank-notes">
+        <div><b>(a)</b> Colocar Cta. Cte. en el mismo tipo de moneda que la Planilla de Facturas o Letras.</div>
+        <div><b>(b)</b> Solo Banco BCP, BBVA Continental y Scotiabank.</div>
+      </div>
       <table class="planilla">
         <thead><tr>
           <th>#</th><th>Nombre / Razón Social</th><th>Det.</th><th>Ret.</th><th>RUC / DNI</th><th>Aval</th>
@@ -629,18 +642,15 @@
         </tr></thead>
         <tbody>
           ${rows}
-          <tr class="tot-row">
-            <td colspan="6">Cantidad de documentos: ${meta.CNT}</td>
-            <td colspan="4" style="text-align:right">Total</td>
-            <td>${meta.MON_SIMBOLO} ${meta.TOT}</td>
-          </tr>
+          <tr class="plan-note-row"><td colspan="11">(d) Detracción / (e) Retención. &nbsp;&nbsp; Para (c), (d) y (e), marcar con X cuando corresponda.</td></tr>
+          <tr class="tot-row"><td colspan="6"></td><td colspan="2">Cantidad de doc.</td><td>${meta.CNT}</td><td>Total</td><td>${meta.MON_SIMBOLO} ${meta.TOT}</td></tr>
         </tbody>
       </table>
-      <div class="foot-grid">
-        <div class="box"><b>Consideraciones</b>Todos los campos se deben llenar sin tachones ni enmendaduras. (d) Detracción / (e) Retención. Para Aval, Det. y Ret. marcar con X cuando corresponda.</div>
-        <div class="box"><b>Disposiciones</b>30 días antes del vencimiento para plazas sin oficinas de TOTAL. 21 días antes del vencimiento para plazas con oficinas de TOTAL. Las disposiciones de esta Planilla se encuentran contenidas en el Contrato Marco suscrito entre TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS y el CLIENTE (Cláusula TERCERA).</div>
-      </div>
-      <div class="auth-box"><b>Autorización.</b> ${meta.CLI} autoriza de manera expresa que los documentos objeto de la presente planilla, entregados con algunos campos en blanco, puedan ser completados por TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad. El(los) firmante(s) declara(n) haber leído en su integridad, encontrado conforme y aceptar todas las condiciones que constan en este documento.</div>
+      <div class="fill-warning">Todos los campos se deben llenar sin tachones ni enmendaduras.</div>
+      <div class="plan-section"><div class="plan-section-title">Consideraciones para el período de recepción de documentos:</div><div class="plan-section-body">- 30 días antes del vencimiento para plazas donde TOTAL SERVICIOS FINANCIEROS no tenga oficinas.<br>- 21 días antes del vencimiento para plazas donde TOTAL SERVICIOS FINANCIEROS tenga oficinas.</div></div>
+      <div class="plan-section"><div class="plan-section-title">Disposiciones</div><div class="plan-section-body">Las disposiciones de esta Planilla se encuentran contenidas en el Contrato Marco suscrito entre TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS y el CLIENTE (Cláusula TERCERA del Contrato Marco).</div></div>
+      <div class="plan-section"><div class="plan-section-title">Autorización</div><div class="plan-section-body"><span class="client-highlight">${meta.CLI}</span> <span class="client-tag">- CLIENTE</span> autoriza de manera expresa que los documentos objeto de la presente planilla y que han sido entregados con algunos campos en blanco, puedan ser completados por <b>TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS</b>, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad.</div></div>
+      <div class="plan-declaration">El(los) firmante(s) declara(n) haber leído en su integridad, encontrado conforme y aceptar todas las condiciones que constan en este documento.</div>
       <div class="signature-grid">
         <div class="signature-cell">Sellos y firmas autorizadas por el cliente</div>
         <div class="signature-cell">Sello y firma del recibidor por Total Servicios</div>
@@ -779,6 +789,8 @@
   .info-table .hl{background:#fff7e5;font-weight:700;white-space:nowrap;}
   .info-table .section-row td{background:#e6005a;color:#fff;font-weight:800;text-transform:uppercase;font-size:7.6pt;letter-spacing:.12pt;padding-top:4pt;padding-bottom:4pt;}
   .info-table .plain-row td{background:#fff;font-size:7.2pt;color:#555;}
+  .bank-notes-word{width:100%;margin:0 0 7pt 0;table-layout:fixed;}
+  .bank-notes-word td{border:1px solid #d7d7d7;background:#f7f7f7;padding:4pt 6pt;font-size:7pt;line-height:1.2;color:#555;vertical-align:top;}
 
   .planilla{width:100%;table-layout:fixed;margin:7pt 0 8pt 0;}
   .planilla th{background:#2f2f2f;color:#fff;border:1px solid #2f2f2f;padding:3.5pt 2pt;font-size:6.1pt;text-transform:uppercase;font-weight:800;line-height:1.05;}
@@ -796,6 +808,12 @@
   .planilla th:nth-child(10){width:10%;}
   .planilla th:nth-child(11){width:9%;}
   .tot-row td{background:#fff7e5;font-weight:700;}
+  .plan-note-row td{background:#f7f7f7;text-align:left!important;font-size:6.6pt!important;font-weight:600;}
+  .fill-warning-word{font-size:7pt;font-weight:800;margin:4pt 0 7pt 0;}
+  .plan-section-word{width:100%;margin:4pt 0 0 0;}
+  .plan-section-word td{border:1px solid #cfcfcf;padding:3pt 5pt;font-size:6.8pt;line-height:1.25;}
+  .plan-section-word .title{background:#2f2f2f;color:#fff;font-family:Georgia,"Times New Roman",serif;font-weight:800;padding-top:2pt;padding-bottom:2pt;}
+  .plan-declaration-word{font-size:7.2pt;font-weight:800;text-transform:uppercase;line-height:1.25;margin:10pt 3pt 4pt 3pt;}
 
   .foot-table{width:100%;margin-top:8pt;}
   .foot-box{width:50%;border:1px solid #d8d8d8;background:#f7f7f7;padding:8pt 10pt;font-size:6.9pt;line-height:1.35;vertical-align:top;}
@@ -878,22 +896,27 @@
       <tr class="plain-row"><td colspan="6"><b>N° Cta. Cte.:</b> ${meta.CTA_CTE} &nbsp;&nbsp;&nbsp; <b>Banco:</b> ${meta.BANCO} &nbsp;&nbsp; <i>(cuenta en la misma moneda de la planilla)</i></td></tr>
     </table>
 
+    <table class="bank-notes-word" width="100%" cellspacing="0" cellpadding="0"><tr>
+      <td width="62%"><b>(a)</b> Colocar Cta. Cte. en el mismo tipo de moneda que la Planilla de Facturas o Letras.</td>
+      <td width="38%"><b>(b)</b> Solo Banco BCP, BBVA Continental y Scotiabank.</td>
+    </tr></table>
+
     <table class="planilla" cellspacing="0" cellpadding="0">
       <thead><tr>
         <th>#</th><th>Nombre / Razón Social</th><th>Det.</th><th>Ret.</th><th>RUC / DNI</th><th>Aval</th><th>N° Doc.</th><th>Contacto</th><th>Teléfono</th><th>Vencimiento</th><th>Importe</th>
       </tr></thead>
       <tbody>
         ${planRows}
-        <tr class="tot-row"><td colspan="6">Cantidad de documentos: ${meta.CNT}</td><td colspan="4" style="text-align:right;">TOTAL</td><td>${meta.MON_SIMBOLO} ${meta.TOT}</td></tr>
+        <tr class="plan-note-row"><td colspan="11">(d) Detracción / (e) Retención. &nbsp;&nbsp; Para (c), (d) y (e), marcar con X cuando corresponda.</td></tr>
+        <tr class="tot-row"><td colspan="6"></td><td colspan="2">Cantidad de doc.</td><td>${meta.CNT}</td><td>TOTAL</td><td>${meta.MON_SIMBOLO} ${meta.TOT}</td></tr>
       </tbody>
     </table>
 
-    <table class="foot-table" cellspacing="0" cellpadding="0"><tr>
-      <td class="foot-box"><div class="foot-title">Consideraciones</div>Todos los campos se deben llenar sin tachones ni enmendaduras. (d) Detracción / (e) Retención. Para Aval, Det. y Ret. marcar con X cuando corresponda.</td>
-      <td class="foot-box"><div class="foot-title">Disposiciones</div>30 días antes del vencimiento para plazas sin oficinas de TOTAL. 21 días antes del vencimiento para plazas con oficinas de TOTAL. Las disposiciones de esta Planilla se encuentran contenidas en el Contrato Marco suscrito entre TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS y el CLIENTE (Cláusula TERCERA).</td>
-    </tr></table>
-
-    <div class="auth-box"><b>Autorización.</b> ${meta.CLI} autoriza de manera expresa que los documentos objeto de la presente planilla, entregados con algunos campos en blanco, puedan ser completados por TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad. El(los) firmante(s) declara(n) haber leído en su integridad, encontrado conforme y aceptar todas las condiciones que constan en este documento.</div>
+    <div class="fill-warning-word">Todos los campos se deben llenar sin tachones ni enmendaduras.</div>
+    <table class="plan-section-word" cellspacing="0" cellpadding="0"><tr><td class="title">Consideraciones para el período de recepción de documentos:</td></tr><tr><td>- 30 días antes del vencimiento para plazas donde TOTAL SERVICIOS FINANCIEROS no tenga oficinas.<br>- 21 días antes del vencimiento para plazas donde TOTAL SERVICIOS FINANCIEROS tenga oficinas.</td></tr></table>
+    <table class="plan-section-word" cellspacing="0" cellpadding="0"><tr><td class="title">Disposiciones</td></tr><tr><td>Las disposiciones de esta Planilla se encuentran contenidas en el Contrato Marco suscrito entre TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS y el CLIENTE (Cláusula TERCERA del Contrato Marco).</td></tr></table>
+    <table class="plan-section-word" cellspacing="0" cellpadding="0"><tr><td class="title">Autorización</td></tr><tr><td><span style="background:#fff200;color:#000;font-weight:800;">${meta.CLI}</span> <span style="background:#23d9e6;color:#000;font-weight:800;">- CLIENTE</span> autoriza de manera expresa que los documentos objeto de la presente planilla y que han sido entregados con algunos campos en blanco, puedan ser completados por <b>TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS</b>, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad.</td></tr></table>
+    <div class="plan-declaration-word">El(los) firmante(s) declara(n) haber leído en su integridad, encontrado conforme y aceptar todas las condiciones que constan en este documento.</div>
 
     <table class="signature-boxes" cellspacing="0" cellpadding="0"><tr>
       <td>Sellos y firmas autorizadas por el cliente</td><td>Sello y firma del recibidor por Total Servicios</td>
