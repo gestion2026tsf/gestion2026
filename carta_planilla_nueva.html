@@ -154,7 +154,7 @@
   table.planilla td{border:1px solid #d8d8d8;padding:5px 4px;text-align:center;}
   table.planilla td.left{text-align:left;}
   .tot-row td{background:var(--highlight);font-weight:700;}
-  .plan-note-row td{background:#f7f7f7;text-align:left!important;font-size:9.5px!important;font-weight:700;padding:4px 7px!important;}
+  .plan-note-row td{background:#f7f7f7;text-align:left!important;font-size:9.5px!important;font-weight:400;padding:4px 7px!important;}
   .fill-warning{font-size:11px;font-weight:800;margin:7px 2px 12px;}
   .plan-section{margin-top:8px;border:1px solid var(--line);font-size:10.5px;}
   .plan-section-title{background:#2f2f2f;color:#fff;padding:3px 7px;font-weight:800;font-family:Georgia,"Times New Roman",serif;}
@@ -640,14 +640,14 @@
         </tr></thead>
         <tbody>
           ${rows}
-          <tr class="plan-note-row"><td colspan="3">(d) Detracción / (e) Retención.</td><td colspan="8">Para (c), (d) y (e), marcar con X cuando corresponda.</td></tr>
+          <tr class="plan-note-row"><td colspan="3">(d) Detracción / (e) Retención.</td><td colspan="4">Para (c), (d) y (e) Marcar con X en el caso de ser aplicable</td><td colspan="2"></td><td></td><td></td></tr>
           <tr class="tot-row"><td colspan="6"></td><td colspan="2">Cantidad de doc.</td><td>${meta.CNT}</td><td>Total</td><td>${meta.MON_SIMBOLO} ${meta.TOT}</td></tr>
         </tbody>
       </table>
       <div class="fill-warning">Todos los campos se deben llenar sin tachones ni enmendaduras.</div>
       <div class="plan-section"><div class="plan-section-title">Consideraciones para el período de recepción de documentos:</div><div class="plan-section-body">- 30 días antes del vencimiento para plazas donde TOTAL SERVICIOS FINANCIEROS no tenga oficinas.<br>- 21 días antes del vencimiento para plazas donde TOTAL SERVICIOS FINANCIEROS tenga oficinas.</div></div>
       <div class="plan-section"><div class="plan-section-title">Disposiciones</div><div class="plan-section-body">Las disposiciones de esta Planilla se encuentran contenidas en el Contrato Marco suscrito entre TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS y el CLIENTE (Cláusula TERCERA del Contrato Marco).</div></div>
-      <div class="plan-section"><div class="plan-section-title">Autorización</div><div class="plan-section-body"><span class="client-highlight">${meta.CLI}</span> <span class="client-tag">- CLIENTE</span> autoriza de manera expresa que los documentos objeto de la presente planilla y que han sido entregados con algunos campos en blanco, puedan ser completados por <b>TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS</b>, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad.</div></div>
+      <div class="plan-section"><div class="plan-section-title">Autorización</div><div class="plan-section-body"><b>${meta.CLI}</b> autoriza de manera expresa que los documentos objeto de la presente planilla y que han sido entregados con algunos campos en blanco, puedan ser completados por <b>TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS</b>, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad.</div></div>
       <div class="plan-declaration">El(los) firmante(s) declara(n) haber leído en su integridad, encontrado conforme y aceptar todas las condiciones que constan en este documento.</div>
       <div class="signature-grid">
         <div class="signature-cell">Sellos y firmas autorizadas por el cliente</div>
@@ -806,7 +806,7 @@
   .planilla th:nth-child(10){width:10%;}
   .planilla th:nth-child(11){width:9%;}
   .tot-row td{background:#fff7e5;font-weight:700;}
-  .plan-note-row td{background:#f7f7f7;text-align:left!important;font-size:8pt!important;font-weight:700;padding:4pt 5pt!important;line-height:1.15;}
+  .plan-note-row td{background:#f7f7f7;text-align:left!important;font-size:8pt!important;font-weight:400;padding:4pt 5pt!important;line-height:1.15;}
   .fill-warning-word{font-size:7pt;font-weight:800;margin:4pt 0 7pt 0;}
   .plan-section-word{width:100%;margin:4pt 0 0 0;}
   .plan-section-word td{border:1px solid #cfcfcf;padding:3pt 5pt;font-size:6.8pt;line-height:1.25;}
@@ -901,7 +901,7 @@
       </tr></thead>
       <tbody>
         ${planRows}
-        <tr class="plan-note-row"><td colspan="3">(d) Detracción / (e) Retención.</td><td colspan="8">Para (c), (d) y (e), marcar con X cuando corresponda.</td></tr>
+        <tr class="plan-note-row"><td colspan="3">(d) Detracción / (e) Retención.</td><td colspan="4">Para (c), (d) y (e) Marcar con X en el caso de ser aplicable</td><td colspan="2"></td><td></td><td></td></tr>
         <tr class="tot-row"><td colspan="6"></td><td colspan="2">Cantidad de doc.</td><td>${meta.CNT}</td><td>TOTAL</td><td>${meta.MON_SIMBOLO} ${meta.TOT}</td></tr>
       </tbody>
     </table>
@@ -909,7 +909,7 @@
     <div class="fill-warning-word">Todos los campos se deben llenar sin tachones ni enmendaduras.</div>
     <table class="plan-section-word" cellspacing="0" cellpadding="0"><tr><td class="title">Consideraciones para el período de recepción de documentos:</td></tr><tr><td>- 30 días antes del vencimiento para plazas donde TOTAL SERVICIOS FINANCIEROS no tenga oficinas.<br>- 21 días antes del vencimiento para plazas donde TOTAL SERVICIOS FINANCIEROS tenga oficinas.</td></tr></table>
     <table class="plan-section-word" cellspacing="0" cellpadding="0"><tr><td class="title">Disposiciones</td></tr><tr><td>Las disposiciones de esta Planilla se encuentran contenidas en el Contrato Marco suscrito entre TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS y el CLIENTE (Cláusula TERCERA del Contrato Marco).</td></tr></table>
-    <table class="plan-section-word" cellspacing="0" cellpadding="0"><tr><td class="title">Autorización</td></tr><tr><td><b>${meta.CLI} - CLIENTE</b> autoriza de manera expresa que los documentos objeto de la presente planilla y que han sido entregados con algunos campos en blanco, puedan ser completados por <b>TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS</b>, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad.</td></tr></table>
+    <table class="plan-section-word" cellspacing="0" cellpadding="0"><tr><td class="title">Autorización</td></tr><tr><td><b>${meta.CLI}</b> autoriza de manera expresa que los documentos objeto de la presente planilla y que han sido entregados con algunos campos en blanco, puedan ser completados por <b>TOTAL SERVICIOS FINANCIEROS EMPRESA DE CREDITOS</b>, en cuanto corresponda y de acuerdo con la Ley de la materia, bajo nuestra entera responsabilidad.</td></tr></table>
     <div class="plan-declaration-word">El(los) firmante(s) declara(n) haber leído en su integridad, encontrado conforme y aceptar todas las condiciones que constan en este documento.</div>
 
     <table class="signature-boxes" cellspacing="0" cellpadding="0"><tr>
