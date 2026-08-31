@@ -299,78 +299,36 @@
   <div class="view-panel" id="viewCompras">
   <header>
     <div class="htext">
-      <div class="eyebrow">Conciliación de compras · Papel de trabajo automatizado</div>
+      <div class="eyebrow">Conciliación de compras · PLE + SIRE + Obligaciones</div>
       <h1>Conciliador de Compras</h1>
-      <p>Replica la lógica del papel de trabajo de Flavio: cruza el PLE 8.1 del periodo contra el SIRE histórico, revisa si el comprobante ya fue anotado en un PLE anterior, usa la Lista de Obligaciones para alertas de bancos, valida los campos principales del comprobante y permite sumar los controles de detracciones y validación SUNAT. El cruce también se realiza en sentido SIRE → PLE para identificar documentos del periodo no encontrados en contabilidad.</p>
+      <p>Valida el PLE 8.1 del periodo contra el histórico SIRE de SUNAT y utiliza la Lista de Obligaciones de Sprint únicamente como apoyo para documentos bancarios. Revisa si el comprobante está registrado y, si lo está, compara RUC, proveedor, tipo, serie, correlativo, fecha de emisión, moneda, tipo de cambio, base imponible, IGV y total. También realiza el cruce SIRE → PLE para identificar comprobantes del periodo que aún no aparecen en contabilidad.</p>
     </div>
   </header>
 
   <div class="grid3" id="cardsPrincipalesC"></div>
 
-  <div class="grid3">
+  <div class="grid2">
     <div class="card" id="cardBancosC">
-      <div class="card-label">Base 3 · recomendada</div>
+      <div class="card-label">Base 3 · apoyo bancos</div>
       <div class="card-title">Lista de Obligaciones Sprint</div>
-      <p class="card-hint">Se usa especialmente para documentos de bancos cuando Sprint no conserva el correlativo correcto.</p>
+      <p class="card-hint">Se utiliza para sugerir el correlativo correcto en documentos bancarios cuando el dato de Sprint no coincide con SIRE. No modifica ningún registro automáticamente.</p>
       <label class="drop" id="dropBancosC">Haz clic o arrastra el Excel aquí
         <input type="file" id="fileBancosC" accept=".xlsx,.xls,.xlsb" />
       </label>
       <div class="footnote" id="estadoBancosC">Sin cargar.</div>
     </div>
 
-    <div class="card" id="cardPLEHistManualC">
-      <div class="card-label">Control histórico · recomendado</div>
-      <div class="card-title">TXT 8.1 Histórico</div>
-      <p class="card-hint">Si el flujo de OneDrive no lo devuelve, puedes cargar aquí el histórico PLE para detectar comprobantes anotados en periodos anteriores.</p>
-      <label class="drop" id="dropPLEHistManualC">TXT o Excel histórico
-        <input type="file" id="filePLEHistManualC" accept=".txt,.xlsx,.xls" />
-      </label>
-      <div class="footnote" id="estadoPLEHistManualC">Pendiente. Si OneDrive lo entrega, no necesitas cargarlo.</div>
-    </div>
-
-    <div class="card" id="cardTCC">
-      <div class="card-label">Control adicional</div>
-      <div class="card-title">Tipo de cambio SUNAT</div>
-      <p class="card-hint">Compara el TC registrado en Sprint contra el TC venta SUNAT de la fecha de emisión.</p>
-      <label class="drop" id="dropTCC">Haz clic o arrastra el Excel aquí
-        <input type="file" id="fileTCC" accept=".xlsx,.xls,.csv" />
-      </label>
-      <div id="configTCC" style="display:none; flex-direction:column; gap:8px;">
-        <div class="grid3" style="margin:0;">
-          <div><label class="fld">Fecha</label><select id="colFechaTCC"></select></div>
-          <div><label class="fld">Compra</label><select id="colCompraTCC"></select></div>
-          <div><label class="fld">Venta</label><select id="colVentaTCC"></select></div>
-        </div>
-      </div>
-      <div class="footnote" id="estadoTCC">Sin cargar.</div>
-    </div>
-  </div>
-
-  <div class="grid2">
-    <div class="card" id="cardDetraccionesC">
-      <div class="card-label">Control tributario · opcional</div>
-      <div class="card-title">Histórico de detracciones</div>
-      <p class="card-hint">Replica el control DETRACCIONES del papel de trabajo. Si lo cargas, identifica constancia, fecha de pago y monto asociado al comprobante.</p>
-      <label class="drop" id="dropDetraccionesC">Haz clic o arrastra el Excel aquí
-        <input type="file" id="fileDetraccionesC" accept=".xlsx,.xls,.csv" />
-      </label>
-      <div class="footnote" id="estadoDetraccionesC">Sin cargar. No bloquea la conciliación.</div>
-    </div>
-
-    <div class="card" id="cardValidacionSunatC">
-      <div class="card-label">Control SUNAT · opcional</div>
-      <div class="card-title">Validación masiva de comprobantes</div>
-      <p class="card-hint">Replica “Validacion CP”: estado del comprobante, estado del contribuyente y condición domiciliaria.</p>
-      <label class="drop" id="dropValidacionSunatC">Haz clic o arrastra el Excel aquí
-        <input type="file" id="fileValidacionSunatC" accept=".xlsx,.xls,.csv" />
-      </label>
-      <div class="footnote" id="estadoValidacionSunatC">Sin cargar. No bloquea la conciliación.</div>
+    <div class="card ready" id="cardAlcanceC">
+      <div class="card-label">Alcance definido por Flavio</div>
+      <div class="card-title">Primera validación</div>
+      <p class="card-hint">1) ¿Está el comprobante en SIRE? 2) Si está, ¿fue registrado correctamente? Se validan los campos principales y se reportan las diferencias para revisión manual.</p>
+      <div class="footnote">Detracciones y otros controles tributarios quedan para una segunda etapa.</div>
     </div>
   </div>
 
   <div class="card" id="cardTiposC" style="display:none;">
-    <div class="card-label">Tipos detectados en el PLE</div>
-    <p class="card-hint">Los tipos normalmente incluidos en propuesta SIRE quedan marcados. Si un tipo no corresponde al cruce SIRE, se informa como “No ubicado por tipo de documento”, igual que en el papel de trabajo.</p>
+    <div class="card-label">Tipos de comprobante detectados en el PLE</div>
+    <p class="card-hint">Permite identificar qué tipos corresponden al cruce con SIRE y cuáles requieren revisión especial.</p>
     <table class="tipos" id="tablaTiposC"></table>
   </div>
 
@@ -1538,8 +1496,7 @@ iniciarHistoricoTC();
 const HISTORICOS_COMPRAS_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/10/workflows/61c88400212e4da2af030c139c79509d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=iAH-S9lpDK1Bmd_CKwMM95JZ2MYVRFvKd9qslmjKRdA';
 
 const state = {
-  rce:null, sire:null, pleHistorico:null, bancos:null, detracciones:null, validacionSunat:null,
-  tc:{rows:[],headers:[],mapa:new Map(),fechaCol:null,compraCol:null,ventaCol:null},
+  rce:null, sire:null, bancos:null,
   tipos:new Map(), historicosCargando:false, historicosError:''
 };
 let lastResult=null;
@@ -1655,13 +1612,8 @@ async function cargarHistoricosCompras(){
     const sireRows=parseSIRERows(sireRaw);
     if(!sireRows.length)throw new Error('El flujo no devolvió SIRE válido.');
     state.sire={rows:sireRows,fileName:'SIRE histórico OneDrive'};
-    const pleRaw=obtenerArrayRespuesta(respuestas[0],['pleHistorico','ple','pleRows','PLEHistorico']);
-    if(pleRaw.length){
-      const pleRows=parseHistoricoDesdeObjetos(pleRaw); if(pleRows.length)state.pleHistorico={rows:pleRows,fileName:'PLE histórico OneDrive'};
-    }
     el.textContent=`${sireRows.length.toLocaleString('es-PE')} comprobantes disponibles — SIRE histórico`;
     document.getElementById('cardSIREC')?.classList.add('ready');
-    if(state.pleHistorico?.rows?.length)document.getElementById('estadoPLEHistManualC').textContent=`${state.pleHistorico.rows.length.toLocaleString('es-PE')} filas históricas recibidas desde OneDrive.`;
   }catch(e){console.error(e);state.historicosError='No se pudo consultar el SIRE histórico: '+e.message;el.textContent=state.historicosError}
   finally{state.historicosCargando=false;actualizarEstado()}
 }
@@ -1698,7 +1650,7 @@ function cargarPLEActual(file){
 }
 function detectarTipos(rows){state.tipos.clear();const c=new Map();rows.forEach(r=>c.set(r.tipoCP,(c.get(r.tipoCP)||0)+1));[...c.entries()].sort().forEach(([cod,n])=>state.tipos.set(cod,{label:tipoLabel(cod),cantidad:n,esperado:TIPOS_ESPERADOS_DEFAULT.has(cod)}));renderTipos()}
 function renderTipos(){const card=document.getElementById('cardTiposC');card.style.display='block';let h='<thead><tr><th>Tipo</th><th>Cantidad</th><th>¿Cruzar con SIRE?</th></tr></thead><tbody>';for(const [cod,x] of state.tipos){h+=`<tr><td>${esc(x.label)}</td><td class="num">${x.cantidad}</td><td><input type="checkbox" data-tipo="${cod}" ${x.esperado?'checked':''}></td></tr>`}h+='</tbody>';const t=document.getElementById('tablaTiposC');t.innerHTML=h;t.querySelectorAll('input').forEach(ch=>ch.addEventListener('change',()=>state.tipos.get(ch.dataset.tipo).esperado=ch.checked))}
-function actualizarEstado(){const listo=!!(state.rce?.rows?.length&&state.sire?.rows?.length);document.getElementById('btnProcesarC').disabled=!listo;let m='Sube el PLE del periodo. El SIRE histórico se obtiene automáticamente.';if(state.rce&&!state.sire)m=state.historicosError||'PLE cargado. Falta SIRE histórico.';if(!state.rce&&state.sire)m='SIRE conectado. Sube el PLE del periodo.';if(listo)m=state.pleHistorico?.rows?.length?'Listo: SIRE + PLE actual + PLE histórico. Puedes conciliar.':'Listo para conciliar. Para identificar anotaciones anteriores, carga TXT 8.1 Histórico si el flujo no lo entrega.';document.getElementById('statusMsgC').textContent=m}
+function actualizarEstado(){const listo=!!(state.rce?.rows?.length&&state.sire?.rows?.length);document.getElementById('btnProcesarC').disabled=!listo;let m='Sube el PLE del periodo. El SIRE histórico se obtiene automáticamente.';if(state.rce&&!state.sire)m=state.historicosError||'PLE cargado. Falta SIRE histórico.';if(!state.rce&&state.sire)m='SIRE histórico conectado. Sube el PLE del periodo.';if(listo&&state.bancos?.rows?.length)m='Listo: PLE + SIRE histórico + Lista de Obligaciones.';else if(listo)m='Listo para conciliar PLE vs SIRE. La Lista de Obligaciones solo se necesita para casos bancarios.';document.getElementById('statusMsgC').textContent=m}
 
 function iniciarBancos(){wireDrop('dropBancosC','fileBancosC',file=>{const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const arr=XLSX.utils.sheet_to_json(ws,{defval:''});const parsed=arr.map(x=>{
   let num=String(valorPorAlias(x,['NumeroDocumento','Número Documento','Nro Documento','Documento'])).trim();let serie=String(valorPorAlias(x,['Serie'])).trim(),numero=String(valorPorAlias(x,['Correlativo','Numero','Número'])).trim();if(!serie&&num.includes('-')){const p=num.lastIndexOf('-');serie=num.slice(0,p);numero=num.slice(p+1)}
@@ -1785,30 +1737,31 @@ function buscarCandidato(ple,sireRows){
 }
 
 function procesar(){
-  const ple=state.rce.rows,sire=state.sire.rows,hist=state.pleHistorico?.rows||[];
+  const ple=state.rce.rows,sire=state.sire.rows;
   const map=(rows,key='key')=>{const m=new Map();rows.forEach(r=>{const a=m.get(r[key])||[];a.push(r);m.set(r[key],a)});return m};
-  const pleMap=map(ple),sireMap=map(sire),histMap=map(hist); state.sireSet=new Set(sire.map(r=>r.key));
+  const pleMap=map(ple),sireMap=map(sire); state.sireSet=new Set(sire.map(r=>r.key));
   const periodoActual=modoPeriodo(ple.map(r=>r.periodoRegistro).filter(Boolean))||modoPeriodo(ple.map(r=>r.periodoEmision).filter(Boolean));
   const pleResultado=ple.map(r=>{
-    const esperado=state.tipos.get(r.tipoCP)?.esperado??true,duplicado=(pleMap.get(r.key)||[]).length>1,regPrev=histMap.has(r.key);
+    const esperado=state.tipos.get(r.tipoCP)?.esperado??true,duplicado=(pleMap.get(r.key)||[]).length>1;
     let sireMatch=(sireMap.get(r.key)||[])[0]||null,candidato=null,comp=null,banco=null,estado='',motivo='';
-    if(!esperado){estado='NO UBICADO';motivo='CP no incluido en propuesta por tipo de documento'}
-    else if(sireMatch){comp=comparar(r,sireMatch);estado=comp.diferencias.length?'SI — CON DIFERENCIAS':'SI';motivo=comp.diferencias.length?'FE incluida en propuesta — revisar '+comp.diferencias.join(', '):'FE incluida en propuesta'}
-    else if(regPrev){estado='REGISTRADO ANTES';motivo='CP encontrado en TXT 8.1 Histórico'}
-    else {banco=sugerirBanco(r);if(banco?.encontradaEnSIRE){sireMatch=(sireMap.get(banco.keySugerida)||[])[0]||null;comp=sireMatch?comparar({...r,serie:banco.serie,nroCP:banco.numero,key:banco.keySugerida},sireMatch):null;estado='OBSERVACIÓN BANCO';motivo='Correlativo sugerido por Lista de Obligaciones y encontrado en SIRE'}
-      else {candidato=buscarCandidato(r,sire);if(candidato){sireMatch=candidato.row;comp=comparar(r,sireMatch);estado='POSIBLE COINCIDENCIA';motivo='Revisar datos del comprobante: '+comp.diferencias.join(', ')}else if(banco){estado='OBSERVACIÓN BANCO';motivo='Correlativo sugerido por Obligaciones no encontrado en SIRE'}else{estado='NO UBICADO';motivo='CP no incluido en propuesta'}}
+    if(!esperado){estado='NO APLICA CRUCE SIRE';motivo='Tipo de documento fuera del cruce principal con SIRE'}
+    else if(sireMatch){comp=comparar(r,sireMatch);estado=comp.diferencias.length?'CONCILIADO CON DIFERENCIAS':'CONCILIADO';motivo=comp.diferencias.length?'Encontrado en SIRE — revisar '+comp.diferencias.join(', '):'Encontrado en SIRE y registrado correctamente'}
+    else {
+      banco=sugerirBanco(r);
+      if(banco?.encontradaEnSIRE){sireMatch=(sireMap.get(banco.keySugerida)||[])[0]||null;comp=sireMatch?comparar({...r,serie:banco.serie,nroCP:banco.numero,key:banco.keySugerida},sireMatch):null;estado='OBSERVACIÓN BANCO';motivo='Correlativo sugerido por Lista de Obligaciones y encontrado en SIRE'}
+      else {candidato=buscarCandidato(r,sire);if(candidato){sireMatch=candidato.row;comp=comparar(r,sireMatch);estado='POSIBLE COINCIDENCIA';motivo='Existe un posible comprobante en SIRE — revisar '+comp.diferencias.join(', ')}else if(banco){estado='OBSERVACIÓN BANCO';motivo='Correlativo sugerido por Obligaciones, pero no se encontró en SIRE'}else{estado='NO UBICADO EN SIRE';motivo='Comprobante del PLE no encontrado en SIRE'}}
     }
-    const tcS=normTxt(r.moneda)==='USD'?tcVenta(r.fechaEmision):null;const difTC=tcS!==null?Math.round((r.tipoCambio-tcS)*1000)/1000:null;
-    const detracciones=state.detracciones?.map?.get(r.key)||[];const detraccion=detracciones[0]||null;const validacionSunat=state.validacionSunat?.map?.get(r.key)||null;
-    let accion='Sin acción';if(estado==='NO UBICADO')accion='Revisar / solicitar sustento';else if(estado==='POSIBLE COINCIDENCIA'||estado==='SI — CON DIFERENCIAS')accion='Corregir o validar diferencias';else if(estado==='OBSERVACIÓN BANCO')accion='Validar correlativo en Obligaciones';else if(estado==='REGISTRADO ANTES')accion='No duplicar: revisar periodo anterior';
-    if(validacionSunat&&normTxt(validacionSunat.estadoComprobante)&&normTxt(validacionSunat.estadoComprobante)!=='ACEPTADO')accion='Revisar estado del comprobante SUNAT';
-    return {...r,esperado,duplicado,registradoAntes:regPrev,estado,motivo,sireMatch,candidato,comparacion:comp,sugerenciaBanco:banco,tcSunat:tcS,difTC,detraccion,validacionSunat,accion};
+    let accion='Sin observación';
+    if(estado==='NO UBICADO EN SIRE')accion='Revisar comprobante / sustento';
+    else if(estado==='POSIBLE COINCIDENCIA'||estado==='CONCILIADO CON DIFERENCIAS')accion='Revisar y corregir diferencias';
+    else if(estado==='OBSERVACIÓN BANCO')accion='Validar correlativo con Lista de Obligaciones';
+    else if(estado==='NO APLICA CRUCE SIRE')accion='Revisión según tipo de documento';
+    return {...r,esperado,duplicado,estado,motivo,sireMatch,candidato,comparacion:comp,sugerenciaBanco:banco,accion};
   });
   const sireResultado=sire.map(r=>{
     const duplicado=(sireMap.get(r.key)||[]).length>1;let estado='HISTÓRICO',motivo='Fuera del periodo analizado';
-    if(pleMap.has(r.key)){estado='SI';motivo='RC PLE'}
-    else if(histMap.has(r.key)){estado='SI HISTÓRICO';motivo='Registrado en periodo anterior'}
-    else if(periodoActual&&(r.periodoSIRE===periodoActual||r.periodoEmision===periodoActual)){estado='NO';motivo='No registrado en contabilidad'}
+    if(pleMap.has(r.key)){estado='REGISTRADO EN PLE';motivo='Encontrado en PLE del periodo'}
+    else if(periodoActual&&(r.periodoSIRE===periodoActual||r.periodoEmision===periodoActual)){estado='NO REGISTRADO EN PLE';motivo='Comprobante SIRE del periodo no encontrado en PLE'}
     return {...r,duplicado,estado,motivo};
   });
   return {pleResultado,sireResultado,periodoActual};
@@ -1819,35 +1772,32 @@ function marca(v){return v===undefined?'No evaluado':v?'Correcto':'Revisar'}
 
 function renderResultados(r){
   const cr=contar(r.pleResultado,'estado'),total=r.pleResultado.length;let h='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';
-  ['SI','SI — CON DIFERENCIAS','REGISTRADO ANTES','POSIBLE COINCIDENCIA','OBSERVACIÓN BANCO','NO UBICADO'].forEach(e=>{const n=cr.get(e)||0;if(!n)return;const cls=e==='SI'?'ok':e==='NO UBICADO'?'bad':'warn';h+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/total*100).toFixed(1)}%</td></tr>`});h+=`<tr><td>TOTAL PLE</td><td>${total}</td><td>100%</td></tr></tbody></table>`;document.getElementById('resumenRCEHolder').innerHTML=h;
-  const sr=r.sireResultado.filter(x=>x.estado!=='HISTÓRICO'),cs=contar(sr,'estado'),ts=sr.length||1;let hs='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';['SI','SI HISTÓRICO','NO'].forEach(e=>{const n=cs.get(e)||0;hs+=`<tr><td>${e==='NO'?'NO — No registrado en contabilidad':e}</td><td class="${e==='NO'?'bad':e==='SI'?'ok':'warn'}">${n}</td><td>${(n/ts*100).toFixed(1)}%</td></tr>`});hs+=`<tr><td>Periodo analizado</td><td>${r.periodoActual||'—'}</td><td>—</td></tr></tbody></table>`;document.getElementById('resumenSIREHolder').innerHTML=hs;
-  let ht='<table class="report"><thead><tr><th>Tipo</th><th>Cantidad</th><th>Ubicado exacto</th><th>Observado/no ubicado</th></tr></thead><tbody>';for(const [cod,info] of state.tipos){const f=r.pleResultado.filter(x=>x.tipoCP===cod),ok=f.filter(x=>x.estado==='SI').length;ht+=`<tr><td>${esc(info.label)}</td><td>${f.length}</td><td class="ok">${ok}</td><td>${f.length-ok}</td></tr>`}ht+='</tbody></table>';document.getElementById('resumenTipoHolder').innerHTML=ht;
-  const rows=r.pleResultado.slice(0,250);let body=rows.map(x=>`<tr><td>${esc(x.rucProveedor)}</td><td>${esc(x.tipoCP)}</td><td>${esc(x.serie)}</td><td>${esc(padNum(x.nroCP))}</td><td>${esc(x.fechaEmision)}</td><td>${x.totalCP.toFixed(2)}</td><td><span class="flag ${x.estado==='SI'?'ok':x.estado==='NO UBICADO'?'bad':'warn'}">${esc(x.estado)}</span></td><td>${esc(x.motivo)}</td><td>${esc(x.sugerenciaBanco?.keySugerida||'')}</td></tr>`).join('');document.getElementById('detailTableC').innerHTML='<thead><tr><th>RUC</th><th>Tipo</th><th>Serie</th><th>Correlativo</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Motivo</th><th>Sugerencia banco</th></tr></thead><tbody>'+body+'</tbody>';
+  ['CONCILIADO','CONCILIADO CON DIFERENCIAS','POSIBLE COINCIDENCIA','OBSERVACIÓN BANCO','NO UBICADO EN SIRE','NO APLICA CRUCE SIRE'].forEach(e=>{const n=cr.get(e)||0;if(!n)return;const cls=e==='CONCILIADO'?'ok':e==='NO UBICADO EN SIRE'?'bad':'warn';h+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/total*100).toFixed(1)}%</td></tr>`});h+=`<tr><td>TOTAL PLE</td><td>${total}</td><td>100%</td></tr></tbody></table>`;document.getElementById('resumenRCEHolder').innerHTML=h;
+  const sr=r.sireResultado.filter(x=>x.estado!=='HISTÓRICO'),cs=contar(sr,'estado'),ts=sr.length||1;let hs='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';['REGISTRADO EN PLE','NO REGISTRADO EN PLE'].forEach(e=>{const n=cs.get(e)||0;hs+=`<tr><td>${e}</td><td class="${e==='NO REGISTRADO EN PLE'?'bad':'ok'}">${n}</td><td>${(n/ts*100).toFixed(1)}%</td></tr>`});hs+=`<tr><td>Periodo analizado</td><td>${r.periodoActual||'—'}</td><td>—</td></tr></tbody></table>`;document.getElementById('resumenSIREHolder').innerHTML=hs;
+  let ht='<table class="report"><thead><tr><th>Tipo</th><th>Cantidad</th><th>Conciliado</th><th>Observado/no ubicado</th></tr></thead><tbody>';for(const [cod,info] of state.tipos){const f=r.pleResultado.filter(x=>x.tipoCP===cod),ok=f.filter(x=>x.estado==='CONCILIADO').length;ht+=`<tr><td>${esc(info.label)}</td><td>${f.length}</td><td class="ok">${ok}</td><td>${f.length-ok}</td></tr>`}ht+='</tbody></table>';document.getElementById('resumenTipoHolder').innerHTML=ht;
+  const rows=r.pleResultado.slice(0,250);let body=rows.map(x=>`<tr><td>${esc(x.rucProveedor)}</td><td>${esc(x.tipoCP)}</td><td>${esc(x.serie)}</td><td>${esc(padNum(x.nroCP))}</td><td>${esc(x.fechaEmision)}</td><td>${x.totalCP.toFixed(2)}</td><td><span class="flag ${x.estado==='CONCILIADO'?'ok':x.estado==='NO UBICADO EN SIRE'?'bad':'warn'}">${esc(x.estado)}</span></td><td>${esc(x.motivo)}</td><td>${esc(x.sugerenciaBanco?.keySugerida||'')}</td></tr>`).join('');document.getElementById('detailTableC').innerHTML='<thead><tr><th>RUC</th><th>Tipo</th><th>Serie</th><th>Correlativo</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Motivo</th><th>Sugerencia banco</th></tr></thead><tbody>'+body+'</tbody>';
 }
 
 document.getElementById('btnProcesarC').addEventListener('click',()=>{const b=document.getElementById('btnProcesarC');b.disabled=true;b.textContent='Conciliando…';setTimeout(()=>{lastResult=procesar();renderResultados(lastResult);document.getElementById('resultsC').classList.add('is-visible');b.disabled=false;b.textContent='Conciliar nuevamente'},10)});
 document.getElementById('btnActualizarHistoricosC').addEventListener('click',cargarHistoricosCompras);
 
 document.getElementById('btnDescargarC').addEventListener('click',()=>{
-  if(!lastResult)return;const msg=document.getElementById('downloadMsgC');msg.textContent='Generando papel de trabajo…';
+  if(!lastResult)return;const msg=document.getElementById('downloadMsgC');msg.textContent='Generando conciliación…';
   setTimeout(()=>{const wb=XLSX.utils.book_new(),r=lastResult;
-    const c=contar(r.pleResultado,'estado');const pend=r.sireResultado.filter(x=>x.estado==='NO');const bancos=r.pleResultado.filter(x=>x.sugerenciaBanco||x.estado==='OBSERVACIÓN BANCO');
-    const res=[['PAPEL DE TRABAJO — VALIDACIÓN COMPRAS'],['Lógica replicada del archivo preliminar de Flavio'],['Generado',new Date().toLocaleString('es-PE')],['Periodo PLE',r.periodoActual||''],[],['PLE → PROPUESTA SIRE'],['Resultado','Cantidad'],...[...c.entries()],['TOTAL PLE',r.pleResultado.length],[],['SIRE → PLE DEL PERIODO'],['No registrado en contabilidad',pend.length],['SIRE histórico total',r.sireResultado.length],[],['Controles usados'],['PLE actual','Sí'],['SIRE histórico','Sí'],['TXT 8.1 Histórico',state.pleHistorico?.rows?.length?'Sí':'No'],['Lista de Obligaciones',state.bancos?.rows?.length?'Sí':'No'],['TC SUNAT',state.tc.mapa.size?'Sí':'No'],['Detracciones',state.detracciones?.rows?.length?'Sí':'No'],['Validación SUNAT CP',state.validacionSunat?.rows?.length?'Sí':'No']];
-    addSheet(wb,'01 Resumen',res,[34,22]);
-    const head=['Periodo registro','CUO','RUC PLE','Proveedor PLE','Tipo PLE','Serie PLE','Correlativo PLE','Fecha PLE','Moneda PLE','TC PLE','Base PLE','IGV PLE','Total PLE','Ubicado en SIRE','Motivo','Periodo emisión','Ya en PLE histórico','RUC SIRE','Proveedor SIRE','Tipo SIRE','Serie SIRE','Correlativo SIRE','Fecha SIRE','Moneda SIRE','TC SIRE','Base SIRE','IGV SIRE','Total SIRE','RUC correcto','Proveedor correcto','Tipo correcto','Serie correcta','Correlativo correcto','Fecha correcta','Moneda correcta','TC correcto','Base correcta','IGV correcto','Total correcto','Diferencias','Sugerencia banco','Acción sugerida','Detracción encontrada','Nro constancia detracción','Fecha pago detracción','Monto detracción','Estado CP SUNAT','Estado contribuyente','Condición domiciliaria','Observación SUNAT'];
-    const a=[head];r.pleResultado.forEach(x=>{const s=x.sireMatch||{},v=x.comparacion?.validaciones||{};a.push([x.periodoRegistro,x.cuo,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo,x.periodoEmision,x.registradoAntes?'Sí':'No',s.rucProveedor||'',s.razonSocial||'',s.tipoCP||'',s.serie||'',s.nroCP?padNum(s.nroCP):'',s.fechaEmision||'',s.moneda||'',s.tipoCambio||'',s.baseImponible??'',s.igvTotal??'',s.totalCP??'',marca(v.ruc),marca(v.proveedor),marca(v.tipo),marca(v.serie),marca(v.correlativo),marca(v.fecha),marca(v.moneda),marca(v.tipoCambio),marca(v.baseImponible),marca(v.igv),marca(v.total),x.comparacion?.diferencias?.join(', ')||'',x.sugerenciaBanco?.keySugerida||'',x.accion||'',x.detraccion?'Sí':'No',x.detraccion?.constancia||'',x.detraccion?.fechaPago||'',x.detraccion?.montoDeposito??'',x.validacionSunat?.estadoComprobante||'',x.validacionSunat?.estadoContribuyente||'',x.validacionSunat?.condicionDomiciliaria||'',x.validacionSunat?.observacion||''])});addSheet(wb,'02 PLE vs SIRE',a,Array(head.length).fill(17),true);
-    const p=[['Periodo SIRE','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','Base','IGV','Total','Estado','Motivo']];pend.forEach(x=>p.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));addSheet(wb,'03 SIRE no PLE periodo',p,[13,14,34,10,12,14,14,10,14,14,14,12,28],true);
+    const c=contar(r.pleResultado,'estado');const pend=r.sireResultado.filter(x=>x.estado==='NO REGISTRADO EN PLE');const bancos=r.pleResultado.filter(x=>x.sugerenciaBanco||x.estado==='OBSERVACIÓN BANCO');
+    const res=[['CONCILIACIÓN DE COMPRAS — ALCANCE FLAVIO'],['Generado',new Date().toLocaleString('es-PE')],['Periodo PLE',r.periodoActual||''],[],['FUENTES'],['PLE 8.1 Sprint del periodo','Sí'],['SIRE histórico','Sí — automático'],['Lista de Obligaciones Sprint',state.bancos?.rows?.length?'Sí':'No'],[],['PLE → SIRE'],['Resultado','Cantidad'],...[...c.entries()],['TOTAL PLE',r.pleResultado.length],[],['SIRE → PLE DEL PERIODO'],['No registrado en PLE',pend.length],['SIRE histórico total',r.sireResultado.length]];
+    addSheet(wb,'01 Resumen',res,[38,24]);
+    const head=['Estado','Acción sugerida','Periodo registro','RUC PLE','Proveedor PLE','Tipo PLE','Serie PLE','Correlativo PLE','Fecha PLE','Moneda PLE','TC PLE','Base PLE','IGV PLE','Total PLE','RUC SIRE','Proveedor SIRE','Tipo SIRE','Serie SIRE','Correlativo SIRE','Fecha SIRE','Moneda SIRE','TC SIRE','Base SIRE','IGV SIRE','Total SIRE','RUC correcto','Proveedor correcto','Tipo correcto','Serie correcta','Correlativo correcto','Fecha correcta','Moneda correcta','TC correcto','Base correcta','IGV correcto','Total correcto','Diferencias','Sugerencia banco','Motivo'];
+    const a=[head];r.pleResultado.forEach(x=>{const ss=x.sireMatch||{},v=x.comparacion?.validaciones||{};a.push([x.estado,x.accion,x.periodoRegistro,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,ss.rucProveedor||'',ss.razonSocial||'',ss.tipoCP||'',ss.serie||'',ss.nroCP?padNum(ss.nroCP):'',ss.fechaEmision||'',ss.moneda||'',ss.tipoCambio||'',ss.baseImponible??'',ss.igvTotal??'',ss.totalCP??'',marca(v.ruc),marca(v.proveedor),marca(v.tipo),marca(v.serie),marca(v.correlativo),marca(v.fecha),marca(v.moneda),marca(v.tipoCambio),marca(v.baseImponible),marca(v.igv),marca(v.total),x.comparacion?.diferencias?.join(', ')||'',x.sugerenciaBanco?.keySugerida||'',x.motivo])});addSheet(wb,'02 PLE vs SIRE',a,Array(head.length).fill(17),true);
+    const p=[['Periodo SIRE','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Base','IGV','Total','Estado','Motivo']];pend.forEach(x=>p.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));addSheet(wb,'03 SIRE no PLE periodo',p,[13,14,34,10,12,14,14,10,10,14,14,14,20,32],true);
     const bh=[['RUC PLE','Proveedor','Tipo','Serie PLE','Correlativo PLE','Total PLE','Serie sugerida','Correlativo sugerido','Encontrado en SIRE','Llave sugerida','Motivo']];bancos.forEach(x=>bh.push([x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.totalCP,x.sugerenciaBanco?.serie||'',x.sugerenciaBanco?.numero||'',x.sugerenciaBanco?.encontradaEnSIRE?'Sí':'No',x.sugerenciaBanco?.keySugerida||'',x.motivo]));addSheet(wb,'04 Alertas Bancos',bh,[14,35,10,13,15,14,15,18,17,38,38],true);
-    const hist=[['Periodo','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha','Llave']];(state.pleHistorico?.rows||[]).forEach(x=>hist.push([x.periodoRegistro||x.periodo||'',x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision||'',x.key]));addSheet(wb,'05 TXT 8.1 Histórico',hist,[12,14,35,10,14,16,14,42],true);
-    const val=[['RUC','Proveedor','Tipo','Serie','Correlativo','Fecha','Moneda','Base','IGV','Total','Estado conciliación','Estado CP SUNAT','Estado contribuyente','Condición domiciliaria','Observación SUNAT','Acción sugerida']];r.pleResultado.forEach(x=>val.push([x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.validacionSunat?.estadoComprobante||'',x.validacionSunat?.estadoContribuyente||'',x.validacionSunat?.condicionDomiciliaria||'',x.validacionSunat?.observacion||'',x.accion||'']));addSheet(wb,'06 Validacion CP',val,[14,35,10,13,16,14,10,14,14,14,22,18,20,20,40,35],true);
-    const det=[['RUC','Proveedor','Tipo','Serie','Correlativo','Fecha pago','Monto depósito','Constancia','Estado en compras','Encontrado en PLE actual']];(state.detracciones?.rows||[]).forEach(d=>det.push([d.ruc,d.proveedor,d.tipoCP,d.serie,padNum(d.nroCP),d.fechaPago,d.montoDeposito,d.constancia,d.estadoCompras,r.pleResultado.some(x=>x.key===d.key)?'Sí':'No']));addSheet(wb,'07 Detracciones',det,[14,35,10,13,16,14,15,18,22,20],true);
-    const sh=[['Periodo','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','Base','IGV','Total','Estado vs PLE','Motivo']];r.sireResultado.forEach(x=>sh.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));addSheet(wb,'08 Propuesta SIRE',sh,[12,14,35,10,13,16,14,10,14,14,14,16,32],true);
-    const fn=`Conciliacion_Compras_Flavio_${new Date().toISOString().slice(0,10)}.xlsx`;XLSX.writeFile(wb,fn);msg.textContent='Descargado: '+fn;
+    const sh=[['Periodo','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Base','IGV','Total','Estado vs PLE','Motivo']];r.sireResultado.forEach(x=>sh.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));addSheet(wb,'05 SIRE histórico',sh,[12,14,35,10,13,16,14,10,10,14,14,14,20,32],true);
+    const fn=`Conciliacion_Compras_${new Date().toISOString().slice(0,10)}.xlsx`;XLSX.writeFile(wb,fn);msg.textContent='Descargado: '+fn;
   },30)
 });
 function addSheet(wb,name,aoa,widths,filter=false){const ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=widths.map(w=>({wch:w}));if(filter&&aoa.length)ws['!autofilter']={ref:`A1:${XLSX.utils.encode_col(aoa[0].length-1)}${aoa.length}`};XLSX.utils.book_append_sheet(wb,ws,name)}
 
-buildCardsPrincipales();iniciarBancos();iniciarHistoricoManual();iniciarTC();iniciarDetracciones();iniciarValidacionSunat();cargarHistoricosCompras();
+buildCardsPrincipales();iniciarBancos();cargarHistoricosCompras();
 })();
 </script>
 <script>
