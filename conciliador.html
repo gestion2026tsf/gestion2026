@@ -404,6 +404,1137 @@
 
 <script>
 (function(){
+const state = {
+  bases: [
+    {id:'A', label:'Premium', wb:null, sheet:null, headers:[], rows:[], rowsRaw:[], headerRowIdx:0,
+     keyMode:'single', keyCol:null, keyCol2:null, pad1:0, pad2:0, sep:'-', statusCol:null},
+    {id:'B', label:'SIRE',    wb:null, sheet:null, headers:[], rows:[], rowsRaw:[], headerRowIdx:0,
+     keyMode:'single', keyCol:null, keyCol2:null, pad1:0, pad2:0, sep:'-', statusCol:null},
+    {id:'C', label:'TCI',     wb:null, sheet:null, headers:[], rows:[], rowsRaw:[], headerRowIdx:0,
+     keyMode:'single', keyCol:null, keyCol2:null, pad1:0, pad2:0, sep:'-', statusCol:null},
+  ],
+  tipoCambio: {
+    wb:null, sheet:null, fileName:'', headers:[], rows:[], mapa:new Map(),
+    fechaCol:null, compraCol:null, ventaCol:null
+  }
+};
+
+function colLetter(i){
+  let s=''; i++;
+  while(i>0){ let m=(i-1)%26; s=String.fromCharCode(65+m)+s; i=Math.floor((i-1)/26); }
+  return s;
+}
+
+function buildCards(){
+  const holder = document.getElementById('cards');
+  holder.innerHTML = '';
+  state.bases.forEach(b=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = 'card-'+b.id;
+    card.innerHTML = `
+      <div class="card-label">Base ${b.id}</div>
+      <input type="text" value="${b.label}" data-role="label" />
+      <label class="drop" data-role="drop">
+        Haz clic o arrastra el Excel aquí
+        <input type="file" accept=".xlsx,.xls,.csv" data-role="file" />
+      </label>
+      <div data-role="config" style="display:none; flex-direction:column; gap:10px;">
+        <div>
+          <label class="fld">Hoja</label>
+          <select data-role="sheet"></select>
+        </div>
+        <div>
+          <label class="fld">Fila de encabezado (haz clic en una fila abajo, o escribe el número)</label>
+          <input type="number" min="1" value="1" data-role="headerrow" />
+        </div>
+        <div class="raw-preview"><table class="rawtbl" data-role="rawtbl"></table></div>
+        <div>
+          <label class="fld">¿Cómo es la llave del comprobante?</label>
+          <div class="keymode-row">
+            <select data-role="keymode">
+              <option value="single">Una sola columna (ej. "F002-191912")</option>
+              <option value="combine">Combinar 2 columnas (ej. Serie + Número)</option>
+            </select>
+          </div>
+        </div>
+        <div data-role="single-block">
+          <label class="fld">Columna llave</label>
+          <select data-role="keycol"></select>
+        </div>
+        <div class="combine-block" data-role="combine-block" style="display:none;">
+          <div class="combine-line">
+            <span class="tag">Serie</span>
+            <select data-role="keycol1"></select>
+            <input type="number" min="0" value="0" data-role="pad1" title="Rellenar con ceros a la izquierda hasta N dígitos (0 = no rellenar)" />
+          </div>
+          <div class="combine-line">
+            <span class="tag">Separador</span>
+            <input type="text" value="-" data-role="sep" style="flex:2; background:var(--panel); border:1px solid var(--line); color:var(--text); font-family:var(--mono); padding:6px 8px; border-radius:6px;" />
+            <span class="tag" style="width:auto;">&nbsp;</span>
+          </div>
+          <div class="combine-line">
+            <span class="tag">Número</span>
+            <select data-role="keycol2"></select>
+            <input type="number" min="0" value="0" data-role="pad2" title="Rellenar con ceros a la izquierda hasta N dígitos (0 = no rellenar)" />
+          </div>
+          <div class="footnote" style="margin:0;">El número de al lado de cada columna es cuántos dígitos rellenar con ceros a la izquierda (déjalo en 0 si no hace falta).</div>
+        </div>
+        <div>
+          <label class="fld">Columna estado (opcional, ej. Aceptado / con errores)</label>
+          <select data-role="statuscol"><option value="">— ninguna —</option></select>
+        </div>
+        <div class="footnote" style="margin:0;" data-role="keypreview"></div>
+      </div>
+    `;
+    holder.appendChild(card);
+
+    card.querySelector('[data-role="label"]').addEventListener('input', e=>{ b.label = e.target.value || b.id; updateStatus(); });
+    const dropEl = card.querySelector('[data-role="drop"]');
+    const fileInput = card.querySelector('[data-role="file"]');
+    dropEl.addEventListener('click', ()=> fileInput.click());
+    dropEl.addEventListener('dragover', e=>{ e.preventDefault(); });
+    dropEl.addEventListener('drop', e=>{
+      e.preventDefault();
+      if(e.dataTransfer.files.length){ fileInput.files = e.dataTransfer.files; handleFile(b, card, fileInput.files[0]); }
+    });
+    fileInput.addEventListener('change', ()=>{ if(fileInput.files.length) handleFile(b, card, fileInput.files[0]); });
+
+    card.querySelector('[data-role="sheet"]').addEventListener('change', e=>{ loadSheet(b, card, e.target.value); });
+    card.querySelector('[data-role="headerrow"]').addEventListener('change', e=>{
+      let v = parseInt(e.target.value,10); if(!v || v<1) v=1;
+      applyHeaderRow(b, card, v);
+    });
+    card.querySelector('[data-role="keymode"]').addEventListener('change', e=>{
+      b.keyMode = e.target.value;
+      card.querySelector('[data-role="single-block"]').style.display = b.keyMode==='single' ? 'block' : 'none';
+      card.querySelector('[data-role="combine-block"]').style.display = b.keyMode==='combine' ? 'flex' : 'none';
+      renderKeyPreview(b, card); updateStatus();
+    });
+    card.querySelector('[data-role="keycol"]').addEventListener('change', e=>{ b.keyCol = e.target.value; renderKeyPreview(b, card); updateStatus(); });
+    card.querySelector('[data-role="keycol1"]').addEventListener('change', e=>{ b.keyCol = e.target.value; renderKeyPreview(b, card); updateStatus(); });
+    card.querySelector('[data-role="keycol2"]').addEventListener('change', e=>{ b.keyCol2 = e.target.value; renderKeyPreview(b, card); updateStatus(); });
+    card.querySelector('[data-role="pad1"]').addEventListener('input', e=>{ b.pad1 = parseInt(e.target.value,10)||0; renderKeyPreview(b, card); });
+    card.querySelector('[data-role="pad2"]').addEventListener('input', e=>{ b.pad2 = parseInt(e.target.value,10)||0; renderKeyPreview(b, card); });
+    card.querySelector('[data-role="sep"]').addEventListener('input', e=>{ b.sep = e.target.value; renderKeyPreview(b, card); });
+    card.querySelector('[data-role="statuscol"]').addEventListener('change', e=>{ b.statusCol = e.target.value; });
+  });
+}
+
+function handleFile(b, card, file){
+  const reader = new FileReader();
+  reader.onload = evt=>{
+    const data = new Uint8Array(evt.target.result);
+    const wb = XLSX.read(data, {type:'array', cellDates:true});
+    b.wb = wb;
+    card.classList.add('ready');
+    card.querySelector('[data-role="drop"]').classList.add('filled');
+    card.querySelector('[data-role="drop"]').firstChild.textContent = '✓ ' + file.name;
+    card.querySelector('[data-role="config"]').style.display = 'flex';
+    const sheetSel = card.querySelector('[data-role="sheet"]');
+    sheetSel.innerHTML = wb.SheetNames.map(s=>`<option value="${s}">${s}</option>`).join('');
+    loadSheet(b, card, wb.SheetNames[0]);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function loadSheet(b, card, sheetName){
+  b.sheet = sheetName;
+  const ws = b.wb.Sheets[sheetName];
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:''});
+  b.rowsRaw = rows;
+
+  renderRawTable(b, card);
+
+  const guessIdx = guessHeaderRow(rows);
+  card.querySelector('[data-role="headerrow"]').value = guessIdx + 1;
+  applyHeaderRow(b, card, guessIdx + 1);
+}
+
+function guessHeaderRow(rows){
+  const keywordRe = /comprobante|serie|numero|número|folio|doc|fecha|estado|moneda|monto|ruc|raz|cliente|tipo/i;
+  let best = 0, bestScore = -1;
+  for(let i=0;i<Math.min(rows.length,20);i++){
+    const r = rows[i];
+    const nonEmpty = r.filter(c=> String(c).trim()!=='').length;
+    if(nonEmpty < 2) continue;
+    const kwHits = r.filter(c=> keywordRe.test(String(c))).length;
+    const numericCells = r.filter(c=> /^-?\d+(\.\d+)?$/.test(String(c).trim())).length;
+    const score = nonEmpty + kwHits*3 - numericCells*2;
+    if(score > bestScore){ bestScore = score; best = i; }
+  }
+  return best;
+}
+
+function renderRawTable(b, card){
+  const tbl = card.querySelector('[data-role="rawtbl"]');
+  const rows = b.rowsRaw.slice(0, 10);
+  const maxCols = Math.min(12, Math.max(...rows.map(r=>r.length), 1));
+  let html = '<thead><tr><th></th>' + Array.from({length:maxCols}, (_,i)=>`<th>${colLetter(i)}</th>`).join('') + '</tr></thead><tbody>';
+  rows.forEach((r,i)=>{
+    html += `<tr data-rownum="${i+1}"><td class="rownum" data-role="rownumcell">${i+1}</td>` +
+      Array.from({length:maxCols}, (_,c)=> `<td>${(r[c] ?? '')}</td>`).join('') + '</tr>';
+  });
+  html += '</tbody>';
+  tbl.innerHTML = html;
+  tbl.querySelectorAll('tr[data-rownum]').forEach(tr=>{
+    tr.querySelector('[data-role="rownumcell"]').addEventListener('click', ()=>{
+      const n = parseInt(tr.dataset.rownum,10);
+      card.querySelector('[data-role="headerrow"]').value = n;
+      applyHeaderRow(b, card, n);
+    });
+  });
+}
+
+function highlightHeaderRow(card, rowNum){
+  const tbl = card.querySelector('[data-role="rawtbl"]');
+  tbl.querySelectorAll('tr').forEach(tr=> tr.classList.remove('hdr-row'));
+  const tr = tbl.querySelector(`tr[data-rownum="${rowNum}"]`);
+  if(tr) tr.classList.add('hdr-row');
+}
+
+function looksNumericColumn(sampleRows, idx){
+  if(!sampleRows || !sampleRows.length) return true;
+  const vals = sampleRows.slice(0, 15).map(r=> String(r[idx] ?? '').trim()).filter(v=> v !== '');
+  if(!vals.length) return true;
+  const withDigits = vals.filter(v=> /\d/.test(v)).length;
+  return (withDigits / vals.length) >= 0.6;
+}
+
+function findNumIdx(headers, excludeIdx, sampleRows){
+  const patterns = [
+    /documento/i,
+    /n[°º]/i,
+    /n[uú]mero/i,
+    /\bnro\b/i,
+    /\bfolio\b/i,
+    /correlativo/i
+  ];
+  for(const re of patterns){
+    const candidates = headers
+      .map((h,i)=>({h,i}))
+      .filter(({h,i})=> i!==excludeIdx
+        && re.test(String(h))
+        && !/fecha/i.test(String(h))
+        && !/\btipo\b/i.test(String(h)));
+    for(const {i} of candidates){
+      if(looksNumericColumn(sampleRows, i)) return i;
+    }
+  }
+  return -1;
+}
+
+function applyHeaderRow(b, card, rowNum){
+  const idx = rowNum - 1;
+  const headers = b.rowsRaw[idx] || [];
+  b.headers = headers;
+  b.headerRowIdx = idx;
+  b.rows = b.rowsRaw.slice(idx+1).filter(r=> r.some(c=> String(c).trim() !== ''));
+
+  highlightHeaderRow(card, rowNum);
+
+  const keySel = card.querySelector('[data-role="keycol"]');
+  const key1Sel = card.querySelector('[data-role="keycol1"]');
+  const key2Sel = card.querySelector('[data-role="keycol2"]');
+  const statusSel = card.querySelector('[data-role="statuscol"]');
+  const opts = headers.map((h,i)=> `<option value="${i}">${colLetter(i)} — ${h || '(sin nombre)'}</option>`).join('');
+  keySel.innerHTML = opts;
+  key1Sel.innerHTML = opts;
+  key2Sel.innerHTML = opts;
+  statusSel.innerHTML = '<option value="">— ninguna —</option>' + opts;
+
+  const serieIdx = headers.findIndex(h=> /^serie/i.test(String(h).trim()) || /\bserie\b/i.test(String(h)));
+  const numIdx = findNumIdx(headers, serieIdx, b.rows);
+  const singleIdx = headers.findIndex(h=> /comprobante|n[°º]\s*documento/i.test(String(h)));
+
+  const keyModeSel = card.querySelector('[data-role="keymode"]');
+  if(serieIdx >= 0 && numIdx >= 0 && serieIdx !== numIdx){
+    b.keyMode = 'combine';
+    keyModeSel.value = 'combine';
+    card.querySelector('[data-role="single-block"]').style.display = 'none';
+    card.querySelector('[data-role="combine-block"]').style.display = 'flex';
+    b.keyCol = String(serieIdx);
+    b.keyCol2 = String(numIdx);
+    key1Sel.value = serieIdx;
+    key2Sel.value = numIdx;
+  } else {
+    b.keyMode = 'single';
+    keyModeSel.value = 'single';
+    card.querySelector('[data-role="single-block"]').style.display = 'block';
+    card.querySelector('[data-role="combine-block"]').style.display = 'none';
+    let guess = singleIdx >= 0 ? singleIdx : headers.findIndex(h=> /comprobante|serie|numero|número|folio|doc/i.test(String(h)));
+    if(guess < 0) guess = 0;
+    b.keyCol = String(guess);
+    keySel.value = guess;
+  }
+
+  const statusIdx = headers.findIndex(h=> /est\.?\s*sunat|estado/i.test(String(h)));
+  b.statusCol = statusIdx >= 0 ? String(statusIdx) : '';
+  statusSel.value = b.statusCol;
+
+  renderKeyPreview(b, card);
+  updateStatus();
+}
+
+function buildKey(b, row){
+  if(b.keyMode === 'combine'){
+    const v1 = padVal(row[parseInt(b.keyCol,10)], b.pad1);
+    const v2 = padVal(row[parseInt(b.keyCol2,10)], b.pad2);
+    return normKey(v1 + (b.sep||'') + v2);
+  }
+  return normKey(row[parseInt(b.keyCol,10)]);
+}
+
+function padVal(raw, padLen){
+  let s = String(raw ?? '').trim().replace(/\.0$/, '');
+  if(padLen > 0){
+    const digitsOnly = /^\d+$/.test(s);
+    if(digitsOnly) s = s.padStart(padLen, '0');
+  }
+  return s;
+}
+
+function renderKeyPreview(b, card){
+  const el = card.querySelector('[data-role="keypreview"]');
+  const sample = b.rows.slice(0,3).map(r=> buildKey(b, r)).filter(Boolean);
+  el.textContent = sample.length ? 'Llave de ejemplo: ' + sample.join('  ·  ') : '(sin filas de datos para previsualizar)';
+}
+
+function updateStatus(){
+  const allReady = state.bases.every(b=>{
+    if(!b.wb) return false;
+    if(b.keyMode === 'combine') return b.keyCol !== null && b.keyCol !== '' && b.keyCol2 !== null && b.keyCol2 !== '';
+    return b.keyCol !== null && b.keyCol !== '';
+  });
+  document.getElementById('btnProcesar').disabled = !allReady;
+  document.getElementById('statusMsg').textContent = allReady
+    ? 'Listo para conciliar ' + state.bases.map(b=>b.label).join(' · ')
+    : 'Sube los 3 archivos y confirma la fila de encabezado y la llave en cada uno.';
+}
+
+function normKey(v){
+  return String(v ?? '').trim().toUpperCase();
+}
+
+function extractKeyed(b){
+  const si = b.statusCol !== '' && b.statusCol != null ? parseInt(b.statusCol, 10) : null;
+  const counts = new Map();
+  const statusByKey = new Map();
+  b.rows.forEach(r=>{
+    const k = buildKey(b, r);
+    if(!k) return;
+    counts.set(k, (counts.get(k)||0)+1);
+    if(si !== null){
+      const st = String(r[si] ?? '').trim();
+      if(st){
+        const arr = statusByKey.get(k) || [];
+        if(!arr.includes(st)) arr.push(st);
+        statusByKey.set(k, arr);
+      }
+    }
+  });
+  return {counts, statusByKey};
+}
+
+let lastResult = null;
+
+document.getElementById('btnProcesar').addEventListener('click', ()=>{
+  const btn = document.getElementById('btnProcesar');
+  const results = document.getElementById('results');
+  const previousScrollY = window.scrollY;
+  btn.disabled = true;
+  btn.classList.add('is-loading');
+  btn.textContent = 'Consolidando…';
+
+  requestAnimationFrame(()=>{
+  const [A,B,C] = state.bases;
+  const exA = extractKeyed(A), exB = extractKeyed(B), exC = extractKeyed(C);
+
+  const setA = new Set(exA.counts.keys());
+  const setB = new Set(exB.counts.keys());
+  const setC = new Set(exC.counts.keys());
+
+  const dupA = [...exA.counts.values()].reduce((s,c)=> s + Math.max(0,c-1), 0);
+  const dupB = [...exB.counts.values()].reduce((s,c)=> s + Math.max(0,c-1), 0);
+  const dupC = [...exC.counts.values()].reduce((s,c)=> s + Math.max(0,c-1), 0);
+
+  const onlyA = [...setA].filter(k=> !setB.has(k) && !setC.has(k));
+  const onlyB = [...setB].filter(k=> !setA.has(k) && !setC.has(k));
+  const onlyC = [...setC].filter(k=> !setA.has(k) && !setB.has(k));
+  const AB = [...setA].filter(k=> setB.has(k) && !setC.has(k));
+  const AC = [...setA].filter(k=> setC.has(k) && !setB.has(k));
+  const BC = [...setB].filter(k=> setC.has(k) && !setA.has(k));
+  const ABC = [...setA].filter(k=> setB.has(k) && setC.has(k));
+
+  const totalOrigA = A.rows.length, totalOrigB = B.rows.length, totalOrigC = C.rows.length;
+  const reconA = ABC.length, reconB = ABC.length, reconC = ABC.length;
+
+  lastResult = {
+    A,B,C, exA,exB,exC, setA,setB,setC,
+    dupA,dupB,dupC,
+    onlyA,onlyB,onlyC, AB,AC,BC,ABC,
+    totalOrigA,totalOrigB,totalOrigC,
+    reconA,reconB,reconC
+  };
+
+  renderResults(lastResult);
+  results.classList.add('is-visible');
+
+  requestAnimationFrame(()=>{
+    window.scrollTo({top:previousScrollY, left:0, behavior:'auto'});
+    btn.classList.remove('is-loading');
+    btn.textContent = 'Conciliar nuevamente';
+    btn.disabled = false;
+  });
+  });
+});
+
+function renderResults(r){
+  renderVenn(r);
+  renderSummaryTable(r);
+  renderDetailPreview(r);
+}
+
+function renderVenn(r){
+  const {A,B,C} = r;
+  const w=340,h=280;
+  const cx=[130,210,170], cy=[110,110,175], rad=95;
+  const svg = `
+  <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+    <circle cx="${cx[0]}" cy="${cy[0]}" r="${rad}" fill="#E6005A" fill-opacity="0.14" stroke="#E6005A" stroke-opacity="0.6"/>
+    <circle cx="${cx[1]}" cy="${cy[1]}" r="${rad}" fill="#F9AE00" fill-opacity="0.16" stroke="#F9AE00" stroke-opacity="0.6"/>
+    <circle cx="${cx[2]}" cy="${cy[2]}" r="${rad}" fill="#241B4D" fill-opacity="0.10" stroke="#241B4D" stroke-opacity="0.5"/>
+    <text x="${cx[0]-70}" y="${cy[0]-70}" fill="#E6005A" font-family="IBM Plex Mono" font-size="12" font-weight="700">${A.label}</text>
+    <text x="${cx[1]+45}" y="${cy[1]-70}" fill="#C98600" font-family="IBM Plex Mono" font-size="12" font-weight="700">${B.label}</text>
+    <text x="${cx[2]-14}" y="${cy[2]+108}" fill="#241B4D" font-family="IBM Plex Mono" font-size="12" font-weight="700">${C.label}</text>
+    <text x="${cx[0]-38}" y="${cy[0]-10}" fill="#241522" font-family="IBM Plex Mono" font-size="14" font-weight="700">${r.onlyA.length}</text>
+    <text x="${cx[1]+18}" y="${cy[1]-10}" fill="#241522" font-family="IBM Plex Mono" font-size="14" font-weight="700">${r.onlyB.length}</text>
+    <text x="${cx[2]-8}" y="${cy[2]+55}" fill="#241522" font-family="IBM Plex Mono" font-size="14" font-weight="700">${r.onlyC.length}</text>
+    <text x="${(cx[0]+cx[1])/2-8}" y="${cy[0]-40}" fill="#241522" font-family="IBM Plex Mono" font-size="13" font-weight="700">${r.AB.length}</text>
+    <text x="${cx[0]-2}" y="${(cy[0]+cy[2])/2+20}" fill="#241522" font-family="IBM Plex Mono" font-size="13" font-weight="700">${r.AC.length}</text>
+    <text x="${cx[1]-14}" y="${(cy[1]+cy[2])/2+20}" fill="#241522" font-family="IBM Plex Mono" font-size="13" font-weight="700">${r.BC.length}</text>
+    <text x="${(cx[0]+cx[1])/2-10}" y="${(cy[0]+cy[2])/2-5}" fill="#1E9E72" font-family="IBM Plex Mono" font-size="15" font-weight="700">${r.ABC.length}</text>
+  </svg>`;
+  document.getElementById('vennSvgHolder').innerHTML = svg;
+
+  const legend = document.getElementById('vennLegend');
+  legend.innerHTML = `
+    <div class="row good"><span>En las 3 bases (conciliado)</span><span>${r.ABC.length}</span></div>
+    <div class="row warn"><span>Solo en ${r.A.label}</span><span>${r.onlyA.length}</span></div>
+    <div class="row warn"><span>Solo en ${r.B.label}</span><span>${r.onlyB.length}</span></div>
+    <div class="row warn"><span>Solo en ${r.C.label}</span><span>${r.onlyC.length}</span></div>
+    <div class="row"><span>${r.A.label} + ${r.B.label}, no ${r.C.label}</span><span>${r.AB.length}</span></div>
+    <div class="row"><span>${r.A.label} + ${r.C.label}, no ${r.B.label}</span><span>${r.AC.length}</span></div>
+    <div class="row"><span>${r.B.label} + ${r.C.label}, no ${r.A.label}</span><span>${r.BC.length}</span></div>
+  `;
+}
+
+function renderSummaryTable(r){
+  const rows = [
+    {label:r.A.label, orig:r.totalOrigA, dup:r.dupA, only:r.onlyA.length, recon:r.reconA},
+    {label:r.B.label, orig:r.totalOrigB, dup:r.dupB, only:r.onlyB.length, recon:r.reconB},
+    {label:r.C.label, orig:r.totalOrigC, dup:r.dupC, only:r.onlyC.length, recon:r.reconC},
+  ];
+  const html = `
+  <table class="report">
+    <thead><tr>
+      <th>Base</th><th>Filas totales</th><th>Duplicados internos</th><th>Solo en esta base</th><th>Total conciliado (en las 3)</th>
+    </tr></thead>
+    <tbody>
+      ${rows.map(row=>`
+        <tr>
+          <td>${row.label}</td>
+          <td>${row.orig}</td>
+          <td class="${row.dup>0?'neg':''}">${row.dup>0? '−'+row.dup : 0}</td>
+          <td class="${row.only>0?'hi':''}">${row.only}</td>
+          <td class="ok">${row.recon}</td>
+        </tr>`).join('')}
+    </tbody>
+  </table>`;
+  document.getElementById('summaryTableHolder').innerHTML = html;
+}
+
+function renderDetailPreview(r){
+  const allKeys = new Set([...r.setA, ...r.setB, ...r.setC]);
+  const keys = [...allKeys].sort((a,b)=>a.localeCompare(b, 'es', {numeric:true})).slice(0,200);
+  const table = document.getElementById('detailTable');
+  const hasStatusA = r.A.statusCol !== '' && r.A.statusCol != null;
+  const hasStatusB = r.B.statusCol !== '' && r.B.statusCol != null;
+  const hasStatusC = r.C.statusCol !== '' && r.C.statusCol != null;
+  let head = `<tr><th>Llave</th><th>${r.A.label}</th><th>${r.B.label}</th><th>${r.C.label}</th>`;
+  if(hasStatusA) head += `<th>Estado ${r.A.label}</th>`;
+  if(hasStatusB) head += `<th>Estado ${r.B.label}</th>`;
+  if(hasStatusC) head += `<th>Estado ${r.C.label}</th>`;
+  head += `<th>Coincidencia</th></tr>`;
+
+  const bodyRows = keys.map(k=>{
+    const inA = r.setA.has(k), inB = r.setB.has(k), inC = r.setC.has(k);
+    const n = [inA,inB,inC].filter(Boolean).length;
+    const match = n===3 ? 'Completa' : n===2 ? 'Parcial (2/3)' : 'Solo 1 base';
+    let row = `<tr><td>${k}</td>
+      <td><span class="flag ${inA?'si':'no'}">${inA?'Sí':'No'}</span></td>
+      <td><span class="flag ${inB?'si':'no'}">${inB?'Sí':'No'}</span></td>
+      <td><span class="flag ${inC?'si':'no'}">${inC?'Sí':'No'}</span></td>`;
+    if(hasStatusA) row += `<td>${(r.exA.statusByKey.get(k)||[]).join(', ')}</td>`;
+    if(hasStatusB) row += `<td>${(r.exB.statusByKey.get(k)||[]).join(', ')}</td>`;
+    if(hasStatusC) row += `<td>${(r.exC.statusByKey.get(k)||[]).join(', ')}</td>`;
+    row += `<td>${match}</td></tr>`;
+    return row;
+  }).join('');
+
+  table.innerHTML = `<thead>${head}</thead><tbody>${bodyRows}</tbody>`;
+}
+
+document.getElementById('btnDescargar').addEventListener('click', ()=>{
+  if(!lastResult){ return; }
+  const r = lastResult;
+  const msg = document.getElementById('downloadMsg');
+  msg.textContent = 'Generando archivo…';
+
+  setTimeout(()=>{
+    const wb = XLSX.utils.book_new();
+
+    const resumenAOA = [
+      ['Conciliación de Comprobantes'],
+      ['Generado', new Date().toLocaleString('es-PE')],
+      [],
+      ['Base','Filas totales','Duplicados internos','Solo en esta base','Total conciliado (en las 3)'],
+      [r.A.label, r.totalOrigA, r.dupA, r.onlyA.length, r.reconA],
+      [r.B.label, r.totalOrigB, r.dupB, r.onlyB.length, r.reconB],
+      [r.C.label, r.totalOrigC, r.dupC, r.onlyC.length, r.reconC],
+      [],
+      ['Cruce entre bases','Cantidad'],
+      [`En las 3 bases`, r.ABC.length],
+      [`${r.A.label} + ${r.B.label}, no ${r.C.label}`, r.AB.length],
+      [`${r.A.label} + ${r.C.label}, no ${r.B.label}`, r.AC.length],
+      [`${r.B.label} + ${r.C.label}, no ${r.A.label}`, r.BC.length],
+      [`Solo en ${r.A.label}`, r.onlyA.length],
+      [`Solo en ${r.B.label}`, r.onlyB.length],
+      [`Solo en ${r.C.label}`, r.onlyC.length],
+    ];
+    const wsResumen = XLSX.utils.aoa_to_sheet(resumenAOA);
+    XLSX.utils.book_append_sheet(wb, wsResumen, 'Resumen');
+
+    const allKeys = [...new Set([...r.setA, ...r.setB, ...r.setC])].sort();
+    const hasStatusA = r.A.statusCol !== '' && r.A.statusCol != null;
+    const hasStatusB = r.B.statusCol !== '' && r.B.statusCol != null;
+    const hasStatusC = r.C.statusCol !== '' && r.C.statusCol != null;
+
+    const header = ['Llave', `En ${r.A.label}`, `Dup. en ${r.A.label}`, `En ${r.B.label}`, `Dup. en ${r.B.label}`, `En ${r.C.label}`, `Dup. en ${r.C.label}`];
+    if(hasStatusA) header.push(`Estado ${r.A.label}`);
+    if(hasStatusB) header.push(`Estado ${r.B.label}`);
+    if(hasStatusC) header.push(`Estado ${r.C.label}`);
+    header.push('Coincidencia');
+
+    const detalleAOA = [header];
+    allKeys.forEach(k=>{
+      const inA = r.setA.has(k), inB = r.setB.has(k), inC = r.setC.has(k);
+      const cA = r.exA.counts.get(k)||0, cB = r.exB.counts.get(k)||0, cC = r.exC.counts.get(k)||0;
+      const n = [inA,inB,inC].filter(Boolean).length;
+      const match = n===3 ? 'Completa' : n===2 ? 'Parcial (2/3)' : 'Solo 1 base';
+      const row = [k, inA?'Sí':'No', Math.max(0,cA-1), inB?'Sí':'No', Math.max(0,cB-1), inC?'Sí':'No', Math.max(0,cC-1)];
+      if(hasStatusA) row.push((r.exA.statusByKey.get(k)||[]).join(', '));
+      if(hasStatusB) row.push((r.exB.statusByKey.get(k)||[]).join(', '));
+      if(hasStatusC) row.push((r.exC.statusByKey.get(k)||[]).join(', '));
+      row.push(match);
+      detalleAOA.push(row);
+    });
+    const wsDetalle = XLSX.utils.aoa_to_sheet(detalleAOA);
+    XLSX.utils.book_append_sheet(wb, wsDetalle, 'Detalle');
+
+    // Premium sheet: copia completa de la base A con controles adicionales.
+    // Se agregan controles con valores cacheados y formulas visibles en Excel:
+    // 1) VAL_SERI después de Documento_8.
+    // 2) REV IGV, % IGV y VARIACIÓN después de ImpGnrlVenta_16,
+    //    calculados usando BaseImponible_OperGrav_14.
+    const premiumHeadersOriginal = r.A.headers.map(h=> String(h ?? '').trim());
+    const normHeader = h=> String(h ?? '')
+      .trim()
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/\s+/g,'')
+      .replace(/[^a-z0-9_]/g,'');
+
+    const normalizedHeaders = premiumHeadersOriginal.map(normHeader);
+    const findHeader = candidates => normalizedHeaders.findIndex(h =>
+      candidates.some(c => h === c || h.startsWith(c) || h.includes(c))
+    );
+
+    const docIdx = findHeader(['documento_','documento']);
+    const serieIdx = findHeader(['serie_7','serie7']);
+    const baseIdx = findHeader([
+      'baseimponible_opergrav_' ,
+      'baseimponible_opergrav' 
+    ]);
+    const igvIdx = findHeader([
+      'impgnrlventa_' ,
+      'impgnrlventa' 
+    ]);
+
+    // Campos para validacion de tipo de cambio.
+    // Se detectan por nombre para no depender de la posicion fija del reporte Premium.
+    const monedaIdx = findHeader(['moneda_25','moneda25','moneda_','moneda']);
+    const tcRegistradoIdx = findHeader(['tc_26','tc26','tipocambio_26','tipocambio26']);
+    const fechaEmisionIdx = normalizedHeaders.findIndex(h =>
+      (h.startsWith('fechaemision') || h.startsWith('fechaemi_'))
+      && !h.includes('comp_pag') && !h.includes('comppag') && !h.includes('pago')
+    );
+    const fechaOrigenIdx = normalizedHeaders.findIndex(h =>
+      h.includes('fechaemicomp_pag') || h.includes('fechaemicomppag')
+      || h.includes('fechaemisioncomprobantepago') || h.includes('fechaemisioncomppag')
+    );
+    const tipoDocumentoIdx = normalizedHeaders.findIndex(h =>
+      (h.startsWith('tipocomp') || h.startsWith('tipodoc') || h.startsWith('tipodocumento'))
+      && !h.includes('pag') && !h.includes('pago')
+    );
+
+    const toNumber = value => {
+      if(typeof value === 'number' && Number.isFinite(value)) return value;
+      if(value === null || value === undefined || value === '') return 0;
+      let text = String(value).trim();
+      if(!text || text === '-') return 0;
+      text = text.replace(/\s/g,'');
+      // Admite 1,234.56 y 1.234,56.
+      if(text.includes(',') && text.includes('.')){
+        if(text.lastIndexOf(',') > text.lastIndexOf('.')){
+          text = text.replace(/\./g,'').replace(',','.');
+        }else{
+          text = text.replace(/,/g,'');
+        }
+      }else if(text.includes(',')){
+        const parts = text.split(',');
+        text = parts.length === 2 && parts[1].length <= 2
+          ? parts[0].replace(/\./g,'') + '.' + parts[1]
+          : text.replace(/,/g,'');
+      }
+      const n = Number(text);
+      return Number.isFinite(n) ? n : 0;
+    };
+
+    const round2 = n => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
+    const round3 = n => Math.round((Number(n) + Number.EPSILON) * 1000) / 1000;
+
+    const clasificarMoneda = value => {
+      const m = String(value ?? '').trim().toUpperCase();
+      if(m === 'USD' || m.includes('DOL')) return 'USD';
+      if(m === 'PEN' || m === 'S/' || m.includes('SOL')) return 'PEN';
+      return m;
+    };
+    const esNotaCreditoDebito = value => {
+      const raw = String(value ?? '').trim();
+      const num = raw.replace(/^0+/, '');
+      return num === '7' || num === '8' || /nota\s*de\s*credito|nota\s*de\s*debito/i.test(raw);
+    };
+    const tcVentaPorFecha = fecha => {
+      const dato = obtenerTipoCambioSUNAT(fecha);
+      // Si no existe la fecha en el historico, dejar vacio para que el error sea visible.
+      return dato && Number.isFinite(dato.venta) ? dato.venta : '';
+    };
+
+    // Convierte cualquier fecha de Premium al NUMERO DE SERIE DE EXCEL (entero).
+    // Esto evita por completo que Excel/Windows reinterprete dd/mm como mm/dd.
+    // Ejemplo: 06/07/2026 siempre queda como el serial correspondiente a 6-jul-2026.
+    const fechaAExcelSerial = value => {
+      const k = normalizarFechaTC(value);
+      if(!k) return String(value ?? '').trim();
+      const m = k.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if(!m) return String(value ?? '').trim();
+      const y = Number(m[1]), mes = Number(m[2]), d = Number(m[3]);
+      return Math.floor(Date.UTC(y, mes - 1, d) / 86400000) + 25569;
+    };
+
+    const premiumHeaders = [];
+    let valSeriOutIdx = -1, revIgvOutIdx = -1, pctIgvOutIdx = -1, variacionOutIdx = -1;
+    let tcGeneralOutIdx = -1, difTcGeneralOutIdx = -1, tcEspecificoOutIdx = -1, difTcEspecificoOutIdx = -1;
+
+    premiumHeadersOriginal.forEach((h, originalIdx)=>{
+      premiumHeaders.push(h || `Columna_${originalIdx+1}`);
+
+      if(originalIdx === docIdx){
+        valSeriOutIdx = premiumHeaders.length;
+        premiumHeaders.push('VAL_SERI');
+      }
+      if(originalIdx === igvIdx){
+        revIgvOutIdx = premiumHeaders.length;
+        premiumHeaders.push('REV IGV');
+        pctIgvOutIdx = premiumHeaders.length;
+        premiumHeaders.push('% IGV');
+        variacionOutIdx = premiumHeaders.length;
+        premiumHeaders.push('VARIACIÓN');
+      }
+      if(originalIdx === tcRegistradoIdx){
+        tcGeneralOutIdx = premiumHeaders.length;
+        premiumHeaders.push('Tipo de Cambio General');
+        difTcGeneralOutIdx = premiumHeaders.length;
+        premiumHeaders.push('DIF TIPO DE CAMBIO GENERAL');
+      }
+      if(originalIdx === fechaOrigenIdx){
+        tcEspecificoOutIdx = premiumHeaders.length;
+        premiumHeaders.push('Tipo de Cambio Especifico');
+        difTcEspecificoOutIdx = premiumHeaders.length;
+        premiumHeaders.push('DIF TIPO DE CAMBIO ESPECIFICO');
+      }
+    });
+
+    // Si algun encabezado cambia y no se encontro la posicion esperada,
+    // igual se crean las cuatro columnas al final para que nunca desaparezcan del reporte.
+    if(tcGeneralOutIdx < 0){
+      tcGeneralOutIdx = premiumHeaders.length; premiumHeaders.push('Tipo de Cambio General');
+      difTcGeneralOutIdx = premiumHeaders.length; premiumHeaders.push('DIF TIPO DE CAMBIO GENERAL');
+    }
+    if(tcEspecificoOutIdx < 0){
+      tcEspecificoOutIdx = premiumHeaders.length; premiumHeaders.push('Tipo de Cambio Especifico');
+      difTcEspecificoOutIdx = premiumHeaders.length; premiumHeaders.push('DIF TIPO DE CAMBIO ESPECIFICO');
+    }
+
+    const premiumAOA = [premiumHeaders];
+    let previousDocument = null;
+    let previousSerie = null;
+
+    r.A.rows.forEach((srcRow, rowIndex)=>{
+      const currentDocument = docIdx >= 0 ? toNumber(srcRow[docIdx]) : 0;
+      const currentSerie = serieIdx >= 0 ? String(srcRow[serieIdx] ?? '').trim() : '';
+
+      let valSerie = '';
+      if(docIdx >= 0 && currentDocument !== 0){
+        // La primera fila o el inicio de una serie nueva se valida como 1.
+        if(previousDocument === null || (serieIdx >= 0 && currentSerie !== previousSerie)){
+          valSerie = 1;
+        }else{
+          valSerie = currentDocument - previousDocument;
+        }
+      }
+
+      const baseImponible = baseIdx >= 0 ? toNumber(srcRow[baseIdx]) : 0;
+      const igvRegistrado = igvIdx >= 0 ? toNumber(srcRow[igvIdx]) : 0;
+      const revIgv = round2(baseImponible * 0.18);
+      const pctIgv = baseImponible !== 0 ? igvRegistrado / baseImponible : 0;
+      const variacion = round2(igvRegistrado - revIgv);
+
+      // Validacion de tipo de cambio solicitada por Contabilidad:
+      // - TC General: USD usa TC venta SUNAT de la fecha de emision; PEN = 1.
+      // - TC Especifico: solo para NC/ND (tipos 7 y 8), usando la fecha del comprobante origen.
+      const moneda = monedaIdx >= 0 ? clasificarMoneda(srcRow[monedaIdx]) : '';
+      const tcRegistrado = tcRegistradoIdx >= 0 ? toNumber(srcRow[tcRegistradoIdx]) : 0;
+      const fechaEmision = fechaEmisionIdx >= 0 ? srcRow[fechaEmisionIdx] : '';
+      const fechaOrigen = fechaOrigenIdx >= 0 ? srcRow[fechaOrigenIdx] : '';
+      const esNota = tipoDocumentoIdx >= 0 ? esNotaCreditoDebito(srcRow[tipoDocumentoIdx]) : false;
+
+      let tcGeneral = '';
+      if(moneda === 'PEN') tcGeneral = 1;
+      else if(moneda === 'USD') tcGeneral = tcVentaPorFecha(fechaEmision);
+      const difTcGeneral = tcGeneral === '' ? '' : round3(tcRegistrado - Number(tcGeneral));
+
+      let tcEspecifico = '';
+      let difTcEspecifico = '';
+      if(esNota){
+        if(moneda === 'PEN') tcEspecifico = 1;
+        else if(moneda === 'USD') tcEspecifico = tcVentaPorFecha(fechaOrigen);
+        if(tcEspecifico !== '') difTcEspecifico = round3(tcRegistrado - Number(tcEspecifico));
+      }
+
+      const outRow = [];
+      premiumHeadersOriginal.forEach((_, originalIdx)=>{
+        const rawValue = srcRow[originalIdx] ?? '';
+        outRow.push(
+          (originalIdx === fechaEmisionIdx || originalIdx === fechaOrigenIdx)
+            ? fechaAExcelSerial(rawValue)
+            : rawValue
+        );
+        if(originalIdx === docIdx) outRow.push(valSerie);
+        if(originalIdx === igvIdx) outRow.push(revIgv, pctIgv, variacion);
+        if(originalIdx === tcRegistradoIdx) outRow.push(tcGeneral, difTcGeneral);
+        if(originalIdx === fechaOrigenIdx) outRow.push(tcEspecifico, difTcEspecifico);
+      });
+      // Fallback: encabezados no detectados -> columnas creadas al final.
+      if(tcRegistradoIdx < 0) outRow.push(tcGeneral, difTcGeneral);
+      if(fechaOrigenIdx < 0) outRow.push(tcEspecifico, difTcEspecifico);
+      premiumAOA.push(outRow);
+
+      if(currentDocument !== 0){
+        previousDocument = currentDocument;
+        previousSerie = currentSerie;
+      }
+    });
+
+    const wsPremium = XLSX.utils.aoa_to_sheet(premiumAOA, {cellDates:true});
+    const excelCol = idx=> XLSX.utils.encode_col(idx);
+
+    // Fórmulas directas en Excel para garantizar que nunca queden vacías.
+    // Se usan las posiciones reales de las columnas, aunque cambie el número final del encabezado.
+    const originalToOutput = new Map();
+    let outPos = 0;
+    premiumHeadersOriginal.forEach((_, originalIdx)=>{
+      originalToOutput.set(originalIdx, outPos);
+      outPos += 1;
+      if(originalIdx === docIdx) outPos += 1;
+      if(originalIdx === igvIdx) outPos += 3;
+      if(originalIdx === tcRegistradoIdx) outPos += 2;
+      if(originalIdx === fechaOrigenIdx) outPos += 2;
+    });
+
+    const docOutIdx = originalToOutput.get(docIdx);
+    const serieOutIdx = serieIdx >= 0 ? originalToOutput.get(serieIdx) : -1;
+    const baseOutIdx = originalToOutput.get(baseIdx);
+    const igvOutIdx = originalToOutput.get(igvIdx);
+    const monedaOutIdx = monedaIdx >= 0 ? originalToOutput.get(monedaIdx) : -1;
+    const tcRegistradoOutIdx = tcRegistradoIdx >= 0 ? originalToOutput.get(tcRegistradoIdx) : -1;
+    const fechaEmisionOutIdx = fechaEmisionIdx >= 0 ? originalToOutput.get(fechaEmisionIdx) : -1;
+    const fechaOrigenOutIdx = fechaOrigenIdx >= 0 ? originalToOutput.get(fechaOrigenIdx) : -1;
+    const tipoDocumentoOutIdx = tipoDocumentoIdx >= 0 ? originalToOutput.get(tipoDocumentoIdx) : -1;
+
+    // Fuerza la visualizacion de fechas como dd/mm/aaaa en Premium.
+    // Aunque Windows/Excel este en configuracion regional de EE.UU.,
+    // la celda conserva el dia, mes y anio correctos.
+    [fechaEmisionOutIdx, fechaOrigenOutIdx].filter(idx=>idx >= 0).forEach(colIdx=>{
+      const col = excelCol(colIdx);
+      for(let excelRow=2; excelRow<=premiumAOA.length; excelRow++){
+        const ref = `${col}${excelRow}`;
+        if(wsPremium[ref] && (wsPremium[ref].t === 'd' || wsPremium[ref].t === 'n')){
+          wsPremium[ref].z = 'dd/mm/yyyy';
+        }
+      }
+    });
+
+    // La fecha ya se exporta como serial entero de Excel. Para BUSCARV usamos INT(ref),
+    // de modo que el cruce sea exacto y no dependa del idioma/formato regional de Excel.
+    // Si excepcionalmente llega texto, se interpreta SIEMPRE como dd/mm/aaaa.
+    const formulaFechaLookup = ref => {
+      const limpio = `TRIM(${ref}&"")`;
+      const p1 = `FIND("/",${limpio})`;
+      const p2 = `FIND("/",${limpio},${p1}+1)`;
+      const dia = `VALUE(LEFT(${limpio},${p1}-1))`;
+      const mes = `VALUE(MID(${limpio},${p1}+1,${p2}-${p1}-1))`;
+      const anio = `VALUE(RIGHT(${limpio},LEN(${limpio})-${p2}))`;
+      return `IF(${ref}="","",IF(ISNUMBER(${ref}),INT(${ref}),IFERROR(DATE(${anio},${mes},${dia}),"")))`;
+    };
+
+    for(let excelRow=2; excelRow<=premiumAOA.length; excelRow++){
+      // VAL_SERI: documento actual menos documento anterior.
+      if(valSeriOutIdx >= 0 && docOutIdx >= 0){
+        const ref = `${excelCol(valSeriOutIdx)}${excelRow}`;
+        const docActual = `${excelCol(docOutIdx)}${excelRow}`;
+        if(excelRow === 2){
+          wsPremium[ref] = {t:'n', v:0, f:`IF(${docActual}="","",0)`, z:'0'};
+        }else{
+          const docAnterior = `${excelCol(docOutIdx)}${excelRow-1}`;
+          let formula = `IF(OR(${docActual}="",${docAnterior}=""),"",${docActual}-${docAnterior})`;
+          if(serieOutIdx >= 0){
+            const serieActual = `${excelCol(serieOutIdx)}${excelRow}`;
+            const serieAnterior = `${excelCol(serieOutIdx)}${excelRow-1}`;
+            formula = `IF(${docActual}="","",IF(${serieActual}<>${serieAnterior},0,${docActual}-${docAnterior}))`;
+          }
+          wsPremium[ref] = {t:'n', v:0, f:formula, z:'0'};
+        }
+      }
+
+      // Tres columnas amarillas basadas en BaseImponible_OperGrav_* e ImpGnrlVenta_*.
+      if(revIgvOutIdx >= 0 && baseOutIdx >= 0 && igvOutIdx >= 0){
+        const baseRef = `${excelCol(baseOutIdx)}${excelRow}`;
+        const igvRef = `${excelCol(igvOutIdx)}${excelRow}`;
+        const revRef = `${excelCol(revIgvOutIdx)}${excelRow}`;
+        const pctRef = `${excelCol(pctIgvOutIdx)}${excelRow}`;
+        const varRef = `${excelCol(variacionOutIdx)}${excelRow}`;
+
+        wsPremium[revRef] = {t:'n', v:0, f:`IF(${baseRef}="","",${baseRef}*0.18)`, z:'#,##0.00'};
+        wsPremium[pctRef] = {t:'n', v:0, f:`IF(OR(${baseRef}="",${baseRef}=0),"",${igvRef}/${baseRef})`, z:'0%'};
+        wsPremium[varRef] = {t:'n', v:0, f:`IF(${igvRef}="","",${igvRef}-${revRef})`, z:'#,##0.00'};
+      }
+
+      // TIPO DE CAMBIO: se conserva la FORMULA dentro del Excel, no solo el resultado.
+      // Al seleccionar una celda Excel mostrara la formula en la barra de formulas.
+      if(state.tipoCambio.mapa && state.tipoCambio.mapa.size &&
+         monedaOutIdx >= 0 && tcRegistradoOutIdx >= 0){
+        const monedaRef = `${excelCol(monedaOutIdx)}${excelRow}`;
+        const tcRegistradoRef = `${excelCol(tcRegistradoOutIdx)}${excelRow}`;
+        const tcGeneralRef = `${excelCol(tcGeneralOutIdx)}${excelRow}`;
+        const difGeneralRef = `${excelCol(difTcGeneralOutIdx)}${excelRow}`;
+
+        if(fechaEmisionOutIdx >= 0){
+          const fechaRef = `${excelCol(fechaEmisionOutIdx)}${excelRow}`;
+          // FechaEmision se exporta como fecha real de Excel, por eso BUSCARV usa la celda directamente.
+          const formulaGeneral =
+            `IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaRef},'Tipo de cambio Sunat'!$A:$C,3,FALSE),0),1)`;
+          const cachedGeneral = premiumAOA[excelRow-1][tcGeneralOutIdx];
+          wsPremium[tcGeneralRef] = {t:'n', v:Number(cachedGeneral)||0, f:formulaGeneral, z:'0.000'};
+          const cachedDifGeneral = premiumAOA[excelRow-1][difTcGeneralOutIdx];
+          wsPremium[difGeneralRef] = {t:'n', v:Number(cachedDifGeneral)||0,
+            f:`IF(${tcGeneralRef}="","",ROUND(${tcRegistradoRef}-${tcGeneralRef},3))`, z:'0.000'};
+        }
+
+        if(fechaOrigenOutIdx >= 0 && tipoDocumentoOutIdx >= 0){
+          const fechaOrigenRef = `${excelCol(fechaOrigenOutIdx)}${excelRow}`;
+          const tipoDocRef = `${excelCol(tipoDocumentoOutIdx)}${excelRow}`;
+          const tcEspRef = `${excelCol(tcEspecificoOutIdx)}${excelRow}`;
+          const difEspRef = `${excelCol(difTcEspecificoOutIdx)}${excelRow}`;
+          const esNotaFormula = `OR(IFERROR(VALUE(${tipoDocRef}),0)=7,IFERROR(VALUE(${tipoDocRef}),0)=8)`;
+          const formulaEspecifico =
+            `IF(${esNotaFormula},IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaOrigenRef},'Tipo de cambio Sunat'!$A:$C,3,FALSE),0),1),0)`;
+          const cachedEsp = premiumAOA[excelRow-1][tcEspecificoOutIdx];
+          wsPremium[tcEspRef] = {t:'n', v:Number(cachedEsp)||0, f:formulaEspecifico, z:'0.000'};
+          const cachedDifEsp = premiumAOA[excelRow-1][difTcEspecificoOutIdx];
+          wsPremium[difEspRef] = {t:'n', v:Number(cachedDifEsp)||0,
+            f:`IF(${tcEspRef}="","",ROUND(${tcRegistradoRef}-${tcEspRef},3))`, z:'0.000'};
+        }
+      }
+    }
+
+    // Fuerza recálculo automático al abrir el archivo en Excel.
+    wb.Workbook = wb.Workbook || {};
+    wb.Workbook.CalcPr = {calcMode:'auto'};
+
+    // Resaltar las columnas nuevas para identificarlas fácilmente.
+    const columnasAgregadas = [
+      valSeriOutIdx, revIgvOutIdx, pctIgvOutIdx, variacionOutIdx,
+      tcGeneralOutIdx, difTcGeneralOutIdx, tcEspecificoOutIdx, difTcEspecificoOutIdx
+    ].filter(idx => idx >= 0);
+    const bordeSuave = {
+      top:{style:'thin', color:{rgb:'D6B656'}},
+      bottom:{style:'thin', color:{rgb:'D6B656'}},
+      left:{style:'thin', color:{rgb:'D6B656'}},
+      right:{style:'thin', color:{rgb:'D6B656'}}
+    };
+
+    columnasAgregadas.forEach(colIdx=>{
+      const col = excelCol(colIdx);
+      for(let excelRow=1; excelRow<=premiumAOA.length; excelRow++){
+        const ref = `${col}${excelRow}`;
+        if(!wsPremium[ref]) wsPremium[ref] = {t:'s', v:''};
+        wsPremium[ref].s = excelRow === 1
+          ? {
+              fill:{patternType:'solid', fgColor:{rgb:'FFF200'}, bgColor:{rgb:'FFF200'}},
+              font:{bold:true, color:{rgb:'000000'}},
+              alignment:{horizontal:'center', vertical:'center', wrapText:true},
+              border:bordeSuave
+            }
+          : {
+              fill:{patternType:'solid', fgColor:{rgb:'FFF8CC'}, bgColor:{rgb:'FFF8CC'}},
+              font:{color:{rgb:'000000'}},
+              alignment:{horizontal:'center', vertical:'center'},
+              border:bordeSuave
+            };
+      }
+    });
+
+    wsPremium['!autofilter'] = {ref:`A1:${excelCol(premiumHeaders.length-1)}${premiumAOA.length}`};
+    wsPremium['!freeze'] = {xSplit:0, ySplit:1, topLeftCell:'A2', activePane:'bottomLeft', state:'frozen'};
+    wsPremium['!cols'] = premiumHeaders.map((h, idx)=>({
+      wch: columnasAgregadas.includes(idx) ? Math.max(13, String(h).length + 3) : Math.min(28, Math.max(11, String(h).length + 2))
+    }));
+    wsPremium['!rows'] = [{hpt:24}];
+
+    XLSX.utils.book_append_sheet(wb, wsPremium, 'Premium');
+
+    // Copia el historico utilizado dentro del mismo Excel para dejar trazabilidad.
+    // CLAVE DEL ARREGLO: la FECHA se guarda como el MISMO serial entero de Excel que Premium.
+    // Asi BUSCARV compara numero contra numero exactamente, sin texto, sin horas y sin mm/dd.
+    if(state.tipoCambio.mapa && state.tipoCambio.mapa.size){
+      const tcAOA = [['FECHA','TIPO DE CAMBIO COMPRA','TIPO DE CAMBIO VENTA']];
+      [...state.tipoCambio.mapa.entries()]
+        .sort((a,b)=>a[0].localeCompare(b[0]))
+        .forEach(([fecha, dato])=>{
+          const m = String(fecha).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+          const fechaExcel = m
+            ? Math.floor(Date.UTC(Number(m[1]), Number(m[2])-1, Number(m[3])) / 86400000) + 25569
+            : fecha;
+          tcAOA.push([fechaExcel, dato.compra ?? '', dato.venta ?? '']);
+        });
+      const wsTC = XLSX.utils.aoa_to_sheet(tcAOA);
+      // Solo cambia la visualizacion; internamente sigue siendo numero de fecha Excel.
+      for(let fila=2; fila<=tcAOA.length; fila++){
+        const ref = `A${fila}`;
+        if(wsTC[ref]) wsTC[ref].z = 'yyyy-mm-dd';
+      }
+      wsTC['!cols'] = [{wch:14},{wch:24},{wch:24}];
+      XLSX.utils.book_append_sheet(wb, wsTC, 'Tipo de cambio Sunat');
+    }
+
+
+    const fname = `Conciliacion_${r.A.label}_${r.B.label}_${r.C.label}.xlsx`.replace(/\s+/g,'_');
+    XLSX.writeFile(wb, fname);
+    msg.textContent = 'Descargado: ' + fname;
+  }, 30);
+});
+
+function normalizarEncabezadoTC(value){
+  return String(value ?? '')
+    .trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/\s+/g,' ');
+}
+
+function normalizarFechaTC(value){
+  if(value === null || value === undefined || value === '') return '';
+
+  if(value instanceof Date && !Number.isNaN(value.getTime())){
+    const y = value.getFullYear();
+    const m = String(value.getMonth()+1).padStart(2,'0');
+    const d = String(value.getDate()).padStart(2,'0');
+    return `${y}-${m}-${d}`;
+  }
+
+  if(typeof value === 'number' && Number.isFinite(value) && window.XLSX?.SSF){
+    const p = XLSX.SSF.parse_date_code(value);
+    if(p) return `${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`;
+  }
+
+  const txt = String(value).trim().split(' ')[0];
+  let m = txt.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  if(m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  m = txt.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
+  if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+  m = txt.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2})$/);
+  if(m){
+    const yy = Number(m[3]);
+    const yyyy = yy >= 70 ? 1900 + yy : 2000 + yy;
+    return `${yyyy}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  }
+  return '';
+}
+
+function convertirTipoCambio(value){
+  if(value === null || value === undefined || value === '' || value instanceof Date) return null;
+  let n;
+  if(typeof value === 'number') n = value;
+  else {
+    let t = String(value).trim().replace(/\s/g,'');
+    if(t.includes(',') && t.includes('.')){
+      t = t.lastIndexOf(',') > t.lastIndexOf('.')
+        ? t.replace(/\./g,'').replace(',','.')
+        : t.replace(/,/g,'');
+    } else if(t.includes(',')) t = t.replace(',','.');
+    n = Number(t);
+  }
+  if(!Number.isFinite(n)) return null;
+  if(n > 100) n = n / 1000;
+  return Math.round(n * 1000) / 1000;
+}
+
+function iniciarHistoricoTC(){
+  const input = document.getElementById('fileTipoCambio');
+  const drop = document.getElementById('dropTipoCambio');
+  const hoja = document.getElementById('sheetTipoCambio');
+
+  drop.addEventListener('dragover', e=>e.preventDefault());
+  drop.addEventListener('drop', e=>{
+    e.preventDefault();
+    if(e.dataTransfer.files.length) cargarArchivoTC(e.dataTransfer.files[0]);
+  });
+  input.addEventListener('change', ()=>{
+    if(input.files.length) cargarArchivoTC(input.files[0]);
+  });
+  hoja.addEventListener('change', ()=>cargarHojaTC(hoja.value));
+  ['colFechaTipoCambio','colCompraTipoCambio','colVentaTipoCambio'].forEach(id=>
+    document.getElementById(id).addEventListener('change', construirMapaTC)
+  );
+}
+
+function cargarArchivoTC(file){
+  const estado = document.getElementById('estadoTipoCambio');
+  if(!window.XLSX){
+    estado.textContent = 'El motor de Excel todavía no ha terminado de cargar. Vuelve a seleccionar el archivo.';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array', cellDates:true});
+      state.tipoCambio.wb = wb;
+      state.tipoCambio.fileName = file.name;
+      const sel = document.getElementById('sheetTipoCambio');
+      sel.innerHTML = wb.SheetNames.map(s=>`<option value="${s}">${s}</option>`).join('');
+      document.getElementById('configTipoCambio').style.display = 'flex';
+      document.getElementById('cardTipoCambio').classList.add('ready');
+      const drop = document.getElementById('dropTipoCambio');
+      drop.classList.add('filled');
+      drop.childNodes[0].textContent = '✓ ' + file.name + ' ';
+      cargarHojaTC(wb.SheetNames[0]);
+    }catch(err){
+      console.error(err);
+      estado.textContent = 'No se pudo leer el histórico de tipo de cambio.';
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function cargarHojaTC(sheetName){
+  const tc = state.tipoCambio;
+  tc.sheet = sheetName;
+  const ws = tc.wb.Sheets[sheetName];
+  const data = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:''});
+  if(!data.length){
+    document.getElementById('estadoTipoCambio').textContent = 'La hoja está vacía.';
+    return;
+  }
+  tc.headers = data[0].map(v=>String(v ?? '').trim());
+  tc.rows = data.slice(1).filter(r=>r.some(v=>String(v ?? '').trim()!==''));
+
+  const opts = tc.headers.map((h,i)=>`<option value="${i}">${colLetter(i)} — ${h || '(sin nombre)'}</option>`).join('');
+  const f = document.getElementById('colFechaTipoCambio');
+  const c = document.getElementById('colCompraTipoCambio');
+  const v = document.getElementById('colVentaTipoCambio');
+  f.innerHTML = c.innerHTML = v.innerHTML = opts;
+
+  const nh = tc.headers.map(normalizarEncabezadoTC);
+  let fi = nh.findIndex(h=>h === 'fecha' || h.includes('fecha'));
+  let ci = nh.findIndex(h=>h.includes('compra'));
+  let vi = nh.findIndex(h=>h.includes('venta'));
+  if(fi < 0) fi = 0;
+  if(ci < 0) ci = Math.min(1, tc.headers.length-1);
+  if(vi < 0) vi = Math.min(2, tc.headers.length-1);
+  f.value=String(fi); c.value=String(ci); v.value=String(vi);
+
+  renderPreviewTC();
+  construirMapaTC();
+}
+
+function renderPreviewTC(){
+  const tc=state.tipoCambio;
+  const tbl=document.getElementById('previewTipoCambio');
+  const headers=tc.headers.slice(0,6);
+  const rows=tc.rows.slice(0,5);
+  tbl.innerHTML = `<thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`+
+    rows.map(r=>`<tr>${headers.map((_,i)=>`<td>${r[i] ?? ''}</td>`).join('')}</tr>`).join('')+
+    '</tbody>';
+}
+
+function construirMapaTC(){
+  const tc = state.tipoCambio;
+  if(!tc.rows.length) return;
+  tc.fechaCol = Number(document.getElementById('colFechaTipoCambio').value);
+  tc.compraCol = Number(document.getElementById('colCompraTipoCambio').value);
+  tc.ventaCol = Number(document.getElementById('colVentaTipoCambio').value);
+  tc.mapa = new Map();
+  let validas=0, observadas=0, duplicadas=0;
+
+  tc.rows.forEach(row=>{
+    const fecha = normalizarFechaTC(row[tc.fechaCol]);
+    const compra = convertirTipoCambio(row[tc.compraCol]);
+    const venta = convertirTipoCambio(row[tc.ventaCol]);
+    if(!fecha || venta === null){ observadas++; return; }
+    if(tc.mapa.has(fecha)) duplicadas++;
+    tc.mapa.set(fecha,{compra,venta});
+    validas++;
+  });
+
+  document.getElementById('estadoTipoCambio').textContent =
+    `Histórico listo: ${validas.toLocaleString('es-PE')} fechas válidas`+
+    ` · ${tc.mapa.size.toLocaleString('es-PE')} fechas únicas`+
+    (observadas ? ` · ${observadas} filas observadas` : '')+
+    (duplicadas ? ` · ${duplicadas} fechas duplicadas` : '');
+}
+
+function obtenerTipoCambioSUNAT(fecha){
+  const k = normalizarFechaTC(fecha);
+  return k ? (state.tipoCambio.mapa.get(k) || null) : null;
+}
+
+buildCards();
+iniciarHistoricoTC();
+})();
+</script>
+<script>
+(function(){
 const HISTORICOS_COMPRAS_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/10/workflows/61c88400212e4da2af030c139c79509d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=iAH-S9lpDK1Bmd_CKwMM95JZ2MYVRFvKd9qslmjKRdA';
 
 const state = {
@@ -719,7 +1850,6 @@ function addSheet(wb,name,aoa,widths,filter=false){const ws=XLSX.utils.aoa_to_sh
 buildCardsPrincipales();iniciarBancos();iniciarHistoricoManual();iniciarTC();iniciarDetracciones();iniciarValidacionSunat();cargarHistoricosCompras();
 })();
 </script>
-
 <script>
 (function(){
   const tabVentas = document.getElementById('tabBtnVentas');
@@ -738,7 +1868,6 @@ buildCardsPrincipales();iniciarBancos();iniciarHistoricoManual();iniciarTC();ini
   tabCompras.addEventListener('click', ()=> mostrar('compras'));
 })();
 </script>
-
 <script>
 // Carga XLSX y PapaParse una sola vez, compartidas por ambas vistas.
 (function cargarLibrerias(){
