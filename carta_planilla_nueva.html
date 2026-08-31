@@ -396,19 +396,120 @@ body{
   box-shadow:0 6px 14px rgba(239,169,19,.16);
 }
 .btn-ghost{background:#f3f4f5;color:#34373c;border:1px solid #e4e5e8;}
-.tabs{gap:7px;margin-bottom:18px;}
-.tab{
-  padding:8px 13px;
-  background:#f4f4f5;
-  border:1px solid #e7e8ea;
-  color:#4b4e54;
-  font-size:11.5px;
+.tabs{
+  display:grid;
+  grid-template-columns:minmax(0,1.45fr) minmax(330px,.85fr);
+  gap:18px;
+  margin-bottom:24px;
+  align-items:start;
 }
+.tab-section{
+  margin:0;
+  background:#fff;
+  border:1px solid #e7e7e8;
+  border-radius:16px;
+  padding:15px;
+  box-shadow:0 7px 24px rgba(25,25,28,.045);
+}
+.tab-section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:0 0 12px;
+  padding:0 2px 10px;
+  border-bottom:1px solid #eeeeef;
+}
+.tab-section-title-wrap{display:flex;align-items:center;gap:9px;min-width:0;}
+.tab-section-icon{
+  width:30px;height:30px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  background:#fff3f7;color:#c71e5d;
+  font-size:14px;font-weight:800;flex:none;
+  border:1px solid #f2d7e1;
+}
+.tab-section[data-kind="planilla"] .tab-section-icon{
+  background:#fff8e9;color:#9a6900;border-color:#f1e1b8;
+}
+.tab-section-title{font-size:12px;font-weight:800;letter-spacing:.045em;text-transform:uppercase;color:#303238;}
+.tab-section-sub{font-size:10.5px;color:#92959b;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tab-section-count{
+  flex:none;min-width:27px;height:27px;padding:0 8px;border-radius:999px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10.5px;font-weight:800;color:#5d6066;background:#f4f4f5;
+}
+.tab-grid{display:flex;flex-direction:column;gap:7px;}
+.tab{
+  position:relative;
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) auto;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  min-height:58px;
+  padding:8px 10px;
+  border-radius:11px;
+  background:#fff;
+  border:1px solid #e7e8ea;
+  color:#272a2f;
+  cursor:pointer;
+  box-shadow:none;
+  transition:border-color .15s ease,box-shadow .15s ease,background .15s ease,transform .15s ease;
+}
+.tab:hover{
+  border-color:#d7c18d;
+  background:#fffdf8;
+  box-shadow:0 5px 14px rgba(25,25,28,.055);
+  transform:translateY(-1px);
+}
+.tab-index{
+  width:34px;height:34px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  background:#f6f6f7;color:#6a6d72;
+  font-size:10.5px;font-weight:900;letter-spacing:.03em;
+}
+.tab-copy{min-width:0;}
+.tab-kicker{
+  font-size:9.2px;font-weight:800;letter-spacing:.075em;text-transform:uppercase;
+  color:#a2791f;margin:0 0 3px;
+}
+.tab-name{
+  font-size:12px;line-height:1.2;font-weight:800;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#292b30;
+}
+.tab-meta{font-size:10.2px;color:#8b8e94;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tab-tail{display:flex;align-items:center;gap:7px;flex:none;}
+.tab-badge{
+  position:static;transform:none;
+  display:flex;align-items:center;justify-content:center;
+  min-width:27px;height:25px;padding:0 7px;border-radius:999px;
+  background:#f2f3f4;color:#5a5d63;font-size:10px;font-weight:800;
+}
+.tab-arrow{font-size:17px;line-height:1;color:#b4b6ba;margin-top:-1px;}
 .tab.active{
-  background:#242424;
-  border-color:#242424;
-  color:#fff;
-  box-shadow:0 5px 14px rgba(0,0,0,.12);
+  background:linear-gradient(90deg,#fff7fa 0%,#ffffff 70%);
+  border-color:#df9bb5;
+  box-shadow:0 6px 17px rgba(199,30,93,.085);
+  transform:none;
+}
+.tab.active::before{
+  content:"";position:absolute;left:-1px;top:9px;bottom:9px;width:3px;
+  border-radius:0 3px 3px 0;background:#c71e5d;
+}
+.tab.active .tab-index{background:#c71e5d;color:#fff;}
+.tab.active .tab-kicker{color:#a44e70;}
+.tab.active .tab-name{color:#22242a;}
+.tab.active .tab-meta{color:#777b82;}
+.tab.active .tab-badge{background:#f8e7ee;color:#a92255;}
+.tab.active .tab-arrow{color:#c71e5d;}
+.tab-section[data-kind="planilla"] .tab.active::before{background:#e5a719;}
+.tab-section[data-kind="planilla"] .tab.active .tab-index{background:#e5a719;color:#2c250f;}
+.tab-section[data-kind="planilla"] .tab.active .tab-badge{background:#fff3d8;color:#8b6308;}
+.tab-section[data-kind="planilla"] .tab.active .tab-arrow{color:#c38b0d;}
+@media(max-width:1000px){.tabs{grid-template-columns:1fr;}.tab-section{padding:14px;}}
+@media(max-width:600px){
+  .tabs{gap:12px}.tab{grid-template-columns:32px minmax(0,1fr) auto;min-height:56px;padding:8px}
+  .tab-index{width:32px;height:32px}.tab-name{font-size:11.5px}.tab-section-sub{display:none}
 }
 table.invlist{
   border:1px solid #e6e7e9;
@@ -792,31 +893,119 @@ table.invlist tr:hover td{background:#fcf8fa;}
     resultsPanel.scrollIntoView({behavior:'smooth'});
   });
 
-  function groupLabel(entry){
-    const g = entry.items;
-    if(!g || !g.length) return 'Documento';
+  function cleanDisplayName(value){
+    let n = String(value || '').trim();
+    if(!n) return 'Sin nombre';
 
-    if(entry.tipo === 'carta'){
-      return 'Carta · ' + g[0].acepNombre;
+    // Si el XML trae el mismo nombre repetido con dos razones sociales, mostramos solo la primera.
+    if(n.includes(' - ')){
+      const parts = n.split(' - ').map(x => x.trim()).filter(Boolean);
+      if(parts.length > 1) n = parts[0];
     }
 
-    const moneda = g[0].currency || 'MONEDA';
-    const base = 'Planilla · ' + moneda;
-    return entry.totalPartes > 1 ? base + ' (parte ' + entry.parte + ')' : base;
+    // Solo para la etiqueta visual: quitamos sufijos societarios largos.
+    n = n
+      .replace(/\bSOCIEDAD ANONIMA CERRADA\b/gi,'')
+      .replace(/\bSOCIEDAD ANÓNIMA CERRADA\b/gi,'')
+      .replace(/\bSOCIEDAD ANONIMA\b/gi,'')
+      .replace(/\bSOCIEDAD ANÓNIMA\b/gi,'')
+      .replace(/\bS\.?A\.?C\.?\b/gi,'')
+      .replace(/\bS\.?A\.?\b/gi,'')
+      .replace(/\s{2,}/g,' ')
+      .replace(/[.,;-]+$/g,'')
+      .trim();
+
+    // Título legible sin alterar el valor real usado en los documentos.
+    return n.toLocaleLowerCase('es-PE').replace(/(^|[\s/])([a-záéíóúñ])/g,(m,p1,p2)=>p1+p2.toLocaleUpperCase('es-PE'));
+  }
+
+  function currencyLabel(code){
+    const c = String(code || '').toUpperCase();
+    if(c === 'PEN') return 'Soles (PEN)';
+    if(c === 'USD') return 'Dólares (USD)';
+    return c || 'Moneda';
+  }
+
+  function tabInfo(entry, number){
+    const g = entry.items || [];
+    if(entry.tipo === 'carta'){
+      return {
+        index:String(number).padStart(2,'0'),
+        kicker:'Carta de cesión',
+        name:cleanDisplayName(g[0]?.acepNombre) || 'Aceptante sin nombre',
+        meta:g.length === 1 ? '1 factura asociada' : g.length + ' facturas asociadas',
+        badge:g.length
+      };
+    }
+
+    const moneda = g[0]?.currency || 'MONEDA';
+    return {
+      index:String(number).padStart(2,'0'),
+      kicker:'Planilla de descuento',
+      name:currencyLabel(moneda),
+      meta:entry.totalPartes > 1 ? 'Parte ' + entry.parte + ' de ' + entry.totalPartes : 'Consolidada por moneda',
+      badge:g.length
+    };
   }
 
   function renderTabs(){
     tabsBar.innerHTML = '';
-    groups.forEach((entry, idx) => {
-      const tab = document.createElement('div');
-      tab.className = 'tab' + (idx === activeGroupIdx ? ' active' : '');
-      tab.textContent = groupLabel(entry) + ' · ' + entry.items.length + ' doc.';
-      tab.addEventListener('click', () => {
-        activeGroupIdx = idx;
-        renderTabs();
-        renderActiveGroup();
+
+    const sections = [
+      {tipo:'carta', title:'Cartas de cesión', subtitle:'Una carta independiente por aceptante', icon:'C'},
+      {tipo:'planilla', title:'Planillas de descuento', subtitle:'Consolidadas por cliente y moneda', icon:'P'}
+    ];
+
+    sections.forEach(section => {
+      const entries = groups.map((entry,idx)=>({entry,idx})).filter(x=>x.entry.tipo === section.tipo);
+      if(!entries.length) return;
+
+      const wrap = document.createElement('div');
+      wrap.className = 'tab-section';
+      wrap.dataset.kind = section.tipo;
+
+      const head = document.createElement('div');
+      head.className = 'tab-section-head';
+      head.innerHTML = `
+        <div class="tab-section-title-wrap">
+          <div class="tab-section-icon">${section.icon}</div>
+          <div style="min-width:0">
+            <div class="tab-section-title">${section.title}</div>
+            <div class="tab-section-sub">${section.subtitle}</div>
+          </div>
+        </div>
+        <div class="tab-section-count">${entries.length}</div>`;
+      wrap.appendChild(head);
+
+      const grid = document.createElement('div');
+      grid.className = 'tab-grid';
+
+      entries.forEach(({entry,idx},localIdx) => {
+        const info = tabInfo(entry, localIdx + 1);
+        const tab = document.createElement('div');
+        tab.className = 'tab' + (idx === activeGroupIdx ? ' active' : '');
+        tab.title = entry.tipo === 'carta' ? (entry.items?.[0]?.acepNombre || '') : info.name;
+        tab.innerHTML = `
+          <div class="tab-index">${info.index}</div>
+          <div class="tab-copy">
+            <div class="tab-kicker">${info.kicker}</div>
+            <div class="tab-name">${info.name}</div>
+            <div class="tab-meta">${info.meta}</div>
+          </div>
+          <div class="tab-tail">
+            <div class="tab-badge">${info.badge}</div>
+            <div class="tab-arrow">›</div>
+          </div>`;
+        tab.addEventListener('click', () => {
+          activeGroupIdx = idx;
+          renderTabs();
+          renderActiveGroup();
+        });
+        grid.appendChild(tab);
       });
-      tabsBar.appendChild(tab);
+
+      wrap.appendChild(grid);
+      tabsBar.appendChild(wrap);
     });
   }
 
