@@ -326,6 +326,16 @@
     </div>
   </div>
 
+  <div class="card" id="cardPLEHistManualC" style="margin-bottom:24px;">
+    <div class="card-label">Control adicional · opcional</div>
+    <div class="card-title">Histórico PLE 8.1 Sprint</div>
+    <p class="card-hint">Sirve para comprobar si un documento que no aparece en el PLE actual ya fue registrado en un periodo anterior. No reemplaza las 3 bases principales.</p>
+    <label class="drop" id="dropPLEHistManualC">Haz clic o arrastra el TXT/Excel histórico aquí
+      <input type="file" id="filePLEHistManualC" accept=".txt,.xlsx,.xls,.xlsb" />
+    </label>
+    <div class="footnote" id="estadoPLEHistManualC">Sin cargar. El cruce principal funciona sin este archivo, pero este control evita falsos pendientes históricos.</div>
+  </div>
+
   <div class="card" id="cardTiposC" style="display:none;">
     <div class="card-label">Tipos de comprobante detectados en el PLE</div>
     <p class="card-hint">Permite identificar qué tipos corresponden al cruce con SIRE y cuáles requieren revisión especial.</p>
@@ -335,7 +345,7 @@
   <div class="actions">
     <button class="primary" id="btnProcesarC" disabled>Conciliar</button>
     <button class="ghost" id="btnActualizarHistoricosC">Actualizar SIRE</button>
-    <span class="status-msg" id="statusMsgC">Sube el PLE del periodo. El SIRE histórico se obtiene automáticamente.</span>
+    <span class="status-msg" id="statusMsgC">Sube el PLE del periodo. Usa “Actualizar SIRE” para forzar una lectura nueva de OneDrive.</span>
   </div>
 
   <section id="resultsC" class="results-section">
@@ -355,7 +365,7 @@
 
     <div class="section-title">Detalle — primeras 250 filas</div>
     <div class="detail-wrap"><table class="detail" id="detailTableC"></table></div>
-    <p class="footnote">El Excel descargado contiene el detalle completo, alertas de bancos, documentos SIRE pendientes del periodo e histórico utilizado.</p>
+    <p class="footnote">El Excel descargado contiene el detalle completo, duplicados, registros de periodos anteriores, alertas de bancos, documentos SIRE pendientes del periodo e históricos utilizados.</p>
   </section>
   </div>
 </div>
@@ -1496,7 +1506,7 @@ iniciarHistoricoTC();
 const HISTORICOS_COMPRAS_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/10/workflows/61c88400212e4da2af030c139c79509d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=iAH-S9lpDK1Bmd_CKwMM95JZ2MYVRFvKd9qslmjKRdA';
 
 const state = {
-  rce:null, sire:null, bancos:null,
+  rce:null, sire:null, bancos:null, pleHistorico:null,
   tipos:new Map(), historicosCargando:false, historicosError:''
 };
 let lastResult=null;
@@ -1693,9 +1703,11 @@ const SIRE_CACHE_DB='TSFConciliadorCache';
 const SIRE_CACHE_STORE='datos';
 const SIRE_CACHE_KEY='sireHistorico';
 const SIRE_CACHE_VERSION=1;
-const SIRE_TIMEOUT_MS=25000;
+const SIRE_TIMEOUT_FONDO_MS=25000;
+const SIRE_TIMEOUT_MANUAL_MS=90000;
 const SIRE_TAM_BLOQUE=5000;
-const SIRE_REINTENTOS=0;
+const SIRE_REINTENTOS_FONDO=0;
+const SIRE_REINTENTOS_MANUAL=1;
 
 function abrirCacheSIRE(){
   return new Promise((resolve,reject)=>{
@@ -1728,68 +1740,99 @@ function activarSIRE(rows,origen,fechaCache=null){
 
 function dormir(ms){ return new Promise(resolve=>setTimeout(resolve,ms)); }
 
-async function pedirParteSIRE(parte,intento=0){
+async function pedirParteSIRE(parte,{timeoutMs=SIRE_TIMEOUT_FONDO_MS,reintentos=SIRE_REINTENTOS_FONDO,forzar=false,intento=0}={}){
   const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(),SIRE_TIMEOUT_MS);
+  const timeout=setTimeout(()=>controller.abort(),timeoutMs);
   try{
     const r=await fetch(HISTORICOS_COMPRAS_URL,{
       method:'POST',
-      headers:{'Content-Type':'application/json','Cache-Control':'no-cache'},
-      body:JSON.stringify({parte}),
-      signal:controller.signal
+      headers:{'Content-Type':'application/json','Cache-Control':'no-cache, no-store','Pragma':'no-cache'},
+      body:JSON.stringify({parte,forzar,ts:Date.now()}),
+      signal:controller.signal,
+      cache:'no-store'
     });
     if(!r.ok){const err=new Error('HTTP '+r.status);err.status=r.status;throw err;}
     return await r.json();
   }catch(err){
     const reintentable=err.name==='AbortError'||err.status===408||err.status===429||(err.status>=500&&err.status<=599);
-    if(reintentable&&intento<SIRE_REINTENTOS){
-      await dormir(800*(intento+1));
-      return pedirParteSIRE(parte,intento+1);
+    if(reintentable&&intento<reintentos){
+      await dormir(1200*(intento+1));
+      return pedirParteSIRE(parte,{timeoutMs,reintentos,forzar,intento:intento+1});
     }
-    if(err.name==='AbortError')throw new Error(`Bloque ${parte}: tiempo de espera agotado`);
+    if(err.name==='AbortError')throw new Error(`Bloque ${parte}: Power Automate tardó más de ${Math.round(timeoutMs/1000)} s`);
     throw new Error(`Bloque ${parte}: ${err.message}`);
   }finally{clearTimeout(timeout);}
 }
 
-async function cargarPartesSIRERapido(onProgress){
-  // Hoy el histórico tiene menos de 10 000 filas: normalmente bastan 2 llamadas.
-  // Cargamos 1 y 2 en paralelo y SOLO pedimos la parte 3 si la parte 2 vino llena (5 000).
-  const [r1,r2]=await Promise.all([
-    pedirParteSIRE(1).then(x=>{onProgress?.(1,2,1,'paralelo');return x;}),
-    pedirParteSIRE(2).then(x=>{onProgress?.(2,2,2,'paralelo');return x;})
-  ]);
-  const resultados=[r1,r2];
-  const filas2=aplanarBloques(r2);
-  if(filas2.length>=SIRE_TAM_BLOQUE){
-    onProgress?.(2,3,3,'ampliando');
-    const r3=await pedirParteSIRE(3);
-    resultados.push(r3);
-    onProgress?.(3,3,3,'secuencial');
+async function cargarPartesSIRE({manual=false,onProgress}={}){
+  const timeoutMs=manual?SIRE_TIMEOUT_MANUAL_MS:SIRE_TIMEOUT_FONDO_MS;
+  const reintentos=manual?SIRE_REINTENTOS_MANUAL:SIRE_REINTENTOS_FONDO;
+  const opts={timeoutMs,reintentos,forzar:manual};
+
+  // En segundo plano priorizamos rapidez: 2 bloques en paralelo.
+  if(!manual){
+    const [r1,r2]=await Promise.all([
+      pedirParteSIRE(1,opts).then(x=>{onProgress?.(1,2,1,'paralelo');return x;}),
+      pedirParteSIRE(2,opts).then(x=>{onProgress?.(2,2,2,'paralelo');return x;})
+    ]);
+    const resultados=[r1,r2];
+    if(aplanarBloques(r2).length>=SIRE_TAM_BLOQUE){
+      onProgress?.(2,3,3,'ampliando');
+      resultados.push(await pedirParteSIRE(3,opts));
+      onProgress?.(3,3,3,'secuencial');
+    }
+    return resultados;
+  }
+
+  // Al pulsar Actualizar SIRE hacemos una actualización robusta y REAL.
+  // Secuencial evita saturar el conector Excel/OneDrive y tolera que tarde más.
+  const resultados=[];
+  for(let parte=1;parte<=3;parte++){
+    onProgress?.(parte-1,3,parte,'secuencial');
+    const resp=await pedirParteSIRE(parte,opts);
+    resultados.push(resp);
+    const filas=aplanarBloques(resp);
+    onProgress?.(parte,3,parte,'secuencial');
+    // Si este bloque ya vino con menos de 5,000, no existen más filas.
+    if(filas.length<SIRE_TAM_BLOQUE) break;
   }
   return resultados;
 }
 
-async function actualizarSIRERemoto({silencioso=false}={}){
+function firmaSIRE(rows){
+  if(!rows?.length)return '0';
+  // Firma liviana para saber si la actualización realmente cambió algo.
+  const picks=[rows[0],rows[Math.floor(rows.length/2)],rows[rows.length-1]].filter(Boolean);
+  return rows.length+'|'+picks.map(x=>[x.periodo,x.rucProveedor,x.tipoCP,x.serie,x.nroCP,x.fechaEmision,x.totalCP].join('~')).join('|');
+}
+
+async function actualizarSIRERemoto({silencioso=false,manual=false}={}){
   if(state.historicosCargando)return false;
   state.historicosCargando=true;
   state.historicosError='';
   const el=document.getElementById('estadoSIREC');
   const btn=document.getElementById('btnActualizarHistoricosC');
   const habiaSIRE=!!state.sire?.rows?.length;
-  if(btn){btn.disabled=true;btn.textContent='Actualizando…';}
-  if(el&&!silencioso)el.textContent='Actualizando SIRE…';
+  const firmaAntes=firmaSIRE(state.sire?.rows||[]);
+  if(btn){btn.disabled=true;btn.textContent=manual?'Actualizando SIRE…':'Actualizando…';}
+  if(el&&!silencioso)el.textContent='Consultando SIRE real en OneDrive… 0/3 bloques';
   const inicio=performance.now();
   try{
-    const respuestas=await cargarPartesSIRERapido((hechas,total,parte,modo)=>{
-      if(el&&!silencioso)el.textContent=`Actualizando SIRE… ${hechas}/${total} bloques`;
-    });
+    const respuestas=await cargarPartesSIRE({manual,onProgress:(hechas,total,parte,modo)=>{
+      if(el&&!silencioso)el.textContent=`Consultando SIRE real en OneDrive… ${hechas}/${total} bloques`;
+    }});
     const sireRaw=respuestas.flatMap(aplanarBloques);
     const sireRows=parseSIRERows(sireRaw);
     if(!sireRows.length)throw new Error('El flujo no devolvió SIRE válido.');
-    state.sire={rows:sireRows,fileName:'SIRE histórico OneDrive',origen:'SIRE actualizado'};
+
+    const firmaDespues=firmaSIRE(sireRows);
+    state.sire={rows:sireRows,fileName:'SIRE histórico OneDrive',origen:'SIRE actualizado',actualizadoEn:Date.now()};
     await guardarCacheSIRE(sireRows);
     const segundos=((performance.now()-inicio)/1000).toFixed(1);
-    if(el)el.textContent=`${sireRows.length.toLocaleString('es-PE')} comprobantes disponibles — SIRE actualizado · ${segundos}s`;
+    const cambio=firmaAntes!==firmaDespues;
+    if(el){
+      el.textContent=`${sireRows.length.toLocaleString('es-PE')} comprobantes disponibles — SIRE actualizado ahora · ${segundos}s${cambio?' · datos nuevos cargados':' · sin cambios respecto a la copia anterior'}`;
+    }
     document.getElementById('cardSIREC')?.classList.add('ready');
     actualizarEstado();
     return true;
@@ -1797,7 +1840,7 @@ async function actualizarSIRERemoto({silencioso=false}={}){
     console.error(e);
     state.historicosError='No se pudo actualizar el SIRE: '+e.message;
     if(el){
-      if(habiaSIRE) el.textContent=`${state.sire.rows.length.toLocaleString('es-PE')} comprobantes disponibles — usando última copia válida · actualización pendiente`;
+      if(habiaSIRE) el.textContent=`${state.sire.rows.length.toLocaleString('es-PE')} comprobantes disponibles — NO se actualizó · usando última copia válida · ${e.message}`;
       else el.textContent=state.historicosError+' · pulsa “Actualizar SIRE” para reintentar.';
     }
     actualizarEstado();
@@ -1826,7 +1869,7 @@ async function cargarHistoricosCompras(){
   }
 
   // 3) Actualización remota en segundo plano. Nunca bloquea el uso del conciliador.
-  setTimeout(()=>actualizarSIRERemoto({silencioso:true}),250);
+  setTimeout(()=>actualizarSIRERemoto({silencioso:true,manual:false}),250);
 }
 
 function parseHistoricoDesdeObjetos(rows){
@@ -2022,7 +2065,9 @@ function procesar(){
         else{estado='NO UBICADO EN SIRE';motivo='No encontrado por llave exacta, Voucher/CUO, candidato ni histórico disponible';accion='Revisar comprobante / sustento';}
       }
     }
-    return {...r,esperado,duplicado,estado,motivo,sireMatch,candidato,comparacion:comp,sugerenciaBanco:banco,accion};
+    const duplicadoSIRE = sireMatch ? (sireMap.get(sireMatch.key)||[]).length>1 : false;
+    const historicoMatch = histMap.has(r.key) ? histMap.get(r.key)[0] : null;
+    return {...r,esperado,duplicado,duplicadoPLE:duplicado,duplicadoSIRE,registradoAntes:!!historicoMatch,historicoMatch,estado,motivo,sireMatch,candidato,comparacion:comp,sugerenciaBanco:banco,accion};
   });
 
   // Para el cruce inverso también se consideran las llaves corregidas por Voucher/CUO.
@@ -2050,14 +2095,27 @@ function marca(v){return v===undefined?'No evaluado':v?'Correcto':'Revisar'}
 
 function renderResultados(r){
   const cr=contar(r.pleResultado,'estado'),total=r.pleResultado.length;let h='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';
-  ['CONCILIADO','CONCILIADO CON DIFERENCIAS','BANCO CONFIRMADO POR OBLIGACIONES','POSIBLE COINCIDENCIA','BANCO EN OBLIGACIONES — NO EN SIRE','REGISTRADO EN PERIODO ANTERIOR','TRATAMIENTO ESPECIAL','REVISIÓN POR TIPO','NO UBICADO EN SIRE'].forEach(e=>{const n=cr.get(e)||0;if(!n)return;const cls=e==='CONCILIADO'?'ok':(e==='NO UBICADO EN SIRE'||e==='BANCO EN OBLIGACIONES — NO EN SIRE')?'bad':e==='BANCO CONFIRMADO POR OBLIGACIONES'?'ok':'warn';h+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/total*100).toFixed(1)}%</td></tr>`});h+=`<tr><td>TOTAL PLE</td><td>${total}</td><td>100%</td></tr></tbody></table>`;document.getElementById('resumenRCEHolder').innerHTML=h;
+  ['CONCILIADO','CONCILIADO CON DIFERENCIAS','BANCO CONFIRMADO POR OBLIGACIONES','POSIBLE COINCIDENCIA','BANCO EN OBLIGACIONES — NO EN SIRE','REGISTRADO EN PERIODO ANTERIOR','TRATAMIENTO ESPECIAL','REVISIÓN POR TIPO','NO UBICADO EN SIRE'].forEach(e=>{const n=cr.get(e)||0;if(!n)return;const cls=e==='CONCILIADO'?'ok':(e==='NO UBICADO EN SIRE'||e==='BANCO EN OBLIGACIONES — NO EN SIRE')?'bad':e==='BANCO CONFIRMADO POR OBLIGACIONES'?'ok':'warn';h+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/total*100).toFixed(1)}%</td></tr>`});h+=`<tr><td>TOTAL PLE</td><td>${total}</td><td>100%</td></tr></tbody></table>`;
+  const dupPLELlaves=[...new Set(r.pleResultado.filter(x=>x.duplicadoPLE).map(x=>x.key))].length;
+  const dupPLEFilas=r.pleResultado.filter(x=>x.duplicadoPLE).length;
+  const dupSIRELlaves=[...new Set(r.sireResultado.filter(x=>x.duplicado).map(x=>x.key))].length;
+  const dupSIREFilas=r.sireResultado.filter(x=>x.duplicado).length;
+  const regAnterior=r.pleResultado.filter(x=>x.estado==='REGISTRADO EN PERIODO ANTERIOR').length;
+  const histEstado=state.pleHistorico?.rows?.length?`${state.pleHistorico.rows.length.toLocaleString('es-PE')} filas cargadas`:'No cargado';
+  h+=`<div style="margin-top:18px"><table class="report"><thead><tr><th>Control adicional</th><th>Resultado</th></tr></thead><tbody>
+    <tr><td>Llaves duplicadas en PLE actual</td><td class="${dupPLELlaves?'warn':'ok'}">${dupPLELlaves} llaves · ${dupPLEFilas} filas</td></tr>
+    <tr><td>Llaves duplicadas en SIRE histórico</td><td class="${dupSIRELlaves?'warn':'ok'}">${dupSIRELlaves} llaves · ${dupSIREFilas} filas</td></tr>
+    <tr><td>Registrados en periodo anterior</td><td class="${regAnterior?'warn':'ok'}">${regAnterior}</td></tr>
+    <tr><td>PLE histórico</td><td>${histEstado}</td></tr>
+  </tbody></table></div>`;
+  document.getElementById('resumenRCEHolder').innerHTML=h;
   const sr=r.sireResultado.filter(x=>x.estado!=='HISTÓRICO'),cs=contar(sr,'estado'),ts=sr.length||1;let hs='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';['REGISTRADO EN PLE','REGISTRADO EN PLE — CORREGIDO POR OBLIGACIONES','REGISTRADO EN PLE HISTÓRICO','POSIBLE COINCIDENCIA EN PLE','NO ENCONTRADO EN PLE — PENDIENTE DE VALIDAR'].forEach(e=>{const n=cs.get(e)||0;const cls=e.startsWith('REGISTRADO EN PLE')?'ok':e.startsWith('NO ENCONTRADO')?'bad':'warn';hs+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/ts*100).toFixed(1)}%</td></tr>`});hs+=`<tr><td>Periodo analizado</td><td>${r.periodoActual||'—'}</td><td>—</td></tr></tbody></table>`;document.getElementById('resumenSIREHolder').innerHTML=hs;
   let ht='<table class="report"><thead><tr><th>Tipo</th><th>Total</th><th>OK</th><th>Con diferencias</th><th>Posible</th><th>Especial</th><th>No ubicado</th></tr></thead><tbody>';for(const [cod,info] of state.tipos){const f=r.pleResultado.filter(x=>x.tipoCP===cod),ok=f.filter(x=>x.estado==='CONCILIADO').length,dif=f.filter(x=>x.estado==='CONCILIADO CON DIFERENCIAS').length,pos=f.filter(x=>x.estado==='POSIBLE COINCIDENCIA'||x.estado==='BANCO CONFIRMADO POR OBLIGACIONES'||x.estado==='BANCO EN OBLIGACIONES — NO EN SIRE').length,esp=f.filter(x=>x.estado==='TRATAMIENTO ESPECIAL'||x.estado==='REVISIÓN POR TIPO').length,no=f.filter(x=>x.estado==='NO UBICADO EN SIRE').length;ht+=`<tr><td>${esc(info.label)}</td><td>${f.length}</td><td class="ok">${ok}</td><td>${dif}</td><td>${pos}</td><td>${esp}</td><td class="${no?'bad':''}">${no}</td></tr>`}ht+='</tbody></table>';document.getElementById('resumenTipoHolder').innerHTML=ht;
-  const rows=r.pleResultado.slice(0,250);let body=rows.map(x=>`<tr><td>${esc(x.rucProveedor)}</td><td>${esc(x.tipoCP)}</td><td>${esc(x.serie)}</td><td>${esc(padNum(x.nroCP))}</td><td>${esc(x.fechaEmision)}</td><td>${x.totalCP.toFixed(2)}</td><td><span class="flag ${x.estado==='CONCILIADO'?'ok':(x.estado==='NO UBICADO EN SIRE'||x.estado==='BANCO EN OBLIGACIONES — NO EN SIRE')?'bad':x.estado==='BANCO CONFIRMADO POR OBLIGACIONES'?'ok':'warn'}">${esc(x.estado)}</span></td><td>${esc(x.motivo)}</td><td>${esc(x.sugerenciaBanco?.keySugerida||'')}</td></tr>`).join('');document.getElementById('detailTableC').innerHTML='<thead><tr><th>RUC</th><th>Tipo</th><th>Serie</th><th>Correlativo</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Motivo</th><th>Sugerencia banco</th></tr></thead><tbody>'+body+'</tbody>';
+  const rows=r.pleResultado.slice(0,250);let body=rows.map(x=>`<tr><td>${esc(x.rucProveedor)}</td><td>${esc(x.tipoCP)}</td><td>${esc(x.serie)}</td><td>${esc(padNum(x.nroCP))}</td><td>${esc(x.fechaEmision)}</td><td>${x.totalCP.toFixed(2)}</td><td>${x.duplicadoPLE?'Sí':'No'}</td><td>${x.duplicadoSIRE?'Sí':'No'}</td><td><span class="flag ${x.estado==='CONCILIADO'?'ok':(x.estado==='NO UBICADO EN SIRE'||x.estado==='BANCO EN OBLIGACIONES — NO EN SIRE')?'bad':x.estado==='BANCO CONFIRMADO POR OBLIGACIONES'?'ok':'warn'}">${esc(x.estado)}</span></td><td>${esc(x.motivo)}</td><td>${esc(x.sugerenciaBanco?.keySugerida||'')}</td></tr>`).join('');document.getElementById('detailTableC').innerHTML='<thead><tr><th>RUC</th><th>Tipo</th><th>Serie</th><th>Correlativo</th><th>Fecha</th><th>Total</th><th>Duplicado PLE</th><th>Duplicado SIRE</th><th>Estado</th><th>Motivo</th><th>Sugerencia banco</th></tr></thead><tbody>'+body+'</tbody>';
 }
 
 document.getElementById('btnProcesarC').addEventListener('click',()=>{const b=document.getElementById('btnProcesarC');b.disabled=true;b.textContent='Conciliando…';setTimeout(()=>{lastResult=procesar();renderResultados(lastResult);document.getElementById('resultsC').classList.add('is-visible');b.disabled=false;b.textContent='Conciliar nuevamente'},10)});
-document.getElementById('btnActualizarHistoricosC').addEventListener('click',()=>actualizarSIRERemoto({silencioso:false}));
+document.getElementById('btnActualizarHistoricosC').addEventListener('click',()=>actualizarSIRERemoto({silencioso:false,manual:true}));
 
 document.getElementById('btnDescargarC').addEventListener('click',()=>{
   if(!lastResult) return;
@@ -2090,11 +2148,19 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
       ['PLE 8.1 Sprint del periodo', 'Sí'],
       ['SIRE histórico', 'Sí — automático'],
       ['Lista de Obligaciones Sprint', state.bancos?.rows?.length ? 'Sí' : 'No'],
+      ['PLE histórico (control adicional)', state.pleHistorico?.rows?.length ? 'Sí — '+state.pleHistorico.rows.length.toLocaleString('es-PE')+' filas' : 'No cargado'],
       [],
       ['RESUMEN PLE → SIRE'],
       ['Resultado', 'Cantidad'],
       ...[...c.entries()],
       ['TOTAL PLE', r.pleResultado.length],
+      [],
+      ['CONTROLES ADICIONALES'],
+      ['Llaves duplicadas PLE', [...new Set(r.pleResultado.filter(x=>x.duplicadoPLE).map(x=>x.key))].length],
+      ['Filas involucradas en duplicados PLE', r.pleResultado.filter(x=>x.duplicadoPLE).length],
+      ['Llaves duplicadas SIRE', [...new Set(r.sireResultado.filter(x=>x.duplicado).map(x=>x.key))].length],
+      ['Filas involucradas en duplicados SIRE', r.sireResultado.filter(x=>x.duplicado).length],
+      ['Registrados en periodo anterior', r.pleResultado.filter(x=>x.estado==='REGISTRADO EN PERIODO ANTERIOR').length],
       [],
       ['RESUMEN SIRE → PLE DEL PERIODO'],
       ['Resultado', 'Cantidad'],
@@ -2103,13 +2169,13 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
     ];
     addSheet(wb, '01 Resumen', res, [42, 24], false, {kind:'summary'});
 
-    const head = ['Estado','Acción sugerida','Periodo registro','RUC PLE','Proveedor PLE','Tipo PLE','Serie PLE','Correlativo PLE','Fecha PLE','Moneda PLE','TC PLE','Base PLE','IGV PLE','Total PLE','RUC SIRE','Proveedor SIRE','Tipo SIRE','Serie SIRE','Correlativo SIRE','Fecha SIRE','Moneda SIRE','TC SIRE','Base SIRE','IGV SIRE','Total SIRE','RUC correcto','Proveedor correcto','Tipo correcto','Serie correcta','Correlativo correcto','Fecha correcta','Moneda correcta','TC correcto','Base correcta','IGV correcto','Total correcto','Diferencias','Sugerencia banco','Motivo'];
+    const head = ['Estado','Acción sugerida','Duplicado PLE','Duplicado SIRE','Registrado en periodo anterior','Periodo histórico','Periodo registro','RUC PLE','Proveedor PLE','Tipo PLE','Serie PLE','Correlativo PLE','Fecha PLE','Moneda PLE','TC PLE','Base PLE','IGV PLE','Total PLE','RUC SIRE','Proveedor SIRE','Tipo SIRE','Serie SIRE','Correlativo SIRE','Fecha SIRE','Moneda SIRE','TC SIRE','Base SIRE','IGV SIRE','Total SIRE','RUC correcto','Proveedor correcto','Tipo correcto','Serie correcta','Correlativo correcto','Fecha correcta','Moneda correcta','TC correcto','Base correcta','IGV correcto','Total correcto','Diferencias','Sugerencia banco','Motivo'];
     const a = [head];
     r.pleResultado.forEach(x=>{
       const ss = x.sireMatch || {};
       const v = x.comparacion?.validaciones || {};
       a.push([
-        x.estado, x.accion, x.periodoRegistro, x.rucProveedor, x.razonSocial, x.tipoCP, x.serie, padNum(x.nroCP),
+        x.estado, x.accion, x.duplicadoPLE?'Sí':'No', x.duplicadoSIRE?'Sí':'No', x.registradoAntes?'Sí':'No', x.historicoMatch?.periodoRegistro || '', x.periodoRegistro, x.rucProveedor, x.razonSocial, x.tipoCP, x.serie, padNum(x.nroCP),
         x.fechaEmision, x.moneda, x.tipoCambio, x.baseImponible, x.igvTotal, x.totalCP,
         ss.rucProveedor || '', ss.razonSocial || '', ss.tipoCP || '', ss.serie || '', ss.nroCP ? padNum(ss.nroCP) : '',
         ss.fechaEmision || '', ss.moneda || '', ss.tipoCambio || '', ss.baseImponible ?? '', ss.igvTotal ?? '', ss.totalCP ?? '',
@@ -2118,7 +2184,7 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
         x.comparacion?.diferencias?.join(', ') || '', x.sugerenciaBanco?.keySugerida || '', x.motivo
       ]);
     });
-    addSheet(wb, '02 PLE vs SIRE', a, [22,22,14,14,34,10,10,15,13,10,10,13,13,13,14,34,10,10,15,13,10,10,13,13,13,12,16,12,12,16,12,12,12,12,12,12,28,24,34], true, {kind:'detail', statusCol:0});
+    addSheet(wb, '02 PLE vs SIRE', a, [22,22,14,14,18,14,14,14,34,10,10,15,13,10,10,13,13,13,14,34,10,10,15,13,10,10,13,13,13,12,16,12,12,16,12,12,12,12,12,12,28,24,34], true, {kind:'detail', statusCol:0});
 
     const p = [['Periodo SIRE','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Base','IGV','Total','Estado','Motivo']];
     pend.forEach(x=>p.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));
@@ -2132,9 +2198,22 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
     ]));
     addSheet(wb, '04 Bancos Obligaciones', bh, [28,20,22,20,24,14,34,14,17,38,48], true, {kind:'detail', statusCol:0});
 
+    const dh = [['Base','Llave','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha','Total','Cantidad con misma llave']];
+    const pleDupMap=new Map(); r.pleResultado.filter(x=>x.duplicadoPLE).forEach(x=>{if(!pleDupMap.has(x.key))pleDupMap.set(x.key,[]);pleDupMap.get(x.key).push(x)});
+    for(const [k,arr] of pleDupMap){for(const x of arr)dh.push(['PLE',k,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.totalCP,arr.length]);}
+    const sireDupMap=new Map(); r.sireResultado.filter(x=>x.duplicado).forEach(x=>{if(!sireDupMap.has(x.key))sireDupMap.set(x.key,[]);sireDupMap.get(x.key).push(x)});
+    for(const [k,arr] of sireDupMap){for(const x of arr)dh.push(['SIRE',k,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.totalCP,arr.length]);}
+    addSheet(wb, '05 Duplicados', dh, [10,38,14,34,10,12,15,14,14,18], true, {kind:'detail'});
+
+    if(state.pleHistorico?.rows?.length){
+      const ph=[['Periodo registro','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Llave']];
+      state.pleHistorico.rows.forEach(x=>ph.push([x.periodoRegistro||x.periodo||'',x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision||'',x.key]));
+      addSheet(wb, '06 PLE histórico', ph, [16,14,34,10,12,15,14,38], true, {kind:'detail'});
+    }
+
     const sh = [['Periodo','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Base','IGV','Total','Estado vs PLE','Motivo']];
     r.sireResultado.forEach(x=>sh.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));
-    addSheet(wb, '05 SIRE histórico', sh, [12,14,35,10,13,16,14,10,10,14,14,14,24,34], true, {kind:'detail', statusCol:12});
+    addSheet(wb, state.pleHistorico?.rows?.length ? '07 SIRE histórico' : '06 SIRE histórico', sh, [12,14,35,10,13,16,14,10,10,14,14,14,24,34], true, {kind:'detail', statusCol:12});
 
     const fn = `Papel_de_Trabajo_Compras_${new Date().toISOString().slice(0,10)}.xlsx`;
     XLSX.writeFile(wb, fn);
@@ -2299,7 +2378,7 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
   XLSX.utils.book_append_sheet(wb, ws, name);
 }
 
-buildCardsPrincipales();iniciarBancos();cargarHistoricosCompras();
+buildCardsPrincipales();iniciarBancos();iniciarHistoricoManual();cargarHistoricosCompras();
 })();
 </script>
 <script>
