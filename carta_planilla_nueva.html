@@ -220,6 +220,18 @@
         <label>Banco</label>
         <input type="text" id="bancoInput" placeholder="Ej. Banco de Crédito del Perú">
       </div>
+      <div class="field">
+        <label>Teléfono</label>
+        <input type="text" id="telefonoInput" placeholder="Ej. 987 654 321">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="emailInput" placeholder="Ej. contacto@empresa.com">
+      </div>
+      <div class="field">
+        <label>Contacto</label>
+        <input type="text" id="contactoInput" placeholder="Ej. Juan Pérez">
+      </div>
     </div>
 
     <table class="invlist" id="invTable" style="display:none">
@@ -277,6 +289,9 @@
   const fechaInput = document.getElementById('fechaInput');
   const cuentaInput = document.getElementById('cuentaInput');
   const bancoInput = document.getElementById('bancoInput');
+  const telefonoInput = document.getElementById('telefonoInput');
+  const emailInput = document.getElementById('emailInput');
+  const contactoInput = document.getElementById('contactoInput');
   const resultsPanel = document.getElementById('resultsPanel');
   const tabsBar = document.getElementById('tabsBar');
   const docFrame = document.getElementById('docFrame');
@@ -512,6 +527,9 @@
     const fecha = fmtDate(fechaISO);
     const cuenta = cuentaInput.value.trim() || '____________________';
     const banco = bancoInput.value.trim() || '____________________';
+    const telefono = telefonoInput.value.trim() || '____________________';
+    const email = emailInput.value.trim() || '____________________';
+    const contacto = contactoInput.value.trim() || '____________________';
     const total = group.reduce((s,i) => s + i.importe, 0);
     return {
       FL: fecha,
@@ -522,6 +540,9 @@
       FUNC: funcionario,
       CTA_CTE: cuenta,
       BANCO: banco,
+      TELEFONO: telefono,
+      EMAIL: email,
+      CONTACTO: contacto,
       CLI: first.cliNombre,
       MON: first.currency,
       RUC_CLI: first.cliRuc,
@@ -629,7 +650,7 @@
           <td class="lbl">Domicilio</td>
           <td colspan="2">${meta.DIR_CLI}</td>
         </tr>
-        <tr class="plain-row"><td colspan="6"><b>Teléfono:</b> ____________________ &nbsp;&nbsp; <b>Email:</b> ____________________ &nbsp;&nbsp; <b>Contacto:</b> ____________________</td></tr>
+        <tr class="plain-row"><td colspan="6"><b>Teléfono:</b> ${meta.TELEFONO} &nbsp;&nbsp; <b>Email:</b> ${meta.EMAIL} &nbsp;&nbsp; <b>Contacto:</b> ${meta.CONTACTO}</td></tr>
         <tr class="plain-row account-line"><td colspan="3"><b>N° Cta. Cte. (a):</b> <span class="account-value">${meta.CTA_CTE}</span></td><td colspan="3"><b>Banco (b):</b> <span class="account-value">${meta.BANCO}</span></td></tr>
         <tr class="plain-row account-notes"><td colspan="6"><b>(a)</b> Colocar Cta. Cte. en el mismo tipo de moneda que la Planilla de Facturas o Letras &nbsp;&nbsp;/&nbsp;&nbsp; <b>(b)</b> Solo Banco BCP, BBVA Continental y Scotiabank</td></tr>
       </table>
@@ -890,7 +911,7 @@
       <tr><td class="lbl">Oficial de Negocios</td><td colspan="2">${meta.FUNC}</td><td class="lbl">Planilla de</td><td colspan="2">Facturas</td></tr>
       <tr><td class="lbl">Razón Social</td><td colspan="2">${meta.CLI}</td><td class="lbl">Moneda</td><td colspan="2">${meta.MON}</td></tr>
       <tr><td class="lbl">RUC</td><td colspan="2">${meta.RUC_CLI}</td><td class="lbl">Domicilio</td><td colspan="2">${meta.DIR_CLI}</td></tr>
-      <tr class="plain-row"><td colspan="6"><b>Teléfono:</b> ____________________ &nbsp;&nbsp;&nbsp; <b>Email:</b> ____________________ &nbsp;&nbsp;&nbsp; <b>Contacto:</b> ____________________</td></tr>
+      <tr class="plain-row"><td colspan="6"><b>Teléfono:</b> ${meta.TELEFONO} &nbsp;&nbsp;&nbsp; <b>Email:</b> ${meta.EMAIL} &nbsp;&nbsp;&nbsp; <b>Contacto:</b> ${meta.CONTACTO}</td></tr>
       <tr class="plain-row"><td colspan="3" style="white-space:nowrap;"><b>N° Cta. Cte. (a):</b> <span style="display:inline-block;min-width:95pt;border-bottom:0.7pt solid #555;padding:0 4pt 1pt;text-align:center;">${meta.CTA_CTE}</span></td><td colspan="3" style="white-space:nowrap;"><b>Banco (b):</b> <span style="display:inline-block;min-width:95pt;border-bottom:0.7pt solid #555;padding:0 4pt 1pt;text-align:center;">${meta.BANCO}</span></td></tr>
       <tr class="plain-row"><td colspan="6" style="white-space:nowrap;font-size:7.2pt;"><b>(a)</b> Colocar Cta. Cte. en el mismo tipo de moneda que la Planilla de Facturas o Letras &nbsp;&nbsp;/&nbsp;&nbsp; <b>(b)</b> Solo Banco BCP, BBVA Continental y Scotiabank</td></tr>
     </table>
