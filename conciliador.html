@@ -1501,9 +1501,9 @@ iniciarHistoricoTC();
 
 <script>
 (function(){
-// Se completa una sola vez cuando Power Automate entregue la URL del flujo.
-// El flujo debe responder JSON con: { sire: { value: [...] }, pleHistorico: { value: [...] }, actualizado: "..." }
-const HISTORICOS_COMPRAS_URL = window.TSF_COMPRAS_HISTORICOS_URL || '';
+// Conexión directa del archivo descargable con Power Automate.
+// El flujo responde las lecturas SIRE por bloques de hasta 5 000 filas.
+const HISTORICOS_COMPRAS_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/10/workflows/61c88400212e4da2af030c139c79509d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=iAH-S9lpDK1Bmd_CKwMM95JZ2MYVRFvKd9qslmjKRdA';
 
 const state = {
   rce: null,
@@ -1705,6 +1705,11 @@ function obtenerArrayRespuesta(data, nombres){
   return [];
 }
 
+function aplanarBloquesSIRE(data){
+  if(!Array.isArray(data)) return [];
+  return data.flat(Infinity).filter(fila=>fila && typeof fila === 'object' && !Array.isArray(fila));
+}
+
 async function cargarHistoricosCompras(){
   if(state.historicosCargando) return;
   const btn = document.getElementById('btnActualizarHistoricosC');
@@ -1718,12 +1723,14 @@ async function cargarHistoricosCompras(){
     if(!HISTORICOS_COMPRAS_URL) throw new Error('Falta vincular la URL de Power Automate.');
     const response = await fetch(HISTORICOS_COMPRAS_URL,{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({accion:'leer_historicos_compras'})
     });
     if(!response.ok) throw new Error(`La conexión respondió ${response.status}.`);
     const data = await response.json();
-    const sireRaw = obtenerArrayRespuesta(data,['sire','sireRows','SIRE','value']);
+    const bloquesDirectos = aplanarBloquesSIRE(data);
+    const sireRaw = bloquesDirectos.length
+      ? bloquesDirectos
+      : obtenerArrayRespuesta(data,['sire','sireRows','SIRE','value']);
     const pleRaw = obtenerArrayRespuesta(data,['pleHistorico','ple','pleRows','PLEHistorico']);
     const sireRows = parseSIRERows(sireRaw);
     const pleRows = parsePLEHistoricoRows(pleRaw);
