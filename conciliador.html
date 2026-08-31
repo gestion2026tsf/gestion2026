@@ -301,7 +301,7 @@
     <div class="htext">
       <div class="eyebrow">Conciliación de compras · PLE + SIRE + Obligaciones</div>
       <h1>Conciliador de Compras</h1>
-      <div style="display:inline-block;margin:6px 0 10px;padding:6px 10px;border:1px solid #e7a6be;border-radius:999px;background:#fff1f6;color:#9d2d59;font-family:var(--mono);font-size:11px;font-weight:700;">VERSIÓN SIRE REAL · 3 MIN · RESPALDO MANUAL · V3</div>
+      <div style="display:inline-block;margin:6px 0 10px;padding:6px 10px;border:1px solid #e7a6be;border-radius:999px;background:#fff1f6;color:#9d2d59;font-family:var(--mono);font-size:11px;font-weight:700;">VERSIÓN SIRE SCRIPT · INCREMENTAL · RESPALDO MANUAL · V4</div>
       <p>Valida el PLE 8.1 del periodo contra el histórico SIRE de SUNAT y utiliza la Lista de Obligaciones de Sprint únicamente como apoyo para documentos bancarios. Revisa si el comprobante está registrado y, si lo está, compara RUC, proveedor, tipo, serie, correlativo, fecha de emisión, moneda, tipo de cambio, base imponible, IGV y total. También realiza el cruce SIRE → PLE para identificar comprobantes del periodo que aún no aparecen en contabilidad.</p>
     </div>
   </header>
@@ -346,7 +346,7 @@
   <div class="actions">
     <button class="primary" id="btnProcesarC" disabled>Conciliar</button>
     <button class="ghost" id="btnActualizarHistoricosC">Actualizar SIRE</button>
-    <span class="status-msg" id="statusMsgC">Sube el PLE del periodo. “Actualizar SIRE” espera hasta 3 minutos. Si falla, usa el Respaldo manual SIRE.</span>
+    <span class="status-msg" id="statusMsgC">Sube el PLE del periodo. “Actualizar SIRE” consulta únicamente las filas nuevas mediante Office Script. Si falla, usa el Respaldo manual SIRE.</span>
   </div>
 
   <section id="resultsC" class="results-section">
@@ -1722,12 +1722,12 @@ function abrirCacheSIRE(){
 async function leerCacheSIRE(){
   try{const db=await abrirCacheSIRE();return await new Promise((resolve,reject)=>{const tx=db.transaction(SIRE_CACHE_STORE,'readonly');const rq=tx.objectStore(SIRE_CACHE_STORE).get(SIRE_CACHE_KEY);rq.onsuccess=()=>resolve(rq.result||null);rq.onerror=()=>reject(rq.error);})}catch(e){return null}
 }
-async function guardarCacheSIRE(rows){
-  try{const db=await abrirCacheSIRE();await new Promise((resolve,reject)=>{const tx=db.transaction(SIRE_CACHE_STORE,'readwrite');tx.objectStore(SIRE_CACHE_STORE).put({rows,guardadoEn:Date.now()},SIRE_CACHE_KEY);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);})}catch(e){console.warn('No se pudo guardar caché SIRE',e)}
+async function guardarCacheSIRE(rows,totalFuente=null){
+  try{const db=await abrirCacheSIRE();await new Promise((resolve,reject)=>{const tx=db.transaction(SIRE_CACHE_STORE,'readwrite');tx.objectStore(SIRE_CACHE_STORE).put({rows,totalFuente:totalFuente??rows.length,guardadoEn:Date.now()},SIRE_CACHE_KEY);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);})}catch(e){console.warn('No se pudo guardar caché SIRE',e)}
 }
-function activarSIRE(rows,origen,fechaCache=null){
+function activarSIRE(rows,origen,fechaCache=null,totalFuente=null){
   if(!Array.isArray(rows)||!rows.length)return false;
-  state.sire={rows,fileName:'SIRE histórico OneDrive',origen};
+  state.sire={rows,fileName:'SIRE histórico OneDrive',origen,totalFuente:totalFuente??rows.length};
   document.getElementById('cardSIREC')?.classList.add('ready');
   const el=document.getElementById('estadoSIREC');
   if(el){
@@ -1741,70 +1741,56 @@ function activarSIRE(rows,origen,fechaCache=null){
 
 function dormir(ms){ return new Promise(resolve=>setTimeout(resolve,ms)); }
 
-async function pedirParteSIRE(parte,{timeoutMs=SIRE_TIMEOUT_FONDO_MS,reintentos=SIRE_REINTENTOS_FONDO,forzar=false,intento=0}={}){
+function normalizarRespuestaScript(data){
+  let x=data;
+  for(let i=0;i<4;i++){
+    if(typeof x==='string'){
+      try{x=JSON.parse(x);}catch(_){break;}
+    }
+    if(x&&typeof x==='object'&&x.result!==undefined){x=x.result;continue;}
+    if(x&&typeof x==='object'&&x.body!==undefined&&x.headers===undefined&&x.filas===undefined){x=x.body;continue;}
+    break;
+  }
+  return x||{};
+}
+
+function filasScriptAObjetos(payload){
+  const p=normalizarRespuestaScript(payload);
+  const headers=Array.isArray(p.headers)?p.headers:[];
+  const filas=Array.isArray(p.filas)?p.filas:[];
+  if(!headers.length||!filas.length)return [];
+  return filas.map(f=>{
+    const o={};
+    headers.forEach((h,i)=>{o[String(h??'').trim()]=Array.isArray(f)?f[i]:'';});
+    return o;
+  });
+}
+
+async function pedirSIREIncremental(desde,{timeoutMs=180000,reintentos=1,intento=0}={}){
   const controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(),timeoutMs);
   try{
     const r=await fetch(HISTORICOS_COMPRAS_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json','Cache-Control':'no-cache, no-store','Pragma':'no-cache'},
-      body:JSON.stringify({parte,forzar,ts:Date.now()}),
+      body:JSON.stringify({desde:Number(desde)||0}),
       signal:controller.signal,
       cache:'no-store'
     });
     if(!r.ok){const err=new Error('HTTP '+r.status);err.status=r.status;throw err;}
-    return await r.json();
+    const txt=await r.text();
+    let data;
+    try{data=JSON.parse(txt);}catch(_){data=txt;}
+    return normalizarRespuestaScript(data);
   }catch(err){
     const reintentable=err.name==='AbortError'||err.status===408||err.status===429||(err.status>=500&&err.status<=599);
     if(reintentable&&intento<reintentos){
-      await dormir(1200*(intento+1));
-      return pedirParteSIRE(parte,{timeoutMs,reintentos,forzar,intento:intento+1});
+      await dormir(1500*(intento+1));
+      return pedirSIREIncremental(desde,{timeoutMs,reintentos,intento:intento+1});
     }
-    if(err.name==='AbortError')throw new Error(`Bloque ${parte}: Power Automate superó el máximo de ${Math.round(timeoutMs/60000)} min`);
-    throw new Error(`Bloque ${parte}: ${err.message}`);
+    if(err.name==='AbortError')throw new Error('Office Script superó el máximo de 3 minutos');
+    throw err;
   }finally{clearTimeout(timeout);}
-}
-
-async function cargarPartesSIRE({manual=false,onProgress}={}){
-  const timeoutMs=manual?SIRE_TIMEOUT_MANUAL_MS:SIRE_TIMEOUT_FONDO_MS;
-  const reintentos=manual?SIRE_REINTENTOS_MANUAL:SIRE_REINTENTOS_FONDO;
-  const opts={timeoutMs,reintentos,forzar:manual};
-
-  // En segundo plano priorizamos rapidez: 2 bloques en paralelo.
-  if(!manual){
-    const [r1,r2]=await Promise.all([
-      pedirParteSIRE(1,opts).then(x=>{onProgress?.(1,2,1,'paralelo');return x;}),
-      pedirParteSIRE(2,opts).then(x=>{onProgress?.(2,2,2,'paralelo');return x;})
-    ]);
-    const resultados=[r1,r2];
-    if(aplanarBloques(r2).length>=SIRE_TAM_BLOQUE){
-      onProgress?.(2,3,3,'ampliando');
-      resultados.push(await pedirParteSIRE(3,opts));
-      onProgress?.(3,3,3,'secuencial');
-    }
-    return resultados;
-  }
-
-  // Al pulsar Actualizar SIRE hacemos una actualización robusta y REAL.
-  // Secuencial evita saturar el conector Excel/OneDrive y tolera que tarde más.
-  const resultados=[];
-  for(let parte=1;parte<=3;parte++){
-    onProgress?.(parte-1,3,parte,'secuencial');
-    const resp=await pedirParteSIRE(parte,opts);
-    resultados.push(resp);
-    const filas=aplanarBloques(resp);
-    onProgress?.(parte,3,parte,'secuencial');
-    // Si este bloque ya vino con menos de 5,000, no existen más filas.
-    if(filas.length<SIRE_TAM_BLOQUE) break;
-  }
-  return resultados;
-}
-
-function firmaSIRE(rows){
-  if(!rows?.length)return '0';
-  // Firma liviana para saber si la actualización realmente cambió algo.
-  const picks=[rows[0],rows[Math.floor(rows.length/2)],rows[rows.length-1]].filter(Boolean);
-  return rows.length+'|'+picks.map(x=>[x.periodo,x.rucProveedor,x.tipoCP,x.serie,x.nroCP,x.fechaEmision,x.totalCP].join('~')).join('|');
 }
 
 async function actualizarSIRERemoto({silencioso=false,manual=false}={}){
@@ -1814,35 +1800,51 @@ async function actualizarSIRERemoto({silencioso=false,manual=false}={}){
   const el=document.getElementById('estadoSIREC');
   const btn=document.getElementById('btnActualizarHistoricosC');
   const habiaSIRE=!!state.sire?.rows?.length;
-  const firmaAntes=firmaSIRE(state.sire?.rows||[]);
-  if(btn){btn.disabled=true;btn.textContent=manual?'Actualizando SIRE…':'Actualizando…';}
-  if(el&&!silencioso)el.textContent='Consultando SIRE real en OneDrive… 0/3 bloques';
+  let desde=Number(state.sire?.totalFuente ?? state.sire?.rows?.length ?? 9505);
+  if(btn){btn.disabled=true;btn.textContent='Buscando filas nuevas…';}
+  if(el&&!silencioso)el.textContent=`Consultando SIRE con Office Script desde la fila ${desde.toLocaleString('es-PE')}…`;
   const inicio=performance.now();
   try{
-    const respuestas=await cargarPartesSIRE({manual,onProgress:(hechas,total,parte,modo)=>{
-      if(el&&!silencioso)el.textContent=`Consultando SIRE real en OneDrive… ${hechas}/${total} bloques`;
-    }});
-    const sireRaw=respuestas.flatMap(aplanarBloques);
-    const sireRows=parseSIRERows(sireRaw);
-    if(!sireRows.length)throw new Error('El flujo no devolvió SIRE válido.');
+    let payload=await pedirSIREIncremental(desde,{timeoutMs:180000,reintentos:manual?1:0});
+    let totalFilas=Number(payload.totalFilas ?? desde);
 
-    const firmaDespues=firmaSIRE(sireRows);
-    state.sire={rows:sireRows,fileName:'SIRE histórico OneDrive',origen:'SIRE actualizado',actualizadoEn:Date.now()};
-    await guardarCacheSIRE(sireRows);
-    const segundos=((performance.now()-inicio)/1000).toFixed(1);
-    const cambio=firmaAntes!==firmaDespues;
-    if(el){
-      el.textContent=`${sireRows.length.toLocaleString('es-PE')} comprobantes disponibles — SIRE actualizado ahora · ${segundos}s${cambio?' · datos nuevos cargados':' · sin cambios respecto a la copia anterior'}`;
+    // Si el archivo fue reemplazado por una versión más corta, reconstruimos la copia completa una vez.
+    if(Number.isFinite(totalFilas)&&totalFilas<desde){
+      if(el&&!silencioso)el.textContent='El SIRE fue reemplazado. Reconstruyendo la copia completa mediante Office Script…';
+      desde=0;
+      payload=await pedirSIREIncremental(0,{timeoutMs:180000,reintentos:1});
+      totalFilas=Number(payload.totalFilas ?? 0);
     }
+
+    const objetosNuevos=filasScriptAObjetos(payload);
+    const nuevas=parseSIRERows(objetosNuevos);
+    const esRecargaCompleta=desde===0;
+    const anteriores=state.sire?.rows||[];
+    const combinadas=esRecargaCompleta?nuevas:anteriores.concat(nuevas);
+
+    if(!combinadas.length)throw new Error('El Office Script no devolvió registros SIRE válidos.');
+
+    const totalFuente=Number.isFinite(totalFilas)&&totalFilas>=0?totalFilas:(esRecargaCompleta?nuevas.length:desde+objetosNuevos.length);
+    state.sire={rows:combinadas,fileName:'SIRE histórico OneDrive',origen:'Office Script incremental',actualizadoEn:Date.now(),totalFuente};
+    await guardarCacheSIRE(combinadas,totalFuente);
     document.getElementById('cardSIREC')?.classList.add('ready');
+    const segundos=((performance.now()-inicio)/1000).toFixed(1);
+    const reportadas=Number(payload.nuevasFilas ?? objetosNuevos.length);
+    if(el){
+      if(reportadas>0){
+        el.textContent=`${combinadas.length.toLocaleString('es-PE')} comprobantes disponibles · SIRE actualizado por Office Script · +${reportadas.toLocaleString('es-PE')} filas nuevas · total fuente ${totalFuente.toLocaleString('es-PE')} · ${segundos}s`;
+      }else{
+        el.textContent=`${combinadas.length.toLocaleString('es-PE')} comprobantes disponibles · SIRE al día · no hay filas nuevas después de ${desde.toLocaleString('es-PE')} · ${segundos}s`;
+      }
+    }
     actualizarEstado();
     return true;
   }catch(e){
     console.error(e);
-    state.historicosError='No se pudo actualizar el SIRE: '+e.message;
+    state.historicosError='No se pudo actualizar el SIRE: '+(e.message||e);
     if(el){
-      if(habiaSIRE) el.textContent=`${state.sire.rows.length.toLocaleString('es-PE')} comprobantes disponibles · Estado de actualización: no se pudo actualizar automáticamente. Se está usando la última copia válida. · Detalle: ${e.message}`;
-      else el.textContent=state.historicosError+' · pulsa “Actualizar SIRE” para reintentar.';
+      if(habiaSIRE)el.textContent=`${state.sire.rows.length.toLocaleString('es-PE')} comprobantes disponibles · No se pudo consultar Office Script. Se mantiene la última copia válida. · Detalle: ${e.message||e}`;
+      else el.textContent=state.historicosError+' · usa el Respaldo manual SIRE.';
     }
     actualizarEstado();
     return false;
@@ -1866,7 +1868,7 @@ async function cargarHistoricosCompras(){
   // 2) Si este navegador ya guardó una actualización anterior, la usamos apenas IndexedDB responda.
   const cache=await leerCacheSIRE();
   if(cache?.rows?.length){
-    activarSIRE(cache.rows,'última copia guardada',cache.guardadoEn);
+    activarSIRE(cache.rows,'última copia guardada',cache.guardadoEn,cache.totalFuente??cache.rows.length);
   }
 
   // 3) Actualización remota en segundo plano. Nunca bloquea el uso del conciliador.
@@ -1949,15 +1951,16 @@ function iniciarHistoricoManual(){
         const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
         let mejores=[];
         let hojaUsada='';
+        let totalFuenteManual=0;
         for(const nombre of wb.SheetNames){
           const ws=wb.Sheets[nombre];
           const data=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false,dateNF:'dd/mm/yyyy'});
           const parsed=parseSIRERows(data);
-          if(parsed.length>mejores.length){mejores=parsed;hojaUsada=nombre;}
+          if(parsed.length>mejores.length){mejores=parsed;hojaUsada=nombre;totalFuenteManual=data.length;}
         }
         if(!mejores.length) throw new Error('No se encontraron registros SIRE válidos en el archivo.');
-        state.sire={rows:mejores,fileName:file.name,origen:'SIRE manual',actualizadoEn:Date.now()};
-        await guardarCacheSIRE(mejores);
+        state.sire={rows:mejores,fileName:file.name,origen:'SIRE manual',actualizadoEn:Date.now(),totalFuente:totalFuenteManual||mejores.length};
+        await guardarCacheSIRE(mejores,totalFuenteManual||mejores.length);
         document.getElementById('cardSIREC')?.classList.add('ready');
         const estadoPrincipal=document.getElementById('estadoSIREC');
         if(estadoPrincipal) estadoPrincipal.textContent=`${mejores.length.toLocaleString('es-PE')} comprobantes disponibles — USANDO SIRE MANUAL · ${file.name}`;
