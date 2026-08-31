@@ -1534,8 +1534,17 @@ function normalizarFecha(value, periodoEsperado=''){
   const coincidePeriodo=f=>!periodo || String(f||'').slice(0,7).replace('-','')===periodo;
 
   if(value instanceof Date&&!Number.isNaN(value.getTime())){
-    const f=isoFecha(value.getFullYear(),value.getMonth()+1,value.getDate());
-    return f;
+    const y=value.getFullYear(), m=value.getMonth()+1, d=value.getDate();
+    const directo=isoFecha(y,m,d);
+    // Excel/Power Automate puede haber guardado una fecha DD/MM como MM/DD.
+    // Si el mes almacenado contradice el Periodo SIRE, probamos día/mes invertidos.
+    if(periodo && String(y)+String(m).padStart(2,'0')!==periodo){
+      if(d>=1 && d<=12 && valida(y,d,m)){
+        const invertida=isoFecha(y,d,m);
+        if(coincidePeriodo(invertida)) return invertida;
+      }
+    }
+    return directo;
   }
 
   const serialAFecha=n=>{
@@ -1641,7 +1650,7 @@ function parseSIRERows(rows){
     // Por eso la fecha se normaliza únicamente desde 'Fecha de emisión' y el periodo operativo
     // se deriva de esa fecha real.
     const fechaRaw=valorPorAlias(x,['Fecha de emisión','Fecha Emisión','Fecha Emision']);
-    r.fechaEmision=normalizarFecha(fechaRaw);
+    r.fechaEmision=normalizarFecha(fechaRaw, r.periodo);
     r.baseImponible=r.biGravadoDG+r.biDGNG+r.biDNG; r.igvTotal=r.igvDG+r.igvDGNG+r.igvDNG;
     r.periodoEmision=periodoDeFecha(r.fechaEmision);
     r.periodoSIRE=r.periodoEmision || periodoPLE(r.periodo);
@@ -1663,16 +1672,14 @@ function aplanarBloques(data){
   if(data.body)return aplanarBloques(data.body); return [];
 }
 
-const SIRE_PARTES=[1,2,3];
-const SIRE_MAX_CONCURRENCIA=2; // rápido, pero sin lanzar los 3 conectores de Excel a la vez
+const SIRE_TAM_BLOQUE=5000;
 const SIRE_REINTENTOS=2;
 
 function dormir(ms){ return new Promise(resolve=>setTimeout(resolve,ms)); }
 
 async function pedirParteSIRE(parte,intento=0){
   const controller=new AbortController();
-  // Dejamos margen suficiente al flujo. El 504 normalmente lo genera Power Automate antes que este límite.
-  const timeout=setTimeout(()=>controller.abort(),110000);
+  const timeout=setTimeout(()=>controller.abort(),90000);
   try{
     const r=await fetch(HISTORICOS_COMPRAS_URL,{
       method:'POST',
@@ -1680,43 +1687,33 @@ async function pedirParteSIRE(parte,intento=0){
       body:JSON.stringify({parte}),
       signal:controller.signal
     });
-    if(!r.ok){
-      const err=new Error('HTTP '+r.status);
-      err.status=r.status;
-      throw err;
-    }
+    if(!r.ok){const err=new Error('HTTP '+r.status);err.status=r.status;throw err;}
     return await r.json();
   }catch(err){
-    const reintentable=err.name==='AbortError' || err.status===408 || err.status===429 || (err.status>=500 && err.status<=599);
-    if(reintentable && intento<SIRE_REINTENTOS){
-      // Reintento corto y progresivo. Solo se repite el bloque que falló.
-      await dormir(1200*(intento+1));
+    const reintentable=err.name==='AbortError'||err.status===408||err.status===429||(err.status>=500&&err.status<=599);
+    if(reintentable&&intento<SIRE_REINTENTOS){
+      await dormir(800*(intento+1));
       return pedirParteSIRE(parte,intento+1);
     }
-    if(err.name==='AbortError') throw new Error(`Bloque ${parte}: tiempo de espera agotado`);
+    if(err.name==='AbortError')throw new Error(`Bloque ${parte}: tiempo de espera agotado`);
     throw new Error(`Bloque ${parte}: ${err.message}`);
-  }finally{
-    clearTimeout(timeout);
-  }
+  }finally{clearTimeout(timeout);}
 }
 
 async function cargarPartesSIRERapido(onProgress){
-  const resultados=new Array(SIRE_PARTES.length);
-  const fallidas=[];let siguiente=0,terminadas=0;
-  async function worker(){
-    while(true){
-      const idx=siguiente++;if(idx>=SIRE_PARTES.length)return;
-      const parte=SIRE_PARTES[idx];
-      try{resultados[idx]=await pedirParteSIRE(parte);terminadas++;onProgress?.(terminadas,SIRE_PARTES.length,parte,'paralelo');}
-      catch(err){fallidas.push({idx,parte,err});}
-    }
-  }
-  await Promise.all(Array.from({length:Math.min(SIRE_MAX_CONCURRENCIA,SIRE_PARTES.length)},()=>worker()));
-  // Si Power Automate se saturó en paralelo, solo las partes fallidas pasan a modo secuencial.
-  for(const f of fallidas){
-    onProgress?.(terminadas,SIRE_PARTES.length,f.parte,'reintentando');
-    resultados[f.idx]=await pedirParteSIRE(f.parte);
-    terminadas++;onProgress?.(terminadas,SIRE_PARTES.length,f.parte,'secuencial');
+  // Hoy el histórico tiene menos de 10 000 filas: normalmente bastan 2 llamadas.
+  // Cargamos 1 y 2 en paralelo y SOLO pedimos la parte 3 si la parte 2 vino llena (5 000).
+  const [r1,r2]=await Promise.all([
+    pedirParteSIRE(1).then(x=>{onProgress?.(1,2,1,'paralelo');return x;}),
+    pedirParteSIRE(2).then(x=>{onProgress?.(2,2,2,'paralelo');return x;})
+  ]);
+  const resultados=[r1,r2];
+  const filas2=aplanarBloques(r2);
+  if(filas2.length>=SIRE_TAM_BLOQUE){
+    onProgress?.(2,3,3,'ampliando');
+    const r3=await pedirParteSIRE(3);
+    resultados.push(r3);
+    onProgress?.(3,3,3,'secuencial');
   }
   return resultados;
 }
