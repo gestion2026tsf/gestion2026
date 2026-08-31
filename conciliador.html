@@ -1529,11 +1529,15 @@ function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&l
 function normalizarFecha(value){
   if(value===null||value===undefined||value==='') return '';
   if(value instanceof Date&&!Number.isNaN(value.getTime())) return `${value.getFullYear()}-${String(value.getMonth()+1).padStart(2,'0')}-${String(value.getDate()).padStart(2,'0')}`;
-  if(typeof value==='number'&&window.XLSX?.SSF){const p=XLSX.SSF.parse_date_code(value);if(p)return `${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`}
-  const t=String(value).trim().split(' ')[0];
+  const serialAFecha=n=>{if(Number.isFinite(n)&&n>20000&&n<80000&&window.XLSX?.SSF){const p=XLSX.SSF.parse_date_code(n);if(p)return `${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`;}return ''};
+  if(typeof value==='number'){const f=serialAFecha(value);if(f)return f;}
+  const raw=String(value).trim();
+  if(/^\d+(?:\.\d+)?$/.test(raw)){const f=serialAFecha(Number(raw));if(f)return f;}
+  let iso=raw.match(/^(\d{4})-(\d{2})-(\d{2})T/); if(iso)return `${iso[1]}-${iso[2]}-${iso[3]}`;
+  const t=raw.split(' ')[0];
   let m=t.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/); if(m)return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
   m=t.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/); if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
-  m=t.match(/^(\d{4})-(\d{2})-(\d{2})T/); if(m)return `${m[1]}-${m[2]}-${m[3]}`;
+  m=t.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2})$/); if(m){const yy=Number(m[3]),yyyy=yy>=70?1900+yy:2000+yy;return `${yyyy}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;}
   return '';
 }
 function periodoDeFecha(fecha){const f=normalizarFecha(fecha);return f?f.slice(0,7).replace('-',''):''}
@@ -1640,18 +1644,22 @@ async function pedirParteSIRE(parte,intento=0){
 
 async function cargarPartesSIRERapido(onProgress){
   const resultados=new Array(SIRE_PARTES.length);
-  let siguiente=0,terminadas=0;
+  const fallidas=[];let siguiente=0,terminadas=0;
   async function worker(){
     while(true){
-      const idx=siguiente++;
-      if(idx>=SIRE_PARTES.length)return;
+      const idx=siguiente++;if(idx>=SIRE_PARTES.length)return;
       const parte=SIRE_PARTES[idx];
-      resultados[idx]=await pedirParteSIRE(parte);
-      terminadas++;
-      onProgress?.(terminadas,SIRE_PARTES.length,parte);
+      try{resultados[idx]=await pedirParteSIRE(parte);terminadas++;onProgress?.(terminadas,SIRE_PARTES.length,parte,'paralelo');}
+      catch(err){fallidas.push({idx,parte,err});}
     }
   }
   await Promise.all(Array.from({length:Math.min(SIRE_MAX_CONCURRENCIA,SIRE_PARTES.length)},()=>worker()));
+  // Si Power Automate se saturó en paralelo, solo las partes fallidas pasan a modo secuencial.
+  for(const f of fallidas){
+    onProgress?.(terminadas,SIRE_PARTES.length,f.parte,'reintentando');
+    resultados[f.idx]=await pedirParteSIRE(f.parte);
+    terminadas++;onProgress?.(terminadas,SIRE_PARTES.length,f.parte,'secuencial');
+  }
   return resultados;
 }
 
@@ -1666,8 +1674,8 @@ async function cargarHistoricosCompras(){
   actualizarEstado();
   const inicio=performance.now();
   try{
-    const respuestas=await cargarPartesSIRERapido((hechas,total)=>{
-      if(el)el.textContent=`Cargando SIRE histórico… ${hechas}/${total} bloques listos`;
+    const respuestas=await cargarPartesSIRERapido((hechas,total,parte,modo)=>{
+      if(el)el.textContent=modo==='reintentando'?`Power Automate demoró en el bloque ${parte}. Reintentando solo ese bloque…`:`Cargando SIRE histórico… ${hechas}/${total} bloques listos`;
     });
     const sireRaw=respuestas.flatMap(aplanarBloques);
     const sireRows=parseSIRERows(sireRaw);
@@ -1717,15 +1725,41 @@ function marcarDrop(id,file){const d=document.getElementById(id);if(!d)return;d.
 function cargarPLEActual(file){
   const rd=new FileReader(); rd.onload=e=>{try{const rows=parsePLE(e.target.result);state.rce={rows,fileName:file.name};document.getElementById('estadoRCEC').textContent=`${rows.length.toLocaleString('es-PE')} filas — ${file.name}`;document.getElementById('cardRCEC').classList.add('ready');marcarDrop('dropRCEC',file);detectarTipos(rows);actualizarEstado()}catch(err){document.getElementById('estadoRCEC').textContent='No se pudo leer el TXT.'}};rd.readAsText(file,'UTF-8');
 }
-function detectarTipos(rows){state.tipos.clear();const c=new Map();rows.forEach(r=>c.set(r.tipoCP,(c.get(r.tipoCP)||0)+1));[...c.entries()].sort().forEach(([cod,n])=>state.tipos.set(cod,{label:tipoLabel(cod),cantidad:n,esperado:TIPOS_ESPERADOS_DEFAULT.has(cod)}));renderTipos()}
-function renderTipos(){const card=document.getElementById('cardTiposC');card.style.display='block';let h='<thead><tr><th>Tipo</th><th>Cantidad</th><th>¿Cruzar con SIRE?</th></tr></thead><tbody>';for(const [cod,x] of state.tipos){h+=`<tr><td>${esc(x.label)}</td><td class="num">${x.cantidad}</td><td><input type="checkbox" data-tipo="${cod}" ${x.esperado?'checked':''}></td></tr>`}h+='</tbody>';const t=document.getElementById('tablaTiposC');t.innerHTML=h;t.querySelectorAll('input').forEach(ch=>ch.addEventListener('change',()=>state.tipos.get(ch.dataset.tipo).esperado=ch.checked))}
+function detectarTipos(rows){
+  state.tipos.clear();const c=new Map();rows.forEach(r=>c.set(r.tipoCP,(c.get(r.tipoCP)||0)+1));
+  [...c.entries()].sort().forEach(([cod,n])=>state.tipos.set(cod,{label:tipoLabel(cod),cantidad:n,esperado:TIPOS_ESPERADOS_DEFAULT.has(cod),especial:TIPOS_TRATAMIENTO_ESPECIAL.has(cod)}));
+  renderTipos();
+}
+function renderTipos(){
+  const card=document.getElementById('cardTiposC');card.style.display='block';
+  let h='<thead><tr><th>Tipo</th><th>Cantidad</th><th>Regla automática</th></tr></thead><tbody>';
+  for(const [cod,x] of state.tipos){let regla=x.especial?'Tratamiento especial':x.esperado?'Cruce principal con SIRE':'Revisión por tipo';h+=`<tr><td>${esc(x.label)}</td><td class="num">${x.cantidad}</td><td>${regla}</td></tr>`;}
+  h+='</tbody>';document.getElementById('tablaTiposC').innerHTML=h;
+}
 function actualizarEstado(){const listo=!!(state.rce?.rows?.length&&state.sire?.rows?.length);document.getElementById('btnProcesarC').disabled=!listo;let m='Sube el PLE del periodo. El SIRE histórico se obtiene automáticamente.';if(state.rce&&!state.sire)m=state.historicosError||'PLE cargado. Falta SIRE histórico.';if(!state.rce&&state.sire)m='SIRE histórico conectado. Sube el PLE del periodo.';if(listo&&state.bancos?.rows?.length)m='Listo: PLE + SIRE histórico + Lista de Obligaciones.';else if(listo)m='Listo para conciliar PLE vs SIRE. La Lista de Obligaciones solo se necesita para casos bancarios.';document.getElementById('statusMsgC').textContent=m}
 
-function iniciarBancos(){wireDrop('dropBancosC','fileBancosC',file=>{const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const arr=XLSX.utils.sheet_to_json(ws,{defval:''});const parsed=arr.map(x=>{
-  let num=String(valorPorAlias(x,['NumeroDocumento','Número Documento','Nro Documento','Documento'])).trim();let serie=String(valorPorAlias(x,['Serie'])).trim(),numero=String(valorPorAlias(x,['Correlativo','Numero','Número'])).trim();if(!serie&&num.includes('-')){const p=num.lastIndexOf('-');serie=num.slice(0,p);numero=num.slice(p+1)}
-  return {ruc:digits(valorPorAlias(x,['RUC','RucProveedor','NumeroRuc'])),proveedor:normTxt(valorPorAlias(x,['Busqueda','Proveedor','Razon Social','Razón Social'])),serie,numero,monto:toNumber(valorPorAlias(x,['MontoObligacion','Monto Obligacion','Importe','Monto'])),fecha:normalizarFecha(valorPorAlias(x,['FechaDocumento','Fecha Documento','Fecha'])),raw:x};
-}).filter(x=>x.serie&&x.numero);state.bancos={rows:parsed,fileName:file.name};document.getElementById('estadoBancosC').textContent=`${parsed.length.toLocaleString('es-PE')} filas — ${file.name}`;document.getElementById('cardBancosC').classList.add('ready');marcarDrop('dropBancosC',file)}catch(err){console.error(err);document.getElementById('estadoBancosC').textContent='No se pudo leer Obligaciones.'}};rd.readAsArrayBuffer(file)})}
-function sugerirBanco(r){if(!state.bancos)return null;let best=null,score=1e9;const nom=normTxt(r.razonSocial),ruc=digits(r.rucProveedor);for(const b of state.bancos.rows){const sameRuc=ruc&&b.ruc&&ruc===b.ruc;const sameNom=nom&&b.proveedor&&(b.proveedor.includes(nom)||nom.includes(b.proveedor));if(!sameRuc&&!sameNom)continue;const dif=Math.abs(toNumber(b.monto)-toNumber(r.totalCP));const tol=Math.max(.10,Math.abs(r.totalCP)*.01);if(dif>tol)continue;let s=dif;if(b.fecha&&r.fechaNorm)s+=b.fecha===r.fechaNorm?0:1;if(s<score){score=s;best=b}}if(!best)return null;const key=buildKey(r.rucProveedor,r.tipoCP,best.serie,best.numero);return {serie:best.serie,numero:padNum(best.numero),keySugerida:key,encontradaEnSIRE:state.sireSet?.has(key)||false,monto:best.monto,fecha:best.fecha}}
+function normVoucher(v){return String(v??'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
+function iniciarBancos(){wireDrop('dropBancosC','fileBancosC',file=>{const rd=new FileReader();rd.onload=e=>{try{
+  const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const arr=XLSX.utils.sheet_to_json(ws,{defval:''});
+  const parsed=arr.map(x=>{
+    const documento=String(valorPorAlias(x,['NumeroDocumento','Número Documento','Nro Documento','Documento'])).trim();
+    let serie='',numero=''; if(documento.includes('-')){const p=documento.lastIndexOf('-');serie=documento.slice(0,p).replace(/^(FP|PP)-/i,'');numero=documento.slice(p+1)}
+    if(!serie)serie=String(valorPorAlias(x,['Serie'])).trim(); if(!numero)numero=String(valorPorAlias(x,['Correlativo','Numero','Número'])).trim();
+    const voucher=String(valorPorAlias(x,['Voucher','CUO','Voucher Contable'])).trim();
+    return {voucher,voucherNorm:normVoucher(voucher),documento,proveedor:String(valorPorAlias(x,['Busqueda','Proveedor','Razon Social','Razón Social'])).trim(),tipoDocumento:String(valorPorAlias(x,['TipoDocumento','Tipo Documento'])).trim(),serie,numero,monto:toNumber(valorPorAlias(x,['MontoObligacion','Monto Obligacion','Importe','Monto'])),fecha:normalizarFecha(valorPorAlias(x,['FechaDocumento','Fecha Documento','Fecha'])),raw:x};
+  }).filter(x=>x.voucherNorm&&x.serie&&x.numero);
+  const porVoucher=new Map(); parsed.forEach(x=>{if(!porVoucher.has(x.voucherNorm))porVoucher.set(x.voucherNorm,[]);porVoucher.get(x.voucherNorm).push(x)});
+  state.bancos={rows:parsed,porVoucher,fileName:file.name};document.getElementById('estadoBancosC').textContent=`${parsed.length.toLocaleString('es-PE')} filas — ${file.name}`;document.getElementById('cardBancosC').classList.add('ready');marcarDrop('dropBancosC',file);actualizarEstado();
+}catch(err){console.error(err);document.getElementById('estadoBancosC').textContent='No se pudo leer Obligaciones.'}};rd.readAsArrayBuffer(file)})}
+function sugerirBanco(r){
+  if(!state.bancos?.porVoucher)return null;
+  const vn=normVoucher(r.cuo); if(!vn)return null;
+  const candidatas=state.bancos.porVoucher.get(vn)||[]; if(!candidatas.length)return null;
+  // El Voucher/CUO es la relación principal. Si hay duplicados, prioriza la fila FP y luego la que tenga un documento utilizable.
+  const best=[...candidatas].sort((a,b)=>((a.tipoDocumento==='FP'?0:1)-(b.tipoDocumento==='FP'?0:1)))[0];
+  const key=buildKey(r.rucProveedor,r.tipoCP,best.serie,best.numero);
+  return {voucher:r.cuo,voucherObligacion:best.voucher,documentoObligacion:best.documento,serie:best.serie,numero:padNum(best.numero),keySugerida:key,encontradaEnSIRE:state.sireSet?.has(key)||false,monto:best.monto,fecha:best.fecha,metodo:'VOUCHER/CUO EXACTO'};
+}
 
 function iniciarHistoricoManual(){wireDrop('dropPLEHistManualC','filePLEHistManualC',file=>{const rd=new FileReader();rd.onload=e=>{try{let rows=[];if(file.name.toLowerCase().endsWith('.txt'))rows=parsePLE(e.target.result);else{const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const data=XLSX.utils.sheet_to_json(ws,{defval:''});rows=parseHistoricoDesdeObjetos(data)}state.pleHistorico={rows,fileName:file.name};document.getElementById('estadoPLEHistManualC').textContent=`${rows.length.toLocaleString('es-PE')} filas — ${file.name}`;document.getElementById('cardPLEHistManualC').classList.add('ready');marcarDrop('dropPLEHistManualC',file);actualizarEstado()}catch(err){console.error(err);document.getElementById('estadoPLEHistManualC').textContent='No se pudo leer el histórico.'}};if(file.name.toLowerCase().endsWith('.txt'))rd.readAsText(file,'UTF-8');else rd.readAsArrayBuffer(file)})}
 
@@ -1785,17 +1819,29 @@ function cargarTC(file){const rd=new FileReader();rd.onload=e=>{try{const wb=XLS
 function construirMapaTC(){const tc=state.tc;if(!tc.rows.length)return;tc.fechaCol=+document.getElementById('colFechaTCC').value;tc.compraCol=+document.getElementById('colCompraTCC').value;tc.ventaCol=+document.getElementById('colVentaTCC').value;tc.mapa=new Map();tc.rows.forEach(r=>{const f=normalizarFecha(r[tc.fechaCol]),v=toNumber(r[tc.ventaCol]),c=toNumber(r[tc.compraCol]);if(f&&v)tc.mapa.set(f,{compra:c,venta:v})});document.getElementById('estadoTCC').textContent=`${tc.mapa.size.toLocaleString('es-PE')} fechas disponibles.`}
 function tcVenta(fecha){const x=state.tc.mapa.get(normalizarFecha(fecha));return x?x.venta:null}
 
+function nombreCanonico(v){
+  return normTxt(v).replace(/[^A-Z0-9 ]/g,' ')
+    .replace(/SOCIEDAD ANONIMA CERRADA/g,' ').replace(/SOCIEDAD ANONIMA/g,' ')
+    .replace(/EMPRESA INDIVIDUAL DE RESPONSABILIDAD LIMITADA/g,' ').replace(/SOCIEDAD COMERCIAL DE RESPONSABILIDAD LIMITADA/g,' ')
+    .replace(/\bS A C\b|\bSAC\b|\bS A\b|\bSA\b|\bS R L\b|\bSRL\b|\bE I R L\b|\bEIRL\b/g,' ')
+    .replace(/\s+/g,' ').trim();
+}
+function simNombre(a,b){
+  const A=nombreCanonico(a),B=nombreCanonico(b); if(!A||!B)return true; if(A===B||A.includes(B)||B.includes(A))return true;
+  const ta=A.split(' ').filter(x=>x.length>2),tb=B.split(' ').filter(x=>x.length>2),sa=new Set(ta),sb=new Set(tb);let comunes=0;sa.forEach(x=>{if(sb.has(x))comunes++});
+  const base=Math.min(sa.size,sb.size); return base>0 && (comunes/base)>=0.67;
+}
+function dineroIgual(a,b){return Math.abs(Math.round(toNumber(a)*100)-Math.round(toNumber(b)*100))===0}
 function comparar(ple,sire){
   const v={
     tipo:ple.tipoCP===sire.tipoCP,ruc:digits(ple.rucProveedor)===digits(sire.rucProveedor),
     proveedor:!ple.razonSocial||!sire.razonSocial||simNombre(ple.razonSocial,sire.razonSocial),serie:normTxt(ple.serie)===normTxt(sire.serie),
     correlativo:padNum(ple.nroCP)===padNum(sire.nroCP),fecha:!!ple.fechaNorm&&!!sire.fechaEmision&&ple.fechaNorm===sire.fechaEmision,
     moneda:normTxt(ple.moneda)===normTxt(sire.moneda),tipoCambio:normTxt(ple.moneda)!=='USD'||!sire.tipoCambio||casiIgual(ple.tipoCambio,sire.tipoCambio,.001),
-    baseImponible:casiIgual(ple.baseImponible,sire.baseImponible,.05),igv:casiIgual(ple.igvTotal,sire.igvTotal,.05),total:casiIgual(ple.totalCP,sire.totalCP,.05)
+    baseImponible:dineroIgual(ple.baseImponible,sire.baseImponible),igv:dineroIgual(ple.igvTotal,sire.igvTotal),total:dineroIgual(ple.totalCP,sire.totalCP)
   };
   const dif=Object.entries(v).filter(([,ok])=>!ok).map(([k])=>k);return {validaciones:v,diferencias:dif};
 }
-function simNombre(a,b){const A=normTxt(a).replace(/[^A-Z0-9 ]/g,''),B=normTxt(b).replace(/[^A-Z0-9 ]/g,'');if(!A||!B)return true;if(A.includes(B)||B.includes(A))return true;const sa=new Set(A.split(' ').filter(x=>x.length>2)),sb=new Set(B.split(' ').filter(x=>x.length>2));let n=0;sa.forEach(x=>{if(sb.has(x))n++});return n>=Math.min(2,Math.min(sa.size,sb.size))}
 function buscarCandidato(ple,sireRows){
   let best=null,bestScore=-1;
   for(const s of sireRows){if(digits(s.rucProveedor)!==digits(ple.rucProveedor))continue;if(s.tipoCP!==ple.tipoCP)continue;let score=2;
@@ -1809,43 +1855,56 @@ function procesar(){
   const ple=state.rce.rows,sire=state.sire.rows;
   const map=(rows,key='key')=>{const m=new Map();rows.forEach(r=>{const a=m.get(r[key])||[];a.push(r);m.set(r[key],a)});return m};
   const pleMap=map(ple),sireMap=map(sire); state.sireSet=new Set(sire.map(r=>r.key));
+  const histMap=state.pleHistorico?.rows?.length?map(state.pleHistorico.rows):new Map();
   const periodoActual=modoPeriodo(ple.map(r=>r.periodoRegistro).filter(Boolean))||modoPeriodo(ple.map(r=>r.periodoEmision).filter(Boolean));
+
   const pleResultado=ple.map(r=>{
-    const especial=TIPOS_TRATAMIENTO_ESPECIAL.has(r.tipoCP);
-    const esperado=TIPOS_ESPERADOS_DEFAULT.has(r.tipoCP);
-    const duplicado=(pleMap.get(r.key)||[]).length>1;
-    let sireMatch=(sireMap.get(r.key)||[])[0]||null,candidato=null,comp=null,banco=null,estado='',motivo='';
+    const especial=TIPOS_TRATAMIENTO_ESPECIAL.has(r.tipoCP),esperado=TIPOS_ESPERADOS_DEFAULT.has(r.tipoCP),duplicado=(pleMap.get(r.key)||[]).length>1;
+    let sireMatch=(sireMap.get(r.key)||[])[0]||null,candidato=null,comp=null,banco=null,estado='',motivo='',accion='Sin observación';
     if(especial){
-      estado='TRATAMIENTO ESPECIAL';
-      motivo=tipoLabel(r.tipoCP)+' — revisar según regla específica del comprobante';
-      if(r.tipoCP==='13'){
-        banco=sugerirBanco(r);
-        if(banco?.encontradaEnSIRE) motivo+='; correlativo sugerido por Obligaciones encontrado en SIRE';
-        else if(banco) motivo+='; revisar correlativo sugerido por Lista de Obligaciones';
+      estado='TRATAMIENTO ESPECIAL';motivo=tipoLabel(r.tipoCP)+' — control separado del cruce principal';accion='Aplicar control específico según tipo';
+    }else if(!esperado){
+      estado='REVISIÓN POR TIPO';motivo='Tipo fuera del cruce principal configurado';accion='Revisar tratamiento del tipo de comprobante';
+    }else if(sireMatch){
+      comp=comparar(r,sireMatch);estado=comp.diferencias.length?'CONCILIADO CON DIFERENCIAS':'CONCILIADO';
+      motivo=comp.diferencias.length?'Encontrado en SIRE — revisar '+comp.diferencias.join(', '):'Encontrado en SIRE y registrado correctamente';
+      if(comp.diferencias.length)accion='Revisar y corregir diferencias';
+    }else{
+      banco=sugerirBanco(r);
+      if(banco){
+        if(banco.encontradaEnSIRE){
+          sireMatch=(sireMap.get(banco.keySugerida)||[])[0]||null;
+          comp=sireMatch?comparar({...r,serie:banco.serie,nroCP:banco.numero,key:banco.keySugerida},sireMatch):null;
+          estado='BANCO CONFIRMADO POR OBLIGACIONES';motivo='Voucher/CUO exacto en Obligaciones → '+banco.documentoObligacion+' → encontrado en SIRE';
+          if(comp?.diferencias?.length)motivo+='; diferencias: '+comp.diferencias.join(', ');
+          accion='Validación bancaria confirmada por Voucher/CUO';
+        }else{
+          estado='BANCO EN OBLIGACIONES — NO EN SIRE';motivo='Voucher/CUO exacto encontrado en Obligaciones ('+banco.documentoObligacion+'), pero esa llave no aparece en SIRE';accion='Revisar SIRE / sustento bancario';
+        }
+      }else{
+        candidato=buscarCandidato(r,sire);
+        if(candidato){sireMatch=candidato.row;comp=comparar(r,sireMatch);estado='POSIBLE COINCIDENCIA';motivo='No hay llave exacta; candidato en SIRE — revisar '+comp.diferencias.join(', ');accion='Validar candidato antes de corregir';}
+        else if(histMap.has(r.key)){const h=histMap.get(r.key)[0];estado='REGISTRADO EN PERIODO ANTERIOR';motivo='Comprobante encontrado en PLE histórico'+(h.periodoRegistro?' — periodo '+h.periodoRegistro:'');accion='Verificar que no corresponda volver a registrar';}
+        else{estado='NO UBICADO EN SIRE';motivo='No encontrado por llave exacta, Voucher/CUO, candidato ni histórico disponible';accion='Revisar comprobante / sustento';}
       }
     }
-    else if(!esperado){estado='REVISIÓN POR TIPO';motivo='Tipo de comprobante fuera del cruce principal configurado'}
-    else if(sireMatch){comp=comparar(r,sireMatch);estado=comp.diferencias.length?'CONCILIADO CON DIFERENCIAS':'CONCILIADO';motivo=comp.diferencias.length?'Encontrado en SIRE — revisar '+comp.diferencias.join(', '):'Encontrado en SIRE y registrado correctamente'}
-    else {
-      banco=sugerirBanco(r);
-      if(banco?.encontradaEnSIRE){sireMatch=(sireMap.get(banco.keySugerida)||[])[0]||null;comp=sireMatch?comparar({...r,serie:banco.serie,nroCP:banco.numero,key:banco.keySugerida},sireMatch):null;estado='OBSERVACIÓN BANCO';motivo='Correlativo sugerido por Lista de Obligaciones y encontrado en SIRE'}
-      else {candidato=buscarCandidato(r,sire);if(candidato){sireMatch=candidato.row;comp=comparar(r,sireMatch);estado='POSIBLE COINCIDENCIA';motivo='Existe un posible comprobante en SIRE — revisar '+comp.diferencias.join(', ')}else if(banco){estado='OBSERVACIÓN BANCO';motivo='Correlativo sugerido por Obligaciones, pero no se encontró en SIRE'}else{estado='NO UBICADO EN SIRE';motivo='No encontrado luego del cruce exacto y búsqueda de candidatos'}}
-    }
-    let accion='Sin observación';
-    if(estado==='NO UBICADO EN SIRE')accion='Revisar comprobante / sustento';
-    else if(estado==='POSIBLE COINCIDENCIA'||estado==='CONCILIADO CON DIFERENCIAS')accion='Revisar y corregir diferencias';
-    else if(estado==='OBSERVACIÓN BANCO')accion='Validar correlativo con Lista de Obligaciones';
-    else if(estado==='TRATAMIENTO ESPECIAL')accion='Aplicar control específico según tipo';
-    else if(estado==='REVISIÓN POR TIPO')accion='Revisar alcance del tipo de comprobante';
     return {...r,esperado,duplicado,estado,motivo,sireMatch,candidato,comparacion:comp,sugerenciaBanco:banco,accion};
+  });
+
+  // Para el cruce inverso también se consideran las llaves corregidas por Voucher/CUO.
+  const pleEfectivo=new Map();
+  pleResultado.forEach(x=>{
+    if(!pleEfectivo.has(x.key))pleEfectivo.set(x.key,x);
+    if(x.sugerenciaBanco?.encontradaEnSIRE&&!pleEfectivo.has(x.sugerenciaBanco.keySugerida))pleEfectivo.set(x.sugerenciaBanco.keySugerida,x);
   });
   const sireResultado=sire.map(r=>{
     const duplicado=(sireMap.get(r.key)||[]).length>1;let estado='HISTÓRICO',motivo='Fuera del periodo analizado',candidatoPLE=null;
-    if(pleMap.has(r.key)){estado='REGISTRADO EN PLE';motivo='Encontrado en PLE del periodo'}
+    if(pleEfectivo.has(r.key)){const p=pleEfectivo.get(r.key);estado=p.sugerenciaBanco?.keySugerida===r.key?'REGISTRADO EN PLE — CORREGIDO POR OBLIGACIONES':'REGISTRADO EN PLE';motivo='Encontrado en PLE del periodo';}
     else if(periodoActual&&(r.periodoSIRE===periodoActual||r.periodoEmision===periodoActual)){
       candidatoPLE=buscarCandidato(r,ple);
-      if(candidatoPLE){estado='POSIBLE COINCIDENCIA EN PLE';motivo='No hay llave exacta, pero existe candidato en PLE — validar serie/correlativo/datos'}
-      else {estado='NO ENCONTRADO EN PLE — PENDIENTE DE VALIDAR';motivo='SIRE del periodo sin llave exacta ni candidato suficiente en PLE'}
+      if(candidatoPLE){estado='POSIBLE COINCIDENCIA EN PLE';motivo='No hay llave exacta, pero existe candidato en PLE — validar serie/correlativo/datos';}
+      else if(histMap.has(r.key)){estado='REGISTRADO EN PLE HISTÓRICO';motivo='No aparece en PLE actual, pero existe en histórico';}
+      else{estado='NO ENCONTRADO EN PLE — PENDIENTE DE VALIDAR';motivo='SIRE del periodo sin llave exacta, corrección bancaria, candidato ni histórico disponible';}
     }
     return {...r,duplicado,estado,motivo,candidatoPLE};
   });
@@ -1857,10 +1916,10 @@ function marca(v){return v===undefined?'No evaluado':v?'Correcto':'Revisar'}
 
 function renderResultados(r){
   const cr=contar(r.pleResultado,'estado'),total=r.pleResultado.length;let h='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';
-  ['CONCILIADO','CONCILIADO CON DIFERENCIAS','POSIBLE COINCIDENCIA','OBSERVACIÓN BANCO','TRATAMIENTO ESPECIAL','REVISIÓN POR TIPO','NO UBICADO EN SIRE'].forEach(e=>{const n=cr.get(e)||0;if(!n)return;const cls=e==='CONCILIADO'?'ok':e==='NO UBICADO EN SIRE'?'bad':'warn';h+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/total*100).toFixed(1)}%</td></tr>`});h+=`<tr><td>TOTAL PLE</td><td>${total}</td><td>100%</td></tr></tbody></table>`;document.getElementById('resumenRCEHolder').innerHTML=h;
-  const sr=r.sireResultado.filter(x=>x.estado!=='HISTÓRICO'),cs=contar(sr,'estado'),ts=sr.length||1;let hs='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';['REGISTRADO EN PLE','POSIBLE COINCIDENCIA EN PLE','NO ENCONTRADO EN PLE — PENDIENTE DE VALIDAR'].forEach(e=>{const n=cs.get(e)||0;const cls=e==='REGISTRADO EN PLE'?'ok':e.startsWith('NO ENCONTRADO')?'bad':'warn';hs+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/ts*100).toFixed(1)}%</td></tr>`});hs+=`<tr><td>Periodo analizado</td><td>${r.periodoActual||'—'}</td><td>—</td></tr></tbody></table>`;document.getElementById('resumenSIREHolder').innerHTML=hs;
-  let ht='<table class="report"><thead><tr><th>Tipo</th><th>Total</th><th>OK</th><th>Con diferencias</th><th>Posible</th><th>Especial</th><th>No ubicado</th></tr></thead><tbody>';for(const [cod,info] of state.tipos){const f=r.pleResultado.filter(x=>x.tipoCP===cod),ok=f.filter(x=>x.estado==='CONCILIADO').length,dif=f.filter(x=>x.estado==='CONCILIADO CON DIFERENCIAS').length,pos=f.filter(x=>x.estado==='POSIBLE COINCIDENCIA'||x.estado==='OBSERVACIÓN BANCO').length,esp=f.filter(x=>x.estado==='TRATAMIENTO ESPECIAL'||x.estado==='REVISIÓN POR TIPO').length,no=f.filter(x=>x.estado==='NO UBICADO EN SIRE').length;ht+=`<tr><td>${esc(info.label)}</td><td>${f.length}</td><td class="ok">${ok}</td><td>${dif}</td><td>${pos}</td><td>${esp}</td><td class="${no?'bad':''}">${no}</td></tr>`}ht+='</tbody></table>';document.getElementById('resumenTipoHolder').innerHTML=ht;
-  const rows=r.pleResultado.slice(0,250);let body=rows.map(x=>`<tr><td>${esc(x.rucProveedor)}</td><td>${esc(x.tipoCP)}</td><td>${esc(x.serie)}</td><td>${esc(padNum(x.nroCP))}</td><td>${esc(x.fechaEmision)}</td><td>${x.totalCP.toFixed(2)}</td><td><span class="flag ${x.estado==='CONCILIADO'?'ok':x.estado==='NO UBICADO EN SIRE'?'bad':'warn'}">${esc(x.estado)}</span></td><td>${esc(x.motivo)}</td><td>${esc(x.sugerenciaBanco?.keySugerida||'')}</td></tr>`).join('');document.getElementById('detailTableC').innerHTML='<thead><tr><th>RUC</th><th>Tipo</th><th>Serie</th><th>Correlativo</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Motivo</th><th>Sugerencia banco</th></tr></thead><tbody>'+body+'</tbody>';
+  ['CONCILIADO','CONCILIADO CON DIFERENCIAS','BANCO CONFIRMADO POR OBLIGACIONES','POSIBLE COINCIDENCIA','BANCO EN OBLIGACIONES — NO EN SIRE','REGISTRADO EN PERIODO ANTERIOR','TRATAMIENTO ESPECIAL','REVISIÓN POR TIPO','NO UBICADO EN SIRE'].forEach(e=>{const n=cr.get(e)||0;if(!n)return;const cls=e==='CONCILIADO'?'ok':(e==='NO UBICADO EN SIRE'||e==='BANCO EN OBLIGACIONES — NO EN SIRE')?'bad':e==='BANCO CONFIRMADO POR OBLIGACIONES'?'ok':'warn';h+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/total*100).toFixed(1)}%</td></tr>`});h+=`<tr><td>TOTAL PLE</td><td>${total}</td><td>100%</td></tr></tbody></table>`;document.getElementById('resumenRCEHolder').innerHTML=h;
+  const sr=r.sireResultado.filter(x=>x.estado!=='HISTÓRICO'),cs=contar(sr,'estado'),ts=sr.length||1;let hs='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';['REGISTRADO EN PLE','REGISTRADO EN PLE — CORREGIDO POR OBLIGACIONES','REGISTRADO EN PLE HISTÓRICO','POSIBLE COINCIDENCIA EN PLE','NO ENCONTRADO EN PLE — PENDIENTE DE VALIDAR'].forEach(e=>{const n=cs.get(e)||0;const cls=e.startsWith('REGISTRADO EN PLE')?'ok':e.startsWith('NO ENCONTRADO')?'bad':'warn';hs+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/ts*100).toFixed(1)}%</td></tr>`});hs+=`<tr><td>Periodo analizado</td><td>${r.periodoActual||'—'}</td><td>—</td></tr></tbody></table>`;document.getElementById('resumenSIREHolder').innerHTML=hs;
+  let ht='<table class="report"><thead><tr><th>Tipo</th><th>Total</th><th>OK</th><th>Con diferencias</th><th>Posible</th><th>Especial</th><th>No ubicado</th></tr></thead><tbody>';for(const [cod,info] of state.tipos){const f=r.pleResultado.filter(x=>x.tipoCP===cod),ok=f.filter(x=>x.estado==='CONCILIADO').length,dif=f.filter(x=>x.estado==='CONCILIADO CON DIFERENCIAS').length,pos=f.filter(x=>x.estado==='POSIBLE COINCIDENCIA'||x.estado==='BANCO CONFIRMADO POR OBLIGACIONES'||x.estado==='BANCO EN OBLIGACIONES — NO EN SIRE').length,esp=f.filter(x=>x.estado==='TRATAMIENTO ESPECIAL'||x.estado==='REVISIÓN POR TIPO').length,no=f.filter(x=>x.estado==='NO UBICADO EN SIRE').length;ht+=`<tr><td>${esc(info.label)}</td><td>${f.length}</td><td class="ok">${ok}</td><td>${dif}</td><td>${pos}</td><td>${esp}</td><td class="${no?'bad':''}">${no}</td></tr>`}ht+='</tbody></table>';document.getElementById('resumenTipoHolder').innerHTML=ht;
+  const rows=r.pleResultado.slice(0,250);let body=rows.map(x=>`<tr><td>${esc(x.rucProveedor)}</td><td>${esc(x.tipoCP)}</td><td>${esc(x.serie)}</td><td>${esc(padNum(x.nroCP))}</td><td>${esc(x.fechaEmision)}</td><td>${x.totalCP.toFixed(2)}</td><td><span class="flag ${x.estado==='CONCILIADO'?'ok':(x.estado==='NO UBICADO EN SIRE'||x.estado==='BANCO EN OBLIGACIONES — NO EN SIRE')?'bad':x.estado==='BANCO CONFIRMADO POR OBLIGACIONES'?'ok':'warn'}">${esc(x.estado)}</span></td><td>${esc(x.motivo)}</td><td>${esc(x.sugerenciaBanco?.keySugerida||'')}</td></tr>`).join('');document.getElementById('detailTableC').innerHTML='<thead><tr><th>RUC</th><th>Tipo</th><th>Serie</th><th>Correlativo</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Motivo</th><th>Sugerencia banco</th></tr></thead><tbody>'+body+'</tbody>';
 }
 
 document.getElementById('btnProcesarC').addEventListener('click',()=>{const b=document.getElementById('btnProcesarC');b.disabled=true;b.textContent='Conciliando…';setTimeout(()=>{lastResult=procesar();renderResultados(lastResult);document.getElementById('resultsC').classList.add('is-visible');b.disabled=false;b.textContent='Conciliar nuevamente'},10)});
@@ -1869,18 +1928,29 @@ document.getElementById('btnActualizarHistoricosC').addEventListener('click',car
 document.getElementById('btnDescargarC').addEventListener('click',()=>{
   if(!lastResult)return;const msg=document.getElementById('downloadMsgC');msg.textContent='Generando conciliación…';
   setTimeout(()=>{const wb=XLSX.utils.book_new(),r=lastResult;
-    const c=contar(r.pleResultado,'estado');const pend=r.sireResultado.filter(x=>x.estado==='NO ENCONTRADO EN PLE — PENDIENTE DE VALIDAR');const bancos=r.pleResultado.filter(x=>x.sugerenciaBanco||x.estado==='OBSERVACIÓN BANCO');
+    const c=contar(r.pleResultado,'estado');const pend=r.sireResultado.filter(x=>x.estado==='NO ENCONTRADO EN PLE — PENDIENTE DE VALIDAR');const bancos=r.pleResultado.filter(x=>x.sugerenciaBanco||x.estado.includes('BANCO'));
     const res=[['CONCILIACIÓN DE COMPRAS — ALCANCE FLAVIO'],['Generado',new Date().toLocaleString('es-PE')],['Periodo PLE',r.periodoActual||''],[],['FUENTES'],['PLE 8.1 Sprint del periodo','Sí'],['SIRE histórico','Sí — automático'],['Lista de Obligaciones Sprint',state.bancos?.rows?.length?'Sí':'No'],[],['PLE → SIRE'],['Resultado','Cantidad'],...[...c.entries()],['TOTAL PLE',r.pleResultado.length],[],['SIRE → PLE DEL PERIODO'],['No encontrado en PLE — pendiente de validar',pend.length],['SIRE histórico total',r.sireResultado.length]];
     addSheet(wb,'01 Resumen',res,[38,24]);
     const head=['Estado','Acción sugerida','Periodo registro','RUC PLE','Proveedor PLE','Tipo PLE','Serie PLE','Correlativo PLE','Fecha PLE','Moneda PLE','TC PLE','Base PLE','IGV PLE','Total PLE','RUC SIRE','Proveedor SIRE','Tipo SIRE','Serie SIRE','Correlativo SIRE','Fecha SIRE','Moneda SIRE','TC SIRE','Base SIRE','IGV SIRE','Total SIRE','RUC correcto','Proveedor correcto','Tipo correcto','Serie correcta','Correlativo correcto','Fecha correcta','Moneda correcta','TC correcto','Base correcta','IGV correcto','Total correcto','Diferencias','Sugerencia banco','Motivo'];
     const a=[head];r.pleResultado.forEach(x=>{const ss=x.sireMatch||{},v=x.comparacion?.validaciones||{};a.push([x.estado,x.accion,x.periodoRegistro,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,ss.rucProveedor||'',ss.razonSocial||'',ss.tipoCP||'',ss.serie||'',ss.nroCP?padNum(ss.nroCP):'',ss.fechaEmision||'',ss.moneda||'',ss.tipoCambio||'',ss.baseImponible??'',ss.igvTotal??'',ss.totalCP??'',marca(v.ruc),marca(v.proveedor),marca(v.tipo),marca(v.serie),marca(v.correlativo),marca(v.fecha),marca(v.moneda),marca(v.tipoCambio),marca(v.baseImponible),marca(v.igv),marca(v.total),x.comparacion?.diferencias?.join(', ')||'',x.sugerenciaBanco?.keySugerida||'',x.motivo])});addSheet(wb,'02 PLE vs SIRE',a,Array(head.length).fill(17),true);
     const p=[['Periodo SIRE','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Base','IGV','Total','Estado','Motivo']];pend.forEach(x=>p.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));addSheet(wb,'03 SIRE no PLE periodo',p,[13,14,34,10,12,14,14,10,10,14,14,14,20,32],true);
-    const bh=[['RUC PLE','Proveedor','Tipo','Serie PLE','Correlativo PLE','Total PLE','Serie sugerida','Correlativo sugerido','Encontrado en SIRE','Llave sugerida','Motivo']];bancos.forEach(x=>bh.push([x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.totalCP,x.sugerenciaBanco?.serie||'',x.sugerenciaBanco?.numero||'',x.sugerenciaBanco?.encontradaEnSIRE?'Sí':'No',x.sugerenciaBanco?.keySugerida||'',x.motivo]));addSheet(wb,'04 Alertas Bancos',bh,[14,35,10,13,15,14,15,18,17,38,38],true);
+    const bh=[['Estado','CUO/Voucher PLE','Voucher Obligaciones','Documento PLE','Documento Obligaciones','RUC PLE','Proveedor','Total PLE','Encontrado en SIRE','Llave corregida','Motivo']];bancos.forEach(x=>bh.push([x.estado,x.cuo,x.sugerenciaBanco?.voucherObligacion||'',`${x.serie}-${padNum(x.nroCP)}`,x.sugerenciaBanco?.documentoObligacion||'',x.rucProveedor,x.razonSocial,x.totalCP,x.sugerenciaBanco?.encontradaEnSIRE?'Sí':'No',x.sugerenciaBanco?.keySugerida||'',x.motivo]));addSheet(wb,'04 Bancos Obligaciones',bh,[28,20,20,20,24,14,34,14,17,40,48],true);
     const sh=[['Periodo','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Base','IGV','Total','Estado vs PLE','Motivo']];r.sireResultado.forEach(x=>sh.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));addSheet(wb,'05 SIRE histórico',sh,[12,14,35,10,13,16,14,10,10,14,14,14,20,32],true);
     const fn=`Conciliacion_Compras_${new Date().toISOString().slice(0,10)}.xlsx`;XLSX.writeFile(wb,fn);msg.textContent='Descargado: '+fn;
   },30)
 });
-function addSheet(wb,name,aoa,widths,filter=false){const ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=widths.map(w=>({wch:w}));if(filter&&aoa.length)ws['!autofilter']={ref:`A1:${XLSX.utils.encode_col(aoa[0].length-1)}${aoa.length}`};XLSX.utils.book_append_sheet(wb,ws,name)}
+function addSheet(wb,name,aoa,widths,filter=false){
+  const ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=widths.map(w=>({wch:w}));ws['!rows']=[{hpt:24}];
+  if(filter&&aoa.length)ws['!autofilter']={ref:`A1:${XLSX.utils.encode_col(aoa[0].length-1)}${aoa.length}`};
+  ws['!freeze']={xSplit:0,ySplit:1,topLeftCell:'A2',activePane:'bottomLeft',state:'frozen'};
+  const range=XLSX.utils.decode_range(ws['!ref']||'A1:A1');
+  for(let c=range.s.c;c<=range.e.c;c++){const ref=XLSX.utils.encode_cell({r:0,c});if(ws[ref])ws[ref].s={font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'8B1E41'}},alignment:{vertical:'center',wrapText:true},border:{bottom:{style:'thin',color:{rgb:'D9D9D9'}}}};}
+  for(let r=1;r<=range.e.r;r++){
+    const estado=String(ws[XLSX.utils.encode_cell({r,c:0})]?.v||'');
+    if(estado){let fill='FFFFFF';if(estado==='CONCILIADO'||estado.includes('CONFIRMADO')||estado.startsWith('REGISTRADO EN PLE'))fill='E2F0D9';else if(estado.includes('DIFERENCIAS')||estado.includes('POSIBLE')||estado.includes('TRATAMIENTO')||estado.includes('PERIODO ANTERIOR'))fill='FFF2CC';else if(estado.includes('NO UBICADO')||estado.includes('NO EN SIRE')||estado.startsWith('NO ENCONTRADO'))fill='FCE4D6';if(fill!=='FFFFFF'&&ws[XLSX.utils.encode_cell({r,c:0})])ws[XLSX.utils.encode_cell({r,c:0})].s={fill:{fgColor:{rgb:fill}},font:{bold:true},alignment:{wrapText:true}};}
+  }
+  XLSX.utils.book_append_sheet(wb,ws,name);
+}
 
 buildCardsPrincipales();iniciarBancos();cargarHistoricosCompras();
 })();
