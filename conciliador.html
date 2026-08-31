@@ -490,12 +490,11 @@ function buildCards(){
   });
 }
 
-// VENTAS: leer valores crudos. No convertir numeros con formato fecha a Date.
 function handleFile(b, card, file){
   const reader = new FileReader();
   reader.onload = evt=>{
     const data = new Uint8Array(evt.target.result);
-    const wb = XLSX.read(data, {type:'array', cellDates:false});
+    const wb = XLSX.read(data, {type:'array', cellDates:true});
     b.wb = wb;
     card.classList.add('ready');
     card.querySelector('[data-role="drop"]').classList.add('filled');
@@ -1048,9 +1047,6 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       (h.startsWith('fechaemision') || h.startsWith('fechaemi_'))
       && !h.includes('comp_pag') && !h.includes('comppag') && !h.includes('pago')
     );
-    const fechaVencIdx = normalizedHeaders.findIndex(h =>
-      h.startsWith('fechavenc') || h.startsWith('fechavencimiento')
-    );
     const fechaOrigenIdx = normalizedHeaders.findIndex(h =>
       h.includes('fechaemicomp_pag') || h.includes('fechaemicomppag')
       || h.includes('fechaemisioncomprobantepago') || h.includes('fechaemisioncomppag')
@@ -1113,21 +1109,6 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       if(!m) return String(value ?? '').trim();
       const y = Number(m[1]), mes = Number(m[2]), d = Number(m[3]);
       return Math.floor(Date.UTC(y, mes - 1, d) / 86400000) + 25569;
-    };
-
-    // SheetJS puede convertir una celda NUMERICA en Date si el archivo de origen
-    // trae por error formato de fecha. Esta funcion recupera el serial original,
-    // incluyendo decimales (por ejemplo 3.403 vuelve a ser 3.403, no 03/01/1900).
-    const dateObjetoASerialOriginal = value => {
-      if(!(value instanceof Date) || Number.isNaN(value.getTime())) return value;
-      const utc = Date.UTC(
-        value.getFullYear(), value.getMonth(), value.getDate(),
-        value.getHours(), value.getMinutes(), value.getSeconds(), value.getMilliseconds()
-      );
-      let serial = (utc - Date.UTC(1899, 11, 30)) / 86400000;
-      // Correccion del bug historico de Excel para fechas anteriores a 01/03/1900.
-      if(serial < 61) serial -= 1;
-      return Math.round(serial * 1000000) / 1000000;
     };
 
     const premiumHeaders = [];
@@ -1223,15 +1204,11 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       const outRow = [];
       premiumHeadersOriginal.forEach((_, originalIdx)=>{
         const rawValue = srcRow[originalIdx] ?? '';
-        const esFechaReal = originalIdx === fechaEmisionIdx || originalIdx === fechaVencIdx || originalIdx === fechaOrigenIdx;
-        let valorSalida = rawValue;
-        if(esFechaReal){
-          valorSalida = rawValue === '' ? '' : fechaAExcelSerial(rawValue);
-        }else if(rawValue instanceof Date){
-          // IMPORTANTE: no es una fecha real. Recupera el numero original.
-          valorSalida = dateObjetoASerialOriginal(rawValue);
-        }
-        outRow.push(valorSalida);
+        outRow.push(
+          (originalIdx === fechaEmisionIdx || originalIdx === fechaOrigenIdx)
+            ? fechaAExcelSerial(rawValue)
+            : rawValue
+        );
         if(originalIdx === docIdx) outRow.push(valSerie);
         if(originalIdx === igvIdx) outRow.push(revIgv, pctIgv, variacion);
         if(originalIdx === tcRegistradoIdx) outRow.push(tcGeneral, difTcGeneral);
@@ -1271,14 +1248,13 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     const monedaOutIdx = monedaIdx >= 0 ? originalToOutput.get(monedaIdx) : -1;
     const tcRegistradoOutIdx = tcRegistradoIdx >= 0 ? originalToOutput.get(tcRegistradoIdx) : -1;
     const fechaEmisionOutIdx = fechaEmisionIdx >= 0 ? originalToOutput.get(fechaEmisionIdx) : -1;
-    const fechaVencOutIdx = fechaVencIdx >= 0 ? originalToOutput.get(fechaVencIdx) : -1;
     const fechaOrigenOutIdx = fechaOrigenIdx >= 0 ? originalToOutput.get(fechaOrigenIdx) : -1;
     const tipoDocumentoOutIdx = tipoDocumentoIdx >= 0 ? originalToOutput.get(tipoDocumentoIdx) : -1;
 
     // Fuerza la visualizacion de fechas como dd/mm/aaaa en Premium.
     // Aunque Windows/Excel este en configuracion regional de EE.UU.,
     // la celda conserva el dia, mes y anio correctos.
-    [fechaEmisionOutIdx, fechaVencOutIdx, fechaOrigenOutIdx].filter(idx=>idx >= 0).forEach(colIdx=>{
+    [fechaEmisionOutIdx, fechaOrigenOutIdx].filter(idx=>idx >= 0).forEach(colIdx=>{
       const col = excelCol(colIdx);
       for(let excelRow=2; excelRow<=premiumAOA.length; excelRow++){
         const ref = `${col}${excelRow}`;
@@ -1408,26 +1384,10 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       }
     });
 
-    // Estilo general Premium: encabezado corporativo, filas alternadas y alertas visibles.
+    // VENTAS V15: motor antiguo preservado. Solo coloreamos encabezados y
+    // columnas de control creadas por el sistema. No se toca formato/tipo de
+    // ninguna columna original de Premium.
     styleRange(wsPremium,`A1:${excelCol(premiumHeaders.length-1)}1`,()=>headerStyle);
-    for(let rr=2;rr<=premiumAOA.length;rr++){
-      for(let cc=0;cc<premiumHeaders.length;cc++){
-        if(columnasAgregadas.includes(cc)) continue; // conserva amarillo de controles calculados
-        const ref=`${excelCol(cc)}${rr}`;
-        if(!wsPremium[ref]) continue;
-        wsPremium[ref].s = rr%2 ? bodyStyle : altBodyStyle;
-      }
-      // Semáforo para columnas de variación TC/IGV si existen.
-      [variacionOutIdx,difTcGeneralOutIdx,difTcEspecificoOutIdx,valSeriOutIdx].filter(x=>x>=0).forEach(cc=>{
-        const ref=`${excelCol(cc)}${rr}`;
-        const val=Number(wsPremium[ref]?.v ?? premiumAOA[rr-1]?.[cc] ?? 0);
-        if(Number.isFinite(val) && Math.abs(val)>0.0001){
-          wsPremium[ref].s={...statusStyle('Con Errores'),numFmt:wsPremium[ref].z};
-        }else if(Number.isFinite(val)){
-          wsPremium[ref].s={...statusStyle('Aceptado'),numFmt:wsPremium[ref].z};
-        }
-      });
-    }
     wsPremium['!autofilter'] = {ref:`A1:${excelCol(premiumHeaders.length-1)}${premiumAOA.length}`};
     wsPremium['!freeze'] = {xSplit:0, ySplit:1, topLeftCell:'A2', activePane:'bottomLeft', state:'frozen'};
     wsPremium['!cols'] = premiumHeaders.map((h, idx)=>({
@@ -1468,7 +1428,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     }
 
 
-    const fname = `Papel_de_Trabajo_Ventas_${new Date().toISOString().slice(0,10)}_${r.A.label}_${r.B.label}_${r.C.label}.xlsx`.replace(/\s+/g,'_');
+    const fname = `Papel_de_Trabajo_Ventas_V15_${new Date().toISOString().slice(0,10)}_${r.A.label}_${r.B.label}_${r.C.label}.xlsx`.replace(/\s+/g,'_');
     exportarWorkbookVentasConLogo(wb, fname, msg);
   }, 30);
 });
@@ -1547,7 +1507,7 @@ async function exportarWorkbookVentasConLogo(wb, fname, msg){
     a.href=url; a.download=fname;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),4000);
-    if(msg) msg.textContent='Descargado con logo y Premium preservado: '+fname;
+    if(msg) msg.textContent='Descargado · motor antiguo de Ventas restaurado · '+fname;
   }catch(err){
     console.warn('No se pudo insertar el logo sin alterar Premium. Se descarga el Excel normal.',err);
     fallback();
