@@ -301,6 +301,7 @@
     <div class="htext">
       <div class="eyebrow">Conciliación de compras · PLE + SIRE + Obligaciones</div>
       <h1>Conciliador de Compras</h1>
+      <div style="display:inline-block;margin:6px 0 10px;padding:6px 10px;border:1px solid #e7a6be;border-radius:999px;background:#fff1f6;color:#9d2d59;font-family:var(--mono);font-size:11px;font-weight:700;">VERSIÓN SIRE REAL · 3 MIN · RESPALDO MANUAL · V3</div>
       <p>Valida el PLE 8.1 del periodo contra el histórico SIRE de SUNAT y utiliza la Lista de Obligaciones de Sprint únicamente como apoyo para documentos bancarios. Revisa si el comprobante está registrado y, si lo está, compara RUC, proveedor, tipo, serie, correlativo, fecha de emisión, moneda, tipo de cambio, base imponible, IGV y total. También realiza el cruce SIRE → PLE para identificar comprobantes del periodo que aún no aparecen en contabilidad.</p>
     </div>
   </header>
@@ -326,14 +327,14 @@
     </div>
   </div>
 
-  <div class="card" id="cardPLEHistManualC" style="margin-bottom:24px;">
-    <div class="card-label">Control adicional · opcional</div>
-    <div class="card-title">Histórico PLE 8.1 Sprint</div>
-    <p class="card-hint">Sirve para comprobar si un documento que no aparece en el PLE actual ya fue registrado en un periodo anterior. No reemplaza las 3 bases principales.</p>
-    <label class="drop" id="dropPLEHistManualC">Haz clic o arrastra el TXT/Excel histórico aquí
-      <input type="file" id="filePLEHistManualC" accept=".txt,.xlsx,.xls,.xlsb" />
+  <div class="card" id="cardSIREManualC" style="margin-bottom:24px;">
+    <div class="card-label">Respaldo manual · opcional</div>
+    <div class="card-title">Cargar SIRE CONTA manualmente</div>
+    <p class="card-hint">Úsalo solo si Power Automate no actualiza o si necesitas trabajar con una versión más reciente. El archivo manual reemplaza temporalmente la copia automática/caché y queda guardado como última copia válida.</p>
+    <label class="drop" id="dropSIREManualC">Haz clic o arrastra SIRE CONTA.xlsx aquí
+      <input type="file" id="fileSIREManualC" accept=".xlsx,.xls,.xlsb" />
     </label>
-    <div class="footnote" id="estadoPLEHistManualC">Sin cargar. El cruce principal funciona sin este archivo, pero este control evita falsos pendientes históricos.</div>
+    <div class="footnote" id="estadoSIREManualC">Sin cargar. Si la actualización automática funciona, no necesitas usar este respaldo.</div>
   </div>
 
   <div class="card" id="cardTiposC" style="display:none;">
@@ -345,7 +346,7 @@
   <div class="actions">
     <button class="primary" id="btnProcesarC" disabled>Conciliar</button>
     <button class="ghost" id="btnActualizarHistoricosC">Actualizar SIRE</button>
-    <span class="status-msg" id="statusMsgC">Sube el PLE del periodo. Usa “Actualizar SIRE” para forzar una lectura nueva de OneDrive.</span>
+    <span class="status-msg" id="statusMsgC">Sube el PLE del periodo. “Actualizar SIRE” espera hasta 3 minutos. Si falla, usa el Respaldo manual SIRE.</span>
   </div>
 
   <section id="resultsC" class="results-section">
@@ -1703,8 +1704,8 @@ const SIRE_CACHE_DB='TSFConciliadorCache';
 const SIRE_CACHE_STORE='datos';
 const SIRE_CACHE_KEY='sireHistorico';
 const SIRE_CACHE_VERSION=1;
-const SIRE_TIMEOUT_FONDO_MS=25000;
-const SIRE_TIMEOUT_MANUAL_MS=90000;
+const SIRE_TIMEOUT_FONDO_MS=180000;
+const SIRE_TIMEOUT_MANUAL_MS=180000;
 const SIRE_TAM_BLOQUE=5000;
 const SIRE_REINTENTOS_FONDO=0;
 const SIRE_REINTENTOS_MANUAL=1;
@@ -1731,7 +1732,7 @@ function activarSIRE(rows,origen,fechaCache=null){
   const el=document.getElementById('estadoSIREC');
   if(el){
     const cuando=fechaCache?new Date(fechaCache).toLocaleString('es-PE'):'';
-    el.textContent=`${rows.length.toLocaleString('es-PE')} comprobantes disponibles — ${origen}${cuando?' · '+cuando:''}`;
+    el.textContent=`${rows.length.toLocaleString('es-PE')} comprobantes disponibles — ${origen}${cuando?' · '+cuando:''} · intentando actualización real…`;
   }
   actualizarEstado();
   return true;
@@ -1759,7 +1760,7 @@ async function pedirParteSIRE(parte,{timeoutMs=SIRE_TIMEOUT_FONDO_MS,reintentos=
       await dormir(1200*(intento+1));
       return pedirParteSIRE(parte,{timeoutMs,reintentos,forzar,intento:intento+1});
     }
-    if(err.name==='AbortError')throw new Error(`Bloque ${parte}: Power Automate tardó más de ${Math.round(timeoutMs/1000)} s`);
+    if(err.name==='AbortError')throw new Error(`Bloque ${parte}: Power Automate superó el máximo de ${Math.round(timeoutMs/60000)} min`);
     throw new Error(`Bloque ${parte}: ${err.message}`);
   }finally{clearTimeout(timeout);}
 }
@@ -1840,7 +1841,7 @@ async function actualizarSIRERemoto({silencioso=false,manual=false}={}){
     console.error(e);
     state.historicosError='No se pudo actualizar el SIRE: '+e.message;
     if(el){
-      if(habiaSIRE) el.textContent=`${state.sire.rows.length.toLocaleString('es-PE')} comprobantes disponibles — NO se actualizó · usando última copia válida · ${e.message}`;
+      if(habiaSIRE) el.textContent=`${state.sire.rows.length.toLocaleString('es-PE')} comprobantes disponibles · Estado de actualización: no se pudo actualizar automáticamente. Se está usando la última copia válida. · Detalle: ${e.message}`;
       else el.textContent=state.historicosError+' · pulsa “Actualizar SIRE” para reintentar.';
     }
     actualizarEstado();
@@ -1869,7 +1870,7 @@ async function cargarHistoricosCompras(){
   }
 
   // 3) Actualización remota en segundo plano. Nunca bloquea el uso del conciliador.
-  setTimeout(()=>actualizarSIRERemoto({silencioso:true,manual:false}),250);
+  setTimeout(()=>actualizarSIRERemoto({silencioso:false,manual:false}),500);
 }
 
 function parseHistoricoDesdeObjetos(rows){
@@ -1938,7 +1939,40 @@ function sugerirBanco(r){
   return {voucher:r.cuo,voucherObligacion:best.voucher,documentoObligacion:best.documento,serie:best.serie,numero:padNum(best.numero),keySugerida:key,encontradaEnSIRE:state.sireSet?.has(key)||false,monto:best.monto,fecha:best.fecha,metodo:'VOUCHER/CUO EXACTO'};
 }
 
-function iniciarHistoricoManual(){wireDrop('dropPLEHistManualC','filePLEHistManualC',file=>{const rd=new FileReader();rd.onload=e=>{try{let rows=[];if(file.name.toLowerCase().endsWith('.txt'))rows=parsePLE(e.target.result);else{const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const data=XLSX.utils.sheet_to_json(ws,{defval:''});rows=parseHistoricoDesdeObjetos(data)}state.pleHistorico={rows,fileName:file.name};document.getElementById('estadoPLEHistManualC').textContent=`${rows.length.toLocaleString('es-PE')} filas — ${file.name}`;document.getElementById('cardPLEHistManualC').classList.add('ready');marcarDrop('dropPLEHistManualC',file);actualizarEstado()}catch(err){console.error(err);document.getElementById('estadoPLEHistManualC').textContent='No se pudo leer el histórico.'}};if(file.name.toLowerCase().endsWith('.txt'))rd.readAsText(file,'UTF-8');else rd.readAsArrayBuffer(file)})}
+function iniciarHistoricoManual(){
+  wireDrop('dropSIREManualC','fileSIREManualC',file=>{
+    const rd=new FileReader();
+    rd.onload=async e=>{
+      const estado=document.getElementById('estadoSIREManualC');
+      try{
+        if(estado) estado.textContent='Leyendo respaldo manual SIRE…';
+        const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
+        let mejores=[];
+        let hojaUsada='';
+        for(const nombre of wb.SheetNames){
+          const ws=wb.Sheets[nombre];
+          const data=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false,dateNF:'dd/mm/yyyy'});
+          const parsed=parseSIRERows(data);
+          if(parsed.length>mejores.length){mejores=parsed;hojaUsada=nombre;}
+        }
+        if(!mejores.length) throw new Error('No se encontraron registros SIRE válidos en el archivo.');
+        state.sire={rows:mejores,fileName:file.name,origen:'SIRE manual',actualizadoEn:Date.now()};
+        await guardarCacheSIRE(mejores);
+        document.getElementById('cardSIREC')?.classList.add('ready');
+        const estadoPrincipal=document.getElementById('estadoSIREC');
+        if(estadoPrincipal) estadoPrincipal.textContent=`${mejores.length.toLocaleString('es-PE')} comprobantes disponibles — USANDO SIRE MANUAL · ${file.name}`;
+        if(estado) estado.textContent=`✓ ${mejores.length.toLocaleString('es-PE')} comprobantes cargados · hoja: ${hojaUsada} · este SIRE tiene prioridad`;
+        document.getElementById('cardSIREManualC')?.classList.add('ready');
+        marcarDrop('dropSIREManualC',file);
+        actualizarEstado();
+      }catch(err){
+        console.error(err);
+        if(estado) estado.textContent='No se pudo leer el SIRE manual: '+(err.message||'archivo no válido');
+      }
+    };
+    rd.readAsArrayBuffer(file);
+  });
+}
 
 function leerExcelFlexible(file, onOk, onErr){
   const rd=new FileReader();
