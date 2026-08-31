@@ -301,7 +301,7 @@
     <div class="htext">
       <div class="eyebrow">Conciliación de compras · PLE + SIRE + Obligaciones</div>
       <h1>Conciliador de Compras</h1>
-      <div style="display:inline-block;margin:6px 0 10px;padding:6px 10px;border:1px solid #e7a6be;border-radius:999px;background:#fff1f6;color:#9d2d59;font-family:var(--mono);font-size:11px;font-weight:700;">VERSIÓN SIRE SCRIPT · INCREMENTAL · RESPALDO MANUAL · V4</div>
+      <div style="display:inline-block;margin:6px 0 10px;padding:6px 10px;border:1px solid #e7a6be;border-radius:999px;background:#fff1f6;color:#9d2d59;font-family:var(--mono);font-size:11px;font-weight:700;">VERSIÓN SIRE SCRIPT · REFRESCO COMPLETO · RESPALDO MANUAL · V5</div>
       <p>Valida el PLE 8.1 del periodo contra el histórico SIRE de SUNAT y utiliza la Lista de Obligaciones de Sprint únicamente como apoyo para documentos bancarios. Revisa si el comprobante está registrado y, si lo está, compara RUC, proveedor, tipo, serie, correlativo, fecha de emisión, moneda, tipo de cambio, base imponible, IGV y total. También realiza el cruce SIRE → PLE para identificar comprobantes del periodo que aún no aparecen en contabilidad.</p>
     </div>
   </header>
@@ -346,7 +346,7 @@
   <div class="actions">
     <button class="primary" id="btnProcesarC" disabled>Conciliar</button>
     <button class="ghost" id="btnActualizarHistoricosC">Actualizar SIRE</button>
-    <span class="status-msg" id="statusMsgC">Sube el PLE del periodo. “Actualizar SIRE” consulta únicamente las filas nuevas mediante Office Script. Si falla, usa el Respaldo manual SIRE.</span>
+    <span class="status-msg" id="statusMsgC">Sube el PLE del periodo. “Actualizar SIRE” relee todo el SIRE mediante Office Script y reemplaza la copia completa. Detecta altas, bajas y modificaciones. Si falla, usa el Respaldo manual SIRE.</span>
   </div>
 
   <section id="resultsC" class="results-section">
@@ -863,25 +863,108 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
   setTimeout(()=>{
     const wb = XLSX.utils.book_new();
 
+    // ===== ESTILO CORPORATIVO TOTAL - VENTAS =====
+    const BRAND = {
+      pink:'E6005C', pinkSoft:'FDE7F0', pinkPale:'FFF4F8',
+      orange:'F5A800', orangeSoft:'FFF1CC',
+      black:'111111', dark:'333333', white:'FFFFFF',
+      green:'198754', greenSoft:'E8F5EE',
+      amber:'B26A00', amberSoft:'FFF4D6',
+      red:'C62828', redSoft:'FDE8E8',
+      blue:'1565C0', blueSoft:'E8F1FB',
+      gray:'6B7280', graySoft:'F3F4F6', border:'E5E7EB'
+    };
+    const thinBorder = {
+      top:{style:'thin',color:{rgb:BRAND.border}},
+      bottom:{style:'thin',color:{rgb:BRAND.border}},
+      left:{style:'thin',color:{rgb:BRAND.border}},
+      right:{style:'thin',color:{rgb:BRAND.border}}
+    };
+    const setStyle = (ws, ref, style)=>{ if(ws[ref]) ws[ref].s = style; };
+    const styleRange = (ws, range, fn)=>{
+      const r=XLSX.utils.decode_range(range);
+      for(let R=r.s.r;R<=r.e.r;R++) for(let C=r.s.c;C<=r.e.c;C++){
+        const ref=XLSX.utils.encode_cell({r:R,c:C});
+        if(!ws[ref]) ws[ref]={t:'s',v:''};
+        ws[ref].s=fn(ws[ref],R,C,ref) || ws[ref].s;
+      }
+    };
+    const titleStyle = {fill:{patternType:'solid',fgColor:{rgb:BRAND.black}},font:{bold:true,color:{rgb:BRAND.white},sz:18},alignment:{vertical:'center',horizontal:'left'}};
+    const sectionStyle = {fill:{patternType:'solid',fgColor:{rgb:BRAND.pink}},font:{bold:true,color:{rgb:BRAND.white},sz:11},alignment:{vertical:'center',horizontal:'left'},border:thinBorder};
+    const headerStyle = {fill:{patternType:'solid',fgColor:{rgb:BRAND.black}},font:{bold:true,color:{rgb:BRAND.white}},alignment:{vertical:'center',horizontal:'center',wrapText:true},border:thinBorder};
+    const bodyStyle = {font:{color:{rgb:BRAND.dark}},alignment:{vertical:'center'},border:{bottom:{style:'hair',color:{rgb:'ECECEC'}}}};
+    const altBodyStyle = {fill:{patternType:'solid',fgColor:{rgb:'FAFAFA'}},font:{color:{rgb:BRAND.dark}},alignment:{vertical:'center'},border:{bottom:{style:'hair',color:{rgb:'ECECEC'}}}};
+    const statusStyle = value=>{
+      const x=String(value??'').trim().toUpperCase();
+      if(x==='COMPLETA' || x==='ACEPTADO') return {fill:{patternType:'solid',fgColor:{rgb:BRAND.greenSoft}},font:{bold:true,color:{rgb:BRAND.green}},alignment:{horizontal:'center',vertical:'center'},border:thinBorder};
+      if(x.includes('OBSERV') || x.includes('PARCIAL')) return {fill:{patternType:'solid',fgColor:{rgb:BRAND.amberSoft}},font:{bold:true,color:{rgb:BRAND.amber}},alignment:{horizontal:'center',vertical:'center'},border:thinBorder};
+      if(x.includes('ERROR') || x.includes('SOLO 1')) return {fill:{patternType:'solid',fgColor:{rgb:BRAND.redSoft}},font:{bold:true,color:{rgb:BRAND.red}},alignment:{horizontal:'center',vertical:'center'},border:thinBorder};
+      if(!x) return {fill:{patternType:'solid',fgColor:{rgb:BRAND.graySoft}},font:{color:{rgb:BRAND.gray}},alignment:{horizontal:'center',vertical:'center'},border:thinBorder};
+      return {fill:{patternType:'solid',fgColor:{rgb:BRAND.blueSoft}},font:{color:{rgb:BRAND.blue}},alignment:{horizontal:'center',vertical:'center'},border:thinBorder};
+    };
+
+    const totalLlaves = new Set([...r.setA,...r.setB,...r.setC]).size;
+    const totalAlertas = r.AB.length + r.AC.length + r.BC.length + r.onlyA.length + r.onlyB.length + r.onlyC.length;
+    const pctCompleta = totalLlaves ? r.ABC.length / totalLlaves : 0;
     const resumenAOA = [
-      ['Conciliación de Comprobantes'],
-      ['Generado', new Date().toLocaleString('es-PE')],
+      ['TOTAL SERVICIOS FINANCIEROS','','','',''],
+      ['CONCILIACIÓN DE VENTAS · PREMIUM / SIRE / TCI','','','',''],
+      ['Generado', new Date().toLocaleString('es-PE'),'','',''],
       [],
-      ['Base','Filas totales','Duplicados internos','Solo en esta base','Total conciliado (en las 3)'],
+      ['INDICADORES PRINCIPALES','','','',''],
+      ['Llaves analizadas', totalLlaves, 'Conciliación completa', r.ABC.length, pctCompleta],
+      ['Alertas por revisar', totalAlertas, 'Duplicados internos', r.dupA+r.dupB+r.dupC, ''],
+      [],
+      ['RESUMEN POR BASE','','','',''],
+      ['Base','Filas totales','Duplicados internos','Solo en esta base','Conciliados en las 3'],
       [r.A.label, r.totalOrigA, r.dupA, r.onlyA.length, r.reconA],
       [r.B.label, r.totalOrigB, r.dupB, r.onlyB.length, r.reconB],
       [r.C.label, r.totalOrigC, r.dupC, r.onlyC.length, r.reconC],
       [],
-      ['Cruce entre bases','Cantidad'],
-      [`En las 3 bases`, r.ABC.length],
-      [`${r.A.label} + ${r.B.label}, no ${r.C.label}`, r.AB.length],
-      [`${r.A.label} + ${r.C.label}, no ${r.B.label}`, r.AC.length],
-      [`${r.B.label} + ${r.C.label}, no ${r.A.label}`, r.BC.length],
-      [`Solo en ${r.A.label}`, r.onlyA.length],
-      [`Solo en ${r.B.label}`, r.onlyB.length],
-      [`Solo en ${r.C.label}`, r.onlyC.length],
+      ['CRUCE ENTRE BASES','','','',''],
+      ['Resultado','Cantidad','','',''],
+      ['Completa · en las 3 bases', r.ABC.length,'','',''],
+      [`Parcial · ${r.A.label} + ${r.B.label}, no ${r.C.label}`, r.AB.length,'','',''],
+      [`Parcial · ${r.A.label} + ${r.C.label}, no ${r.B.label}`, r.AC.length,'','',''],
+      [`Parcial · ${r.B.label} + ${r.C.label}, no ${r.A.label}`, r.BC.length,'','',''],
+      [`Solo en ${r.A.label}`, r.onlyA.length,'','',''],
+      [`Solo en ${r.B.label}`, r.onlyB.length,'','',''],
+      [`Solo en ${r.C.label}`, r.onlyC.length,'','',''],
+      [],
+      ['LEYENDA','','','',''],
+      ['Completa','Correcto · presente en las 3 bases','','',''],
+      ['Parcial (2/3)','Revisar · falta en una base','','',''],
+      ['Solo 1 base','Error / pendiente · solo aparece en una fuente','','','']
     ];
     const wsResumen = XLSX.utils.aoa_to_sheet(resumenAOA);
+    wsResumen['!merges'] = [
+      XLSX.utils.decode_range('A1:E1'), XLSX.utils.decode_range('A2:E2'),
+      XLSX.utils.decode_range('A5:E5'), XLSX.utils.decode_range('A9:E9'),
+      XLSX.utils.decode_range('A15:E15'), XLSX.utils.decode_range('A25:E25')
+    ];
+    styleRange(wsResumen,'A1:E1',()=>titleStyle);
+    styleRange(wsResumen,'A2:E2',()=>({fill:{patternType:'solid',fgColor:{rgb:BRAND.pink}},font:{bold:true,color:{rgb:BRAND.white},sz:14},alignment:{vertical:'center',horizontal:'left'}}));
+    ['A5:E5','A9:E9','A15:E15','A25:E25'].forEach(rg=>styleRange(wsResumen,rg,()=>sectionStyle));
+    styleRange(wsResumen,'A10:E10',()=>headerStyle);
+    styleRange(wsResumen,'A16:B16',()=>headerStyle);
+    // KPI cards
+    ['A6:B6','C6:E6','A7:B7','C7:E7'].forEach((rg,i)=>styleRange(wsResumen,rg,()=>({
+      fill:{patternType:'solid',fgColor:{rgb:i===0?BRAND.pinkPale:i===1?BRAND.greenSoft:i===2?BRAND.amberSoft:BRAND.blueSoft}},
+      font:{bold:true,color:{rgb:BRAND.black}},alignment:{vertical:'center',wrapText:true},border:thinBorder
+    })));
+    wsResumen['E6'].z='0.0%';
+    for(let rr=11;rr<=13;rr++) styleRange(wsResumen,`A${rr}:E${rr}`,()=>rr%2?bodyStyle:altBodyStyle);
+    for(let rr=17;rr<=23;rr++){
+      styleRange(wsResumen,`A${rr}:B${rr}`,()=>rr%2?bodyStyle:altBodyStyle);
+      const label=String(wsResumen[`A${rr}`]?.v??'');
+      setStyle(wsResumen,`A${rr}`,statusStyle(label));
+    }
+    setStyle(wsResumen,'A26',statusStyle('Completa'));
+    setStyle(wsResumen,'A27',statusStyle('Parcial'));
+    setStyle(wsResumen,'A28',statusStyle('Solo 1'));
+    wsResumen['!cols']=[{wch:42},{wch:18},{wch:24},{wch:18},{wch:16}];
+    wsResumen['!rows']=[{hpt:30},{hpt:25},{hpt:20},{hpt:8},{hpt:22},{hpt:28},{hpt:28}];
+    wsResumen['!freeze']={xSplit:0,ySplit:3,topLeftCell:'A4',activePane:'bottomLeft',state:'frozen'};
     XLSX.utils.book_append_sheet(wb, wsResumen, 'Resumen');
 
     const allKeys = [...new Set([...r.setA, ...r.setB, ...r.setC])].sort();
@@ -909,6 +992,22 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       detalleAOA.push(row);
     });
     const wsDetalle = XLSX.utils.aoa_to_sheet(detalleAOA);
+    wsDetalle['!autofilter']={ref:`A1:${XLSX.utils.encode_col(header.length-1)}${detalleAOA.length}`};
+    wsDetalle['!freeze']={xSplit:1,ySplit:1,topLeftCell:'B2',activePane:'bottomRight',state:'frozen'};
+    wsDetalle['!cols']=header.map((h,i)=>({wch:i===0?26:(String(h).startsWith('Estado')?26:16)}));
+    wsDetalle['!rows']=[{hpt:32}];
+    styleRange(wsDetalle,`A1:${XLSX.utils.encode_col(header.length-1)}1`,()=>headerStyle);
+    for(let rr=2;rr<=detalleAOA.length;rr++){
+      styleRange(wsDetalle,`A${rr}:${XLSX.utils.encode_col(header.length-1)}${rr}`,()=>rr%2?bodyStyle:altBodyStyle);
+      for(let cc=1;cc<header.length;cc++){
+        const ref=`${XLSX.utils.encode_col(cc)}${rr}`;
+        const h=String(header[cc]??'');
+        const v=wsDetalle[ref]?.v;
+        if(h==='Coincidencia' || h.startsWith('Estado ')) setStyle(wsDetalle,ref,statusStyle(v));
+        else if(h.startsWith('En ')) setStyle(wsDetalle,ref,statusStyle(String(v)==='Sí'?'Aceptado':'Con Errores'));
+        else if(h.startsWith('Dup. ') && Number(v)>0) setStyle(wsDetalle,ref,statusStyle('Con Errores'));
+      }
+    }
     XLSX.utils.book_append_sheet(wb, wsDetalle, 'Detalle');
 
     // Premium sheet: copia completa de la base A con controles adicionales.
@@ -1285,6 +1384,26 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       }
     });
 
+    // Estilo general Premium: encabezado corporativo, filas alternadas y alertas visibles.
+    styleRange(wsPremium,`A1:${excelCol(premiumHeaders.length-1)}1`,()=>headerStyle);
+    for(let rr=2;rr<=premiumAOA.length;rr++){
+      for(let cc=0;cc<premiumHeaders.length;cc++){
+        if(columnasAgregadas.includes(cc)) continue; // conserva amarillo de controles calculados
+        const ref=`${excelCol(cc)}${rr}`;
+        if(!wsPremium[ref]) continue;
+        wsPremium[ref].s = rr%2 ? bodyStyle : altBodyStyle;
+      }
+      // Semáforo para columnas de variación TC/IGV si existen.
+      [variacionOutIdx,difTcGeneralOutIdx,difTcEspecificoOutIdx,valSeriOutIdx].filter(x=>x>=0).forEach(cc=>{
+        const ref=`${excelCol(cc)}${rr}`;
+        const val=Number(wsPremium[ref]?.v ?? premiumAOA[rr-1]?.[cc] ?? 0);
+        if(Number.isFinite(val) && Math.abs(val)>0.0001){
+          wsPremium[ref].s={...statusStyle('Con Errores'),numFmt:wsPremium[ref].z};
+        }else if(Number.isFinite(val)){
+          wsPremium[ref].s={...statusStyle('Aceptado'),numFmt:wsPremium[ref].z};
+        }
+      });
+    }
     wsPremium['!autofilter'] = {ref:`A1:${excelCol(premiumHeaders.length-1)}${premiumAOA.length}`};
     wsPremium['!freeze'] = {xSplit:0, ySplit:1, topLeftCell:'A2', activePane:'bottomLeft', state:'frozen'};
     wsPremium['!cols'] = premiumHeaders.map((h, idx)=>({
@@ -1315,11 +1434,15 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
         if(wsTC[ref]) wsTC[ref].z = 'yyyy-mm-dd';
       }
       wsTC['!cols'] = [{wch:14},{wch:24},{wch:24}];
+      wsTC['!freeze']={xSplit:0,ySplit:1,topLeftCell:'A2',activePane:'bottomLeft',state:'frozen'};
+      wsTC['!autofilter']={ref:`A1:C${tcAOA.length}`};
+      styleRange(wsTC,'A1:C1',()=>headerStyle);
+      for(let rr=2;rr<=tcAOA.length;rr++) styleRange(wsTC,`A${rr}:C${rr}`,()=>rr%2?bodyStyle:altBodyStyle);
       XLSX.utils.book_append_sheet(wb, wsTC, 'Tipo de cambio Sunat');
     }
 
 
-    const fname = `Conciliacion_${r.A.label}_${r.B.label}_${r.C.label}.xlsx`.replace(/\s+/g,'_');
+    const fname = `Papel_de_Trabajo_Ventas_${new Date().toISOString().slice(0,10)}_${r.A.label}_${r.B.label}_${r.C.label}.xlsx`.replace(/\s+/g,'_');
     XLSX.writeFile(wb, fname);
     msg.textContent = 'Descargado: ' + fname;
   }, 30);
@@ -1800,42 +1923,30 @@ async function actualizarSIRERemoto({silencioso=false,manual=false}={}){
   const el=document.getElementById('estadoSIREC');
   const btn=document.getElementById('btnActualizarHistoricosC');
   const habiaSIRE=!!state.sire?.rows?.length;
-  let desde=Number(state.sire?.totalFuente ?? state.sire?.rows?.length ?? 9505);
-  if(btn){btn.disabled=true;btn.textContent='Buscando filas nuevas…';}
-  if(el&&!silencioso)el.textContent=`Consultando SIRE con Office Script desde la fila ${desde.toLocaleString('es-PE')}…`;
+  if(btn){btn.disabled=true;btn.textContent='Actualizando SIRE…';}
+  if(el&&!silencioso)el.textContent='Consultando SIRE completo con Office Script…';
   const inicio=performance.now();
   try{
-    let payload=await pedirSIREIncremental(desde,{timeoutMs:180000,reintentos:manual?1:0});
-    let totalFilas=Number(payload.totalFilas ?? desde);
+    // REFRESCO COMPLETO: desde=0 para detectar altas, bajas y modificaciones.
+    const payload=await pedirSIREIncremental(0,{timeoutMs:180000,reintentos:manual?1:0});
+    const objetos=filasScriptAObjetos(payload);
+    const filas=parseSIRERows(objetos);
+    if(!filas.length)throw new Error('El Office Script no devolvió registros SIRE válidos.');
 
-    // Si el archivo fue reemplazado por una versión más corta, reconstruimos la copia completa una vez.
-    if(Number.isFinite(totalFilas)&&totalFilas<desde){
-      if(el&&!silencioso)el.textContent='El SIRE fue reemplazado. Reconstruyendo la copia completa mediante Office Script…';
-      desde=0;
-      payload=await pedirSIREIncremental(0,{timeoutMs:180000,reintentos:1});
-      totalFilas=Number(payload.totalFilas ?? 0);
-    }
-
-    const objetosNuevos=filasScriptAObjetos(payload);
-    const nuevas=parseSIRERows(objetosNuevos);
-    const esRecargaCompleta=desde===0;
-    const anteriores=state.sire?.rows||[];
-    const combinadas=esRecargaCompleta?nuevas:anteriores.concat(nuevas);
-
-    if(!combinadas.length)throw new Error('El Office Script no devolvió registros SIRE válidos.');
-
-    const totalFuente=Number.isFinite(totalFilas)&&totalFilas>=0?totalFilas:(esRecargaCompleta?nuevas.length:desde+objetosNuevos.length);
-    state.sire={rows:combinadas,fileName:'SIRE histórico OneDrive',origen:'Office Script incremental',actualizadoEn:Date.now(),totalFuente};
-    await guardarCacheSIRE(combinadas,totalFuente);
+    // Reemplaza por completo la copia anterior; no concatena con la caché.
+    const totalFuente=filas.length;
+    state.sire={
+      rows:filas,
+      fileName:'SIRE histórico OneDrive',
+      origen:'Office Script refresco completo',
+      actualizadoEn:Date.now(),
+      totalFuente
+    };
+    await guardarCacheSIRE(filas,totalFuente);
     document.getElementById('cardSIREC')?.classList.add('ready');
     const segundos=((performance.now()-inicio)/1000).toFixed(1);
-    const reportadas=Number(payload.nuevasFilas ?? objetosNuevos.length);
     if(el){
-      if(reportadas>0){
-        el.textContent=`${combinadas.length.toLocaleString('es-PE')} comprobantes disponibles · SIRE actualizado por Office Script · +${reportadas.toLocaleString('es-PE')} filas nuevas · total fuente ${totalFuente.toLocaleString('es-PE')} · ${segundos}s`;
-      }else{
-        el.textContent=`${combinadas.length.toLocaleString('es-PE')} comprobantes disponibles · SIRE al día · no hay filas nuevas después de ${desde.toLocaleString('es-PE')} · ${segundos}s`;
-      }
+      el.textContent=`${filas.length.toLocaleString('es-PE')} comprobantes disponibles · SIRE actualizado completamente · altas, bajas y cambios sincronizados · ${segundos}s`;
     }
     actualizarEstado();
     return true;
@@ -1843,7 +1954,7 @@ async function actualizarSIRERemoto({silencioso=false,manual=false}={}){
     console.error(e);
     state.historicosError='No se pudo actualizar el SIRE: '+(e.message||e);
     if(el){
-      if(habiaSIRE)el.textContent=`${state.sire.rows.length.toLocaleString('es-PE')} comprobantes disponibles · No se pudo consultar Office Script. Se mantiene la última copia válida. · Detalle: ${e.message||e}`;
+      if(habiaSIRE)el.textContent=`${state.sire.rows.length.toLocaleString('es-PE')} comprobantes disponibles · No se pudo actualizar el SIRE. Se mantiene la última copia válida. · Detalle: ${e.message||e}`;
       else el.textContent=state.historicosError+' · usa el Respaldo manual SIRE.';
     }
     actualizarEstado();
