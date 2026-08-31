@@ -195,7 +195,7 @@
 
   <div class="panel">
     <h2>1. Carga tus XML</h2>
-    <p class="sub">Puedes seleccionar varios XML a la vez, de distintos aceptantes. La herramienta los agrupa sola por aceptante y moneda.</p>
+    <p class="sub">Puedes seleccionar varios XML a la vez. Las Cartas de Cesión se separan por aceptante y las Planillas de Descuento se agrupan por cliente y moneda.</p>
     <div class="dropzone" id="dropzone">
       <div class="dz-icon">📄</div>
       <div class="dz-title">Haz clic aquí o arrastra tus archivos XML</div>
@@ -209,7 +209,7 @@
         <input type="text" id="funcInput" placeholder="Ej. María Belén Ramírez">
       </div>
       <div class="field">
-        <label>Fecha del documento</label>
+        <label>Fecha de cesión</label>
         <input type="date" id="fechaInput">
       </div>
       <div class="field">
@@ -229,7 +229,7 @@
         <input type="email" id="emailInput" placeholder="Ej. contacto@empresa.com">
       </div>
       <div class="field">
-        <label>Contacto</label>
+        <label>Contacto del cliente</label>
         <input type="text" id="contactoInput" placeholder="Ej. Juan Pérez">
       </div>
     </div>
@@ -260,13 +260,13 @@
 
   <div class="panel no-print" id="resultsPanel" style="display:none">
     <h2>2. Documentos generados</h2>
-    <p class="sub">Un juego de Carta de Cesión + Planilla por cada aceptante/moneda (máx. 11 facturas por planilla; si hay más, se crean varias partes).</p>
+    <p class="sub">Cartas: una por cada aceptante. Planillas: una por cliente y moneda (máx. 11 facturas por planilla; si hay más, se crean varias partes).</p>
     <div class="tabs" id="tabsBar"></div>
     <div class="doc-actions">
       <button class="btn btn-gold btn-sm" id="downloadCartaBtn">⬇ Word Carta de Cesión</button>
       <button class="btn btn-primary btn-sm" id="downloadPlanillaBtn">⬇ Word Planilla de Descuento</button>
     </div>
-    <div class="warn-box">Se descargarán dos archivos Word independientes: la Carta de Cesión en vertical y la Planilla de Descuento en horizontal.</div>
+    <div class="warn-box">Selecciona una pestaña. Las Cartas de Cesión se descargan en vertical y las Planillas de Descuento en horizontal.</div>
     <div class="doc-frame" id="docFrame"></div>
   </div>
 
@@ -301,7 +301,7 @@
   fechaInput.value = new Date().toISOString().slice(0,10);
 
   let invoices = []; // {id, fileName, issueDate, dueDate, currency, cliNombre, cliRuc, cliDir, acepNombre, acepRuc, acepDir, importe, groupKey, include}
-  let groups = [];   // built on "Generar"
+  let groups = [];   // documentos generados: cartas por aceptante y planillas por cliente/moneda
   let activeGroupIdx = 0;
   const GROUP_COLORS = ['#2f2f2f','#e6005a','#f9ae00','#1c7c4c','#7a3ea1','#0e7c86','#a05a2c'];
 
@@ -467,21 +467,61 @@
   // ---------- BUILD GROUPS ----------
   const MAX_ROWS = 11;
 
-  function buildGroups(){
-    const included = invoices.filter(i => i.include);
+  function normalizeKey(v){
+    return (v || '').trim().toUpperCase();
+  }
+
+  // CARTA DE CESIÓN: una carta por CLIENTE + ACEPTANTE.
+  // La moneda no separa la carta.
+  function buildCartaGroups(included){
     const byKey = {};
     included.forEach(inv => {
-      if(!byKey[inv.groupKey]) byKey[inv.groupKey] = [];
-      byKey[inv.groupKey].push(inv);
+      const cliKey = normalizeKey(inv.cliRuc || inv.cliNombre);
+      const acepKey = normalizeKey(inv.acepRuc || inv.acepNombre);
+      const key = cliKey + '__' + acepKey;
+      if(!byKey[key]) byKey[key] = [];
+      byKey[key].push(inv);
     });
+
+    return Object.values(byKey).map(list => {
+      list.sort((a,b) => (a.id || '').localeCompare(b.id || ''));
+      return { tipo:'carta', items:list };
+    });
+  }
+
+  // PLANILLA: una planilla por CLIENTE + MONEDA.
+  // Si hay más de 11 facturas en la misma moneda, se crean partes adicionales.
+  function buildPlanillaGroups(included){
+    const byKey = {};
+    included.forEach(inv => {
+      const cliKey = normalizeKey(inv.cliRuc || inv.cliNombre);
+      const key = cliKey + '__' + normalizeKey(inv.currency);
+      if(!byKey[key]) byKey[key] = [];
+      byKey[key].push(inv);
+    });
+
     const out = [];
     Object.values(byKey).forEach(list => {
       list.sort((a,b) => (a.id || '').localeCompare(b.id || ''));
+      const totalPartes = Math.ceil(list.length / MAX_ROWS);
       for(let i=0; i<list.length; i += MAX_ROWS){
-        out.push(list.slice(i, i+MAX_ROWS));
+        out.push({
+          tipo:'planilla',
+          items:list.slice(i, i+MAX_ROWS),
+          parte:Math.floor(i / MAX_ROWS) + 1,
+          totalPartes
+        });
       }
     });
     return out;
+  }
+
+  function buildGroups(){
+    const included = invoices.filter(i => i.include);
+    return [
+      ...buildCartaGroups(included),
+      ...buildPlanillaGroups(included)
+    ];
   }
 
   generarBtn.addEventListener('click', () => {
@@ -497,19 +537,25 @@
     resultsPanel.scrollIntoView({behavior:'smooth'});
   });
 
-  function groupLabel(g, idx, allGroups){
-    const sameAcep = allGroups.filter(x => x[0].groupKey === g[0].groupKey);
-    const partIdx = sameAcep.indexOf(g);
-    const base = g[0].acepNombre;
-    return sameAcep.length > 1 ? `${base} (parte ${partIdx+1})` : base;
+  function groupLabel(entry){
+    const g = entry.items;
+    if(!g || !g.length) return 'Documento';
+
+    if(entry.tipo === 'carta'){
+      return 'Carta · ' + g[0].acepNombre;
+    }
+
+    const moneda = g[0].currency || 'MONEDA';
+    const base = 'Planilla · ' + moneda;
+    return entry.totalPartes > 1 ? base + ' (parte ' + entry.parte + ')' : base;
   }
 
   function renderTabs(){
     tabsBar.innerHTML = '';
-    groups.forEach((g, idx) => {
+    groups.forEach((entry, idx) => {
       const tab = document.createElement('div');
       tab.className = 'tab' + (idx === activeGroupIdx ? ' active' : '');
-      tab.textContent = groupLabel(g, idx, groups) + ` · ${g.length} doc.`;
+      tab.textContent = groupLabel(entry) + ' · ' + entry.items.length + ' doc.';
       tab.addEventListener('click', () => {
         activeGroupIdx = idx;
         renderTabs();
@@ -679,9 +725,20 @@
   }
 
   function renderActiveGroup(){
-    const g = groups[activeGroupIdx];
+    const entry = groups[activeGroupIdx];
+    if(!entry) return;
+    const g = entry.items;
     const meta = buildMeta(g);
-    docFrame.innerHTML = cartaHTML(g, meta, false) + planillaHTML(g, meta, true);
+
+    if(entry.tipo === 'carta'){
+      docFrame.innerHTML = cartaHTML(g, meta, false);
+      downloadCartaBtn.style.display = 'inline-block';
+      downloadPlanillaBtn.style.display = 'none';
+    } else {
+      docFrame.innerHTML = planillaHTML(g, meta, true);
+      downloadCartaBtn.style.display = 'none';
+      downloadPlanillaBtn.style.display = 'inline-block';
+    }
   }
 
   // ---------- WORD (.doc) EXPORT ----------
@@ -963,17 +1020,23 @@
   }
 
   function descargarWord(tipo){
-    const g = groups[activeGroupIdx];
-    if(!g) return;
+    const entry = groups[activeGroupIdx];
+    if(!entry || entry.tipo !== tipo) return;
+    const g = entry.items;
     const meta = buildMeta(g);
     const html = buildWordSeparado(g, meta, tipo);
     const blob = new Blob(['\ufeff', html], {type: 'application/msword'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = tipo === 'carta'
-      ? `Carta_Cesion_${slug(g[0].acepNombre)}.doc`
-      : `Planilla_Descuento_${slug(g[0].cliNombre)}.doc`;
+
+    if(tipo === 'carta'){
+      a.download = `Carta_Cesion_${slug(g[0].acepNombre)}.doc`;
+    } else {
+      const parte = entry.totalPartes > 1 ? '_Parte_' + entry.parte : '';
+      a.download = `Planilla_Descuento_${slug(g[0].cliNombre)}_${slug(g[0].currency)}${parte}.doc`;
+    }
+
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
