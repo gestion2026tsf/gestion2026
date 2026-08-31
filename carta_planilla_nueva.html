@@ -675,7 +675,115 @@ table.invlist tr:hover td{background:#fcf8fa;}
   function directChild(root, name){
     return Array.from(root.children).find(el => el.localName === name) || null;
   }
-  function txt(el){ return el ? el.textContent.trim() : ''; }
+  function normalizeUnicodeText(value){
+    if(value == null) return '';
+    return String(value)
+      .replace(/^\uFEFF/, '')
+      .replace(/\u0000/g, '')
+      .normalize('NFC');
+  }
+
+  function txt(el){
+    return el ? normalizeUnicodeText(el.textContent.trim()) : '';
+  }
+
+  // Lee XML respetando BOM, declaración encoding y Unicode.
+  // Evita errores como ANÃ“NIMA / MUÃ‘OZ causados por forzar ISO-8859-1.
+  function decodeUtf32(bytes, littleEndian){
+    const start = (bytes[0]===0x00 && bytes[1]===0x00 && bytes[2]===0xFE && bytes[3]===0xFF) ||
+                  (bytes[0]===0xFF && bytes[1]===0xFE && bytes[2]===0x00 && bytes[3]===0x00) ? 4 : 0;
+    const out = [];
+    for(let i=start; i+3<bytes.length; i+=4){
+      const cp = littleEndian
+        ? (bytes[i] | (bytes[i+1]<<8) | (bytes[i+2]<<16) | (bytes[i+3]<<24)) >>> 0
+        : ((bytes[i]<<24) | (bytes[i+1]<<16) | (bytes[i+2]<<8) | bytes[i+3]) >>> 0;
+      if(cp === 0) continue;
+      if(cp <= 0x10FFFF && !(cp >= 0xD800 && cp <= 0xDFFF)) out.push(String.fromCodePoint(cp));
+      else out.push('\uFFFD');
+    }
+    return out.join('');
+  }
+
+  function normalizeEncodingLabel(label){
+    const s = (label || '').trim().toLowerCase().replace(/_/g,'-');
+    const aliases = {
+      'utf8':'utf-8',
+      'utf-8':'utf-8',
+      'utf16':'utf-16le',
+      'utf-16':'utf-16le',
+      'utf16le':'utf-16le',
+      'utf-16le':'utf-16le',
+      'utf16be':'utf-16be',
+      'utf-16be':'utf-16be',
+      'latin1':'windows-1252',
+      'latin-1':'windows-1252',
+      'iso8859-1':'windows-1252',
+      'iso-8859-1':'windows-1252',
+      'cp1252':'windows-1252',
+      'windows1252':'windows-1252',
+      'windows-1252':'windows-1252'
+    };
+    return aliases[s] || s || 'utf-8';
+  }
+
+  function detectXmlEncoding(bytes){
+    if(bytes.length >= 4){
+      // BOM y patrones definidos por XML para UTF-32/UTF-16.
+      if(bytes[0]===0x00 && bytes[1]===0x00 && bytes[2]===0xFE && bytes[3]===0xFF) return 'utf-32be';
+      if(bytes[0]===0xFF && bytes[1]===0xFE && bytes[2]===0x00 && bytes[3]===0x00) return 'utf-32le';
+      if(bytes[0]===0x00 && bytes[1]===0x00 && bytes[2]===0x00 && bytes[3]===0x3C) return 'utf-32be';
+      if(bytes[0]===0x3C && bytes[1]===0x00 && bytes[2]===0x00 && bytes[3]===0x00) return 'utf-32le';
+      if(bytes[0]===0x00 && bytes[1]===0x3C && bytes[2]===0x00 && bytes[3]===0x3F) return 'utf-16be';
+      if(bytes[0]===0x3C && bytes[1]===0x00 && bytes[2]===0x3F && bytes[3]===0x00) return 'utf-16le';
+    }
+    if(bytes.length >= 3 && bytes[0]===0xEF && bytes[1]===0xBB && bytes[2]===0xBF) return 'utf-8';
+    if(bytes.length >= 2 && bytes[0]===0xFE && bytes[1]===0xFF) return 'utf-16be';
+    if(bytes.length >= 2 && bytes[0]===0xFF && bytes[1]===0xFE) return 'utf-16le';
+
+    // La declaración XML está al inicio y usa caracteres ASCII compatibles.
+    const headLen = Math.min(bytes.length, 1024);
+    let head = '';
+    for(let i=0;i<headLen;i++) head += String.fromCharCode(bytes[i]);
+    const m = head.match(/<\?xml[^>]*encoding\s*=\s*["']\s*([^"']+)\s*["']/i);
+    return normalizeEncodingLabel(m ? m[1] : 'utf-8');
+  }
+
+  function decodeXmlArrayBuffer(buffer){
+    const bytes = new Uint8Array(buffer);
+    let encoding = detectXmlEncoding(bytes);
+    let text = '';
+
+    if(encoding === 'utf-32le'){
+      text = decodeUtf32(bytes, true);
+    }else if(encoding === 'utf-32be'){
+      text = decodeUtf32(bytes, false);
+    }else{
+      const candidates = [];
+      const add = enc => { enc = normalizeEncodingLabel(enc); if(enc && !candidates.includes(enc)) candidates.push(enc); };
+      add(encoding);
+      add('utf-8');
+      add('windows-1252');
+
+      let lastError = null;
+      for(const enc of candidates){
+        try{
+          text = new TextDecoder(enc, {fatal:true}).decode(bytes);
+          encoding = enc;
+          lastError = null;
+          break;
+        }catch(err){ lastError = err; }
+      }
+      if(lastError){
+        // Último recurso: nunca detener el proceso por un byte defectuoso.
+        text = new TextDecoder('utf-8', {fatal:false}).decode(bytes);
+        encoding = 'utf-8';
+      }
+    }
+
+    text = normalizeUnicodeText(text);
+    if(!text.trim()) throw new Error('El XML está vacío o no se pudo decodificar.');
+    return {text, encoding};
+  }
 
   function fmtDate(iso){
     if(!iso) return '';
@@ -739,26 +847,40 @@ table.invlist tr:hover td{background:#fcf8fa;}
     if(!files.length) return;
     statusMsg.textContent = 'Leyendo ' + files.length + ' archivo(s)...';
     let pending = files.length;
+    let errores = [];
+
     files.forEach(file => {
       const reader = new FileReader();
       reader.onload = e => {
         try{
-          const inv = parseInvoiceXML(e.target.result, file.name);
+          const decoded = decodeXmlArrayBuffer(e.target.result);
+          const inv = parseInvoiceXML(decoded.text, file.name);
+          inv.sourceEncoding = decoded.encoding;
           if(!invoices.some(x => x.id === inv.id && x.fileName === inv.fileName)){
             invoices.push(inv);
           }
         }catch(err){
-          console.error(err);
-          statusMsg.textContent = 'Error leyendo ' + file.name + ': ' + err.message;
+          console.error('Error leyendo', file.name, err);
+          errores.push(file.name + ': ' + err.message);
         }
         pending--;
         if(pending === 0){
           renderInvTable();
-          statusMsg.textContent = invoices.length + ' documento(s) cargado(s).';
+          statusMsg.textContent = errores.length
+            ? invoices.length + ' documento(s) cargado(s). ' + errores.length + ' archivo(s) con error.'
+            : invoices.length + ' documento(s) cargado(s).';
         }
       };
-      reader.onerror = () => { pending--; };
-      reader.readAsText(file, 'ISO-8859-1');
+      reader.onerror = () => {
+        errores.push(file.name + ': no se pudo leer el archivo.');
+        pending--;
+        if(pending === 0){
+          renderInvTable();
+          statusMsg.textContent = invoices.length + ' documento(s) cargado(s). ' + errores.length + ' archivo(s) con error.';
+        }
+      };
+      // IMPORTANTE: leer bytes, no texto forzado a ISO-8859-1.
+      reader.readAsArrayBuffer(file);
     });
   }
 
@@ -1473,7 +1595,7 @@ table.invlist tr:hover td{background:#fcf8fa;}
     const g = entry.items;
     const meta = buildMeta(g);
     const html = buildWordSeparado(g, meta, tipo);
-    const blob = new Blob(['\ufeff', html], {type: 'application/msword'});
+    const blob = new Blob(['\ufeff', html], {type: 'application/msword;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
