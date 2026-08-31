@@ -301,7 +301,7 @@
     <div class="htext">
       <div class="eyebrow">Conciliación de compras · PLE + SIRE + Obligaciones</div>
       <h1>Conciliador de Compras</h1>
-      <div style="display:inline-block;margin:6px 0 10px;padding:6px 10px;border:1px solid #e7a6be;border-radius:999px;background:#fff1f6;color:#9d2d59;font-family:var(--mono);font-size:11px;font-weight:700;">VERSIÓN SIRE SCRIPT · REFRESCO COMPLETO · RESPALDO MANUAL · V5</div>
+      <div style="display:inline-block;margin:6px 0 10px;padding:6px 10px;border:1px solid #e7a6be;border-radius:999px;background:#fff1f6;color:#9d2d59;font-family:var(--mono);font-size:11px;font-weight:700;">VERSIÓN COMPRAS · FECHAS SIRE CORREGIDAS · V12</div>
       <p>Valida el PLE 8.1 del periodo contra el histórico SIRE de SUNAT y utiliza la Lista de Obligaciones de Sprint únicamente como apoyo para documentos bancarios. Revisa si el comprobante está registrado y, si lo está, compara RUC, proveedor, tipo, serie, correlativo, fecha de emisión, moneda, tipo de cambio, base imponible, IGV y total. También realiza el cruce SIRE → PLE para identificar comprobantes del periodo que aún no aparecen en contabilidad.</p>
     </div>
   </header>
@@ -1455,67 +1455,78 @@ async function exportarWorkbookVentasConLogo(wb, fname, msg){
   };
 
   try{
-    if(!window.ExcelJS) return fallback();
-
-    if(msg) msg.textContent = 'Insertando logo corporativo en el Excel…';
-
+    // IMPORTANTE: no usamos ExcelJS para Ventas porque puede reinterpretar
+    // numeros de Premium como fechas. Insertamos el logo directamente en
+    // el paquete XLSX (ZIP/OOXML), sin tocar ninguna celda ni formato.
+    if(!window.JSZip) return fallback();
     const dataLogo = obtenerLogoTotalExcel();
     if(!dataLogo) return fallback();
 
-    const bufferXlsx = XLSX.write(wb, { bookType:'xlsx', type:'array' });
-    const wbExcel = new ExcelJS.Workbook();
-    await wbExcel.xlsx.load(bufferXlsx);
+    if(msg) msg.textContent = 'Insertando logo sin modificar Premium…';
 
-    // ExcelJS puede interpretar algunos importes como fechas si heredan un estilo de fecha.
-    // Antes de guardar, normalizamos de forma explícita los tipos de la hoja Premium.
-    corregirFormatosVentasExcelJS(wbExcel);
+    const baseArray = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+    const zip = await JSZip.loadAsync(baseArray);
 
-    const wsResumen = wbExcel.getWorksheet('Resumen') || wbExcel.worksheets?.[0];
-    if(wsResumen){
-      // Reservar espacio visual a la derecha para el logo.
-      for(let c=6; c<=9; c++){
-        const col = wsResumen.getColumn(c);
-        if(!col.width || col.width < 13) col.width = c===6 ? 4 : 13;
-      }
-      wsResumen.getRow(1).height = Math.max(wsResumen.getRow(1).height || 0, 26);
-      wsResumen.getRow(2).height = Math.max(wsResumen.getRow(2).height || 0, 24);
-      wsResumen.getRow(3).height = Math.max(wsResumen.getRow(3).height || 0, 18);
-      wsResumen.getRow(4).height = Math.max(wsResumen.getRow(4).height || 0, 10);
+    // Imagen PNG.
+    const base64 = dataLogo.replace(/^data:image\/png;base64,/i,'');
+    zip.file('xl/media/total_logo.png', base64, {base64:true});
 
-      const imageId = wbExcel.addImage({
-        base64: dataLogo,
-        extension: 'png'
-      });
+    // Drawing anclado en la hoja Resumen (primera hoja del libro).
+    const cx = 250 * 9525; // 250 px
+    const cy = 95 * 9525;  // 95 px
+    const drawingXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <xdr:oneCellAnchor>
+    <xdr:from><xdr:col>5</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>0</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>
+    <xdr:ext cx="${cx}" cy="${cy}"/>
+    <xdr:pic>
+      <xdr:nvPicPr><xdr:cNvPr id="1" name="Logo TOTAL"/><xdr:cNvPicPr/></xdr:nvPicPr>
+      <xdr:blipFill><a:blip r:embed="rId1"/><a:stretch><a:fillRect/></a:stretch></xdr:blipFill>
+      <xdr:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></xdr:spPr>
+    </xdr:pic>
+    <xdr:clientData/>
+  </xdr:oneCellAnchor>
+</xdr:wsDr>`;
+    zip.file('xl/drawings/drawing_total.xml', drawingXml);
+    zip.file('xl/drawings/_rels/drawing_total.xml.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/total_logo.png"/>
+</Relationships>`);
 
-      wsResumen.addImage(imageId, {
-        tl: { col: 5.25, row: 0.15 },
-        ext: { width: 250, height: 95 },
-        editAs: 'oneCell'
-      });
+    // Relacion de sheet1 -> drawing. Resumen siempre se agrega primero.
+    const sheetRelsPath='xl/worksheets/_rels/sheet1.xml.rels';
+    let sheetRels = zip.file(sheetRelsPath)
+      ? await zip.file(sheetRelsPath).async('string')
+      : `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`;
+    const ids=[...sheetRels.matchAll(/Id="rId(\d+)"/g)].map(m=>Number(m[1]));
+    const rid='rId'+((ids.length?Math.max(...ids):0)+1);
+    sheetRels=sheetRels.replace('</Relationships>',`<Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing_total.xml"/></Relationships>`);
+    zip.file(sheetRelsPath,sheetRels);
 
-      const labelCell = wsResumen.getCell('G5');
-      labelCell.value = 'TOTAL · Imagen corporativa';
-      labelCell.font = { bold:true, color:{ argb:'FFE6005C' }, size:10 };
-      labelCell.alignment = { horizontal:'center', vertical:'middle' };
+    let sheetXml=await zip.file('xl/worksheets/sheet1.xml').async('string');
+    if(!/<drawing\b/.test(sheetXml)){
+      sheetXml=sheetXml.replace('</worksheet>',`<drawing r:id="${rid}"/></worksheet>`);
+      zip.file('xl/worksheets/sheet1.xml',sheetXml);
     }
 
-    const out = await wbExcel.xlsx.writeBuffer();
-    const blob = new Blob([out], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fname;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=> URL.revokeObjectURL(url), 4000);
-    if(msg) msg.textContent = 'Descargado con logo: ' + fname;
+    // Content types necesarios para PNG y drawing.
+    let ct=await zip.file('[Content_Types].xml').async('string');
+    if(!/Extension="png"/i.test(ct)) ct=ct.replace('</Types>','<Default Extension="png" ContentType="image/png"/></Types>');
+    if(!/PartName="\/xl\/drawings\/drawing_total.xml"/i.test(ct)) ct=ct.replace('</Types>','<Override PartName="/xl/drawings/drawing_total.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/></Types>');
+    zip.file('[Content_Types].xml',ct);
+
+    const out=await zip.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',compression:'DEFLATE'});
+    const url=URL.createObjectURL(out);
+    const a=document.createElement('a');
+    a.href=url; a.download=fname;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    if(msg) msg.textContent='Descargado con logo y Premium preservado: '+fname;
   }catch(err){
-    console.warn('No se pudo insertar el logo en el Excel. Se descargará la versión normal.', err);
+    console.warn('No se pudo insertar el logo sin alterar Premium. Se descarga el Excel normal.',err);
     fallback();
   }
 }
-
 
 function corregirFormatosVentasExcelJS(wbExcel){
   // Conserva exactamente la logica visual del archivo anterior y evita que
@@ -1843,24 +1854,30 @@ function normalizarFecha(value, periodoEsperado=''){
   const valida=(y,m,d)=>{const dt=new Date(Number(y),Number(m)-1,Number(d));return dt.getFullYear()===Number(y)&&dt.getMonth()===Number(m)-1&&dt.getDate()===Number(d)};
   const coincidePeriodo=f=>!periodo || String(f||'').slice(0,7).replace('-','')===periodo;
 
-  if(value instanceof Date&&!Number.isNaN(value.getTime())){
-    const y=value.getFullYear(), m=value.getMonth()+1, d=value.getDate();
+  // COMPRAS: corrige exclusivamente la ambigüedad día/mes del SIRE usando su Periodo.
+  // No altera una fecha si ya coincide con el periodo. Solo invierte mes/día cuando:
+  //   a) la fecha directa contradice el periodo, y
+  //   b) la fecha invertida es válida y sí coincide con el periodo.
+  const ajustarPorPeriodo=(y,m,d)=>{
+    y=Number(y);m=Number(m);d=Number(d);
+    if(!valida(y,m,d)) return '';
     const directo=isoFecha(y,m,d);
-    // Excel/Power Automate puede haber guardado una fecha DD/MM como MM/DD.
-    // Si el mes almacenado contradice el Periodo SIRE, probamos día/mes invertidos.
-    if(periodo && String(y)+String(m).padStart(2,'0')!==periodo){
-      if(d>=1 && d<=12 && valida(y,d,m)){
-        const invertida=isoFecha(y,d,m);
-        if(coincidePeriodo(invertida)) return invertida;
-      }
+    if(!periodo || coincidePeriodo(directo)) return directo;
+    if(m>=1&&m<=12&&d>=1&&d<=12&&valida(y,d,m)){
+      const invertida=isoFecha(y,d,m);
+      if(coincidePeriodo(invertida)) return invertida;
     }
     return directo;
+  };
+
+  if(value instanceof Date&&!Number.isNaN(value.getTime())){
+    return ajustarPorPeriodo(value.getFullYear(),value.getMonth()+1,value.getDate());
   }
 
   const serialAFecha=n=>{
     if(Number.isFinite(n)&&n>20000&&n<80000&&window.XLSX?.SSF){
       const p=XLSX.SSF.parse_date_code(n);
-      if(p) return isoFecha(p.y,p.m,p.d);
+      if(p) return ajustarPorPeriodo(p.y,p.m,p.d);
     }
     return '';
   };
@@ -1874,11 +1891,11 @@ function normalizarFecha(value, periodoEsperado=''){
   }
 
   let m=raw.match(/^(\d{4})-(\d{2})-(\d{2})T/);
-  if(m) return isoFecha(m[1],m[2],m[3]);
+  if(m) return ajustarPorPeriodo(m[1],m[2],m[3]);
 
   const t=raw.split(' ')[0];
   m=t.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
-  if(m && valida(m[1],m[2],m[3])) return isoFecha(m[1],m[2],m[3]);
+  if(m) return ajustarPorPeriodo(m[1],m[2],m[3]);
 
   m=t.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
   if(m){
@@ -1894,7 +1911,6 @@ function normalizarFecha(value, periodoEsperado=''){
       if(porPeriodo) return porPeriodo;
     }
     if(unicos.length===1) return unicos[0];
-    // Si ambas son válidas y no hay periodo para decidir, preservamos DD/MM/YYYY.
     return unicos[0] || '';
   }
 
@@ -1955,10 +1971,9 @@ function parseSIRERows(rows){
       biDNG:toNumber(valorPorAlias(x,['BI Gravado DNG'])), igvDNG:toNumber(valorPorAlias(x,['IGV / IPM DNG','IGV DNG'])),
       totalCP:toNumber(valorPorAlias(x,['Importe Total','Total CP','Importe total de la operación','Total'])), raw:x
     };
-    // IMPORTANTE: el campo 'Periodo' del consolidado SIRE NO es confiable para interpretar la fecha.
-    // En la fuente existen filas con Periodo 202601 y Fecha de emisión de meses posteriores.
-    // Por eso la fecha se normaliza únicamente desde 'Fecha de emisión' y el periodo operativo
-    // se deriva de esa fecha real.
+    // COMPRAS: el Periodo SIRE se usa SOLO para desambiguar día/mes cuando Excel/Office Script
+    // serializa una fecha como MM/DD. Ej.: Periodo 202607 + 2026-01-07 => 01/07/2026.
+    // Si la fecha directa ya coincide con el periodo, no se modifica.
     const fechaRaw=valorPorAlias(x,['Fecha de emisión','Fecha Emisión','Fecha Emision']);
     r.fechaEmision=normalizarFecha(fechaRaw, r.periodo);
     r.baseImponible=r.biGravadoDG+r.biDGNG+r.biDNG; r.igvTotal=r.igvDG+r.igvDGNG+r.igvDNG;
@@ -2001,7 +2016,7 @@ async function obtenerSIREInicialComprimido(){
 }
 const SIRE_CACHE_DB='TSFConciliadorCache';
 const SIRE_CACHE_STORE='datos';
-const SIRE_CACHE_KEY='sireHistorico';
+const SIRE_CACHE_KEY='sireHistorico_fechaFix_v2';
 const SIRE_CACHE_VERSION=1;
 const SIRE_TIMEOUT_FONDO_MS=180000;
 const SIRE_TIMEOUT_MANUAL_MS=180000;
@@ -2026,6 +2041,16 @@ async function guardarCacheSIRE(rows,totalFuente=null){
 }
 function activarSIRE(rows,origen,fechaCache=null,totalFuente=null){
   if(!Array.isArray(rows)||!rows.length)return false;
+  // Rehidrata también copias antiguas guardadas con la fecha día/mes mal interpretada.
+  rows=rows.map(r=>{
+    const x={...r};
+    const periodoRef=x.periodo||x.periodoSIRE||'';
+    const fechaCorregida=normalizarFecha(x.fechaEmision,periodoRef);
+    if(fechaCorregida)x.fechaEmision=fechaCorregida;
+    x.periodoEmision=periodoDeFecha(x.fechaEmision);
+    x.periodoSIRE=x.periodoEmision||periodoPLE(x.periodo)||x.periodoSIRE||'';
+    return x;
+  });
   state.sire={rows,fileName:'SIRE histórico OneDrive',origen,totalFuente:totalFuente??rows.length};
   document.getElementById('cardSIREC')?.classList.add('ready');
   const el=document.getElementById('estadoSIREC');
@@ -2225,7 +2250,9 @@ function sugerirBanco(r){
   // El Voucher/CUO es la relación principal. Si hay duplicados, prioriza la fila FP y luego la que tenga un documento utilizable.
   const best=[...candidatas].sort((a,b)=>((a.tipoDocumento==='FP'?0:1)-(b.tipoDocumento==='FP'?0:1)))[0];
   const key=buildKey(r.rucProveedor,r.tipoCP,best.serie,best.numero);
-  return {voucher:r.cuo,voucherObligacion:best.voucher,documentoObligacion:best.documento,serie:best.serie,numero:padNum(best.numero),keySugerida:key,encontradaEnSIRE:state.sireSet?.has(key)||false,monto:best.monto,fecha:best.fecha,metodo:'VOUCHER/CUO EXACTO'};
+  const proveedorObligacion=String(best.proveedor||'').trim();
+  const esBancoObligacion=/\bBANCO\b|SCOTIABANK|INTERBANK|BBVA|BCP|CREDITO DEL PERU|FINANCIER/i.test(proveedorObligacion);
+  return {voucher:r.cuo,voucherObligacion:best.voucher,documentoObligacion:best.documento,proveedorObligacion,tipoDocumentoObligacion:best.tipoDocumento,esBancoObligacion,serie:best.serie,numero:padNum(best.numero),keySugerida:key,encontradaEnSIRE:state.sireSet?.has(key)||false,monto:best.monto,fecha:best.fecha,metodo:'VOUCHER/CUO EXACTO'};
 }
 
 function iniciarHistoricoManual(){
@@ -2372,21 +2399,41 @@ function procesar(){
       if(comp.diferencias.length)accion='Revisar y corregir diferencias';
     }else{
       banco=sugerirBanco(r);
-      if(banco){
-        if(banco.encontradaEnSIRE){
-          sireMatch=(sireMap.get(banco.keySugerida)||[])[0]||null;
-          comp=sireMatch?comparar({...r,serie:banco.serie,nroCP:banco.numero,key:banco.keySugerida},sireMatch):null;
-          estado='BANCO CONFIRMADO POR OBLIGACIONES';motivo='Voucher/CUO exacto en Obligaciones → '+banco.documentoObligacion+' → encontrado en SIRE';
-          if(comp?.diferencias?.length)motivo+='; diferencias: '+comp.diferencias.join(', ');
-          accion='Validación bancaria confirmada por Voucher/CUO';
-        }else{
-          estado='BANCO EN OBLIGACIONES — NO EN SIRE';motivo='Voucher/CUO exacto encontrado en Obligaciones ('+banco.documentoObligacion+'), pero esa llave no aparece en SIRE';accion='Revisar SIRE / sustento bancario';
-        }
+
+      // 1) Si Obligaciones corrige el documento y esa llave sí existe en SIRE, confirma banco.
+      if(banco?.encontradaEnSIRE){
+        sireMatch=(sireMap.get(banco.keySugerida)||[])[0]||null;
+        comp=sireMatch?comparar({...r,serie:banco.serie,nroCP:banco.numero,key:banco.keySugerida},sireMatch):null;
+        estado='BANCO CONFIRMADO POR OBLIGACIONES';
+        motivo='Voucher/CUO exacto en Obligaciones → '+banco.documentoObligacion+' → encontrado en SIRE';
+        if(comp?.diferencias?.length)motivo+='; diferencias: '+comp.diferencias.join(', ');
+        accion='Validación bancaria confirmada por Voucher/CUO';
       }else{
+        // 2) Si Obligaciones NO encontró una llave válida en SIRE, todavía hay que buscar
+        //    un candidato real en SIRE. Antes el sistema cortaba aquí y generaba 7 falsos
+        //    "BANCO EN OBLIGACIONES — NO EN SIRE".
         candidato=buscarCandidato(r,sire);
-        if(candidato){sireMatch=candidato.row;comp=comparar(r,sireMatch);estado='POSIBLE COINCIDENCIA';motivo='No hay llave exacta; candidato en SIRE — revisar '+comp.diferencias.join(', ');accion='Validar candidato antes de corregir';}
-        else if(histMap.has(r.key)){const h=histMap.get(r.key)[0];estado='REGISTRADO EN PERIODO ANTERIOR';motivo='Comprobante encontrado en PLE histórico'+(h.periodoRegistro?' — periodo '+h.periodoRegistro:'');accion='Verificar que no corresponda volver a registrar';}
-        else{estado='NO UBICADO EN SIRE';motivo='No encontrado por llave exacta, Voucher/CUO, candidato ni histórico disponible';accion='Revisar comprobante / sustento';}
+        if(candidato){
+          sireMatch=candidato.row;
+          comp=comparar(r,sireMatch);
+          estado='POSIBLE COINCIDENCIA';
+          motivo=(banco?'Voucher/CUO encontrado en Obligaciones ('+banco.documentoObligacion+'), pero no confirmó SIRE. ':'')+'Candidato en SIRE — revisar '+comp.diferencias.join(', ');
+          accion='Validar candidato antes de corregir';
+        }else if(banco?.esBancoObligacion){
+          // Solo queda como alerta bancaria cuando la propia fila de Obligaciones corresponde a banco.
+          estado='BANCO EN OBLIGACIONES — NO EN SIRE';
+          motivo='Voucher/CUO exacto encontrado en Obligaciones ('+banco.documentoObligacion+'), pero esa llave no aparece en SIRE';
+          accion='Revisar SIRE / sustento bancario';
+        }else if(histMap.has(r.key)){
+          const h=histMap.get(r.key)[0];
+          estado='REGISTRADO EN PERIODO ANTERIOR';
+          motivo='Comprobante encontrado en PLE histórico'+(h.periodoRegistro?' — periodo '+h.periodoRegistro:'');
+          accion='Verificar que no corresponda volver a registrar';
+        }else{
+          estado='NO UBICADO EN SIRE';
+          motivo=banco?'Voucher/CUO existe en Obligaciones, pero no corresponde a una corrección bancaria confirmable y no se halló candidato en SIRE':'No encontrado por llave exacta, Voucher/CUO, candidato ni histórico disponible';
+          accion='Revisar comprobante / sustento';
+        }
       }
     }
     const duplicadoSIRE = sireMatch ? (sireMap.get(sireMatch.key)||[]).length>1 : false;
@@ -2838,6 +2885,10 @@ buildCardsPrincipales();iniciarBancos();iniciarHistoricoManual();cargarHistorico
     'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js',
     'https://unpkg.com/exceljs@4.4.0/dist/exceljs.min.js'
   ];
+  const fuentesJSZip = [
+    'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js',
+    'https://unpkg.com/jszip@3.10.1/dist/jszip.min.js'
+  ];
   function cargar(fuentes, checkGlobal, onDone, onFail){
     let i = 0;
     (function intentar(){
@@ -2852,6 +2903,7 @@ buildCardsPrincipales();iniciarBancos();iniciarHistoricoManual();cargarHistorico
   cargar(fuentesXLSX, 'XLSX', ()=>{
     cargar(fuentesPapa, 'Papa', ()=>{}, ()=>console.warn('No se pudo cargar PapaParse.'));
     cargar(fuentesExcelJS, 'ExcelJS', ()=>{}, ()=>console.warn('No se pudo cargar ExcelJS; el Excel se descargará sin logo.'));
+    cargar(fuentesJSZip, 'JSZip', ()=>{}, ()=>console.warn('No se pudo cargar JSZip; Ventas se descargará sin logo para proteger Premium.'));
   }, ()=>console.warn('No se pudo cargar XLSX.'));
 })();
 </script>
