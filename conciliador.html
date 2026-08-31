@@ -1601,22 +1601,90 @@ function aplanarBloques(data){
   if(data.body)return aplanarBloques(data.body); return [];
 }
 
-async function cargarHistoricosCompras(){
-  if(state.historicosCargando)return; state.historicosCargando=true; state.historicosError='';
-  const el=document.getElementById('estadoSIREC'); if(el)el.textContent='Consultando SIRE histórico de OneDrive…'; actualizarEstado();
+const SIRE_PARTES=[1,2,3];
+const SIRE_MAX_CONCURRENCIA=2; // rápido, pero sin lanzar los 3 conectores de Excel a la vez
+const SIRE_REINTENTOS=2;
+
+function dormir(ms){ return new Promise(resolve=>setTimeout(resolve,ms)); }
+
+async function pedirParteSIRE(parte,intento=0){
+  const controller=new AbortController();
+  // Dejamos margen suficiente al flujo. El 504 normalmente lo genera Power Automate antes que este límite.
+  const timeout=setTimeout(()=>controller.abort(),110000);
   try{
-    const respuestas=await Promise.all([1,2,3].map(async parte=>{
-      const r=await fetch(HISTORICOS_COMPRAS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parte})});
-      if(!r.ok)throw new Error('HTTP '+r.status); return r.json();
-    }));
+    const r=await fetch(HISTORICOS_COMPRAS_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Cache-Control':'no-cache'},
+      body:JSON.stringify({parte}),
+      signal:controller.signal
+    });
+    if(!r.ok){
+      const err=new Error('HTTP '+r.status);
+      err.status=r.status;
+      throw err;
+    }
+    return await r.json();
+  }catch(err){
+    const reintentable=err.name==='AbortError' || err.status===408 || err.status===429 || (err.status>=500 && err.status<=599);
+    if(reintentable && intento<SIRE_REINTENTOS){
+      // Reintento corto y progresivo. Solo se repite el bloque que falló.
+      await dormir(1200*(intento+1));
+      return pedirParteSIRE(parte,intento+1);
+    }
+    if(err.name==='AbortError') throw new Error(`Bloque ${parte}: tiempo de espera agotado`);
+    throw new Error(`Bloque ${parte}: ${err.message}`);
+  }finally{
+    clearTimeout(timeout);
+  }
+}
+
+async function cargarPartesSIRERapido(onProgress){
+  const resultados=new Array(SIRE_PARTES.length);
+  let siguiente=0,terminadas=0;
+  async function worker(){
+    while(true){
+      const idx=siguiente++;
+      if(idx>=SIRE_PARTES.length)return;
+      const parte=SIRE_PARTES[idx];
+      resultados[idx]=await pedirParteSIRE(parte);
+      terminadas++;
+      onProgress?.(terminadas,SIRE_PARTES.length,parte);
+    }
+  }
+  await Promise.all(Array.from({length:Math.min(SIRE_MAX_CONCURRENCIA,SIRE_PARTES.length)},()=>worker()));
+  return resultados;
+}
+
+async function cargarHistoricosCompras(){
+  if(state.historicosCargando)return;
+  state.historicosCargando=true;
+  state.historicosError='';
+  const el=document.getElementById('estadoSIREC');
+  const btn=document.getElementById('btnActualizarHistoricosC');
+  if(btn){btn.disabled=true;btn.textContent='Cargando SIRE…';}
+  if(el)el.textContent='Conectando con SIRE histórico…';
+  actualizarEstado();
+  const inicio=performance.now();
+  try{
+    const respuestas=await cargarPartesSIRERapido((hechas,total)=>{
+      if(el)el.textContent=`Cargando SIRE histórico… ${hechas}/${total} bloques listos`;
+    });
     const sireRaw=respuestas.flatMap(aplanarBloques);
     const sireRows=parseSIRERows(sireRaw);
     if(!sireRows.length)throw new Error('El flujo no devolvió SIRE válido.');
     state.sire={rows:sireRows,fileName:'SIRE histórico OneDrive'};
-    el.textContent=`${sireRows.length.toLocaleString('es-PE')} comprobantes disponibles — SIRE histórico`;
+    const segundos=((performance.now()-inicio)/1000).toFixed(1);
+    if(el)el.textContent=`${sireRows.length.toLocaleString('es-PE')} comprobantes disponibles — SIRE histórico · ${segundos}s`;
     document.getElementById('cardSIREC')?.classList.add('ready');
-  }catch(e){console.error(e);state.historicosError='No se pudo consultar el SIRE histórico: '+e.message;el.textContent=state.historicosError}
-  finally{state.historicosCargando=false;actualizarEstado()}
+  }catch(e){
+    console.error(e);
+    state.historicosError='No se pudo consultar el SIRE histórico: '+e.message;
+    if(el)el.textContent=state.historicosError+' · pulsa “Actualizar SIRE” para reintentar.';
+  }finally{
+    state.historicosCargando=false;
+    if(btn){btn.disabled=false;btn.textContent='Actualizar SIRE';}
+    actualizarEstado();
+  }
 }
 
 function parseHistoricoDesdeObjetos(rows){
