@@ -1047,6 +1047,9 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       (h.startsWith('fechaemision') || h.startsWith('fechaemi_'))
       && !h.includes('comp_pag') && !h.includes('comppag') && !h.includes('pago')
     );
+    const fechaVencIdx = normalizedHeaders.findIndex(h =>
+      h.startsWith('fechavenc') || h.startsWith('fechavencimiento')
+    );
     const fechaOrigenIdx = normalizedHeaders.findIndex(h =>
       h.includes('fechaemicomp_pag') || h.includes('fechaemicomppag')
       || h.includes('fechaemisioncomprobantepago') || h.includes('fechaemisioncomppag')
@@ -1109,6 +1112,21 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       if(!m) return String(value ?? '').trim();
       const y = Number(m[1]), mes = Number(m[2]), d = Number(m[3]);
       return Math.floor(Date.UTC(y, mes - 1, d) / 86400000) + 25569;
+    };
+
+    // SheetJS puede convertir una celda NUMERICA en Date si el archivo de origen
+    // trae por error formato de fecha. Esta funcion recupera el serial original,
+    // incluyendo decimales (por ejemplo 3.403 vuelve a ser 3.403, no 03/01/1900).
+    const dateObjetoASerialOriginal = value => {
+      if(!(value instanceof Date) || Number.isNaN(value.getTime())) return value;
+      const utc = Date.UTC(
+        value.getFullYear(), value.getMonth(), value.getDate(),
+        value.getHours(), value.getMinutes(), value.getSeconds(), value.getMilliseconds()
+      );
+      let serial = (utc - Date.UTC(1899, 11, 30)) / 86400000;
+      // Correccion del bug historico de Excel para fechas anteriores a 01/03/1900.
+      if(serial < 61) serial -= 1;
+      return Math.round(serial * 1000000) / 1000000;
     };
 
     const premiumHeaders = [];
@@ -1204,11 +1222,15 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       const outRow = [];
       premiumHeadersOriginal.forEach((_, originalIdx)=>{
         const rawValue = srcRow[originalIdx] ?? '';
-        outRow.push(
-          (originalIdx === fechaEmisionIdx || originalIdx === fechaOrigenIdx)
-            ? fechaAExcelSerial(rawValue)
-            : rawValue
-        );
+        const esFechaReal = originalIdx === fechaEmisionIdx || originalIdx === fechaVencIdx || originalIdx === fechaOrigenIdx;
+        let valorSalida = rawValue;
+        if(esFechaReal){
+          valorSalida = rawValue === '' ? '' : fechaAExcelSerial(rawValue);
+        }else if(rawValue instanceof Date){
+          // IMPORTANTE: no es una fecha real. Recupera el numero original.
+          valorSalida = dateObjetoASerialOriginal(rawValue);
+        }
+        outRow.push(valorSalida);
         if(originalIdx === docIdx) outRow.push(valSerie);
         if(originalIdx === igvIdx) outRow.push(revIgv, pctIgv, variacion);
         if(originalIdx === tcRegistradoIdx) outRow.push(tcGeneral, difTcGeneral);
@@ -1248,13 +1270,14 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     const monedaOutIdx = monedaIdx >= 0 ? originalToOutput.get(monedaIdx) : -1;
     const tcRegistradoOutIdx = tcRegistradoIdx >= 0 ? originalToOutput.get(tcRegistradoIdx) : -1;
     const fechaEmisionOutIdx = fechaEmisionIdx >= 0 ? originalToOutput.get(fechaEmisionIdx) : -1;
+    const fechaVencOutIdx = fechaVencIdx >= 0 ? originalToOutput.get(fechaVencIdx) : -1;
     const fechaOrigenOutIdx = fechaOrigenIdx >= 0 ? originalToOutput.get(fechaOrigenIdx) : -1;
     const tipoDocumentoOutIdx = tipoDocumentoIdx >= 0 ? originalToOutput.get(tipoDocumentoIdx) : -1;
 
     // Fuerza la visualizacion de fechas como dd/mm/aaaa en Premium.
     // Aunque Windows/Excel este en configuracion regional de EE.UU.,
     // la celda conserva el dia, mes y anio correctos.
-    [fechaEmisionOutIdx, fechaOrigenOutIdx].filter(idx=>idx >= 0).forEach(colIdx=>{
+    [fechaEmisionOutIdx, fechaVencOutIdx, fechaOrigenOutIdx].filter(idx=>idx >= 0).forEach(colIdx=>{
       const col = excelCol(colIdx);
       for(let excelRow=2; excelRow<=premiumAOA.length; excelRow++){
         const ref = `${col}${excelRow}`;
@@ -1432,6 +1455,8 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       for(let fila=2; fila<=tcAOA.length; fila++){
         const ref = `A${fila}`;
         if(wsTC[ref]) wsTC[ref].z = 'yyyy-mm-dd';
+        if(wsTC[`B${fila}`]) wsTC[`B${fila}`].z = '0.000';
+        if(wsTC[`C${fila}`]) wsTC[`C${fila}`].z = '0.000';
       }
       wsTC['!cols'] = [{wch:14},{wch:24},{wch:24}];
       wsTC['!freeze']={xSplit:0,ySplit:1,topLeftCell:'A2',activePane:'bottomLeft',state:'frozen'};
@@ -1672,9 +1697,16 @@ function normalizarFechaTC(value){
 }
 
 function convertirTipoCambio(value){
-  if(value === null || value === undefined || value === '' || value instanceof Date) return null;
+  if(value === null || value === undefined || value === '') return null;
   let n;
-  if(typeof value === 'number') n = value;
+  if(value instanceof Date){
+    const utc = Date.UTC(
+      value.getFullYear(), value.getMonth(), value.getDate(),
+      value.getHours(), value.getMinutes(), value.getSeconds(), value.getMilliseconds()
+    );
+    n = (utc - Date.UTC(1899, 11, 30)) / 86400000;
+    if(n < 61) n -= 1;
+  } else if(typeof value === 'number') n = value;
   else {
     let t = String(value).trim().replace(/\s/g,'');
     if(t.includes(',') && t.includes('.')){
