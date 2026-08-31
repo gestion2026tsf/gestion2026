@@ -299,859 +299,424 @@
   <div class="view-panel" id="viewCompras">
   <header>
     <div class="htext">
-      <div class="eyebrow">Conciliación de compras · PLE + SIRE histórico + Obligaciones</div>
+      <div class="eyebrow">Conciliación de compras · Papel de trabajo automatizado</div>
       <h1>Conciliador de Compras</h1>
-      <p>Valida el PLE 8.1 del periodo contra todo el histórico SIRE de SUNAT y utiliza la Lista de Obligaciones de Sprint como apoyo para documentos bancarios. El control revisa RUC, tipo, serie, correlativo, proveedor, fecha, moneda, tipo de cambio, base imponible, IGV y total; si detecta una posible coincidencia con datos distintos, la muestra como alerta para revisión manual. Ventas conserva su funcionamiento original.</p>
+      <p>Replica la lógica del papel de trabajo de Flavio: cruza el PLE 8.1 del periodo contra el SIRE histórico, revisa si el comprobante ya fue anotado en un PLE anterior, usa la Lista de Obligaciones para alertas de bancos, valida los campos principales del comprobante y permite sumar los controles de detracciones y validación SUNAT. El cruce también se realiza en sentido SIRE → PLE para identificar documentos del periodo no encontrados en contabilidad.</p>
     </div>
   </header>
 
   <div class="grid3" id="cardsPrincipalesC"></div>
-  <div class="grid2">
+
+  <div class="grid3">
+    <div class="card" id="cardBancosC">
+      <div class="card-label">Base 3 · recomendada</div>
+      <div class="card-title">Lista de Obligaciones Sprint</div>
+      <p class="card-hint">Se usa especialmente para documentos de bancos cuando Sprint no conserva el correlativo correcto.</p>
+      <label class="drop" id="dropBancosC">Haz clic o arrastra el Excel aquí
+        <input type="file" id="fileBancosC" accept=".xlsx,.xls,.xlsb" />
+      </label>
+      <div class="footnote" id="estadoBancosC">Sin cargar.</div>
+    </div>
+
+    <div class="card" id="cardPLEHistManualC">
+      <div class="card-label">Control histórico · recomendado</div>
+      <div class="card-title">TXT 8.1 Histórico</div>
+      <p class="card-hint">Si el flujo de OneDrive no lo devuelve, puedes cargar aquí el histórico PLE para detectar comprobantes anotados en periodos anteriores.</p>
+      <label class="drop" id="dropPLEHistManualC">TXT o Excel histórico
+        <input type="file" id="filePLEHistManualC" accept=".txt,.xlsx,.xls" />
+      </label>
+      <div class="footnote" id="estadoPLEHistManualC">Pendiente. Si OneDrive lo entrega, no necesitas cargarlo.</div>
+    </div>
+
     <div class="card" id="cardTCC">
-      <div class="card-label">Opcional</div>
-      <div class="card-title">Histórico de tipo de cambio SUNAT</div>
-      <p class="card-hint">Para comparar el TC registrado en Sprint contra el TC venta SUNAT de la fecha de emisión.</p>
+      <div class="card-label">Control adicional</div>
+      <div class="card-title">Tipo de cambio SUNAT</div>
+      <p class="card-hint">Compara el TC registrado en Sprint contra el TC venta SUNAT de la fecha de emisión.</p>
       <label class="drop" id="dropTCC">Haz clic o arrastra el Excel aquí
         <input type="file" id="fileTCC" accept=".xlsx,.xls,.csv" />
       </label>
       <div id="configTCC" style="display:none; flex-direction:column; gap:8px;">
         <div class="grid3" style="margin:0;">
-          <div><label class="fld">Columna fecha</label><select id="colFechaTCC"></select></div>
-          <div><label class="fld">Columna compra</label><select id="colCompraTCC"></select></div>
-          <div><label class="fld">Columna venta</label><select id="colVentaTCC"></select></div>
+          <div><label class="fld">Fecha</label><select id="colFechaTCC"></select></div>
+          <div><label class="fld">Compra</label><select id="colCompraTCC"></select></div>
+          <div><label class="fld">Venta</label><select id="colVentaTCC"></select></div>
         </div>
       </div>
       <div class="footnote" id="estadoTCC">Sin cargar.</div>
     </div>
   </div>
 
+  <div class="grid2">
+    <div class="card" id="cardDetraccionesC">
+      <div class="card-label">Control tributario · opcional</div>
+      <div class="card-title">Histórico de detracciones</div>
+      <p class="card-hint">Replica el control DETRACCIONES del papel de trabajo. Si lo cargas, identifica constancia, fecha de pago y monto asociado al comprobante.</p>
+      <label class="drop" id="dropDetraccionesC">Haz clic o arrastra el Excel aquí
+        <input type="file" id="fileDetraccionesC" accept=".xlsx,.xls,.csv" />
+      </label>
+      <div class="footnote" id="estadoDetraccionesC">Sin cargar. No bloquea la conciliación.</div>
+    </div>
+
+    <div class="card" id="cardValidacionSunatC">
+      <div class="card-label">Control SUNAT · opcional</div>
+      <div class="card-title">Validación masiva de comprobantes</div>
+      <p class="card-hint">Replica “Validacion CP”: estado del comprobante, estado del contribuyente y condición domiciliaria.</p>
+      <label class="drop" id="dropValidacionSunatC">Haz clic o arrastra el Excel aquí
+        <input type="file" id="fileValidacionSunatC" accept=".xlsx,.xls,.csv" />
+      </label>
+      <div class="footnote" id="estadoValidacionSunatC">Sin cargar. No bloquea la conciliación.</div>
+    </div>
+  </div>
+
   <div class="card" id="cardTiposC" style="display:none;">
-    <div class="card-label">Tipos de comprobante detectados en el PLE</div>
-    <p class="card-hint">Marca qué tipos esperas encontrar en la Propuesta SIRE. Los que dejes sin marcar se reportan aparte como "No aplica cruce SIRE" en vez de como observación.</p>
+    <div class="card-label">Tipos detectados en el PLE</div>
+    <p class="card-hint">Los tipos normalmente incluidos en propuesta SIRE quedan marcados. Si un tipo no corresponde al cruce SIRE, se informa como “No ubicado por tipo de documento”, igual que en el papel de trabajo.</p>
     <table class="tipos" id="tablaTiposC"></table>
   </div>
 
   <div class="actions">
     <button class="primary" id="btnProcesarC" disabled>Conciliar</button>
-    <span class="status-msg" id="statusMsgC">Sube el PLE (TXT). Los históricos se obtendrán automáticamente.</span>
+    <button class="ghost" id="btnActualizarHistoricosC">Actualizar SIRE</button>
+    <span class="status-msg" id="statusMsgC">Sube el PLE del periodo. El SIRE histórico se obtiene automáticamente.</span>
   </div>
 
   <section id="resultsC" class="results-section">
-    <div class="section-title">Resumen — PLE del periodo analizado</div>
+    <div class="section-title">Resumen — PLE → Propuesta SIRE</div>
     <div id="resumenRCEHolder"></div>
 
-    <div class="section-title">Resumen — SIRE histórico (solo el periodo analizado se considera pendiente)</div>
+    <div class="section-title">Resumen — Propuesta SIRE → PLE</div>
     <div id="resumenSIREHolder"></div>
 
     <div class="section-title">Resumen por tipo de comprobante</div>
     <div id="resumenTipoHolder"></div>
 
     <div class="download-row">
-      <button class="ghost" id="btnDescargarC">Descargar Excel de conciliación (.xlsx)</button>
+      <button class="ghost" id="btnDescargarC">Descargar papel de trabajo (.xlsx)</button>
       <span class="status-msg" id="downloadMsgC"></span>
     </div>
 
-    <div class="section-title">Alertas y control (vista previa — primeras 250 filas)</div>
+    <div class="section-title">Detalle — primeras 250 filas</div>
     <div class="detail-wrap"><table class="detail" id="detailTableC"></table></div>
-    <p class="footnote">El Excel descargado incluye el detalle completo, no solo esta vista previa.</p>
+    <p class="footnote">El Excel descargado contiene el detalle completo, alertas de bancos, documentos SIRE pendientes del periodo e histórico utilizado.</p>
   </section>
   </div>
 </div>
 
 <script>
 (function(){
+const HISTORICOS_COMPRAS_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/10/workflows/61c88400212e4da2af030c139c79509d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=iAH-S9lpDK1Bmd_CKwMM95JZ2MYVRFvKd9qslmjKRdA';
+
 const state = {
-  bases: [
-    {id:'A', label:'Premium', wb:null, sheet:null, headers:[], rows:[], rowsRaw:[], headerRowIdx:0,
-     keyMode:'single', keyCol:null, keyCol2:null, pad1:0, pad2:0, sep:'-', statusCol:null},
-    {id:'B', label:'SIRE',    wb:null, sheet:null, headers:[], rows:[], rowsRaw:[], headerRowIdx:0,
-     keyMode:'single', keyCol:null, keyCol2:null, pad1:0, pad2:0, sep:'-', statusCol:null},
-    {id:'C', label:'TCI',     wb:null, sheet:null, headers:[], rows:[], rowsRaw:[], headerRowIdx:0,
-     keyMode:'single', keyCol:null, keyCol2:null, pad1:0, pad2:0, sep:'-', statusCol:null},
-  ],
-  tipoCambio: {
-    wb:null, sheet:null, fileName:'', headers:[], rows:[], mapa:new Map(),
-    fechaCol:null, compraCol:null, ventaCol:null
-  }
+  rce:null, sire:null, pleHistorico:null, bancos:null, detracciones:null, validacionSunat:null,
+  tc:{rows:[],headers:[],mapa:new Map(),fechaCol:null,compraCol:null,ventaCol:null},
+  tipos:new Map(), historicosCargando:false, historicosError:''
 };
+let lastResult=null;
 
-function colLetter(i){
-  let s=''; i++;
-  while(i>0){ let m=(i-1)%26; s=String.fromCharCode(65+m)+s; i=Math.floor((i-1)/26); }
-  return s;
+const TIPO_LABELS={
+  '01':'Factura','02':'Recibo por Honorarios','03':'Boleta de venta','04':'Liquidación de compra',
+  '05':'Boleto de transporte aéreo','06':'Carta de porte aéreo','07':'Nota de crédito','08':'Nota de débito',
+  '09':'Guía de remisión remitente','12':'Ticket máquina registradora','13':'Documento bancos/financieras/AFP',
+  '14':'Recibo servicios públicos','18':'Documento COFIDE','31':'Guía transportista','46':'Pago tributos internos',
+  '50':'Declaración aduanera','87':'Nota de débito especial','91':'Comprobante no domiciliado'
+};
+const TIPOS_ESPERADOS_DEFAULT=new Set(['01','03','05','07','08','13','14']);
+
+function normHeader(v){return String(v??'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ')}
+function normTxt(v){return String(v??'').trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ')}
+function toNumber(v){
+  if(typeof v==='number'&&Number.isFinite(v)) return v;
+  let t=String(v??'').trim().replace(/\s/g,''); if(!t||t==='-') return 0;
+  if(t.includes(',')&&t.includes('.')) t=t.lastIndexOf(',')>t.lastIndexOf('.')?t.replace(/\./g,'').replace(',','.'):t.replace(/,/g,'');
+  else if(t.includes(',')) t=t.replace(',','.');
+  const n=Number(t); return Number.isFinite(n)?n:0;
+}
+function digits(v){return String(v??'').replace(/\D/g,'')}
+function padNum(v,len=8){const d=digits(v); return d?d.padStart(len,'0'):String(v??'').trim().padStart(len,'0')}
+function buildKey(ruc,tipo,serie,nro){return `${digits(ruc)}-${String(tipo??'').trim().padStart(2,'0')}-${normTxt(serie)}-${padNum(nro,8)}`}
+function tipoLabel(c){c=String(c??'').trim().padStart(2,'0');return TIPO_LABELS[c]?`${c} — ${TIPO_LABELS[c]}`:`${c} — Tipo no catalogado`}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+function normalizarFecha(value){
+  if(value===null||value===undefined||value==='') return '';
+  if(value instanceof Date&&!Number.isNaN(value.getTime())) return `${value.getFullYear()}-${String(value.getMonth()+1).padStart(2,'0')}-${String(value.getDate()).padStart(2,'0')}`;
+  if(typeof value==='number'&&window.XLSX?.SSF){const p=XLSX.SSF.parse_date_code(value);if(p)return `${p.y}-${String(p.m).padStart(2,'0')}-${String(p.d).padStart(2,'0')}`}
+  const t=String(value).trim().split(' ')[0];
+  let m=t.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/); if(m)return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  m=t.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/); if(m)return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+  m=t.match(/^(\d{4})-(\d{2})-(\d{2})T/); if(m)return `${m[1]}-${m[2]}-${m[3]}`;
+  return '';
+}
+function periodoDeFecha(fecha){const f=normalizarFecha(fecha);return f?f.slice(0,7).replace('-',''):''}
+function periodoPLE(v){const d=digits(v);return d.length>=6?d.slice(0,6):''}
+function casiIgual(a,b,tol=.02){return Math.abs(toNumber(a)-toNumber(b))<=tol}
+function valorPorAlias(obj,aliases,fallback=''){
+  const es=Object.entries(obj||{}).map(([k,v])=>[normHeader(k),v]);
+  for(const a of aliases){const q=normHeader(a);const x=es.find(([k])=>k===q);if(x)return x[1]}
+  for(const a of aliases){const ps=normHeader(a).split(' ').filter(Boolean);const x=es.find(([k])=>ps.every(p=>k.includes(p)));if(x)return x[1]}
+  return fallback;
 }
 
-function buildCards(){
-  const holder = document.getElementById('cards');
-  holder.innerHTML = '';
-  state.bases.forEach(b=>{
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.id = 'card-'+b.id;
-    card.innerHTML = `
-      <div class="card-label">Base ${b.id}</div>
-      <input type="text" value="${b.label}" data-role="label" />
-      <label class="drop" data-role="drop">
-        Haz clic o arrastra el Excel aquí
-        <input type="file" accept=".xlsx,.xls,.csv" data-role="file" />
-      </label>
-      <div data-role="config" style="display:none; flex-direction:column; gap:10px;">
-        <div>
-          <label class="fld">Hoja</label>
-          <select data-role="sheet"></select>
-        </div>
-        <div>
-          <label class="fld">Fila de encabezado (haz clic en una fila abajo, o escribe el número)</label>
-          <input type="number" min="1" value="1" data-role="headerrow" />
-        </div>
-        <div class="raw-preview"><table class="rawtbl" data-role="rawtbl"></table></div>
-        <div>
-          <label class="fld">¿Cómo es la llave del comprobante?</label>
-          <div class="keymode-row">
-            <select data-role="keymode">
-              <option value="single">Una sola columna (ej. "F002-191912")</option>
-              <option value="combine">Combinar 2 columnas (ej. Serie + Número)</option>
-            </select>
-          </div>
-        </div>
-        <div data-role="single-block">
-          <label class="fld">Columna llave</label>
-          <select data-role="keycol"></select>
-        </div>
-        <div class="combine-block" data-role="combine-block" style="display:none;">
-          <div class="combine-line">
-            <span class="tag">Serie</span>
-            <select data-role="keycol1"></select>
-            <input type="number" min="0" value="0" data-role="pad1" title="Rellenar con ceros a la izquierda hasta N dígitos (0 = no rellenar)" />
-          </div>
-          <div class="combine-line">
-            <span class="tag">Separador</span>
-            <input type="text" value="-" data-role="sep" style="flex:2; background:var(--panel); border:1px solid var(--line); color:var(--text); font-family:var(--mono); padding:6px 8px; border-radius:6px;" />
-            <span class="tag" style="width:auto;">&nbsp;</span>
-          </div>
-          <div class="combine-line">
-            <span class="tag">Número</span>
-            <select data-role="keycol2"></select>
-            <input type="number" min="0" value="0" data-role="pad2" title="Rellenar con ceros a la izquierda hasta N dígitos (0 = no rellenar)" />
-          </div>
-          <div class="footnote" style="margin:0;">El número de al lado de cada columna es cuántos dígitos rellenar con ceros a la izquierda (déjalo en 0 si no hace falta).</div>
-        </div>
-        <div>
-          <label class="fld">Columna estado (opcional, ej. Aceptado / con errores)</label>
-          <select data-role="statuscol"><option value="">— ninguna —</option></select>
-        </div>
-        <div class="footnote" style="margin:0;" data-role="keypreview"></div>
-      </div>
-    `;
-    holder.appendChild(card);
-
-    card.querySelector('[data-role="label"]').addEventListener('input', e=>{ b.label = e.target.value || b.id; updateStatus(); });
-    const dropEl = card.querySelector('[data-role="drop"]');
-    const fileInput = card.querySelector('[data-role="file"]');
-    dropEl.addEventListener('click', ()=> fileInput.click());
-    dropEl.addEventListener('dragover', e=>{ e.preventDefault(); });
-    dropEl.addEventListener('drop', e=>{
-      e.preventDefault();
-      if(e.dataTransfer.files.length){ fileInput.files = e.dataTransfer.files; handleFile(b, card, fileInput.files[0]); }
-    });
-    fileInput.addEventListener('change', ()=>{ if(fileInput.files.length) handleFile(b, card, fileInput.files[0]); });
-
-    card.querySelector('[data-role="sheet"]').addEventListener('change', e=>{ loadSheet(b, card, e.target.value); });
-    card.querySelector('[data-role="headerrow"]').addEventListener('change', e=>{
-      let v = parseInt(e.target.value,10); if(!v || v<1) v=1;
-      applyHeaderRow(b, card, v);
-    });
-    card.querySelector('[data-role="keymode"]').addEventListener('change', e=>{
-      b.keyMode = e.target.value;
-      card.querySelector('[data-role="single-block"]').style.display = b.keyMode==='single' ? 'block' : 'none';
-      card.querySelector('[data-role="combine-block"]').style.display = b.keyMode==='combine' ? 'flex' : 'none';
-      renderKeyPreview(b, card); updateStatus();
-    });
-    card.querySelector('[data-role="keycol"]').addEventListener('change', e=>{ b.keyCol = e.target.value; renderKeyPreview(b, card); updateStatus(); });
-    card.querySelector('[data-role="keycol1"]').addEventListener('change', e=>{ b.keyCol = e.target.value; renderKeyPreview(b, card); updateStatus(); });
-    card.querySelector('[data-role="keycol2"]').addEventListener('change', e=>{ b.keyCol2 = e.target.value; renderKeyPreview(b, card); updateStatus(); });
-    card.querySelector('[data-role="pad1"]').addEventListener('input', e=>{ b.pad1 = parseInt(e.target.value,10)||0; renderKeyPreview(b, card); });
-    card.querySelector('[data-role="pad2"]').addEventListener('input', e=>{ b.pad2 = parseInt(e.target.value,10)||0; renderKeyPreview(b, card); });
-    card.querySelector('[data-role="sep"]').addEventListener('input', e=>{ b.sep = e.target.value; renderKeyPreview(b, card); });
-    card.querySelector('[data-role="statuscol"]').addEventListener('change', e=>{ b.statusCol = e.target.value; });
-  });
-}
-
-function handleFile(b, card, file){
-  const reader = new FileReader();
-  reader.onload = evt=>{
-    const data = new Uint8Array(evt.target.result);
-    const wb = XLSX.read(data, {type:'array', cellDates:true});
-    b.wb = wb;
-    card.classList.add('ready');
-    card.querySelector('[data-role="drop"]').classList.add('filled');
-    card.querySelector('[data-role="drop"]').firstChild.textContent = '✓ ' + file.name;
-    card.querySelector('[data-role="config"]').style.display = 'flex';
-    const sheetSel = card.querySelector('[data-role="sheet"]');
-    sheetSel.innerHTML = wb.SheetNames.map(s=>`<option value="${s}">${s}</option>`).join('');
-    loadSheet(b, card, wb.SheetNames[0]);
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function loadSheet(b, card, sheetName){
-  b.sheet = sheetName;
-  const ws = b.wb.Sheets[sheetName];
-  const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:''});
-  b.rowsRaw = rows;
-
-  renderRawTable(b, card);
-
-  const guessIdx = guessHeaderRow(rows);
-  card.querySelector('[data-role="headerrow"]').value = guessIdx + 1;
-  applyHeaderRow(b, card, guessIdx + 1);
-}
-
-function guessHeaderRow(rows){
-  const keywordRe = /comprobante|serie|numero|número|folio|doc|fecha|estado|moneda|monto|ruc|raz|cliente|tipo/i;
-  let best = 0, bestScore = -1;
-  for(let i=0;i<Math.min(rows.length,20);i++){
-    const r = rows[i];
-    const nonEmpty = r.filter(c=> String(c).trim()!=='').length;
-    if(nonEmpty < 2) continue;
-    const kwHits = r.filter(c=> keywordRe.test(String(c))).length;
-    const numericCells = r.filter(c=> /^-?\d+(\.\d+)?$/.test(String(c).trim())).length;
-    const score = nonEmpty + kwHits*3 - numericCells*2;
-    if(score > bestScore){ bestScore = score; best = i; }
-  }
-  return best;
-}
-
-function renderRawTable(b, card){
-  const tbl = card.querySelector('[data-role="rawtbl"]');
-  const rows = b.rowsRaw.slice(0, 10);
-  const maxCols = Math.min(12, Math.max(...rows.map(r=>r.length), 1));
-  let html = '<thead><tr><th></th>' + Array.from({length:maxCols}, (_,i)=>`<th>${colLetter(i)}</th>`).join('') + '</tr></thead><tbody>';
-  rows.forEach((r,i)=>{
-    html += `<tr data-rownum="${i+1}"><td class="rownum" data-role="rownumcell">${i+1}</td>` +
-      Array.from({length:maxCols}, (_,c)=> `<td>${(r[c] ?? '')}</td>`).join('') + '</tr>';
-  });
-  html += '</tbody>';
-  tbl.innerHTML = html;
-  tbl.querySelectorAll('tr[data-rownum]').forEach(tr=>{
-    tr.querySelector('[data-role="rownumcell"]').addEventListener('click', ()=>{
-      const n = parseInt(tr.dataset.rownum,10);
-      card.querySelector('[data-role="headerrow"]').value = n;
-      applyHeaderRow(b, card, n);
-    });
-  });
-}
-
-function highlightHeaderRow(card, rowNum){
-  const tbl = card.querySelector('[data-role="rawtbl"]');
-  tbl.querySelectorAll('tr').forEach(tr=> tr.classList.remove('hdr-row'));
-  const tr = tbl.querySelector(`tr[data-rownum="${rowNum}"]`);
-  if(tr) tr.classList.add('hdr-row');
-}
-
-function looksNumericColumn(sampleRows, idx){
-  if(!sampleRows || !sampleRows.length) return true;
-  const vals = sampleRows.slice(0, 15).map(r=> String(r[idx] ?? '').trim()).filter(v=> v !== '');
-  if(!vals.length) return true;
-  const withDigits = vals.filter(v=> /\d/.test(v)).length;
-  return (withDigits / vals.length) >= 0.6;
-}
-
-function findNumIdx(headers, excludeIdx, sampleRows){
-  const patterns = [
-    /documento/i,
-    /n[°º]/i,
-    /n[uú]mero/i,
-    /\bnro\b/i,
-    /\bfolio\b/i,
-    /correlativo/i
-  ];
-  for(const re of patterns){
-    const candidates = headers
-      .map((h,i)=>({h,i}))
-      .filter(({h,i})=> i!==excludeIdx
-        && re.test(String(h))
-        && !/fecha/i.test(String(h))
-        && !/\btipo\b/i.test(String(h)));
-    for(const {i} of candidates){
-      if(looksNumericColumn(sampleRows, i)) return i;
-    }
-  }
-  return -1;
-}
-
-function applyHeaderRow(b, card, rowNum){
-  const idx = rowNum - 1;
-  const headers = b.rowsRaw[idx] || [];
-  b.headers = headers;
-  b.headerRowIdx = idx;
-  b.rows = b.rowsRaw.slice(idx+1).filter(r=> r.some(c=> String(c).trim() !== ''));
-
-  highlightHeaderRow(card, rowNum);
-
-  const keySel = card.querySelector('[data-role="keycol"]');
-  const key1Sel = card.querySelector('[data-role="keycol1"]');
-  const key2Sel = card.querySelector('[data-role="keycol2"]');
-  const statusSel = card.querySelector('[data-role="statuscol"]');
-  const opts = headers.map((h,i)=> `<option value="${i}">${colLetter(i)} — ${h || '(sin nombre)'}</option>`).join('');
-  keySel.innerHTML = opts;
-  key1Sel.innerHTML = opts;
-  key2Sel.innerHTML = opts;
-  statusSel.innerHTML = '<option value="">— ninguna —</option>' + opts;
-
-  const serieIdx = headers.findIndex(h=> /^serie/i.test(String(h).trim()) || /\bserie\b/i.test(String(h)));
-  const numIdx = findNumIdx(headers, serieIdx, b.rows);
-  const singleIdx = headers.findIndex(h=> /comprobante|n[°º]\s*documento/i.test(String(h)));
-
-  const keyModeSel = card.querySelector('[data-role="keymode"]');
-  if(serieIdx >= 0 && numIdx >= 0 && serieIdx !== numIdx){
-    b.keyMode = 'combine';
-    keyModeSel.value = 'combine';
-    card.querySelector('[data-role="single-block"]').style.display = 'none';
-    card.querySelector('[data-role="combine-block"]').style.display = 'flex';
-    b.keyCol = String(serieIdx);
-    b.keyCol2 = String(numIdx);
-    key1Sel.value = serieIdx;
-    key2Sel.value = numIdx;
-  } else {
-    b.keyMode = 'single';
-    keyModeSel.value = 'single';
-    card.querySelector('[data-role="single-block"]').style.display = 'block';
-    card.querySelector('[data-role="combine-block"]').style.display = 'none';
-    let guess = singleIdx >= 0 ? singleIdx : headers.findIndex(h=> /comprobante|serie|numero|número|folio|doc/i.test(String(h)));
-    if(guess < 0) guess = 0;
-    b.keyCol = String(guess);
-    keySel.value = guess;
-  }
-
-  const statusIdx = headers.findIndex(h=> /est\.?\s*sunat|estado/i.test(String(h)));
-  b.statusCol = statusIdx >= 0 ? String(statusIdx) : '';
-  statusSel.value = b.statusCol;
-
-  renderKeyPreview(b, card);
-  updateStatus();
-}
-
-function buildKey(b, row){
-  if(b.keyMode === 'combine'){
-    const v1 = padVal(row[parseInt(b.keyCol,10)], b.pad1);
-    const v2 = padVal(row[parseInt(b.keyCol2,10)], b.pad2);
-    return normKey(v1 + (b.sep||'') + v2);
-  }
-  return normKey(row[parseInt(b.keyCol,10)]);
-}
-
-function padVal(raw, padLen){
-  let s = String(raw ?? '').trim().replace(/\.0$/, '');
-  if(padLen > 0){
-    const digitsOnly = /^\d+$/.test(s);
-    if(digitsOnly) s = s.padStart(padLen, '0');
-  }
-  return s;
-}
-
-function renderKeyPreview(b, card){
-  const el = card.querySelector('[data-role="keypreview"]');
-  const sample = b.rows.slice(0,3).map(r=> buildKey(b, r)).filter(Boolean);
-  el.textContent = sample.length ? 'Llave de ejemplo: ' + sample.join('  ·  ') : '(sin filas de datos para previsualizar)';
-}
-
-function updateStatus(){
-  const listo = !!(state.rce && state.sire);
-  document.getElementById('btnProcesarC').disabled = !listo;
-  let mensaje = 'Sube el PLE (TXT). El SIRE histórico se obtiene automáticamente.';
-  if(state.rce && !state.sire) mensaje = state.historicosError || 'PLE cargado. Falta conectar el histórico SIRE de OneDrive.';
-  if(!state.rce && state.sire) mensaje = 'SIRE histórico conectado. Sube el PLE (TXT) del periodo.';
-  if(listo && state.bancos) mensaje = 'Listo: PLE + SIRE histórico + Lista de Obligaciones.';
-  else if(listo) mensaje = 'Listo para conciliar PLE vs SIRE. Carga Obligaciones si quieres validar/sugerir documentos bancarios.';
-  document.getElementById('statusMsgC').textContent = mensaje;
-}
-
-function iniciarBancos(){
-  wireDropzone('dropBancosC','fileBancosC', file=>{
-    const reader = new FileReader();
-    reader.onload = e=>{
-      try{
-        const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array', cellDates:true});
-        const sheetName = wb.SheetNames[0];
-        const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], {defval:''});
-        const parsed = rows.map(r=>{
-          const numDoc = String(r['NumeroDocumento'] ?? '').trim();
-          const guion = numDoc.lastIndexOf('-');
-          const serie = guion > 0 ? numDoc.slice(0,guion) : '';
-          const numero = guion > 0 ? numDoc.slice(guion+1) : numDoc;
-          let fecha = r['FechaDocumento'];
-          if(fecha instanceof Date) fecha = normalizarFechaDDMMAAAA(fecha);
-          else if(typeof fecha === 'number') fecha = normalizarFechaDDMMAAAA(excelSerialADate(fecha));
-          return {
-            proveedorTexto: normTxt(r['Busqueda']),
-            numeroDocumento: numDoc,
-            serie, numero,
-            monto: toNumber(r['MontoObligacion']),
-            fecha: fecha || '',
-            tipoDocumento: String(r['TipoDocumento'] ?? '').trim(),
-            raw: r
-          };
-        }).filter(r=> r.numeroDocumento);
-        state.bancos = {rows: parsed, fileName: file.name};
-        document.getElementById('estadoBancosC').textContent = `${parsed.length.toLocaleString('es-PE')} filas leídas — ${file.name}`;
-        document.getElementById('cardBancosC').classList.add('ready');
-        document.getElementById('dropBancosC').classList.add('filled');
-        document.getElementById('dropBancosC').firstChild.textContent = '✓ ' + file.name;
-      }catch(err){
-        console.error(err);
-        document.getElementById('estadoBancosC').textContent = 'No se pudo leer el archivo de Obligaciones-Bancos.';
-      }
+function parsePLE(text){
+  return text.split(/\r?\n/).filter(l=>l.trim()).map((line,i)=>{
+    const f=line.split('|'); const r={
+      _fila:i+1,periodo:String(f[0]||'').trim(),cuo:String(f[1]||'').trim(),correlativoAsiento:String(f[2]||'').trim(),
+      fechaEmision:String(f[3]||'').trim(),fechaVcto:String(f[4]||'').trim(),tipoCP:String(f[5]||'').trim().padStart(2,'0'),
+      serie:String(f[6]||'').trim(),anioDua:String(f[7]||'').trim(),nroCP:String(f[8]||'').trim(),nroFinal:String(f[9]||'').trim(),
+      tipoDocId:String(f[10]||'').trim(),rucProveedor:String(f[11]||'').trim(),razonSocial:String(f[12]||'').trim(),
+      biGravadoDG:toNumber(f[13]),igvDG:toNumber(f[14]),biDGNG:toNumber(f[15]),igvDGNG:toNumber(f[16]),biDNG:toNumber(f[17]),igvDNG:toNumber(f[18]),
+      valorAdqNG:toNumber(f[19]),isc:toNumber(f[20]),icbper:toNumber(f[21]),otros:toNumber(f[22]),totalCP:toNumber(f[23]),
+      moneda:String(f[24]||'').trim().toUpperCase(),tipoCambio:toNumber(f[25]),raw:line
     };
-    reader.readAsArrayBuffer(file);
+    r.fechaNorm=normalizarFecha(r.fechaEmision); r.periodoEmision=periodoDeFecha(r.fechaEmision); r.periodoRegistro=periodoPLE(r.periodo);
+    r.baseImponible=r.biGravadoDG+r.biDGNG+r.biDNG; r.igvTotal=r.igvDG+r.igvDGNG+r.igvDNG;
+    r.key=buildKey(r.rucProveedor,r.tipoCP,r.serie,r.nroCP); return r;
   });
 }
+function parseSIRERows(rows){
+  return (rows||[]).map((x,i)=>{
+    const r={
+      _fila:i+1,
+      rucProveedor:String(valorPorAlias(x,['Nro Doc Identidad','Nro Documento Identidad','RUC Proveedor','RUC'])).trim(),
+      razonSocial:String(valorPorAlias(x,['Apellidos Nombres/ Razón Social','Apellidos y Nombres o Razón social','Razón Social Proveedor','Razon Social'])).trim(),
+      periodo:String(valorPorAlias(x,['Periodo','Periodo Tributario'])).trim(),
+      tipoCP:String(valorPorAlias(x,['Tipo CP/Doc.','Tipo CP','Tipo de comprobante','Tipo Comprobante'])).trim().padStart(2,'0'),
+      serie:String(valorPorAlias(x,['Serie del CDP','Serie CP','Serie'])).trim(),
+      nroCP:String(valorPorAlias(x,['Nro CP o Doc. Nro Inicial (Rango)','Nro CP o Doc','Número comprobante','Nro CP','Numero CP'])).trim(),
+      fechaEmision:normalizarFecha(valorPorAlias(x,['Fecha de emisión','Fecha Emisión','Fecha Emision'])),
+      moneda:String(valorPorAlias(x,['Moneda','Codigo Moneda'])).trim().toUpperCase(),
+      tipoCambio:toNumber(valorPorAlias(x,['Tipo de Cambio','Tipo Cambio','TC'])),
+      biGravadoDG:toNumber(valorPorAlias(x,['BI Gravado DG','Base Imponible DG'])),
+      igvDG:toNumber(valorPorAlias(x,['IGV / IPM DG','IGV DG'])),
+      biDGNG:toNumber(valorPorAlias(x,['BI Gravado DGNG'])), igvDGNG:toNumber(valorPorAlias(x,['IGV / IPM DGNG','IGV DGNG'])),
+      biDNG:toNumber(valorPorAlias(x,['BI Gravado DNG'])), igvDNG:toNumber(valorPorAlias(x,['IGV / IPM DNG','IGV DNG'])),
+      totalCP:toNumber(valorPorAlias(x,['Importe Total','Total CP','Importe total de la operación','Total'])), raw:x
+    };
+    r.baseImponible=r.biGravadoDG+r.biDGNG+r.biDNG; r.igvTotal=r.igvDG+r.igvDGNG+r.igvDNG;
+    r.periodoEmision=periodoDeFecha(r.fechaEmision); r.periodoSIRE=periodoPLE(r.periodo)||r.periodoEmision;
+    r.key=buildKey(r.rucProveedor,r.tipoCP,r.serie,r.nroCP); return r;
+  }).filter(r=>r.rucProveedor&&r.tipoCP&&r.serie&&r.nroCP);
+}
 
-function sugerirCorrelativoBanco(rceRow){
-  if(!state.bancos) return null;
-  const nombreRCE = normTxt(rceRow.razonSocial);
-  if(!nombreRCE) return null;
-  let mejor = null, mejorDif = Infinity;
-  for(const b of state.bancos.rows){
-    if(!b.proveedorTexto) continue;
-    const coincideNombre = b.proveedorTexto.includes(nombreRCE) || nombreRCE.includes(b.proveedorTexto);
-    if(!coincideNombre) continue;
-    const dif = Math.abs(b.monto - rceRow.totalCP);
-    const tolerancia = Math.max(0.05, rceRow.totalCP * 0.01);
-    if(dif <= tolerancia && dif < mejorDif){
-      mejor = b; mejorDif = dif;
+function obtenerArrayRespuesta(data,nombres){
+  if(Array.isArray(data))return data;
+  if(!data||typeof data!=='object')return [];
+  for(const n of nombres){if(Array.isArray(data[n]))return data[n]}
+  if(data.body){const x=obtenerArrayRespuesta(data.body,nombres);if(x.length)return x}
+  return [];
+}
+function aplanarBloques(data){
+  if(Array.isArray(data))return data;
+  if(!data||typeof data!=='object')return [];
+  for(const k of ['value','sire','sireRows','SIRE']) if(Array.isArray(data[k]))return data[k];
+  if(data.body)return aplanarBloques(data.body); return [];
+}
+
+async function cargarHistoricosCompras(){
+  if(state.historicosCargando)return; state.historicosCargando=true; state.historicosError='';
+  const el=document.getElementById('estadoSIREC'); if(el)el.textContent='Consultando SIRE histórico de OneDrive…'; actualizarEstado();
+  try{
+    const respuestas=await Promise.all([1,2,3].map(async parte=>{
+      const r=await fetch(HISTORICOS_COMPRAS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parte})});
+      if(!r.ok)throw new Error('HTTP '+r.status); return r.json();
+    }));
+    const sireRaw=respuestas.flatMap(aplanarBloques);
+    const sireRows=parseSIRERows(sireRaw);
+    if(!sireRows.length)throw new Error('El flujo no devolvió SIRE válido.');
+    state.sire={rows:sireRows,fileName:'SIRE histórico OneDrive'};
+    const pleRaw=obtenerArrayRespuesta(respuestas[0],['pleHistorico','ple','pleRows','PLEHistorico']);
+    if(pleRaw.length){
+      const pleRows=parseHistoricoDesdeObjetos(pleRaw); if(pleRows.length)state.pleHistorico={rows:pleRows,fileName:'PLE histórico OneDrive'};
     }
+    el.textContent=`${sireRows.length.toLocaleString('es-PE')} comprobantes disponibles — SIRE histórico`;
+    document.getElementById('cardSIREC')?.classList.add('ready');
+    if(state.pleHistorico?.rows?.length)document.getElementById('estadoPLEHistManualC').textContent=`${state.pleHistorico.rows.length.toLocaleString('es-PE')} filas históricas recibidas desde OneDrive.`;
+  }catch(e){console.error(e);state.historicosError='No se pudo consultar el SIRE histórico: '+e.message;el.textContent=state.historicosError}
+  finally{state.historicosCargando=false;actualizarEstado()}
+}
+
+function parseHistoricoDesdeObjetos(rows){
+  return (rows||[]).map((x,i)=>{
+    const r={_fila:i+1,periodo:String(valorPorAlias(x,['Periodo'])).trim(),fechaEmision:normalizarFecha(valorPorAlias(x,['Fecha de emisión','Fecha Emisión'])),
+      tipoCP:String(valorPorAlias(x,['Tipo de Comprobante de Pago o Documento','Tipo CP','Tipo'])).trim().padStart(2,'0'),
+      serie:String(valorPorAlias(x,['Serie del comprobante','Serie'])).trim(),nroCP:String(valorPorAlias(x,['Número del comprobante','Nro CP','NumeroDocumento'])).trim(),
+      rucProveedor:String(valorPorAlias(x,['Número de RUC del proveedor','RUC Proveedor','RUC'])).trim(),razonSocial:String(valorPorAlias(x,['Razón Social','Apellidos y nombres'])).trim()};
+    r.periodoRegistro=periodoPLE(r.periodo); r.key=buildKey(r.rucProveedor,r.tipoCP,r.serie,r.nroCP);return r;
+  }).filter(r=>digits(r.rucProveedor)&&r.serie&&r.nroCP);
+}
+
+function buildCardsPrincipales(){
+  document.getElementById('cardsPrincipalesC').innerHTML=`
+    <div class="card" id="cardRCEC"><div class="card-label">Base 1 · obligatoria</div><div class="card-title">PLE 8.1 Sprint del periodo</div>
+      <p class="card-hint">Registro contable que se validará contra SUNAT.</p><label class="drop" id="dropRCEC">Haz clic o arrastra el TXT aquí<input type="file" id="fileRCEC" accept=".txt" /></label><div class="footnote" id="estadoRCEC">Sin cargar.</div></div>
+    <div class="card" id="cardSIREC"><div class="card-label">Base 2 · automática</div><div class="card-title">Propuesta SIRE histórica</div>
+      <p class="card-hint">Fuente principal SUNAT. Se consulta desde OneDrive y permite buscar documentos emitidos en meses anteriores.</p><div class="footnote" id="estadoSIREC">Pendiente de conexión.</div></div>
+    <div class="card"><div class="card-label">Resultado esperado</div><div class="card-title">Papel de trabajo Flavio</div>
+      <p class="card-hint">PLE→SIRE, SIRE→PLE, validación CP, periodos anteriores y alertas de bancos en un solo Excel.</p><div class="footnote">Sin modificar automáticamente la contabilidad.</div></div>`;
+  wireDrop('dropRCEC','fileRCEC',cargarPLEActual);
+}
+function wireDrop(dropId,inputId,cb){
+  const d=document.getElementById(dropId),i=document.getElementById(inputId); if(!d||!i)return;
+  d.addEventListener('click',()=>i.click()); d.addEventListener('dragover',e=>e.preventDefault());
+  d.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer.files.length)cb(e.dataTransfer.files[0])});
+  i.addEventListener('change',()=>{if(i.files.length)cb(i.files[0])});
+}
+function marcarDrop(id,file){const d=document.getElementById(id);if(!d)return;d.classList.add('filled');for(const n of d.childNodes){if(n.nodeType===3){n.textContent='✓ '+file.name+' ';break}}}
+function cargarPLEActual(file){
+  const rd=new FileReader(); rd.onload=e=>{try{const rows=parsePLE(e.target.result);state.rce={rows,fileName:file.name};document.getElementById('estadoRCEC').textContent=`${rows.length.toLocaleString('es-PE')} filas — ${file.name}`;document.getElementById('cardRCEC').classList.add('ready');marcarDrop('dropRCEC',file);detectarTipos(rows);actualizarEstado()}catch(err){document.getElementById('estadoRCEC').textContent='No se pudo leer el TXT.'}};rd.readAsText(file,'UTF-8');
+}
+function detectarTipos(rows){state.tipos.clear();const c=new Map();rows.forEach(r=>c.set(r.tipoCP,(c.get(r.tipoCP)||0)+1));[...c.entries()].sort().forEach(([cod,n])=>state.tipos.set(cod,{label:tipoLabel(cod),cantidad:n,esperado:TIPOS_ESPERADOS_DEFAULT.has(cod)}));renderTipos()}
+function renderTipos(){const card=document.getElementById('cardTiposC');card.style.display='block';let h='<thead><tr><th>Tipo</th><th>Cantidad</th><th>¿Cruzar con SIRE?</th></tr></thead><tbody>';for(const [cod,x] of state.tipos){h+=`<tr><td>${esc(x.label)}</td><td class="num">${x.cantidad}</td><td><input type="checkbox" data-tipo="${cod}" ${x.esperado?'checked':''}></td></tr>`}h+='</tbody>';const t=document.getElementById('tablaTiposC');t.innerHTML=h;t.querySelectorAll('input').forEach(ch=>ch.addEventListener('change',()=>state.tipos.get(ch.dataset.tipo).esperado=ch.checked))}
+function actualizarEstado(){const listo=!!(state.rce?.rows?.length&&state.sire?.rows?.length);document.getElementById('btnProcesarC').disabled=!listo;let m='Sube el PLE del periodo. El SIRE histórico se obtiene automáticamente.';if(state.rce&&!state.sire)m=state.historicosError||'PLE cargado. Falta SIRE histórico.';if(!state.rce&&state.sire)m='SIRE conectado. Sube el PLE del periodo.';if(listo)m=state.pleHistorico?.rows?.length?'Listo: SIRE + PLE actual + PLE histórico. Puedes conciliar.':'Listo para conciliar. Para identificar anotaciones anteriores, carga TXT 8.1 Histórico si el flujo no lo entrega.';document.getElementById('statusMsgC').textContent=m}
+
+function iniciarBancos(){wireDrop('dropBancosC','fileBancosC',file=>{const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const arr=XLSX.utils.sheet_to_json(ws,{defval:''});const parsed=arr.map(x=>{
+  let num=String(valorPorAlias(x,['NumeroDocumento','Número Documento','Nro Documento','Documento'])).trim();let serie=String(valorPorAlias(x,['Serie'])).trim(),numero=String(valorPorAlias(x,['Correlativo','Numero','Número'])).trim();if(!serie&&num.includes('-')){const p=num.lastIndexOf('-');serie=num.slice(0,p);numero=num.slice(p+1)}
+  return {ruc:digits(valorPorAlias(x,['RUC','RucProveedor','NumeroRuc'])),proveedor:normTxt(valorPorAlias(x,['Busqueda','Proveedor','Razon Social','Razón Social'])),serie,numero,monto:toNumber(valorPorAlias(x,['MontoObligacion','Monto Obligacion','Importe','Monto'])),fecha:normalizarFecha(valorPorAlias(x,['FechaDocumento','Fecha Documento','Fecha'])),raw:x};
+}).filter(x=>x.serie&&x.numero);state.bancos={rows:parsed,fileName:file.name};document.getElementById('estadoBancosC').textContent=`${parsed.length.toLocaleString('es-PE')} filas — ${file.name}`;document.getElementById('cardBancosC').classList.add('ready');marcarDrop('dropBancosC',file)}catch(err){console.error(err);document.getElementById('estadoBancosC').textContent='No se pudo leer Obligaciones.'}};rd.readAsArrayBuffer(file)})}
+function sugerirBanco(r){if(!state.bancos)return null;let best=null,score=1e9;const nom=normTxt(r.razonSocial),ruc=digits(r.rucProveedor);for(const b of state.bancos.rows){const sameRuc=ruc&&b.ruc&&ruc===b.ruc;const sameNom=nom&&b.proveedor&&(b.proveedor.includes(nom)||nom.includes(b.proveedor));if(!sameRuc&&!sameNom)continue;const dif=Math.abs(toNumber(b.monto)-toNumber(r.totalCP));const tol=Math.max(.10,Math.abs(r.totalCP)*.01);if(dif>tol)continue;let s=dif;if(b.fecha&&r.fechaNorm)s+=b.fecha===r.fechaNorm?0:1;if(s<score){score=s;best=b}}if(!best)return null;const key=buildKey(r.rucProveedor,r.tipoCP,best.serie,best.numero);return {serie:best.serie,numero:padNum(best.numero),keySugerida:key,encontradaEnSIRE:state.sireSet?.has(key)||false,monto:best.monto,fecha:best.fecha}}
+
+function iniciarHistoricoManual(){wireDrop('dropPLEHistManualC','filePLEHistManualC',file=>{const rd=new FileReader();rd.onload=e=>{try{let rows=[];if(file.name.toLowerCase().endsWith('.txt'))rows=parsePLE(e.target.result);else{const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const data=XLSX.utils.sheet_to_json(ws,{defval:''});rows=parseHistoricoDesdeObjetos(data)}state.pleHistorico={rows,fileName:file.name};document.getElementById('estadoPLEHistManualC').textContent=`${rows.length.toLocaleString('es-PE')} filas — ${file.name}`;document.getElementById('cardPLEHistManualC').classList.add('ready');marcarDrop('dropPLEHistManualC',file);actualizarEstado()}catch(err){console.error(err);document.getElementById('estadoPLEHistManualC').textContent='No se pudo leer el histórico.'}};if(file.name.toLowerCase().endsWith('.txt'))rd.readAsText(file,'UTF-8');else rd.readAsArrayBuffer(file)})}
+
+function leerExcelFlexible(file, onOk, onErr){
+  const rd=new FileReader();
+  rd.onload=e=>{try{
+    const bytes=new Uint8Array(e.target.result);const wb=XLSX.read(bytes,{type:'array',cellDates:true});
+    onOk(wb);
+  }catch(err){console.error(err);if(onErr)onErr(err)}};
+  rd.readAsArrayBuffer(file);
+}
+function iniciarDetracciones(){
+  wireDrop('dropDetraccionesC','fileDetraccionesC',file=>leerExcelFlexible(file,wb=>{
+    let parsed=[];
+    for(const sn of wb.SheetNames){
+      const data=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,raw:true,defval:''});
+      let hi=data.findIndex(row=>{const j=row.map(normHeader).join('|');return j.includes('ruc proveedor')&&j.includes('serie de comprobante')&&j.includes('numero de comprobante')});
+      if(hi<0) continue;
+      const h=data[hi].map(normHeader);
+      const idx=(...names)=>{for(const n of names){const z=normHeader(n);let i=h.findIndex(x=>x===z||x.includes(z));if(i>=0)return i}return -1};
+      const iruc=idx('ruc proveedor'), iprov=idx('nombre proveedor'), itipo=idx('tipo de comprobante'), iser=idx('serie de comprobante'), inum=idx('numero de comprobante'), ifecha=idx('fecha pago'), imonto=idx('monto deposito'), iconst=idx('numero constancia','nro constancia'), iestado=idx('estado en compras');
+      for(const row of data.slice(hi+1)){
+        const ruc=iruc>=0?digits(row[iruc]):'', tipo=itipo>=0?String(row[itipo]??'').trim().padStart(2,'0'):'', serie=iser>=0?String(row[iser]??'').trim():'', nro=inum>=0?String(row[inum]??'').trim():'';
+        if(!ruc||!serie||!nro)continue;
+        parsed.push({ruc,proveedor:iprov>=0?String(row[iprov]??''):'',tipoCP:tipo,serie,nroCP:nro,fechaPago:ifecha>=0?normalizarFecha(row[ifecha]):'',montoDeposito:imonto>=0?toNumber(row[imonto]):0,constancia:iconst>=0?String(row[iconst]??''):'',estadoCompras:iestado>=0?String(row[iestado]??''):'',key:buildKey(ruc,tipo,serie,nro)});
+      }
+      if(parsed.length)break;
+    }
+    state.detracciones={rows:parsed,fileName:file.name,map:new Map()};
+    parsed.forEach(x=>{if(!state.detracciones.map.has(x.key))state.detracciones.map.set(x.key,[]);state.detracciones.map.get(x.key).push(x)});
+    document.getElementById('estadoDetraccionesC').textContent=`${parsed.length.toLocaleString('es-PE')} registros — ${file.name}`;document.getElementById('cardDetraccionesC').classList.add('ready');marcarDrop('dropDetraccionesC',file);
+  },()=>document.getElementById('estadoDetraccionesC').textContent='No se pudo leer Detracciones.'));
+}
+function iniciarValidacionSunat(){
+  wireDrop('dropValidacionSunatC','fileValidacionSunatC',file=>leerExcelFlexible(file,wb=>{
+    let parsed=[];
+    for(const sn of wb.SheetNames){
+      const data=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,raw:true,defval:''});
+      let hi=data.findIndex(row=>row.map(normHeader).join('|').includes('estado del comprobante'));
+      if(hi<0) continue;
+      const h1=data[hi].map(normHeader), h2=(data[hi+1]||[]).map(normHeader);
+      const merged=h1.map((x,i)=>(x+' '+(h2[i]||'')).trim());
+      const find=(rx,def=-1)=>{let i=merged.findIndex(x=>rx.test(x));return i>=0?i:def};
+      const iruc=find(/ruc.*emisor|del emisor/,2), itipo=find(/comprobante.*tipo|tipo \*/,3), iser=find(/serie/,4), inum=find(/numero|número/,5), ifecha=find(/fecha.*emision|emisión/,6), iimporte=find(/importe.*total/,7), iestado=find(/estado del comprobante|sunat.*estado/,13), icontrib=find(/estado del contribuyente/,15), idom=find(/condicion domiciliaria|condición domiciliaria/,17), iobs=find(/observacion|observación/,19);
+      for(const row of data.slice(hi+2)){
+        const ruc=digits(row[iruc]),tipo=String(row[itipo]??'').trim().padStart(2,'0'),serie=String(row[iser]??'').trim(),nro=String(row[inum]??'').trim();if(!ruc||!serie||!nro)continue;
+        parsed.push({ruc,tipoCP:tipo,serie,nroCP:nro,fecha:normalizarFecha(row[ifecha]),importe:toNumber(row[iimporte]),estadoComprobante:String(row[iestado]??'').trim(),estadoContribuyente:String(row[icontrib]??'').trim(),condicionDomiciliaria:String(row[idom]??'').trim(),observacion:String(row[iobs]??'').trim(),key:buildKey(ruc,tipo,serie,nro)});
+      }
+      if(parsed.length)break;
+    }
+    state.validacionSunat={rows:parsed,fileName:file.name,map:new Map(parsed.map(x=>[x.key,x]))};
+    document.getElementById('estadoValidacionSunatC').textContent=`${parsed.length.toLocaleString('es-PE')} comprobantes — ${file.name}`;document.getElementById('cardValidacionSunatC').classList.add('ready');marcarDrop('dropValidacionSunatC',file);
+  },()=>document.getElementById('estadoValidacionSunatC').textContent='No se pudo leer Validación SUNAT.'));
+}
+function iniciarTC(){wireDrop('dropTCC','fileTCC',cargarTC);['colFechaTCC','colCompraTCC','colVentaTCC'].forEach(id=>document.getElementById(id).addEventListener('change',construirMapaTC))}
+function cargarTC(file){const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});const data=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:''});let hi=data.findIndex(r=>r.some(c=>/fecha/i.test(String(c)))&&r.some(c=>/compra|venta/i.test(String(c))));if(hi<0)hi=0;state.tc.headers=data[hi].map(x=>String(x??'').trim());state.tc.rows=data.slice(hi+1).filter(r=>r.some(v=>String(v??'').trim()));const opts=state.tc.headers.map((h,i)=>`<option value="${i}">${esc(h||'Col '+(i+1))}</option>`).join('');['colFechaTCC','colCompraTCC','colVentaTCC'].forEach(id=>document.getElementById(id).innerHTML=opts);const nh=state.tc.headers.map(normHeader);document.getElementById('colFechaTCC').value=Math.max(0,nh.findIndex(h=>h.includes('fecha')));document.getElementById('colCompraTCC').value=Math.max(0,nh.findIndex(h=>h.includes('compra')));let vi=nh.findIndex(h=>h.includes('venta'));document.getElementById('colVentaTCC').value=vi<0?Math.min(2,nh.length-1):vi;document.getElementById('configTCC').style.display='flex';document.getElementById('cardTCC').classList.add('ready');marcarDrop('dropTCC',file);construirMapaTC()}catch(err){console.error(err);document.getElementById('estadoTCC').textContent='No se pudo leer TC.'}};rd.readAsArrayBuffer(file)}
+function construirMapaTC(){const tc=state.tc;if(!tc.rows.length)return;tc.fechaCol=+document.getElementById('colFechaTCC').value;tc.compraCol=+document.getElementById('colCompraTCC').value;tc.ventaCol=+document.getElementById('colVentaTCC').value;tc.mapa=new Map();tc.rows.forEach(r=>{const f=normalizarFecha(r[tc.fechaCol]),v=toNumber(r[tc.ventaCol]),c=toNumber(r[tc.compraCol]);if(f&&v)tc.mapa.set(f,{compra:c,venta:v})});document.getElementById('estadoTCC').textContent=`${tc.mapa.size.toLocaleString('es-PE')} fechas disponibles.`}
+function tcVenta(fecha){const x=state.tc.mapa.get(normalizarFecha(fecha));return x?x.venta:null}
+
+function comparar(ple,sire){
+  const v={
+    tipo:ple.tipoCP===sire.tipoCP,ruc:digits(ple.rucProveedor)===digits(sire.rucProveedor),
+    proveedor:!ple.razonSocial||!sire.razonSocial||simNombre(ple.razonSocial,sire.razonSocial),serie:normTxt(ple.serie)===normTxt(sire.serie),
+    correlativo:padNum(ple.nroCP)===padNum(sire.nroCP),fecha:!!ple.fechaNorm&&!!sire.fechaEmision&&ple.fechaNorm===sire.fechaEmision,
+    moneda:normTxt(ple.moneda)===normTxt(sire.moneda),tipoCambio:normTxt(ple.moneda)!=='USD'||!sire.tipoCambio||casiIgual(ple.tipoCambio,sire.tipoCambio,.001),
+    baseImponible:casiIgual(ple.baseImponible,sire.baseImponible,.05),igv:casiIgual(ple.igvTotal,sire.igvTotal,.05),total:casiIgual(ple.totalCP,sire.totalCP,.05)
+  };
+  const dif=Object.entries(v).filter(([,ok])=>!ok).map(([k])=>k);return {validaciones:v,diferencias:dif};
+}
+function simNombre(a,b){const A=normTxt(a).replace(/[^A-Z0-9 ]/g,''),B=normTxt(b).replace(/[^A-Z0-9 ]/g,'');if(!A||!B)return true;if(A.includes(B)||B.includes(A))return true;const sa=new Set(A.split(' ').filter(x=>x.length>2)),sb=new Set(B.split(' ').filter(x=>x.length>2));let n=0;sa.forEach(x=>{if(sb.has(x))n++});return n>=Math.min(2,Math.min(sa.size,sb.size))}
+function buscarCandidato(ple,sireRows){
+  let best=null,bestScore=-1;
+  for(const s of sireRows){if(digits(s.rucProveedor)!==digits(ple.rucProveedor))continue;if(s.tipoCP!==ple.tipoCP)continue;let score=2;
+    if(normTxt(s.serie)===normTxt(ple.serie))score+=3;if(padNum(s.nroCP)===padNum(ple.nroCP))score+=4;if(casiIgual(s.totalCP,ple.totalCP,.10))score+=3;if(s.fechaEmision&&ple.fechaNorm&&s.fechaEmision===ple.fechaNorm)score+=2;if(simNombre(s.razonSocial,ple.razonSocial))score+=1;
+    if(score>bestScore){bestScore=score;best=s}
   }
-  if(!mejor) return null;
-  const numeroSugerido = padNum(mejor.numero, 8);
-  const keySugerida = buildKey(rceRow.rucProveedor, rceRow.tipoCP, mejor.serie, numeroSugerido);
-  return {
-    serie: mejor.serie,
-    numero: numeroSugerido,
-    keySugerida,
-    encontradaEnSIRE: state.sireSet ? state.sireSet.has(keySugerida) : false
-  };
+  return bestScore>=6?{row:best,score:bestScore}:null;
 }
-
-function iniciarTC(){
-  const input = document.getElementById('fileTCC');
-  const drop = document.getElementById('dropTCC');
-  drop.addEventListener('click', ()=> input.click());
-  drop.addEventListener('dragover', e=>e.preventDefault());
-  drop.addEventListener('drop', e=>{ e.preventDefault(); if(e.dataTransfer.files.length){ input.files=e.dataTransfer.files; cargarTC(input.files[0]); } });
-  input.addEventListener('change', ()=>{ if(input.files.length) cargarTC(input.files[0]); });
-  ['colFechaTCC','colCompraTCC','colVentaTCC'].forEach(id=> document.getElementById(id).addEventListener('change', construirMapaTC));
-}
-
-function cargarTC(file){
-  const reader = new FileReader();
-  reader.onload = e=>{
-    try{
-      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array', cellDates:true});
-      state.tc.wb = wb;
-      const sheetName = wb.SheetNames[0];
-      const data = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], {header:1, raw:true, defval:''});
-      let headerIdx = data.findIndex(r=> r.some(c=> /fecha/i.test(String(c))) && r.some(c=> /compra|venta/i.test(String(c))));
-      if(headerIdx < 0) headerIdx = 0;
-      state.tc.headers = data[headerIdx].map(v=> String(v ?? '').trim());
-      state.tc.rows = data.slice(headerIdx+1).filter(r=> r.some(v=> String(v ?? '').trim() !== ''));
-      const opts = state.tc.headers.map((h,i)=> `<option value="${i}">${h || '(col '+(i+1)+')'}</option>`).join('');
-      document.getElementById('colFechaTCC').innerHTML = opts;
-      document.getElementById('colCompraTCC').innerHTML = opts;
-      document.getElementById('colVentaTCC').innerHTML = opts;
-      const nh = state.tc.headers.map(normHeader);
-      let fi = nh.findIndex(h=> h.includes('fecha')); if(fi<0) fi=0;
-      let ci = nh.findIndex(h=> h.includes('compra')); if(ci<0) ci=Math.min(1,state.tc.headers.length-1);
-      let vi = nh.findIndex(h=> h.includes('venta')); if(vi<0) vi=Math.min(2,state.tc.headers.length-1);
-      document.getElementById('colFechaTCC').value=fi;
-      document.getElementById('colCompraTCC').value=ci;
-      document.getElementById('colVentaTCC').value=vi;
-      document.getElementById('configTCC').style.display='flex';
-      document.getElementById('cardTCC').classList.add('ready');
-      document.getElementById('dropTCC').classList.add('filled');
-      document.getElementById('dropTCC').firstChild.textContent = '✓ ' + file.name;
-      construirMapaTC();
-    }catch(err){
-      console.error(err);
-      document.getElementById('estadoTCC').textContent = 'No se pudo leer el histórico de tipo de cambio.';
-    }
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function construirMapaTC(){
-  const tc = state.tc;
-  if(!tc.rows.length) return;
-  tc.fechaCol = Number(document.getElementById('colFechaTCC').value);
-  tc.compraCol = Number(document.getElementById('colCompraTCC').value);
-  tc.ventaCol = Number(document.getElementById('colVentaTCC').value);
-  tc.mapa = new Map();
-  let validas = 0;
-  tc.rows.forEach(row=>{
-    const fecha = normalizarFechaDDMMAAAA(row[tc.fechaCol]);
-    const venta = toNumber(row[tc.ventaCol]);
-    const compra = toNumber(row[tc.compraCol]);
-    if(!fecha || !venta) return;
-    tc.mapa.set(fecha, {compra, venta});
-    validas++;
-  });
-  document.getElementById('estadoTCC').textContent = `Histórico listo: ${validas.toLocaleString('es-PE')} fechas.`;
-}
-
-function tcVentaPorFecha(fechaDDMMAAAA){
-  const k = normalizarFechaDDMMAAAA(fechaDDMMAAAA);
-  const dato = k ? state.tc.mapa.get(k) : null;
-  return dato ? dato.venta : null;
-}
-
-function casiIgual(a,b,tolerancia=0.02){
-  return Math.abs(toNumber(a)-toNumber(b)) <= tolerancia;
-}
-
-function periodoYYYYMMDesdePLE(rows){
-  const c = new Map();
-  (rows||[]).forEach(r=>{
-    const p = String(r.periodo||'').replace(/\D/g,'').slice(0,6);
-    if(p.length===6) c.set(p,(c.get(p)||0)+1);
-  });
-  return [...c.entries()].sort((a,b)=>b[1]-a[1])[0]?.[0] || '';
-}
-
-function periodoDeFecha(fecha){
-  const f = normalizarFechaDDMMAAAA(fecha);
-  return /^\d{4}-\d{2}-\d{2}$/.test(f) ? f.slice(0,7).replace('-','') : '';
-}
-
-function similitudTexto(a,b){
-  const A = new Set(normTxt(a).split(/\s+/).filter(x=>x.length>2));
-  const B = new Set(normTxt(b).split(/\s+/).filter(x=>x.length>2));
-  if(!A.size || !B.size) return 0;
-  let inter = 0;
-  A.forEach(x=>{ if(B.has(x)) inter++; });
-  return inter / Math.max(A.size,B.size);
-}
-
-function scoreCandidatoSIRE(ple,sire){
-  if(ple.rucProveedor !== sire.rucProveedor || ple.tipoCP !== sire.tipoCP) return -1;
-  let score = 0;
-  if(normTxt(ple.serie) === normTxt(sire.serie)) score += 35;
-  if(padNum(ple.nroCP,8) === padNum(sire.nroCP,8)) score += 35;
-  if(casiIgual(ple.totalCP,sire.totalCP,0.05)) score += 25;
-  if(normalizarFechaDDMMAAAA(ple.fechaEmision) && normalizarFechaDDMMAAAA(ple.fechaEmision) === normalizarFechaDDMMAAAA(sire.fechaEmision)) score += 20;
-  if(normTxt(ple.moneda) && normTxt(ple.moneda) === normTxt(sire.moneda)) score += 10;
-  score += Math.round(similitudTexto(ple.razonSocial,sire.razonSocial)*15);
-  return score;
-}
-
-function buscarCandidatoSIRE(ple, indiceRucTipo){
-  const clave = `${ple.rucProveedor}|${ple.tipoCP}`;
-  const candidatos = indiceRucTipo.get(clave) || [];
-  let mejor = null, score = -1;
-  candidatos.forEach(s=>{
-    const sc = scoreCandidatoSIRE(ple,s);
-    if(sc > score){ score=sc; mejor=s; }
-  });
-  // 55 exige al menos una combinación fuerte: total + fecha, o serie + otros datos.
-  return score >= 55 ? {fila:mejor, score} : null;
-}
-
-function compararPLEvsSIRE(ple,sire){
-  if(!sire) return null;
-  const basePLE = ple.biGravadoDG + ple.biDGNG + ple.biDNG;
-  const igvPLE = ple.igvDG + ple.igvDGNG + ple.igvDNG;
-  const fechaPLE = normalizarFechaDDMMAAAA(ple.fechaEmision);
-  const fechaSIRE = normalizarFechaDDMMAAAA(sire.fechaEmision);
-  const validaciones = {
-    ruc: String(ple.rucProveedor||'').trim() === String(sire.rucProveedor||'').trim(),
-    tipo: String(ple.tipoCP||'').padStart(2,'0') === String(sire.tipoCP||'').padStart(2,'0'),
-    serie: normTxt(ple.serie) === normTxt(sire.serie),
-    correlativo: padNum(ple.nroCP,8) === padNum(sire.nroCP,8),
-    proveedor: similitudTexto(ple.razonSocial,sire.razonSocial) >= 0.80,
-    fecha: !!fechaPLE && !!fechaSIRE ? fechaPLE === fechaSIRE : undefined,
-    moneda: normTxt(ple.moneda) && normTxt(sire.moneda) ? normTxt(ple.moneda) === normTxt(sire.moneda) : undefined,
-    tipoCambio: normTxt(ple.moneda) !== 'USD' ? true : ((ple.tipoCambio && sire.tipoCambio) ? casiIgual(ple.tipoCambio,sire.tipoCambio,0.001) : undefined),
-    baseImponible: (sire.baseImponible || basePLE) ? casiIgual(basePLE,sire.baseImponible) : undefined,
-    igv: (sire.igvTotal || igvPLE) ? casiIgual(igvPLE,sire.igvTotal) : undefined,
-    total: (sire.totalCP || ple.totalCP) ? casiIgual(ple.totalCP,sire.totalCP) : undefined
-  };
-  const etiquetas = {ruc:'RUC',tipo:'tipo',serie:'serie',correlativo:'correlativo',proveedor:'proveedor',fecha:'fecha',moneda:'moneda',tipoCambio:'tipo de cambio',baseImponible:'base imponible',igv:'IGV',total:'total'};
-  const diferencias = Object.entries(validaciones).filter(([,ok])=>ok===false).map(([campo])=>etiquetas[campo]||campo);
-  const noEvaluados = Object.entries(validaciones).filter(([,ok])=>ok===undefined).map(([campo])=>etiquetas[campo]||campo);
-  return {validaciones,diferencias,noEvaluados,basePLE,igvPLE};
-}
-
-let lastResult = null;
-
-document.getElementById('btnProcesarC').addEventListener('click', ()=>{
-  const btn = document.getElementById('btnProcesarC');
-  btn.disabled = true; btn.classList.add('is-loading'); btn.textContent = 'Conciliando…';
-  requestAnimationFrame(()=>{
-    lastResult = procesar();
-    renderResultados(lastResult);
-    document.getElementById('resultsC').classList.add('is-visible');
-    requestAnimationFrame(()=>{
-      btn.classList.remove('is-loading'); btn.textContent = 'Conciliar nuevamente'; btn.disabled = false;
-    });
-  });
-});
 
 function procesar(){
-  const rceRows = state.rce.rows;
-  const sireRows = state.sire.rows;
-  const historicoRows = state.pleHistorico?.rows || [];
-  const periodoAnalizado = periodoYYYYMMDesdePLE(rceRows);
-
-  const sireByKey = new Map();
-  const sireByRucTipo = new Map();
-  sireRows.forEach(r=>{
-    const arr = sireByKey.get(r.key) || [];
-    arr.push(r); sireByKey.set(r.key, arr);
-    const rt = `${r.rucProveedor}|${r.tipoCP}`;
-    const arrRT = sireByRucTipo.get(rt) || [];
-    arrRT.push(r); sireByRucTipo.set(rt, arrRT);
-  });
-  state.sireSet = new Set(sireByKey.keys());
-
-  const rceByKey = new Map();
-  rceRows.forEach(r=>{
-    const arr = rceByKey.get(r.key) || [];
-    arr.push(r); rceByKey.set(r.key, arr);
-  });
-
-  const historicoByKey = new Map();
-  historicoRows.forEach(r=>{
-    const arr = historicoByKey.get(r.key) || [];
-    arr.push(r); historicoByKey.set(r.key,arr);
-  });
-
-  const rceResultado = rceRows.map(r=>{
-    const info = state.tipos.get(r.tipoCP);
-    const esperado = info ? info.esperado : true;
-    const duplicado = (rceByKey.get(r.key)||[]).length > 1;
-    const coincidenciaExacta = (sireByKey.get(r.key)||[])[0] || null;
-    const registradoAntes = historicoByKey.has(r.key);
-    const periodoEmision = periodoDeFecha(r.fechaEmision);
-    const esPeriodoAnterior = !!(periodoAnalizado && periodoEmision && periodoEmision < periodoAnalizado);
-    let estado, sugerenciaBanco = null, comparacion = null, coincidenciaSIRE = coincidenciaExacta, candidatoScore = null;
-
-    if(!esperado){
-      estado = 'NO APLICA CRUCE SIRE';
-    } else if(coincidenciaExacta){
-      comparacion = compararPLEvsSIRE(r,coincidenciaExacta);
-      estado = comparacion.diferencias.length ? 'CONCILIADO CON DIFERENCIAS' : 'CONCILIADO';
-    } else {
-      // Para bancos, primero usar la fuente especial pedida en la reunión.
-      sugerenciaBanco = sugerirCorrelativoBanco(r);
-      if(sugerenciaBanco && sugerenciaBanco.encontradaEnSIRE){
-        coincidenciaSIRE = (sireByKey.get(sugerenciaBanco.keySugerida)||[])[0] || null;
-        comparacion = coincidenciaSIRE ? compararPLEvsSIRE(r,coincidenciaSIRE) : null;
-        estado = 'OBSERVACIÓN — VER CORRELATIVO BANCO';
-      } else {
-        const candidato = buscarCandidatoSIRE(r,sireByRucTipo);
-        if(candidato){
-          coincidenciaSIRE = candidato.fila;
-          candidatoScore = candidato.score;
-          comparacion = compararPLEvsSIRE(r,coincidenciaSIRE);
-          estado = 'POSIBLE COINCIDENCIA — REVISAR DATOS';
-        } else if(sugerenciaBanco){
-          estado = 'OBSERVACIÓN — CORRELATIVO SUGERIDO TAMPOCO CONCILIA';
-        } else {
-          estado = 'NO UBICADO EN SIRE';
-        }
-      }
+  const ple=state.rce.rows,sire=state.sire.rows,hist=state.pleHistorico?.rows||[];
+  const map=(rows,key='key')=>{const m=new Map();rows.forEach(r=>{const a=m.get(r[key])||[];a.push(r);m.set(r[key],a)});return m};
+  const pleMap=map(ple),sireMap=map(sire),histMap=map(hist); state.sireSet=new Set(sire.map(r=>r.key));
+  const periodoActual=modoPeriodo(ple.map(r=>r.periodoRegistro).filter(Boolean))||modoPeriodo(ple.map(r=>r.periodoEmision).filter(Boolean));
+  const pleResultado=ple.map(r=>{
+    const esperado=state.tipos.get(r.tipoCP)?.esperado??true,duplicado=(pleMap.get(r.key)||[]).length>1,regPrev=histMap.has(r.key);
+    let sireMatch=(sireMap.get(r.key)||[])[0]||null,candidato=null,comp=null,banco=null,estado='',motivo='';
+    if(!esperado){estado='NO UBICADO';motivo='CP no incluido en propuesta por tipo de documento'}
+    else if(sireMatch){comp=comparar(r,sireMatch);estado=comp.diferencias.length?'SI — CON DIFERENCIAS':'SI';motivo=comp.diferencias.length?'FE incluida en propuesta — revisar '+comp.diferencias.join(', '):'FE incluida en propuesta'}
+    else if(regPrev){estado='REGISTRADO ANTES';motivo='CP encontrado en TXT 8.1 Histórico'}
+    else {banco=sugerirBanco(r);if(banco?.encontradaEnSIRE){sireMatch=(sireMap.get(banco.keySugerida)||[])[0]||null;comp=sireMatch?comparar({...r,serie:banco.serie,nroCP:banco.numero,key:banco.keySugerida},sireMatch):null;estado='OBSERVACIÓN BANCO';motivo='Correlativo sugerido por Lista de Obligaciones y encontrado en SIRE'}
+      else {candidato=buscarCandidato(r,sire);if(candidato){sireMatch=candidato.row;comp=comparar(r,sireMatch);estado='POSIBLE COINCIDENCIA';motivo='Revisar datos del comprobante: '+comp.diferencias.join(', ')}else if(banco){estado='OBSERVACIÓN BANCO';motivo='Correlativo sugerido por Obligaciones no encontrado en SIRE'}else{estado='NO UBICADO';motivo='CP no incluido en propuesta'}}
     }
-
-    let tcSunat = null, difTC = null;
-    if(state.tc.mapa.size && normTxt(r.moneda) === 'USD'){
-      tcSunat = tcVentaPorFecha(r.fechaEmision);
-      if(tcSunat !== null) difTC = Math.round((r.tipoCambio - tcSunat) * 1000) / 1000;
-    }
-
-    return {...r, esperado, duplicado, registradoAntes, periodoEmision, esPeriodoAnterior, estado, sugerenciaBanco, coincidenciaSIRE, comparacion, candidatoScore, tcSunat, difTC};
+    const tcS=normTxt(r.moneda)==='USD'?tcVenta(r.fechaEmision):null;const difTC=tcS!==null?Math.round((r.tipoCambio-tcS)*1000)/1000:null;
+    const detracciones=state.detracciones?.map?.get(r.key)||[];const detraccion=detracciones[0]||null;const validacionSunat=state.validacionSunat?.map?.get(r.key)||null;
+    let accion='Sin acción';if(estado==='NO UBICADO')accion='Revisar / solicitar sustento';else if(estado==='POSIBLE COINCIDENCIA'||estado==='SI — CON DIFERENCIAS')accion='Corregir o validar diferencias';else if(estado==='OBSERVACIÓN BANCO')accion='Validar correlativo en Obligaciones';else if(estado==='REGISTRADO ANTES')accion='No duplicar: revisar periodo anterior';
+    if(validacionSunat&&normTxt(validacionSunat.estadoComprobante)&&normTxt(validacionSunat.estadoComprobante)!=='ACEPTADO')accion='Revisar estado del comprobante SUNAT';
+    return {...r,esperado,duplicado,registradoAntes:regPrev,estado,motivo,sireMatch,candidato,comparacion:comp,sugerenciaBanco:banco,tcSunat:tcS,difTC,detraccion,validacionSunat,accion};
   });
-
-  const sireResultado = sireRows.map(r=>{
-    const duplicado = (sireByKey.get(r.key)||[]).length > 1;
-    const periodoEmision = periodoDeFecha(r.fechaEmision) || String(r.periodo||'').replace(/\D/g,'').slice(0,6);
-    let estado;
-    if(rceByKey.has(r.key)) estado = 'REGISTRADO EN PLE ANALIZADO';
-    else if(historicoByKey.has(r.key)) estado = 'REGISTRADO EN PLE HISTÓRICO';
-    else if(periodoAnalizado && periodoEmision === periodoAnalizado) estado = 'NO ENCONTRADO EN PLE DEL PERIODO';
-    else estado = 'HISTÓRICO SIRE — FUERA DEL PERIODO ANALIZADO';
-    return {...r, periodoEmision, duplicado, estado};
+  const sireResultado=sire.map(r=>{
+    const duplicado=(sireMap.get(r.key)||[]).length>1;let estado='HISTÓRICO',motivo='Fuera del periodo analizado';
+    if(pleMap.has(r.key)){estado='SI';motivo='RC PLE'}
+    else if(histMap.has(r.key)){estado='SI HISTÓRICO';motivo='Registrado en periodo anterior'}
+    else if(periodoActual&&(r.periodoSIRE===periodoActual||r.periodoEmision===periodoActual)){estado='NO';motivo='No registrado en contabilidad'}
+    return {...r,duplicado,estado,motivo};
   });
-
-  return {rceResultado, sireResultado, rceByKey, sireByKey, historicoByKey, periodoAnalizado};
+  return {pleResultado,sireResultado,periodoActual};
 }
-
-function contarPor(arr, campo){
-  const m = new Map();
-  arr.forEach(x=>{ m.set(x[campo], (m.get(x[campo])||0)+1); });
-  return m;
-}
+function modoPeriodo(a){const c=new Map();a.forEach(x=>c.set(x,(c.get(x)||0)+1));return [...c.entries()].sort((x,y)=>y[1]-x[1])[0]?.[0]||''}
+function contar(arr,campo){const m=new Map();arr.forEach(x=>m.set(x[campo],(m.get(x[campo])||0)+1));return m}
+function marca(v){return v===undefined?'No evaluado':v?'Correcto':'Revisar'}
 
 function renderResultados(r){
-  const cEstadoRCE = contarPor(r.rceResultado, 'estado');
-  const dupRCE = r.rceResultado.filter(x=>x.duplicado).length;
-  const totalRCE = r.rceResultado.length;
-  let htmlRCE = `<table class="report"><thead><tr><th>Estado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>`;
-  ['CONCILIADO','CONCILIADO CON DIFERENCIAS','POSIBLE COINCIDENCIA — REVISAR DATOS','OBSERVACIÓN — VER CORRELATIVO BANCO','OBSERVACIÓN — CORRELATIVO SUGERIDO TAMPOCO CONCILIA','NO UBICADO EN SIRE','NO APLICA CRUCE SIRE'].forEach(estado=>{
-    const cant = cEstadoRCE.get(estado) || 0;
-    if(!cant) return;
-    const cls = estado==='CONCILIADO' ? 'ok' : (estado.includes('DIFERENCIAS') || estado.includes('POSIBLE') || estado.startsWith('OBSERV')) ? 'warn' : estado==='NO UBICADO EN SIRE' ? 'bad' : '';
-    htmlRCE += `<tr><td>${estado}</td><td class="${cls}">${cant}</td><td>${(cant/totalRCE*100).toFixed(1)}%</td></tr>`;
-  });
-  htmlRCE += `<tr><td>Emitidos en periodo anterior al analizado</td><td class="warn">${r.rceResultado.filter(x=>x.esPeriodoAnterior).length}</td><td>—</td></tr>`;
-  htmlRCE += `<tr><td>Duplicados internos (misma llave)</td><td class="${dupRCE>0?'bad':''}">${dupRCE}</td><td>—</td></tr>`;
-  htmlRCE += `<tr><td>TOTAL FILAS PLE</td><td>${totalRCE}</td><td>100%</td></tr></tbody></table>`;
-  document.getElementById('resumenRCEHolder').innerHTML = htmlRCE;
-
-  const cEstadoSIRE = contarPor(r.sireResultado, 'estado');
-  const totalSIRE = r.sireResultado.length;
-  let htmlSIRE = `<table class="report"><thead><tr><th>Estado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>`;
-  ['REGISTRADO EN PLE ANALIZADO','REGISTRADO EN PLE HISTÓRICO','NO ENCONTRADO EN PLE DEL PERIODO','HISTÓRICO SIRE — FUERA DEL PERIODO ANALIZADO'].forEach(estado=>{
-    const cant = cEstadoSIRE.get(estado) || 0;
-    if(!cant) return;
-    const cls = estado==='REGISTRADO EN PLE ANALIZADO' ? 'ok' : estado==='NO ENCONTRADO EN PLE DEL PERIODO' ? 'bad' : 'mute';
-    htmlSIRE += `<tr><td>${estado}</td><td class="${cls}">${cant}</td><td>${(cant/totalSIRE*100).toFixed(1)}%</td></tr>`;
-  });
-  htmlSIRE += `<tr><td>TOTAL FILAS SIRE HISTÓRICO</td><td>${totalSIRE}</td><td>100%</td></tr></tbody></table>`;
-  document.getElementById('resumenSIREHolder').innerHTML = htmlSIRE;
-
-  let htmlTipo = `<table class="report"><thead><tr><th>Tipo</th><th>Esperado en SIRE</th><th>Cantidad PLE</th><th>Conciliado</th><th>% conciliado</th></tr></thead><tbody>`;
-  [...state.tipos.entries()].forEach(([codigo,info])=>{
-    const filasTipo = r.rceResultado.filter(x=>x.tipoCP===codigo);
-    const conciliado = filasTipo.filter(x=>x.estado==='CONCILIADO' || x.estado==='CONCILIADO CON DIFERENCIAS').length;
-    const pct = filasTipo.length ? (conciliado/filasTipo.length*100).toFixed(1)+'%' : '—';
-    htmlTipo += `<tr><td>${info.label}</td><td>${info.esperado?'Sí':'No'}</td><td>${filasTipo.length}</td><td class="ok">${conciliado}</td><td>${pct}</td></tr>`;
-  });
-  htmlTipo += `</tbody></table>`;
-  document.getElementById('resumenTipoHolder').innerHTML = htmlTipo;
-
-  const filasDetalle = r.rceResultado.slice(0,250);
-  let head = `<tr><th>Llave PLE</th><th>Tipo</th><th>Proveedor</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Periodo emisión</th><th>Diferencias</th><th>No evaluado</th><th>Sugerencia banco</th></tr>`;
-  let body = filasDetalle.map(f=>{
-    const flagCls = f.estado==='CONCILIADO' ? 'ok' : (f.estado.includes('DIFERENCIAS') || f.estado.includes('POSIBLE') || f.estado.startsWith('OBSERV')) ? 'warn' : f.estado==='NO APLICA CRUCE SIRE' ? 'mute' : 'bad';
-    return `<tr><td>${f.key}</td><td>${f.tipoCP}</td><td>${f.razonSocial}</td><td>${f.fechaEmision}</td><td>${f.totalCP.toFixed(2)}</td><td><span class="flag ${flagCls}">${f.estado}</span></td><td>${f.esPeriodoAnterior?'Anterior':'Actual/otro'}</td><td>${f.comparacion?.diferencias?.join(', ') || ''}</td><td>${f.comparacion?.noEvaluados?.join(', ') || ''}</td><td>${f.sugerenciaBanco ? f.sugerenciaBanco.keySugerida : ''}</td></tr>`;
-  }).join('');
-  document.getElementById('detailTableC').innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
+  const cr=contar(r.pleResultado,'estado'),total=r.pleResultado.length;let h='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';
+  ['SI','SI — CON DIFERENCIAS','REGISTRADO ANTES','POSIBLE COINCIDENCIA','OBSERVACIÓN BANCO','NO UBICADO'].forEach(e=>{const n=cr.get(e)||0;if(!n)return;const cls=e==='SI'?'ok':e==='NO UBICADO'?'bad':'warn';h+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/total*100).toFixed(1)}%</td></tr>`});h+=`<tr><td>TOTAL PLE</td><td>${total}</td><td>100%</td></tr></tbody></table>`;document.getElementById('resumenRCEHolder').innerHTML=h;
+  const sr=r.sireResultado.filter(x=>x.estado!=='HISTÓRICO'),cs=contar(sr,'estado'),ts=sr.length||1;let hs='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';['SI','SI HISTÓRICO','NO'].forEach(e=>{const n=cs.get(e)||0;hs+=`<tr><td>${e==='NO'?'NO — No registrado en contabilidad':e}</td><td class="${e==='NO'?'bad':e==='SI'?'ok':'warn'}">${n}</td><td>${(n/ts*100).toFixed(1)}%</td></tr>`});hs+=`<tr><td>Periodo analizado</td><td>${r.periodoActual||'—'}</td><td>—</td></tr></tbody></table>`;document.getElementById('resumenSIREHolder').innerHTML=hs;
+  let ht='<table class="report"><thead><tr><th>Tipo</th><th>Cantidad</th><th>Ubicado exacto</th><th>Observado/no ubicado</th></tr></thead><tbody>';for(const [cod,info] of state.tipos){const f=r.pleResultado.filter(x=>x.tipoCP===cod),ok=f.filter(x=>x.estado==='SI').length;ht+=`<tr><td>${esc(info.label)}</td><td>${f.length}</td><td class="ok">${ok}</td><td>${f.length-ok}</td></tr>`}ht+='</tbody></table>';document.getElementById('resumenTipoHolder').innerHTML=ht;
+  const rows=r.pleResultado.slice(0,250);let body=rows.map(x=>`<tr><td>${esc(x.rucProveedor)}</td><td>${esc(x.tipoCP)}</td><td>${esc(x.serie)}</td><td>${esc(padNum(x.nroCP))}</td><td>${esc(x.fechaEmision)}</td><td>${x.totalCP.toFixed(2)}</td><td><span class="flag ${x.estado==='SI'?'ok':x.estado==='NO UBICADO'?'bad':'warn'}">${esc(x.estado)}</span></td><td>${esc(x.motivo)}</td><td>${esc(x.sugerenciaBanco?.keySugerida||'')}</td></tr>`).join('');document.getElementById('detailTableC').innerHTML='<thead><tr><th>RUC</th><th>Tipo</th><th>Serie</th><th>Correlativo</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Motivo</th><th>Sugerencia banco</th></tr></thead><tbody>'+body+'</tbody>';
 }
 
-function estiloHoja(ws, headerRow=1){
-  if(!ws || !ws['!ref']) return;
-  const range = XLSX.utils.decode_range(ws['!ref']);
-  for(let c=range.s.c;c<=range.e.c;c++){
-    const cell = ws[XLSX.utils.encode_cell({r:headerRow-1,c})];
-    if(cell){
-      cell.s = {font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'E6005A'}},alignment:{vertical:'center',wrapText:true},border:{bottom:{style:'thin',color:{rgb:'D9D9D9'}}}};
-    }
-  }
-  ws['!rows'] = ws['!rows'] || [];
-  ws['!rows'][headerRow-1] = {hpt:30};
-}
+document.getElementById('btnProcesarC').addEventListener('click',()=>{const b=document.getElementById('btnProcesarC');b.disabled=true;b.textContent='Conciliando…';setTimeout(()=>{lastResult=procesar();renderResultados(lastResult);document.getElementById('resultsC').classList.add('is-visible');b.disabled=false;b.textContent='Conciliar nuevamente'},10)});
+document.getElementById('btnActualizarHistoricosC').addEventListener('click',cargarHistoricosCompras);
 
-function anchoColumnas(ws, anchos){
-  ws['!cols'] = anchos.map(w=>({wch:w}));
-}
-
-function valorValidacion(v){
-  if(v===undefined) return 'No evaluado';
-  return v ? 'Correcto' : 'Revisar';
-}
-
-document.getElementById('btnDescargarC').addEventListener('click', ()=>{
-  if(!lastResult){ return; }
-  const msg = document.getElementById('downloadMsgC');
-  msg.textContent = 'Generando archivo…';
-  setTimeout(()=>{
-    const wb = XLSX.utils.book_new();
-    const r = lastResult;
-    const cEstadoRCE = contarPor(r.rceResultado, 'estado');
-    const cEstadoSIRE = contarPor(r.sireResultado, 'estado');
-
-    const resumenAOA = [
-      ['CONCILIACIÓN DE COMPRAS — CONTROL EJECUTIVO'],
-      ['Generado', new Date().toLocaleString('es-PE')],
-      ['Periodo PLE analizado', r.periodoAnalizado || 'No identificado'],
-      ['Fuente 1','PLE 8.1 Sprint del periodo'],
-      ['Fuente 2','Propuesta SIRE histórica (SUNAT)'],
-      ['Fuente 3','Lista de Obligaciones Sprint — apoyo documentos bancarios'],
-      [],
-      ['RESULTADO PLE','CANTIDAD'],
-      ...[...cEstadoRCE.entries()],
-      ['Emitidos en periodo anterior', r.rceResultado.filter(x=>x.esPeriodoAnterior).length],
-      ['Duplicados internos PLE', r.rceResultado.filter(x=>x.duplicado).length],
-      ['TOTAL PLE', r.rceResultado.length],
-      [],
-      ['CONTROL SIRE','CANTIDAD'],
-      ...[...cEstadoSIRE.entries()],
-      ['TOTAL SIRE HISTÓRICO', r.sireResultado.length],
-      [],
-      ['TIPO','¿ESPERADO EN SIRE?','CANTIDAD PLE','CONCILIADO'],
-      ...[...state.tipos.entries()].map(([codigo,info])=>{
-        const filasTipo = r.rceResultado.filter(x=>x.tipoCP===codigo);
-        const conciliado = filasTipo.filter(x=>x.estado==='CONCILIADO' || x.estado==='CONCILIADO CON DIFERENCIAS').length;
-        return [info.label, info.esperado?'Sí':'No', filasTipo.length, conciliado];
-      })
-    ];
-    const wsResumen = XLSX.utils.aoa_to_sheet(resumenAOA);
-    estiloHoja(wsResumen,8);
-    anchoColumnas(wsResumen,[50,22,18,18]);
-    XLSX.utils.book_append_sheet(wb, wsResumen, 'Resumen Ejecutivo');
-
-    // Papel de trabajo principal: PLE a la izquierda, SIRE encontrado al medio y validaciones a la derecha.
-    const h = ['Estado','Periodo PLE','Periodo emisión','Emisión periodo anterior','Tipo','RUC PLE','Proveedor PLE','Serie PLE','Correlativo PLE','Fecha PLE','Moneda PLE','Base PLE','IGV PLE','Total PLE','TC PLE',
-      'RUC SIRE','Proveedor SIRE','Serie SIRE','Correlativo SIRE','Fecha SIRE','Moneda SIRE','Base SIRE','IGV SIRE','Total SIRE','TC SIRE',
-      'RUC correcto','Tipo correcto','Serie correcta','Correlativo correcto','Proveedor correcto','Fecha correcta','Moneda correcta','TC correcto','Base correcta','IGV correcto','Total correcto',
-      'Diferencias','Campos no evaluados','Duplicado PLE','Sugerencia Banco','Score candidato'];
-    const aoa=[h];
-    r.rceResultado.forEach(f=>{
-      const srow=f.coincidenciaSIRE;
-      const v=f.comparacion?.validaciones || {};
-      const basePLE=f.biGravadoDG+f.biDGNG+f.biDNG;
-      const igvPLE=f.igvDG+f.igvDGNG+f.igvDNG;
-      aoa.push([f.estado,f.periodo,f.periodoEmision,f.esPeriodoAnterior?'Sí':'No',f.tipoCP,f.rucProveedor,f.razonSocial,f.serie,padNum(f.nroCP,8),normalizarFechaDDMMAAAA(f.fechaEmision),f.moneda,basePLE,igvPLE,f.totalCP,f.tipoCambio||'',
-        srow?.rucProveedor||'',srow?.razonSocial||'',srow?.serie||'',srow?padNum(srow.nroCP,8):'',srow?.fechaEmision||'',srow?.moneda||'',srow?.baseImponible??'',srow?.igvTotal??'',srow?.totalCP??'',srow?.tipoCambio||'',
-        valorValidacion(v.ruc),valorValidacion(v.tipo),valorValidacion(v.serie),valorValidacion(v.correlativo),valorValidacion(v.proveedor),valorValidacion(v.fecha),valorValidacion(v.moneda),valorValidacion(v.tipoCambio),valorValidacion(v.baseImponible),valorValidacion(v.igv),valorValidacion(v.total),
-        f.comparacion?.diferencias?.join(', ')||'',f.comparacion?.noEvaluados?.join(', ')||'',f.duplicado?'Sí':'No',f.sugerenciaBanco?.keySugerida||'',f.candidatoScore??'']);
-    });
-    const wsControl=XLSX.utils.aoa_to_sheet(aoa);
-    wsControl['!autofilter']={ref:`A1:${XLSX.utils.encode_col(h.length-1)}${aoa.length}`};
-    estiloHoja(wsControl,1);
-    anchoColumnas(wsControl,[32,12,13,14,7,14,36,12,16,12,10,12,12,12,10,14,36,12,16,12,10,12,12,12,10,12,12,12,15,15,12,12,12,12,12,12,35,26,12,30,12]);
-    XLSX.utils.book_append_sheet(wb, wsControl, 'Control PLE vs SIRE');
-
-    const pend = r.sireResultado.filter(f=>f.estado==='NO ENCONTRADO EN PLE DEL PERIODO');
-    const hp=['Estado','Periodo emisión','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','Base imponible','IGV','Total','Duplicado SIRE'];
-    const ap=[hp,...pend.map(f=>[f.estado,f.periodoEmision,f.rucProveedor,f.razonSocial,f.tipoCP,f.serie,padNum(f.nroCP,8),f.fechaEmision,f.moneda,f.baseImponible,f.igvTotal,f.totalCP,f.duplicado?'Sí':'No'])];
-    const wsPend=XLSX.utils.aoa_to_sheet(ap);
-    wsPend['!autofilter']={ref:`A1:M${ap.length}`};
-    estiloHoja(wsPend,1); anchoColumnas(wsPend,[32,13,14,38,8,12,16,13,10,14,12,12,12]);
-    XLSX.utils.book_append_sheet(wb, wsPend, 'Pendientes SIRE periodo');
-
-    const hb=['Estado','Llave PLE','RUC','Proveedor','Tipo','Serie PLE','Correlativo PLE','Total PLE','Serie sugerida','Correlativo sugerido','Llave sugerida','Encontrada en SIRE'];
-    const bancos=r.rceResultado.filter(f=>f.sugerenciaBanco || f.estado.includes('BANCO'));
-    const ab=[hb,...bancos.map(f=>[f.estado,f.key,f.rucProveedor,f.razonSocial,f.tipoCP,f.serie,padNum(f.nroCP,8),f.totalCP,f.sugerenciaBanco?.serie||'',f.sugerenciaBanco?.numero||'',f.sugerenciaBanco?.keySugerida||'',f.sugerenciaBanco?.encontradaEnSIRE?'Sí':'No'])];
-    const wsB=XLSX.utils.aoa_to_sheet(ab); wsB['!autofilter']={ref:`A1:L${ab.length}`};
-    estiloHoja(wsB,1); anchoColumnas(wsB,[38,34,14,38,8,12,16,12,14,18,34,14]);
-    XLSX.utils.book_append_sheet(wb, wsB, 'Alertas Bancos');
-
-    // Histórico SIRE completo, conservado para trazabilidad. No se presenta como pendiente por defecto.
-    const hs=['Estado','Periodo emisión','Llave','RUC Proveedor','Razón Social','Tipo','Serie','Nro CP','Fecha Emisión','Moneda','Base imponible','IGV','Total CP','Duplicado en SIRE'];
-    const as=[hs,...r.sireResultado.map(f=>[f.estado,f.periodoEmision,f.key,f.rucProveedor,f.razonSocial,f.tipoCP,f.serie,padNum(f.nroCP,8),f.fechaEmision,f.moneda,f.baseImponible,f.igvTotal,f.totalCP,f.duplicado?'Sí':'No'])];
-    const wsS=XLSX.utils.aoa_to_sheet(as); wsS['!autofilter']={ref:`A1:N${as.length}`};
-    estiloHoja(wsS,1); anchoColumnas(wsS,[34,13,34,14,38,8,12,16,13,10,14,12,12,12]);
-    XLSX.utils.book_append_sheet(wb, wsS, 'SIRE histórico');
-
-    const fname = `Conciliacion_Compras_Mejorada_${new Date().toISOString().slice(0,10)}.xlsx`;
-    XLSX.writeFile(wb, fname);
-    msg.textContent = 'Descargado: ' + fname;
-  }, 30);
+document.getElementById('btnDescargarC').addEventListener('click',()=>{
+  if(!lastResult)return;const msg=document.getElementById('downloadMsgC');msg.textContent='Generando papel de trabajo…';
+  setTimeout(()=>{const wb=XLSX.utils.book_new(),r=lastResult;
+    const c=contar(r.pleResultado,'estado');const pend=r.sireResultado.filter(x=>x.estado==='NO');const bancos=r.pleResultado.filter(x=>x.sugerenciaBanco||x.estado==='OBSERVACIÓN BANCO');
+    const res=[['PAPEL DE TRABAJO — VALIDACIÓN COMPRAS'],['Lógica replicada del archivo preliminar de Flavio'],['Generado',new Date().toLocaleString('es-PE')],['Periodo PLE',r.periodoActual||''],[],['PLE → PROPUESTA SIRE'],['Resultado','Cantidad'],...[...c.entries()],['TOTAL PLE',r.pleResultado.length],[],['SIRE → PLE DEL PERIODO'],['No registrado en contabilidad',pend.length],['SIRE histórico total',r.sireResultado.length],[],['Controles usados'],['PLE actual','Sí'],['SIRE histórico','Sí'],['TXT 8.1 Histórico',state.pleHistorico?.rows?.length?'Sí':'No'],['Lista de Obligaciones',state.bancos?.rows?.length?'Sí':'No'],['TC SUNAT',state.tc.mapa.size?'Sí':'No'],['Detracciones',state.detracciones?.rows?.length?'Sí':'No'],['Validación SUNAT CP',state.validacionSunat?.rows?.length?'Sí':'No']];
+    addSheet(wb,'01 Resumen',res,[34,22]);
+    const head=['Periodo registro','CUO','RUC PLE','Proveedor PLE','Tipo PLE','Serie PLE','Correlativo PLE','Fecha PLE','Moneda PLE','TC PLE','Base PLE','IGV PLE','Total PLE','Ubicado en SIRE','Motivo','Periodo emisión','Ya en PLE histórico','RUC SIRE','Proveedor SIRE','Tipo SIRE','Serie SIRE','Correlativo SIRE','Fecha SIRE','Moneda SIRE','TC SIRE','Base SIRE','IGV SIRE','Total SIRE','RUC correcto','Proveedor correcto','Tipo correcto','Serie correcta','Correlativo correcto','Fecha correcta','Moneda correcta','TC correcto','Base correcta','IGV correcto','Total correcto','Diferencias','Sugerencia banco','Acción sugerida','Detracción encontrada','Nro constancia detracción','Fecha pago detracción','Monto detracción','Estado CP SUNAT','Estado contribuyente','Condición domiciliaria','Observación SUNAT'];
+    const a=[head];r.pleResultado.forEach(x=>{const s=x.sireMatch||{},v=x.comparacion?.validaciones||{};a.push([x.periodoRegistro,x.cuo,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo,x.periodoEmision,x.registradoAntes?'Sí':'No',s.rucProveedor||'',s.razonSocial||'',s.tipoCP||'',s.serie||'',s.nroCP?padNum(s.nroCP):'',s.fechaEmision||'',s.moneda||'',s.tipoCambio||'',s.baseImponible??'',s.igvTotal??'',s.totalCP??'',marca(v.ruc),marca(v.proveedor),marca(v.tipo),marca(v.serie),marca(v.correlativo),marca(v.fecha),marca(v.moneda),marca(v.tipoCambio),marca(v.baseImponible),marca(v.igv),marca(v.total),x.comparacion?.diferencias?.join(', ')||'',x.sugerenciaBanco?.keySugerida||'',x.accion||'',x.detraccion?'Sí':'No',x.detraccion?.constancia||'',x.detraccion?.fechaPago||'',x.detraccion?.montoDeposito??'',x.validacionSunat?.estadoComprobante||'',x.validacionSunat?.estadoContribuyente||'',x.validacionSunat?.condicionDomiciliaria||'',x.validacionSunat?.observacion||''])});addSheet(wb,'02 PLE vs SIRE',a,Array(head.length).fill(17),true);
+    const p=[['Periodo SIRE','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','Base','IGV','Total','Estado','Motivo']];pend.forEach(x=>p.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));addSheet(wb,'03 SIRE no PLE periodo',p,[13,14,34,10,12,14,14,10,14,14,14,12,28],true);
+    const bh=[['RUC PLE','Proveedor','Tipo','Serie PLE','Correlativo PLE','Total PLE','Serie sugerida','Correlativo sugerido','Encontrado en SIRE','Llave sugerida','Motivo']];bancos.forEach(x=>bh.push([x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.totalCP,x.sugerenciaBanco?.serie||'',x.sugerenciaBanco?.numero||'',x.sugerenciaBanco?.encontradaEnSIRE?'Sí':'No',x.sugerenciaBanco?.keySugerida||'',x.motivo]));addSheet(wb,'04 Alertas Bancos',bh,[14,35,10,13,15,14,15,18,17,38,38],true);
+    const hist=[['Periodo','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha','Llave']];(state.pleHistorico?.rows||[]).forEach(x=>hist.push([x.periodoRegistro||x.periodo||'',x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision||'',x.key]));addSheet(wb,'05 TXT 8.1 Histórico',hist,[12,14,35,10,14,16,14,42],true);
+    const val=[['RUC','Proveedor','Tipo','Serie','Correlativo','Fecha','Moneda','Base','IGV','Total','Estado conciliación','Estado CP SUNAT','Estado contribuyente','Condición domiciliaria','Observación SUNAT','Acción sugerida']];r.pleResultado.forEach(x=>val.push([x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.validacionSunat?.estadoComprobante||'',x.validacionSunat?.estadoContribuyente||'',x.validacionSunat?.condicionDomiciliaria||'',x.validacionSunat?.observacion||'',x.accion||'']));addSheet(wb,'06 Validacion CP',val,[14,35,10,13,16,14,10,14,14,14,22,18,20,20,40,35],true);
+    const det=[['RUC','Proveedor','Tipo','Serie','Correlativo','Fecha pago','Monto depósito','Constancia','Estado en compras','Encontrado en PLE actual']];(state.detracciones?.rows||[]).forEach(d=>det.push([d.ruc,d.proveedor,d.tipoCP,d.serie,padNum(d.nroCP),d.fechaPago,d.montoDeposito,d.constancia,d.estadoCompras,r.pleResultado.some(x=>x.key===d.key)?'Sí':'No']));addSheet(wb,'07 Detracciones',det,[14,35,10,13,16,14,15,18,22,20],true);
+    const sh=[['Periodo','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','Base','IGV','Total','Estado vs PLE','Motivo']];r.sireResultado.forEach(x=>sh.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));addSheet(wb,'08 Propuesta SIRE',sh,[12,14,35,10,13,16,14,10,14,14,14,16,32],true);
+    const fn=`Conciliacion_Compras_Flavio_${new Date().toISOString().slice(0,10)}.xlsx`;XLSX.writeFile(wb,fn);msg.textContent='Descargado: '+fn;
+  },30)
 });
+function addSheet(wb,name,aoa,widths,filter=false){const ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=widths.map(w=>({wch:w}));if(filter&&aoa.length)ws['!autofilter']={ref:`A1:${XLSX.utils.encode_col(aoa[0].length-1)}${aoa.length}`};XLSX.utils.book_append_sheet(wb,ws,name)}
 
-buildCardsPrincipales();
-iniciarBancos();
-iniciarTC();
+buildCardsPrincipales();iniciarBancos();iniciarHistoricoManual();iniciarTC();iniciarDetracciones();iniciarValidacionSunat();cargarHistoricosCompras();
 })();
 </script>
 
