@@ -1721,13 +1721,17 @@ async function cargarHistoricosCompras(){
   document.getElementById('estadoPLEHistC').textContent = 'Consultando el histórico PLE de OneDrive…';
   try{
     if(!HISTORICOS_COMPRAS_URL) throw new Error('Falta vincular la URL de Power Automate.');
-    const response = await fetch(HISTORICOS_COMPRAS_URL,{
-      method:'POST',
-      body:JSON.stringify({accion:'leer_historicos_compras'})
-    });
-    if(!response.ok) throw new Error(`La conexión respondió ${response.status}.`);
-    const data = await response.json();
-    const bloquesDirectos = aplanarBloquesSIRE(data);
+    const respuestas = await Promise.all([1,2,3].map(async parte=>{
+      const response = await fetch(HISTORICOS_COMPRAS_URL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({parte})
+      });
+      if(!response.ok) throw new Error(`La parte ${parte} respondió ${response.status}.`);
+      return response.json();
+    }));
+    const bloquesDirectos = respuestas.flatMap(aplanarBloquesSIRE);
+    const data = respuestas[0] || {};
     const sireRaw = bloquesDirectos.length
       ? bloquesDirectos
       : obtenerArrayRespuesta(data,['sire','sireRows','SIRE','value']);
