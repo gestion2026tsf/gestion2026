@@ -1443,10 +1443,82 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
 
 
     const fname = `Papel_de_Trabajo_Ventas_${new Date().toISOString().slice(0,10)}_${r.A.label}_${r.B.label}_${r.C.label}.xlsx`.replace(/\s+/g,'_');
-    XLSX.writeFile(wb, fname);
-    msg.textContent = 'Descargado: ' + fname;
+    exportarWorkbookVentasConLogo(wb, fname, msg);
   }, 30);
 });
+
+
+async function exportarWorkbookVentasConLogo(wb, fname, msg){
+  const fallback = ()=>{
+    XLSX.writeFile(wb, fname);
+    if(msg) msg.textContent = 'Descargado: ' + fname;
+  };
+
+  try{
+    if(!window.ExcelJS) return fallback();
+
+    if(msg) msg.textContent = 'Insertando logo corporativo en el Excel…';
+
+    const dataLogo = obtenerLogoTotalExcel();
+    if(!dataLogo) return fallback();
+
+    const bufferXlsx = XLSX.write(wb, { bookType:'xlsx', type:'array' });
+    const wbExcel = new ExcelJS.Workbook();
+    await wbExcel.xlsx.load(bufferXlsx);
+
+    const wsResumen = wbExcel.getWorksheet('Resumen') || wbExcel.worksheets?.[0];
+    if(wsResumen){
+      // Reservar espacio visual a la derecha para el logo.
+      for(let c=6; c<=9; c++){
+        const col = wsResumen.getColumn(c);
+        if(!col.width || col.width < 13) col.width = c===6 ? 4 : 13;
+      }
+      wsResumen.getRow(1).height = Math.max(wsResumen.getRow(1).height || 0, 26);
+      wsResumen.getRow(2).height = Math.max(wsResumen.getRow(2).height || 0, 24);
+      wsResumen.getRow(3).height = Math.max(wsResumen.getRow(3).height || 0, 18);
+      wsResumen.getRow(4).height = Math.max(wsResumen.getRow(4).height || 0, 10);
+
+      const imageId = wbExcel.addImage({
+        base64: dataLogo,
+        extension: 'png'
+      });
+
+      wsResumen.addImage(imageId, {
+        tl: { col: 5.25, row: 0.15 },
+        ext: { width: 250, height: 95 },
+        editAs: 'oneCell'
+      });
+
+      const labelCell = wsResumen.getCell('G5');
+      labelCell.value = 'TOTAL · Imagen corporativa';
+      labelCell.font = { bold:true, color:{ argb:'FFE6005C' }, size:10 };
+      labelCell.alignment = { horizontal:'center', vertical:'middle' };
+    }
+
+    const out = await wbExcel.xlsx.writeBuffer();
+    const blob = new Blob([out], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=> URL.revokeObjectURL(url), 4000);
+    if(msg) msg.textContent = 'Descargado con logo: ' + fname;
+  }catch(err){
+    console.warn('No se pudo insertar el logo en el Excel. Se descargará la versión normal.', err);
+    fallback();
+  }
+}
+
+function obtenerLogoTotalExcel(){
+  const el = document.querySelector('.logo-embedded');
+  if(!el) return '';
+  const bg = el.style?.backgroundImage || getComputedStyle(el).backgroundImage || '';
+  const m = bg.match(/url\(["']?(data:image\/png;base64,[^)"']+)["']?\)/i);
+  return m ? m[1] : '';
+}
 
 function normalizarEncabezadoTC(value){
   return String(value ?? '')
@@ -2559,6 +2631,10 @@ buildCardsPrincipales();iniciarBancos();iniciarHistoricoManual();cargarHistorico
     'https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js',
     'https://unpkg.com/papaparse@5.4.1/papaparse.min.js'
   ];
+  const fuentesExcelJS = [
+    'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js',
+    'https://unpkg.com/exceljs@4.4.0/dist/exceljs.min.js'
+  ];
   function cargar(fuentes, checkGlobal, onDone, onFail){
     let i = 0;
     (function intentar(){
@@ -2572,6 +2648,7 @@ buildCardsPrincipales();iniciarBancos();iniciarHistoricoManual();cargarHistorico
   }
   cargar(fuentesXLSX, 'XLSX', ()=>{
     cargar(fuentesPapa, 'Papa', ()=>{}, ()=>console.warn('No se pudo cargar PapaParse.'));
+    cargar(fuentesExcelJS, 'ExcelJS', ()=>{}, ()=>console.warn('No se pudo cargar ExcelJS; el Excel se descargará sin logo.'));
   }, ()=>console.warn('No se pudo cargar XLSX.'));
 })();
 </script>
