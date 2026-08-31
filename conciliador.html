@@ -1466,6 +1466,10 @@ async function exportarWorkbookVentasConLogo(wb, fname, msg){
     const wbExcel = new ExcelJS.Workbook();
     await wbExcel.xlsx.load(bufferXlsx);
 
+    // ExcelJS puede interpretar algunos importes como fechas si heredan un estilo de fecha.
+    // Antes de guardar, normalizamos de forma explícita los tipos de la hoja Premium.
+    corregirFormatosVentasExcelJS(wbExcel);
+
     const wsResumen = wbExcel.getWorksheet('Resumen') || wbExcel.worksheets?.[0];
     if(wsResumen){
       // Reservar espacio visual a la derecha para el logo.
@@ -1509,6 +1513,106 @@ async function exportarWorkbookVentasConLogo(wb, fname, msg){
   }catch(err){
     console.warn('No se pudo insertar el logo en el Excel. Se descargará la versión normal.', err);
     fallback();
+  }
+}
+
+
+function corregirFormatosVentasExcelJS(wbExcel){
+  // Conserva exactamente la logica visual del archivo anterior y evita que
+  // ExcelJS convierta importes o tipos de cambio en fechas de 1900.
+  const ws = wbExcel.getWorksheet('Premium');
+  if(ws){
+    const norm = v => String(v ?? '')
+      .trim().toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/\s+/g,'');
+
+    const dateToExcelSerial = d => {
+      if(!(d instanceof Date) || Number.isNaN(d.getTime())) return d;
+      return Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000) + 25569);
+    };
+
+    const headers = {};
+    for(let c=1;c<=ws.columnCount;c++) headers[norm(ws.getCell(1,c).value)] = c;
+
+    // Fechas reales del reporte Premium original.
+    const dateHeaderNames = [
+      'fechaemision_4','fechavenc_5','fechaemicomppag_27'
+    ];
+    const dateCols = new Set(dateHeaderNames.map(h=>headers[norm(h)]).filter(Boolean));
+
+    // Columnas monetarias / bases / IGV del archivo original.
+    const amountNames = [
+      'valorfacturado_13','baseimponible_opergrav_14','descbaseimponible_15',
+      'impgnrlventas_16','revigv','variacion','descimpgnrlventas_17',
+      'imptotopexo_18','imptotopeina_19','impseleccons_20',
+      'baseimponible_arrozpilado_21','igv_arrozpilado_22','otrosconceptos_23',
+      'importetotal_24'
+    ];
+    const amountCols = new Set(amountNames.map(h=>headers[norm(h)]).filter(Boolean));
+
+    const pctCol = headers[norm('% IGV')];
+    const intCols = new Set([headers[norm('VAL_SERI')]].filter(Boolean));
+    const tcNames = [
+      'tc_26','tipo de cambio general','dif tipo de cambio general',
+      'tipo de cambio especifico','dif tipo de cambio especifico'
+    ];
+    const tcCols = new Set(tcNames.map(h=>headers[norm(h)]).filter(Boolean));
+
+    for(let c=1;c<=ws.columnCount;c++){
+      for(let r=2;r<=ws.rowCount;r++){
+        const cell=ws.getCell(r,c);
+        const v=cell.value;
+
+        if(dateCols.has(c)){
+          // Solo estas columnas pueden ser fechas.
+          cell.numFmt='dd/mm/yyyy';
+          continue;
+        }
+
+        // Si una columna NUMERICA fue reinterpretada por ExcelJS como Date,
+        // la regresamos al valor serial que representa el numero original.
+        if(amountCols.has(c) || tcCols.has(c) || intCols.has(c) || c===pctCol){
+          if(v instanceof Date){
+            cell.value = dateToExcelSerial(v);
+          }else if(v && typeof v==='object' && Object.prototype.hasOwnProperty.call(v,'formula')){
+            const out={...v};
+            if(out.result instanceof Date) out.result=dateToExcelSerial(out.result);
+            cell.value=out;
+          }
+
+          if(c===pctCol) cell.numFmt='0%';
+          else if(tcCols.has(c)) cell.numFmt='0.000';
+          else if(intCols.has(c)) cell.numFmt='0';
+          else cell.numFmt='#,##0.00';
+        }
+      }
+    }
+  }
+
+  // Hoja Tipo de cambio Sunat: A es fecha; B/C son tasas numericas.
+  const wsTC = wbExcel.getWorksheet('Tipo de cambio Sunat');
+  if(wsTC){
+    const dateToExcelSerial = d => {
+      if(!(d instanceof Date) || Number.isNaN(d.getTime())) return d;
+      return Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000) + 25569);
+    };
+
+    for(let r=2;r<=wsTC.rowCount;r++){
+      const fecha=wsTC.getCell(r,1);
+      fecha.numFmt='yyyy-mm-dd'; // igual que el Excel anterior
+
+      for(let c=2;c<=3;c++){
+        const cell=wsTC.getCell(r,c);
+        if(cell.value instanceof Date) cell.value=dateToExcelSerial(cell.value);
+        else if(cell.value && typeof cell.value==='object' && Object.prototype.hasOwnProperty.call(cell.value,'formula')){
+          const out={...cell.value};
+          if(out.result instanceof Date) out.result=dateToExcelSerial(out.result);
+          cell.value=out;
+        }
+        cell.numFmt='0.000';
+      }
+    }
   }
 }
 
@@ -2436,8 +2540,7 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
     addSheet(wb, state.pleHistorico?.rows?.length ? '07 SIRE histórico' : '06 SIRE histórico', sh, [12,14,35,10,13,16,14,10,10,14,14,14,24,34], true, {kind:'detail', statusCol:12});
 
     const fn = `Papel_de_Trabajo_Compras_${new Date().toISOString().slice(0,10)}.xlsx`;
-    XLSX.writeFile(wb, fn);
-    msg.textContent = 'Descargado: ' + fn;
+    exportarWorkbookComprasConLogo(wb, fn, msg);
   }, 30);
 });
 
@@ -2463,18 +2566,22 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
   }
 
   const palette = {
-    primary: 'A63A64',
-    primaryDark: '8B1E41',
-    primarySoft: 'F8DCE7',
-    soft: 'FCEEF3',
-    soft2: 'FFF8FB',
-    gold: 'E6C36A',
-    line: 'E8C8D5',
-    green: 'E4F3E2',
-    amber: 'FFF2CC',
-    orange: 'FCE4D6',
-    red: 'F8D7DA',
-    text: '4A2340',
+    primary: 'E6005C',
+    primaryDark: '111111',
+    primarySoft: 'FDE7F0',
+    soft: 'FFF4F8',
+    soft2: 'FAFAFA',
+    gold: 'F5A800',
+    goldSoft: 'FFF1CC',
+    line: 'E5E7EB',
+    green: 'E8F5EE',
+    greenText: '198754',
+    amber: 'FFF4D6',
+    amberText: 'B26A00',
+    orange: 'FFF1CC',
+    red: 'FDE8E8',
+    redText: 'C62828',
+    text: '333333',
     white: 'FFFFFF'
   };
 
@@ -2530,8 +2637,8 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
           const ref = XLSX.utils.encode_cell({r,c});
           ensureCell(ref);
           ws[ref].s = {
-            font:{bold:true,color:{rgb:palette.primaryDark}},
-            fill:{fgColor:{rgb:palette.primarySoft}},
+            font:{bold:true,color:{rgb:palette.white}},
+            fill:{fgColor:{rgb:palette.primary}},
             alignment:{horizontal:'left',vertical:'center'},
             border:baseBorder
           };
@@ -2546,7 +2653,7 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
         const isNum = typeof ws[ref].v === 'number';
         ws[ref].s = {
           font:{bold:isMiniHeader && c < 2, color:{rgb: c===0 ? palette.primaryDark : palette.text}},
-          fill:{fgColor:{rgb: isMiniHeader ? palette.soft : palette.white}},
+          fill:{fgColor:{rgb: isMiniHeader ? palette.goldSoft : palette.white}},
           alignment:{horizontal:isNum ? 'right' : 'left', vertical:'center', wrapText:true},
           border:baseBorder
         };
@@ -2584,7 +2691,7 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
         else if(isFlag && String(cell.v || '').trim() === 'No') fill = 'FDE9E7';
 
         cell.s = {
-          font:{bold:c === (opts.statusCol ?? -1), color:{rgb: c === (opts.statusCol ?? -1) ? palette.primaryDark : palette.text}},
+          font:{bold:c === (opts.statusCol ?? -1), color:{rgb: c === (opts.statusCol ?? -1) ? (String(currentStatus||'').toUpperCase().includes('NO ') || String(currentStatus||'').toUpperCase().includes('PENDIENTE') ? palette.redText : String(currentStatus||'').toUpperCase().includes('DIFERENCIAS') || String(currentStatus||'').toUpperCase().includes('POSIBLE') ? palette.amberText : palette.greenText) : palette.text}},
           fill:{fgColor:{rgb:fill}},
           alignment:{horizontal:isNum ? 'right' : 'left', vertical:'center', wrapText:true},
           border:baseBorder
@@ -2596,6 +2703,102 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
   }
 
   XLSX.utils.book_append_sheet(wb, ws, name);
+}
+
+
+async function exportarWorkbookComprasConLogo(wb, fname, msg){
+  const fallback = ()=>{
+    XLSX.writeFile(wb, fname);
+    if(msg) msg.textContent = 'Descargado: ' + fname;
+  };
+  try{
+    if(!window.ExcelJS) return fallback();
+    if(msg) msg.textContent = 'Insertando logo TOTAL en el papel de trabajo…';
+
+    const dataLogo = obtenerLogoTotalExcel();
+    if(!dataLogo) return fallback();
+
+    const bufferXlsx = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+    const wbExcel = new ExcelJS.Workbook();
+    await wbExcel.xlsx.load(bufferXlsx);
+    corregirFormatosComprasExcelJS(wbExcel);
+
+    const wsResumen = wbExcel.getWorksheet('01 Resumen') || wbExcel.worksheets?.[0];
+    if(wsResumen){
+      // Espacio reservado para el logo a la derecha, sin tapar el contenido.
+      for(let c=3;c<=6;c++){
+        const col=wsResumen.getColumn(c);
+        if(!col.width || col.width < 14) col.width=14;
+      }
+      wsResumen.getRow(1).height=Math.max(wsResumen.getRow(1).height||0,30);
+      wsResumen.getRow(2).height=Math.max(wsResumen.getRow(2).height||0,22);
+      wsResumen.getRow(3).height=Math.max(wsResumen.getRow(3).height||0,22);
+
+      const imageId=wbExcel.addImage({base64:dataLogo,extension:'png'});
+      wsResumen.addImage(imageId,{
+        tl:{col:2.15,row:0.15},
+        ext:{width:250,height:95},
+        editAs:'oneCell'
+      });
+      const sello=wsResumen.getCell('D6');
+      sello.value='TOTAL · PAPEL DE TRABAJO';
+      sello.font={bold:true,color:{argb:'FFE6005C'},size:10};
+      sello.alignment={horizontal:'center',vertical:'middle'};
+    }
+
+    const out=await wbExcel.xlsx.writeBuffer();
+    const blob=new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download=fname;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    if(msg) msg.textContent='Descargado con logo: '+fname;
+  }catch(err){
+    console.warn('No se pudo insertar el logo en Compras. Se descargará sin logo.',err);
+    fallback();
+  }
+}
+
+function corregirFormatosComprasExcelJS(wbExcel){
+  // Evita que ExcelJS convierta importes/TC en fechas al volver a guardar con imagen.
+  const norm=v=>String(v??'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const dateToExcelSerial=d=>{
+    if(!(d instanceof Date)||Number.isNaN(d.getTime())) return d;
+    return Math.round((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000)+25569);
+  };
+  const isDateHeader=h=>/fecha/.test(norm(h));
+  const isTcHeader=h=>/(^|\s)tc($|\s)|tipo de cambio/.test(norm(h));
+  const isAmountHeader=h=>/base|igv|total|importe|monto|cantidad/.test(norm(h));
+
+  wbExcel.worksheets.forEach(ws=>{
+    if(ws.name==='01 Resumen') return;
+    const headers=[];
+    for(let c=1;c<=ws.columnCount;c++) headers[c]=String(ws.getCell(1,c).value??'');
+    for(let c=1;c<=ws.columnCount;c++){
+      const h=headers[c];
+      const dateCol=isDateHeader(h);
+      const tcCol=isTcHeader(h);
+      const amountCol=isAmountHeader(h);
+      for(let r=2;r<=ws.rowCount;r++){
+        const cell=ws.getCell(r,c);
+        if(dateCol){
+          // Las fechas de Compras suelen ser texto; si son Date, conservar formato fecha.
+          if(cell.value instanceof Date) cell.numFmt='dd/mm/yyyy';
+          continue;
+        }
+        if(tcCol || amountCol){
+          if(cell.value instanceof Date) cell.value=dateToExcelSerial(cell.value);
+          else if(cell.value && typeof cell.value==='object' && Object.prototype.hasOwnProperty.call(cell.value,'formula')){
+            const out={...cell.value};
+            if(out.result instanceof Date) out.result=dateToExcelSerial(out.result);
+            cell.value=out;
+          }
+          cell.numFmt=tcCol?'0.000':'#,##0.00';
+        }
+      }
+    }
+  });
 }
 
 buildCardsPrincipales();iniciarBancos();iniciarHistoricoManual();cargarHistoricosCompras();
