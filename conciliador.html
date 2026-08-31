@@ -1593,7 +1593,7 @@ function normalizarFecha(value, periodoEsperado=''){
 }
 function periodoDeFecha(fecha){const f=normalizarFecha(fecha);return f?f.slice(0,7).replace('-',''):''}
 function periodoPLE(v){const d=digits(v);return d.length>=6?d.slice(0,6):''}
-function casiIgual(a,b,tol=.02){return Math.abs(toNumber(a)-toNumber(b))<=tol}
+function casiIgual(a,b,tol=.005){return Math.abs(toNumber(a)-toNumber(b))<=tol}
 function valorPorAlias(obj,aliases,fallback=''){
   const es=Object.entries(obj||{}).map(([k,v])=>[normHeader(k),v]);
   for(const a of aliases){const q=normHeader(a);const x=es.find(([k])=>k===q);if(x)return x[1]}
@@ -1636,11 +1636,15 @@ function parseSIRERows(rows){
       biDNG:toNumber(valorPorAlias(x,['BI Gravado DNG'])), igvDNG:toNumber(valorPorAlias(x,['IGV / IPM DNG','IGV DNG'])),
       totalCP:toNumber(valorPorAlias(x,['Importe Total','Total CP','Importe total de la operación','Total'])), raw:x
     };
+    // IMPORTANTE: el campo 'Periodo' del consolidado SIRE NO es confiable para interpretar la fecha.
+    // En la fuente existen filas con Periodo 202601 y Fecha de emisión de meses posteriores.
+    // Por eso la fecha se normaliza únicamente desde 'Fecha de emisión' y el periodo operativo
+    // se deriva de esa fecha real.
     const fechaRaw=valorPorAlias(x,['Fecha de emisión','Fecha Emisión','Fecha Emision']);
-    const periodoSireFuente=periodoPLE(r.periodo);
-    r.fechaEmision=normalizarFecha(fechaRaw,periodoSireFuente);
+    r.fechaEmision=normalizarFecha(fechaRaw);
     r.baseImponible=r.biGravadoDG+r.biDGNG+r.biDNG; r.igvTotal=r.igvDG+r.igvDGNG+r.igvDNG;
-    r.periodoEmision=periodoDeFecha(r.fechaEmision); r.periodoSIRE=periodoSireFuente||r.periodoEmision;
+    r.periodoEmision=periodoDeFecha(r.fechaEmision);
+    r.periodoSIRE=r.periodoEmision || periodoPLE(r.periodo);
     r.key=buildKey(r.rucProveedor,r.tipoCP,r.serie,r.nroCP); return r;
   }).filter(r=>r.rucProveedor&&r.tipoCP&&r.serie&&r.nroCP);
 }
