@@ -455,6 +455,326 @@ table.report th,table.detail th{
   border-radius:999px;
 }
 
+
+
+/* Tarjetas visuales para Base 2 automática y respaldo manual */
+.source-card{
+  position:relative;
+  overflow:hidden;
+  border-radius:26px;
+  padding:26px;
+  box-shadow:0 18px 40px rgba(32,41,61,.06);
+  transition:transform .22s ease, box-shadow .22s ease;
+  isolation:isolate;
+}
+.source-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 24px 50px rgba(32,41,61,.09);
+}
+.source-card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.60),rgba(255,255,255,.08));
+  pointer-events:none;
+  z-index:-1;
+}
+.source-card::after{
+  content:"";
+  position:absolute;
+  right:-58px;
+  top:-58px;
+  width:190px;
+  height:190px;
+  border-radius:50%;
+  opacity:.70;
+  filter:blur(1px);
+  z-index:-1;
+}
+.source-card.auto::after{
+  background:radial-gradient(circle at center, rgba(176,210,255,.95) 0%, rgba(176,210,255,.30) 42%, rgba(176,210,255,0) 72%);
+}
+.source-card.manual::after{
+  background:radial-gradient(circle at center, rgba(255,216,138,.95) 0%, rgba(255,216,138,.34) 42%, rgba(255,216,138,0) 72%);
+}
+.source-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:18px;
+}
+.source-title-wrap{
+  display:flex;
+  align-items:flex-start;
+  gap:18px;
+  min-width:0;
+}
+.source-step{
+  position:relative;
+  width:78px;
+  height:78px;
+  border-radius:24px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+  font-weight:900;
+  line-height:1;
+  flex:0 0 78px;
+  box-shadow:0 14px 30px rgba(33,77,156,.16);
+  border:1px solid rgba(255,255,255,.55);
+}
+.source-step::after{
+  content:"";
+  position:absolute;
+  inset:9px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.38);
+}
+.source-card.auto .source-step{
+  background:linear-gradient(135deg,#326FE4 0%, #7DAEFF 100%);
+  color:#fff;
+}
+.source-card.manual .source-step{
+  background:linear-gradient(135deg,#FFB647 0%, #FFD98B 100%);
+  color:#6C4500;
+  box-shadow:0 14px 30px rgba(175,114,0,.16);
+}
+.source-kicker{
+  display:inline-block;
+  margin:4px 0 6px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  background:rgba(255,255,255,.66);
+}
+.source-card.auto .source-kicker{color:#3566B0;border:1px solid #D9E7FF;}
+.source-card.manual .source-kicker{color:#9A6700;border:1px solid #F2DDB3;}
+.source-name{
+  margin:0 0 8px;
+  font-size:28px;
+  line-height:1.04;
+  font-weight:900;
+  letter-spacing:-.02em;
+  color:#1D2433;
+}
+.source-desc{
+  margin:0;
+  color:#667085;
+  font-size:15px;
+  line-height:1.62;
+  max-width:640px;
+}
+.source-chip{
+  align-self:flex-start;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:38px;
+  padding:10px 16px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  background:rgba(255,255,255,.75);
+  box-shadow:0 10px 20px rgba(31,41,55,.05);
+}
+.source-card.auto .source-chip{color:#3566B0;border:1px solid #CFE0FF;}
+.source-card.manual .source-chip{color:#946100;border:1px solid #F0D6A2;}
+.source-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  margin:18px 0 16px;
+}
+.source-mini{
+  position:relative;
+  border-radius:18px;
+  padding:16px 16px 15px;
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(229,231,235,.95);
+  box-shadow:0 8px 22px rgba(24,32,56,.04);
+}
+.source-mini::before{
+  content:"";
+  position:absolute;
+  left:16px;
+  top:0;
+  width:42px;
+  height:4px;
+  border-radius:999px;
+}
+.source-card.auto .source-mini::before{background:linear-gradient(90deg,#4B7FE8,#9DC2FF);}
+.source-card.manual .source-mini::before{background:linear-gradient(90deg,#FFB44F,#FFE09E);}
+.source-mini b{
+  display:block;
+  margin:8px 0 7px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#8A7D84;
+}
+.source-mini span{
+  display:block;
+  color:#273142;
+  font-size:14px;
+  font-weight:700;
+  line-height:1.46;
+}
+.source-note{
+  display:flex;
+  align-items:flex-start;
+  gap:13px;
+  margin-top:6px;
+  padding:16px 18px;
+  border-radius:20px;
+  border:1px solid transparent;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65);
+}
+.source-card.auto .source-note{
+  background:linear-gradient(135deg,#F0F7FF 0%,#FFFFFF 100%);
+  border-color:#D7E7FF;
+}
+.source-card.manual .source-note{
+  background:linear-gradient(135deg,#FFF7E8 0%,#FFFFFF 100%);
+  border-color:#F1DFBB;
+}
+.source-note-icon{
+  width:38px;
+  height:38px;
+  flex:0 0 38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:13px;
+  font-weight:900;
+  font-size:20px;
+  box-shadow:0 8px 18px rgba(31,41,55,.08);
+}
+.source-card.auto .source-note-icon{background:#DCEBFF;color:#25569F;}
+.source-card.manual .source-note-icon{background:#FFE5B3;color:#8D5B00;}
+.source-note strong{
+  display:block;
+  margin:1px 0 4px;
+  font-size:16px;
+  color:#1D2433;
+}
+.source-note p{
+  margin:0;
+  color:#5F6B7C;
+  font-size:14px;
+  line-height:1.55;
+}
+.source-drop{
+  margin-top:16px;
+  border-radius:18px;
+  min-height:78px;
+  font-size:16px;
+  font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+}
+.source-status{
+  margin-top:16px;
+  border-radius:16px;
+  padding:14px 16px;
+  background:rgba(255,255,255,.76);
+  border:1px solid rgba(224,229,236,.95);
+  box-shadow:0 8px 18px rgba(24,32,56,.04);
+  color:#5F6878;
+  font-size:13px;
+  line-height:1.55;
+}
+
+/* Estado compacto y dinámico del SIRE automático */
+#cardSIREC.source-card{
+  padding:20px 22px;
+  border-radius:20px;
+  min-height:0 !important;
+}
+#cardSIREC .source-head{margin-bottom:10px;align-items:center;}
+#cardSIREC .source-title-wrap{gap:13px;align-items:center;}
+#cardSIREC .source-step{
+  width:52px;height:52px;flex-basis:52px;border-radius:16px;
+  font-size:25px;box-shadow:0 8px 18px rgba(33,77,156,.13);
+}
+#cardSIREC .source-step::after{inset:6px;border-radius:11px;}
+#cardSIREC .source-kicker{margin:0 0 3px;padding:4px 8px;font-size:9px;}
+#cardSIREC .source-name{font-size:20px;margin:0 0 3px;}
+#cardSIREC .source-desc{font-size:12.8px;line-height:1.45;}
+#cardSIREC .source-chip{min-height:30px;padding:7px 11px;font-size:9px;}
+#cardSIREC .source-grid{display:none;}
+#cardSIREC .source-note{display:none;}
+.sire-live-status{
+  display:flex;align-items:center;gap:12px;margin-top:13px;
+  padding:12px 14px;border-radius:14px;border:1px solid #E3E8EF;
+  background:#fff;transition:all .22s ease;
+}
+.sire-live-status .sire-dot{
+  width:11px;height:11px;border-radius:50%;flex:0 0 11px;
+  box-shadow:0 0 0 5px rgba(148,163,184,.12);
+}
+.sire-live-status .sire-main{min-width:0;flex:1;}
+.sire-live-status .sire-title{font-size:13.5px;font-weight:800;line-height:1.25;color:#273142;}
+.sire-live-status .sire-detail{font-size:11.8px;line-height:1.4;color:#667085;margin-top:2px;}
+.sire-live-status .sire-count{
+  font-size:19px;font-weight:900;letter-spacing:-.02em;white-space:nowrap;color:#273142;
+}
+.sire-live-status.ok{background:#F2FBF6;border-color:#B9E6CA;}
+.sire-live-status.ok .sire-dot{background:#27AE60;box-shadow:0 0 0 5px rgba(39,174,96,.12);}
+.sire-live-status.ok .sire-title,.sire-live-status.ok .sire-count{color:#17723E;}
+.sire-live-status.error{background:#FFF5F5;border-color:#F2C3C3;}
+.sire-live-status.error .sire-dot{background:#D94C4C;box-shadow:0 0 0 5px rgba(217,76,76,.10);}
+.sire-live-status.error .sire-title,.sire-live-status.error .sire-count{color:#A62F2F;}
+.sire-live-status.loading{background:#FFF9EE;border-color:#F0D7A7;}
+.sire-live-status.loading .sire-dot{background:#D79A2B;box-shadow:0 0 0 5px rgba(215,154,43,.11);animation:sirePulse 1.2s ease-in-out infinite;}
+.sire-live-status.loading .sire-title{color:#8A5A00;}
+.sire-live-status.warning{background:#FFF9EE;border-color:#F0D7A7;}
+.sire-live-status.warning .sire-dot{background:#D79A2B;box-shadow:0 0 0 5px rgba(215,154,43,.11);}
+.sire-live-status.warning .sire-title,.sire-live-status.warning .sire-count{color:#8A5A00;}
+@keyframes sirePulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.72);opacity:.55}}
+.sire-update-meta{
+  display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;font-size:10.8px;color:#748091;
+}
+.sire-update-meta span{background:rgba(255,255,255,.72);border:1px solid #E5EAF0;border-radius:999px;padding:5px 8px;}
+#cardSIREManualC.source-card{padding:18px 20px;border-radius:20px;}
+#cardSIREManualC .source-step{width:48px;height:48px;flex-basis:48px;border-radius:15px;font-size:23px;}
+#cardSIREManualC .source-step::after{inset:6px;border-radius:10px;}
+#cardSIREManualC .source-name{font-size:19px;}
+#cardSIREManualC .source-desc{font-size:12.5px;line-height:1.45;}
+#cardSIREManualC .source-grid{display:none;}
+#cardSIREManualC .source-note{padding:11px 13px;border-radius:14px;margin-top:9px;}
+#cardSIREManualC .source-note-icon{width:30px;height:30px;flex-basis:30px;border-radius:10px;font-size:16px;}
+#cardSIREManualC .source-note strong{font-size:13.5px;}
+#cardSIREManualC .source-note p{font-size:12px;}
+#cardSIREManualC .source-drop{min-height:54px;border-radius:13px;font-size:13px;margin-top:10px;padding:10px;}
+#cardSIREManualC .source-status{margin-top:9px;padding:9px 11px;border-radius:12px;font-size:11.5px;}
+
+@media(max-width:980px){
+  .source-grid{grid-template-columns:1fr;}
+}
+@media(max-width:820px){
+  .source-head{flex-direction:column;}
+  .source-chip{align-self:flex-start;}
+  .source-name{font-size:24px;}
+  .source-step{width:70px;height:70px;font-size:32px;}
+}
+@media(max-width:560px){
+  .source-card{padding:20px 18px;}
+  .source-title-wrap{gap:14px;}
+  .source-step{width:62px;height:62px;font-size:28px;border-radius:20px;flex-basis:62px;}
+  .source-step::after{inset:7px;border-radius:14px;}
+  .source-name{font-size:21px;}
+  .source-desc{font-size:14px;}
+  .source-drop{font-size:14px;min-height:72px;}
+}
+
 /* Separación visual del respaldo manual, sin alterar su comportamiento */
 #viewCompras #cardSireManualC,
 #viewCompras [id*="ManualC"]{
@@ -612,14 +932,31 @@ table.report th,table.detail th{
     <div class="footnote" id="estadoTCC">Sin cargar.</div>
   </div>
 
-  <div class="card" id="cardSIREManualC" style="margin-bottom:24px;">
-    <div class="card-label">Respaldo manual · opcional</div>
-    <div class="card-title">Cargar SIRE CONTA manualmente</div>
-    <p class="card-hint">Úsalo solo si Power Automate no actualiza o si necesitas trabajar con una versión más reciente. El archivo manual reemplaza temporalmente la copia automática/caché y queda guardado como última copia válida.</p>
-    <label class="drop" id="dropSIREManualC">Haz clic o arrastra SIRE CONTA.xlsx aquí
+  <div class="card source-card manual" id="cardSIREManualC" style="margin-bottom:24px;border-color:#F1D8AA;background:linear-gradient(180deg,#FFFDF7 0%,#FFF9ED 100%);">
+    <div class="source-head">
+      <div class="source-title-wrap">
+        <div class="source-step">3</div>
+        <div>
+          <div class="source-kicker">Respaldo manual · usar solo si falla la automática</div>
+          <h3 class="source-name">SIRE CONTA manual</h3>
+          <p class="source-desc">Este campo es un <strong>plan B</strong>. Solo se usa cuando la base automática no cargó, está desactualizada o necesitas reemplazarla temporalmente por una versión más reciente.</p>
+        </div>
+      </div>
+      <div class="source-chip">Uso excepcional</div>
+    </div>
+    <div class="source-grid">
+      <div class="source-mini"><b>Cuándo usarlo</b><span>Si la Base 2 no se actualizó o está fallando.</span></div>
+      <div class="source-mini"><b>Qué hace</b><span>Reemplaza temporalmente la copia automática/caché.</span></div>
+      <div class="source-mini"><b>Importante</b><span>No se sube si la base automática ya está correcta.</span></div>
+    </div>
+    <div class="source-note">
+      <div class="source-note-icon">!</div>
+      <div><strong>No lo subas por costumbre</strong><p>Si arriba ya ves cantidad de comprobantes y estado actualizado, <strong>este paso se omite</strong>.</p></div>
+    </div>
+    <label class="drop source-drop" id="dropSIREManualC" style="border-color:#E9D3AC;background:rgba(255,255,255,.78);">Haz clic o arrastra SIRE CONTA.xlsx aquí
       <input type="file" id="fileSIREManualC" accept=".xlsx,.xls,.xlsb" />
     </label>
-    <div class="footnote" id="estadoSIREManualC">Sin cargar. Si la actualización automática funciona, no necesitas usar este respaldo.</div>
+    <div class="source-status footnote" id="estadoSIREManualC">Sin cargar. Si la actualización automática funciona, este respaldo <strong>NO se usa</strong>.</div>
   </div>
 
   <div class="card" id="cardTiposC" style="display:none;">
@@ -631,7 +968,7 @@ table.report th,table.detail th{
   <div class="actions">
     <button class="primary" id="btnProcesarC" disabled>Conciliar</button>
     <button class="ghost" id="btnActualizarHistoricosC">Actualizar SIRE</button>
-    <span class="status-msg" id="statusMsgC">Sube el PLE del periodo. “Actualizar SIRE” relee todo el SIRE mediante Office Script y reemplaza la copia completa. Detecta altas, bajas y modificaciones. Si falla, usa el Respaldo manual SIRE.</span>
+    <span class="status-msg" id="statusMsgC">Sube el PLE del periodo. “Actualizar SIRE” relee todo el SIRE mediante Office Script y reemplaza la copia completa. Detecta altas, bajas y modificaciones. <strong>Solo si falla la carga automática, usa el Respaldo manual SIRE.</strong></span>
   </div>
 
   <section id="resultsC" class="results-section">
@@ -2374,6 +2711,33 @@ async function leerCacheSIRE(){
 async function guardarCacheSIRE(rows,totalFuente=null){
   try{const db=await abrirCacheSIRE();await new Promise((resolve,reject)=>{const tx=db.transaction(SIRE_CACHE_STORE,'readwrite');tx.objectStore(SIRE_CACHE_STORE).put({rows,totalFuente:totalFuente??rows.length,guardadoEn:Date.now()},SIRE_CACHE_KEY);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);})}catch(e){console.warn('No se pudo guardar caché SIRE',e)}
 }
+function pintarEstadoSIRE(tipo,{cantidad=null,titulo='',detalle='',anterior=null,nuevo=null,segundos=null}={}){
+  const box=document.getElementById('estadoSIREVisualC');
+  const ttl=document.querySelector('#estadoSIREVisualC .sire-title');
+  const det=document.getElementById('estadoSIREDetalleC');
+  const cnt=document.getElementById('estadoSIRECantidadC');
+  const meta=document.getElementById('estadoSIREMetaC');
+  if(!box)return;
+  box.className='sire-live-status '+(tipo||'loading');
+  if(ttl)ttl.textContent=titulo||'';
+  if(det)det.textContent=detalle||'';
+  if(cnt)cnt.textContent=Number.isFinite(Number(cantidad))?Number(cantidad).toLocaleString('es-PE'):'—';
+  if(meta){
+    const items=[];
+    if(Number.isFinite(Number(anterior))&&Number.isFinite(Number(nuevo))){
+      const a=Number(anterior),n=Number(nuevo),d=n-a;
+      const cambio=d===0?'Sin cambio en cantidad':`${a.toLocaleString('es-PE')} → ${n.toLocaleString('es-PE')} (${d>0?'+':''}${d.toLocaleString('es-PE')})`;
+      items.push(`<span>${cambio}</span>`);
+    }
+    if(segundos!==null&&segundos!==undefined)items.push(`<span>${segundos}s</span>`);
+    if(tipo==='ok')items.push('<span>✓ No necesitas cargar SIRE manual</span>');
+    else if(tipo==='error')items.push('<span>Usa el respaldo manual si no hay copia válida</span>');
+    else if(tipo==='warning')items.push('<span>Se mantiene la última copia válida</span>');
+    else items.push('<span>Actualizando base completa…</span>');
+    meta.innerHTML=items.join('');
+  }
+}
+
 function activarSIRE(rows,origen,fechaCache=null,totalFuente=null){
   if(!Array.isArray(rows)||!rows.length)return false;
   // Rehidrata también copias antiguas guardadas con la fecha día/mes mal interpretada.
@@ -2393,6 +2757,7 @@ function activarSIRE(rows,origen,fechaCache=null,totalFuente=null){
     const cuando=fechaCache?new Date(fechaCache).toLocaleString('es-PE'):'';
     el.textContent=`${rows.length.toLocaleString('es-PE')} comprobantes disponibles — ${origen}${cuando?' · '+cuando:''} · intentando actualización real…`;
   }
+  pintarEstadoSIRE('loading',{cantidad:rows.length,titulo:'Copia disponible · buscando actualización',detalle:`${origen}${fechaCache?' · '+new Date(fechaCache).toLocaleString('es-PE'):''}`});
   actualizarEstado();
   return true;
 }
@@ -2459,8 +2824,10 @@ async function actualizarSIRERemoto({silencioso=false,manual=false}={}){
   const el=document.getElementById('estadoSIREC');
   const btn=document.getElementById('btnActualizarHistoricosC');
   const habiaSIRE=!!state.sire?.rows?.length;
+  const cantidadAnterior=state.sire?.rows?.length||0;
   if(btn){btn.disabled=true;btn.textContent='Actualizando SIRE…';}
   if(el&&!silencioso)el.textContent='Consultando SIRE completo con Office Script…';
+  pintarEstadoSIRE('loading',{cantidad:cantidadAnterior||null,titulo:'Actualizando SIRE…',detalle:'Leyendo la base completa para detectar altas, bajas y cambios.'});
   const inicio=performance.now();
   try{
     // REFRESCO COMPLETO: desde=0 para detectar altas, bajas y modificaciones.
@@ -2484,6 +2851,7 @@ async function actualizarSIRERemoto({silencioso=false,manual=false}={}){
     if(el){
       el.textContent=`${filas.length.toLocaleString('es-PE')} comprobantes disponibles · SIRE actualizado completamente · altas, bajas y cambios sincronizados · ${segundos}s`;
     }
+    pintarEstadoSIRE('ok',{cantidad:filas.length,titulo:'SIRE actualizado correctamente',detalle:'Base completa sincronizada · altas, bajas y modificaciones incluidas.',anterior:cantidadAnterior,nuevo:filas.length,segundos});
     actualizarEstado();
     return true;
   }catch(e){
@@ -2492,6 +2860,11 @@ async function actualizarSIRERemoto({silencioso=false,manual=false}={}){
     if(el){
       if(habiaSIRE)el.textContent=`${state.sire.rows.length.toLocaleString('es-PE')} comprobantes disponibles · No se pudo actualizar el SIRE. Se mantiene la última copia válida. · Detalle: ${e.message||e}`;
       else el.textContent=state.historicosError+' · usa el Respaldo manual SIRE.';
+    }
+    if(habiaSIRE){
+      pintarEstadoSIRE('warning',{cantidad:state.sire.rows.length,titulo:'No se pudo refrescar ahora',detalle:'Se mantiene la última copia válida. Puedes volver a intentar “Actualizar SIRE”.'});
+    }else{
+      pintarEstadoSIRE('error',{cantidad:null,titulo:'SIRE no disponible',detalle:'La actualización automática falló y no existe una copia válida. Usa el respaldo manual.'});
     }
     actualizarEstado();
     return false;
@@ -2506,6 +2879,7 @@ async function cargarHistoricosCompras(){
 
   // 1) Abre primero la copia comprimida incluida en el HTML. No depende de Power Automate.
   if(el) el.textContent='Abriendo copia local del SIRE…';
+  pintarEstadoSIRE('loading',{cantidad:null,titulo:'Preparando SIRE…',detalle:'Abriendo la última copia disponible.'});
   const inicial=await obtenerSIREInicialComprimido();
   if(inicial.length){
     activarSIRE(inicial,'copia inicial SIRE');
@@ -2536,8 +2910,15 @@ function buildCardsPrincipales(){
   document.getElementById('cardsPrincipalesC').innerHTML=`
     <div class="card" id="cardRCEC"><div class="card-label">Base 1 · obligatoria</div><div class="card-title">PLE 8.1 Sprint del periodo</div>
       <p class="card-hint">Registro contable que se validará contra SUNAT.</p><label class="drop" id="dropRCEC">Haz clic o arrastra el TXT aquí<input type="file" id="fileRCEC" accept=".txt" /></label><div class="footnote" id="estadoRCEC">Sin cargar.</div></div>
-    <div class="card" id="cardSIREC"><div class="card-label">Base 2 · automática</div><div class="card-title">Propuesta SIRE histórica</div>
-      <p class="card-hint">Fuente principal SUNAT. Se consulta desde OneDrive y permite buscar documentos emitidos en meses anteriores.</p><div class="footnote" id="estadoSIREC">Pendiente de conexión.</div></div>
+    <div class="card source-card auto" id="cardSIREC" style="border-color:#D3E1FF;background:linear-gradient(180deg,#F8FBFF 0%,#EEF5FF 100%);">
+      <div class="source-head">
+        <div class="source-title-wrap"><div class="source-step">2</div><div><div class="source-kicker">Base principal · automática</div><h3 class="source-name">SIRE histórica</h3><p class="source-desc">Se actualiza desde OneDrive y conserva la última copia válida.</p></div></div>
+        <div class="source-chip">Automática</div>
+      </div>
+      <div class="sire-live-status loading" id="estadoSIREVisualC"><span class="sire-dot"></span><div class="sire-main"><div class="sire-title">Conectando con SIRE…</div><div class="sire-detail" id="estadoSIREDetalleC">Buscando la versión más reciente.</div></div><div class="sire-count" id="estadoSIRECantidadC">—</div></div>
+      <div class="sire-update-meta" id="estadoSIREMetaC"><span>Actualización automática</span><span>No cargues el manual si queda en verde</span></div>
+      <div class="source-status footnote" id="estadoSIREC" style="display:none;">Pendiente de conexión.</div>
+    </div>
     <div class="card"><div class="card-label">Resultado esperado</div><div class="card-title">Papel de trabajo Flavio</div>
       <p class="card-hint">PLE→SIRE, SIRE→PLE, validación CP, periodos anteriores y alertas de bancos en un solo Excel.</p><div class="footnote">Sin modificar automáticamente la contabilidad.</div></div>`;
   wireDrop('dropRCEC','fileRCEC',cargarPLEActual);
@@ -2613,6 +2994,7 @@ function iniciarHistoricoManual(){
         document.getElementById('cardSIREC')?.classList.add('ready');
         const estadoPrincipal=document.getElementById('estadoSIREC');
         if(estadoPrincipal) estadoPrincipal.textContent=`${mejores.length.toLocaleString('es-PE')} comprobantes disponibles — USANDO SIRE MANUAL · ${file.name}`;
+        pintarEstadoSIRE('warning',{cantidad:mejores.length,titulo:'Usando respaldo manual',detalle:`${file.name} · hoja ${hojaUsada}. La actualización automática puede reemplazarlo cuando vuelva a funcionar.`});
         if(estado) estado.textContent=`✓ ${mejores.length.toLocaleString('es-PE')} comprobantes cargados · hoja: ${hojaUsada} · este SIRE tiene prioridad`;
         document.getElementById('cardSIREManualC')?.classList.add('ready');
         marcarDrop('dropSIREManualC',file);
