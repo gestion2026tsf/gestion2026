@@ -2262,8 +2262,6 @@ function parsePLE(text){
       biGravadoDG:toNumber(f[13]),igvDG:toNumber(f[14]),biDGNG:toNumber(f[15]),igvDGNG:toNumber(f[16]),biDNG:toNumber(f[17]),igvDNG:toNumber(f[18]),
       valorAdqNG:toNumber(f[19]),isc:toNumber(f[20]),icbper:toNumber(f[21]),otros:toNumber(f[22]),totalCP:toNumber(f[23]),
       moneda:String(f[24]||'').trim().toUpperCase(),tipoCambio:toNumber(f[25]),
-      // Campo 27 del PLE 8.1: fecha del comprobante original que se modifica.
-      // Para notas de credito/debito (07/08), esta es la fecha que define el TC SUNAT.
       fechaOrigen:String(f[26]||'').trim(),raw:line
     };
     r.fechaNorm=normalizarFecha(r.fechaEmision); r.periodoEmision=periodoDeFecha(r.fechaEmision); r.periodoRegistro=periodoPLE(r.periodo);
@@ -2663,12 +2661,12 @@ function iniciarValidacionSunat(){
 }
 function iniciarTC(){wireDrop('dropTCC','fileTCC',cargarTC);['colFechaTCC','colCompraTCC','colVentaTCC'].forEach(id=>document.getElementById(id).addEventListener('change',construirMapaTC))}
 function cargarTC(file){const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});const data=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:''});let hi=data.findIndex(r=>r.some(c=>/fecha/i.test(String(c)))&&r.some(c=>/compra|venta/i.test(String(c))));if(hi<0)hi=0;state.tc.headers=data[hi].map(x=>String(x??'').trim());state.tc.rows=data.slice(hi+1).filter(r=>r.some(v=>String(v??'').trim()));const opts=state.tc.headers.map((h,i)=>`<option value="${i}">${esc(h||'Col '+(i+1))}</option>`).join('');['colFechaTCC','colCompraTCC','colVentaTCC'].forEach(id=>document.getElementById(id).innerHTML=opts);const nh=state.tc.headers.map(normHeader);document.getElementById('colFechaTCC').value=Math.max(0,nh.findIndex(h=>h.includes('fecha')));document.getElementById('colCompraTCC').value=Math.max(0,nh.findIndex(h=>h.includes('compra')));let vi=nh.findIndex(h=>h.includes('venta'));document.getElementById('colVentaTCC').value=vi<0?Math.min(2,nh.length-1):vi;document.getElementById('configTCC').style.display='flex';document.getElementById('cardTCC').classList.add('ready');marcarDrop('dropTCC',file);construirMapaTC()}catch(err){console.error(err);document.getElementById('estadoTCC').textContent='No se pudo leer TC.'}};rd.readAsArrayBuffer(file)}
-function normalizarValorTC(v){
-  const n=toNumber(v);
-  if(!Number.isFinite(n)||n===0)return 0;
+function normalizarValorTCCompras(valor){
+  const n=toNumber(valor);
+  if(!Number.isFinite(n) || n===0) return 0;
   return Math.abs(n)>=100 ? n/1000 : n;
 }
-function construirMapaTC(){const tc=state.tc;if(!tc.rows.length)return;tc.fechaCol=+document.getElementById('colFechaTCC').value;tc.compraCol=+document.getElementById('colCompraTCC').value;tc.ventaCol=+document.getElementById('colVentaTCC').value;tc.mapa=new Map();tc.rows.forEach(r=>{const f=normalizarFecha(r[tc.fechaCol]),v=normalizarValorTC(r[tc.ventaCol]),c=normalizarValorTC(r[tc.compraCol]);if(f&&v)tc.mapa.set(f,{compra:c,venta:v})});document.getElementById('estadoTCC').textContent=`${tc.mapa.size.toLocaleString('es-PE')} fechas disponibles.`}
+function construirMapaTC(){const tc=state.tc;if(!tc.rows.length)return;tc.fechaCol=+document.getElementById('colFechaTCC').value;tc.compraCol=+document.getElementById('colCompraTCC').value;tc.ventaCol=+document.getElementById('colVentaTCC').value;tc.mapa=new Map();tc.rows.forEach(r=>{const f=normalizarFecha(r[tc.fechaCol]),v=normalizarValorTCCompras(r[tc.ventaCol]),c=normalizarValorTCCompras(r[tc.compraCol]);if(f&&v)tc.mapa.set(f,{compra:c,venta:v})});document.getElementById('estadoTCC').textContent=`${tc.mapa.size.toLocaleString('es-PE')} fechas disponibles.`}
 function tcVenta(fecha){const x=state.tc.mapa.get(normalizarFecha(fecha));return x?x.venta:null}
 
 function nombreCanonico(v){
@@ -2869,16 +2867,15 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
     r.pleResultado.forEach(x=>{
       const ss = x.sireMatch || {};
       const v = x.comparacion?.validaciones || {};
-      const esNotaTC = x.tipoCP === '07' || x.tipoCP === '08';
-      const fechaOrigenTC = normalizarFecha(x.fechaOrigen || '');
-      const fechaUsadaTC = esNotaTC ? fechaOrigenTC : normalizarFecha(x.fechaEmision || '');
-      let tcSunatValidado = '';
+      const esNota0708 = x.tipoCP === '07' || x.tipoCP === '08';
+      const fechaUsadaTC = esNota0708 ? x.fechaOrigen : x.fechaEmision;
+      let tcSunatValidado = null;
       if(x.moneda === 'PEN') tcSunatValidado = 1;
-      else if(x.moneda === 'USD' && fechaUsadaTC) tcSunatValidado = tcVenta(fechaUsadaTC) ?? '';
-      const difTcValidado = tcSunatValidado === '' ? '' : Number((toNumber(x.tipoCambio) - Number(tcSunatValidado)).toFixed(3));
+      else if(x.moneda === 'USD' && fechaUsadaTC) tcSunatValidado = tcVenta(fechaUsadaTC);
+      const difTCValidado = tcSunatValidado == null ? '' : Math.round((Number(x.tipoCambio)-Number(tcSunatValidado))*1000)/1000;
       a.push([
         x.estado, x.accion, x.duplicadoPLE?'Sí':'No', x.duplicadoSIRE?'Sí':'No', x.registradoAntes?'Sí':'No', x.historicoMatch?.periodoRegistro || '', x.periodoRegistro, x.rucProveedor, x.razonSocial, x.tipoCP, x.serie, padNum(x.nroCP),
-        x.fechaEmision, x.moneda, x.tipoCambio, fechaOrigenTC, fechaUsadaTC, tcSunatValidado, difTcValidado, x.baseImponible, x.igvTotal, x.totalCP,
+        x.fechaEmision, x.moneda, x.tipoCambio, esNota0708 ? x.fechaOrigen : '', fechaUsadaTC, tcSunatValidado == null ? '' : tcSunatValidado, difTCValidado, x.baseImponible, x.igvTotal, x.totalCP,
         ss.rucProveedor || '', ss.razonSocial || '', ss.tipoCP || '', ss.serie || '', ss.nroCP ? padNum(ss.nroCP) : '',
         ss.fechaEmision || '', ss.moneda || '', ss.tipoCambio || '', ss.baseImponible ?? '', ss.igvTotal ?? '', ss.totalCP ?? '',
         marca(v.ruc), marca(v.proveedor), marca(v.tipo), marca(v.serie), marca(v.correlativo), marca(v.fecha),
@@ -2886,25 +2883,7 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
         x.comparacion?.diferencias?.join(', ') || '', x.sugerenciaBanco?.keySugerida || '', x.motivo
       ]);
     });
-    addSheet(wb, '02 PLE vs SIRE', a, [22,22,14,14,18,14,14,14,34,10,10,15,13,10,10,16,16,18,16,13,13,13,14,34,10,10,15,13,10,10,13,13,13,12,16,12,12,16,12,12,12,12,12,12,28,24,34], true, {kind:'detail', statusCol:0});
-
-    // COMPRAS: destacar en azul las 4 columnas nuevas de validacion TC.
-    const wsPLEvsSIRE = wb.Sheets['02 PLE vs SIRE'];
-    const tcColsCompras = [15,16,17,18]; // P,Q,R,S (base cero)
-    const azulHeader = '2F75B5';
-    const azulSuave = 'DDEBF7';
-    const azulTexto = '17365D';
-    tcColsCompras.forEach(c=>{
-      for(let rr=0; rr<a.length; rr++){
-        const ref=XLSX.utils.encode_cell({r:rr,c});
-        if(!wsPLEvsSIRE[ref]) wsPLEvsSIRE[ref]={t:'s',v:''};
-        wsPLEvsSIRE[ref].s = wsPLEvsSIRE[ref].s || {};
-        wsPLEvsSIRE[ref].s.fill={patternType:'solid',fgColor:{rgb:rr===0?azulHeader:azulSuave}};
-        wsPLEvsSIRE[ref].s.font={...(wsPLEvsSIRE[ref].s.font||{}),bold:rr===0,color:{rgb:rr===0?'FFFFFF':azulTexto}};
-        wsPLEvsSIRE[ref].s.alignment={...(wsPLEvsSIRE[ref].s.alignment||{}),horizontal:rr===0?'center':'right',vertical:'center'};
-        if(rr>0 && (c===17 || c===18)) wsPLEvsSIRE[ref].z='0.000';
-      }
-    });
+    addSheet(wb, '02 PLE vs SIRE', a, [22,22,14,14,18,14,14,14,34,10,10,15,13,10,10,16,16,16,16,13,13,13,14,34,10,10,15,13,10,10,13,13,13,12,16,12,12,16,12,12,12,12,12,12,28,24,34], true, {kind:'detail', statusCol:0, blueCols:[15,16,17,18]});
 
     const p = [['Periodo SIRE','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Base','IGV','Total','Estado','Motivo']];
     pend.forEach(x=>p.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));
@@ -2978,7 +2957,9 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
     red: 'FDE8E8',
     redText: 'C62828',
     text: '333333',
-    white: 'FFFFFF'
+    white: 'FFFFFF',
+    blue: '4472C4',
+    blueSoft: 'D9EAF7'
   };
 
   function normalizeText(v){ return String(v ?? '').trim().toLowerCase(); }
@@ -3094,6 +3075,25 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
         };
         if(isDate) cell.z = 'dd/mm/yyyy';
         else if(isNumericHeader(header)) cell.z = /tc|tipo de cambio/.test(normalizeText(header)) ? '#,##0.000' : '#,##0.00';
+      }
+    }
+  }
+
+  // Columnas de validación TC 07/08 de COMPRAS: azul para diferenciarlas.
+  if(kind !== 'summary' && Array.isArray(opts.blueCols) && opts.blueCols.length){
+    const blueCols = new Set(opts.blueCols);
+    for(const c of blueCols){
+      if(c < 0 || c >= totalCols) continue;
+      for(let r=0; r<aoa.length; r++){
+        const ref = XLSX.utils.encode_cell({r,c});
+        ensureCell(ref);
+        const cell = ws[ref];
+        cell.s = cell.s || {};
+        cell.s.fill = {fgColor:{rgb:r===0 ? palette.blue : palette.blueSoft}};
+        if(r===0){
+          cell.s.font = {bold:true,color:{rgb:palette.white},sz:11};
+          cell.s.alignment = {horizontal:'center',vertical:'center',wrapText:true};
+        }
       }
     }
   }
