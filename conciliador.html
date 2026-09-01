@@ -1384,6 +1384,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     const premiumHeaders = [];
     let valSeriOutIdx = -1, revIgvOutIdx = -1, pctIgvOutIdx = -1, variacionOutIdx = -1;
     let tcGeneralOutIdx = -1, difTcGeneralOutIdx = -1, tcEspecificoOutIdx = -1, difTcEspecificoOutIdx = -1;
+    let tcValidadoOutIdx = -1, difTcValidadoOutIdx = -1;
 
     premiumHeadersOriginal.forEach((h, originalIdx)=>{
       premiumHeaders.push(h || `Columna_${originalIdx+1}`);
@@ -1405,6 +1406,10 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
         premiumHeaders.push('Tipo de Cambio General');
         difTcGeneralOutIdx = premiumHeaders.length;
         premiumHeaders.push('DIF TIPO DE CAMBIO GENERAL');
+        tcValidadoOutIdx = premiumHeaders.length;
+        premiumHeaders.push('TC VALIDADO SEGÚN TIPO');
+        difTcValidadoOutIdx = premiumHeaders.length;
+        premiumHeaders.push('DIF TC VALIDADO');
       }
       if(originalIdx === fechaOrigenIdx){
         tcEspecificoOutIdx = premiumHeaders.length;
@@ -1419,6 +1424,10 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     if(tcGeneralOutIdx < 0){
       tcGeneralOutIdx = premiumHeaders.length; premiumHeaders.push('Tipo de Cambio General');
       difTcGeneralOutIdx = premiumHeaders.length; premiumHeaders.push('DIF TIPO DE CAMBIO GENERAL');
+    }
+    if(tcValidadoOutIdx < 0){
+      tcValidadoOutIdx = premiumHeaders.length; premiumHeaders.push('TC VALIDADO SEGÚN TIPO');
+      difTcValidadoOutIdx = premiumHeaders.length; premiumHeaders.push('DIF TC VALIDADO');
     }
     if(tcEspecificoOutIdx < 0){
       tcEspecificoOutIdx = premiumHeaders.length; premiumHeaders.push('Tipo de Cambio Especifico');
@@ -1471,6 +1480,15 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
         if(tcEspecifico !== '') difTcEspecifico = round3(tcRegistrado - Number(tcEspecifico));
       }
 
+      // NUEVA REGLA COMPRAS - Flavio:
+      // 01/02 y demas documentos -> fecha de emision.
+      // 07/08 (NC/ND) -> fecha del comprobante origen/modificado.
+      const fechaTcValidada = esNota ? fechaOrigen : fechaEmision;
+      let tcValidado = '';
+      if(moneda === 'PEN') tcValidado = 1;
+      else if(moneda === 'USD' && fechaTcValidada) tcValidado = tcVentaPorFecha(fechaTcValidada);
+      const difTcValidado = tcValidado === '' ? '' : round3(tcRegistrado - Number(tcValidado));
+
       const outRow = [];
       premiumHeadersOriginal.forEach((_, originalIdx)=>{
         const rawValue = srcRow[originalIdx] ?? '';
@@ -1481,11 +1499,11 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
         );
         if(originalIdx === docIdx) outRow.push(valSerie);
         if(originalIdx === igvIdx) outRow.push(revIgv, pctIgv, variacion);
-        if(originalIdx === tcRegistradoIdx) outRow.push(tcGeneral, difTcGeneral);
+        if(originalIdx === tcRegistradoIdx) outRow.push(tcGeneral, difTcGeneral, tcValidado, difTcValidado);
         if(originalIdx === fechaOrigenIdx) outRow.push(tcEspecifico, difTcEspecifico);
       });
       // Fallback: encabezados no detectados -> columnas creadas al final.
-      if(tcRegistradoIdx < 0) outRow.push(tcGeneral, difTcGeneral);
+      if(tcRegistradoIdx < 0) outRow.push(tcGeneral, difTcGeneral, tcValidado, difTcValidado);
       if(fechaOrigenIdx < 0) outRow.push(tcEspecifico, difTcEspecifico);
       premiumAOA.push(outRow);
 
@@ -1507,7 +1525,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       outPos += 1;
       if(originalIdx === docIdx) outPos += 1;
       if(originalIdx === igvIdx) outPos += 3;
-      if(originalIdx === tcRegistradoIdx) outPos += 2;
+      if(originalIdx === tcRegistradoIdx) outPos += 4;
       if(originalIdx === fechaOrigenIdx) outPos += 2;
     });
 
@@ -1587,6 +1605,8 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
         const tcRegistradoRef = `${excelCol(tcRegistradoOutIdx)}${excelRow}`;
         const tcGeneralRef = `${excelCol(tcGeneralOutIdx)}${excelRow}`;
         const difGeneralRef = `${excelCol(difTcGeneralOutIdx)}${excelRow}`;
+        const tcValidadoRef = `${excelCol(tcValidadoOutIdx)}${excelRow}`;
+        const difTcValidadoRef = `${excelCol(difTcValidadoOutIdx)}${excelRow}`;
 
         if(fechaEmisionOutIdx >= 0){
           const fechaRef = `${excelCol(fechaEmisionOutIdx)}${excelRow}`;
@@ -1598,6 +1618,22 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
           const cachedDifGeneral = premiumAOA[excelRow-1][difTcGeneralOutIdx];
           wsPremium[difGeneralRef] = {t:'n', v:Number(cachedDifGeneral)||0,
             f:`IF(${tcGeneralRef}="","",ROUND(${tcRegistradoRef}-${tcGeneralRef},3))`, z:'0.000'};
+        }
+
+        // TC VALIDADO SEGUN TIPO: 07/08 usa fecha origen; los demas usan fecha emision.
+        if(fechaEmisionOutIdx >= 0 && tipoDocumentoOutIdx >= 0){
+          const fechaEmisionRef = `${excelCol(fechaEmisionOutIdx)}${excelRow}`;
+          const fechaOrigenRefValidada = fechaOrigenOutIdx >= 0 ? `${excelCol(fechaOrigenOutIdx)}${excelRow}` : '""';
+          const tipoDocRefValidado = `${excelCol(tipoDocumentoOutIdx)}${excelRow}`;
+          const esNotaValidado = `OR(IFERROR(VALUE(${tipoDocRefValidado}),0)=7,IFERROR(VALUE(${tipoDocRefValidado}),0)=8)`;
+          const fechaElegida = `IF(${esNotaValidado},${fechaOrigenRefValidada},${fechaEmisionRef})`;
+          const formulaTcValidado =
+            `IF(UPPER(TRIM(${monedaRef}))="USD",IFERROR(VLOOKUP(${fechaElegida},'Tipo de cambio Sunat'!$A:$C,3,FALSE),""),IF(UPPER(TRIM(${monedaRef}))="PEN",1,""))`;
+          const cachedTcValidado = premiumAOA[excelRow-1][tcValidadoOutIdx];
+          wsPremium[tcValidadoRef] = {t:'n', v:Number(cachedTcValidado)||0, f:formulaTcValidado, z:'0.000'};
+          const cachedDifTcValidado = premiumAOA[excelRow-1][difTcValidadoOutIdx];
+          wsPremium[difTcValidadoRef] = {t:'n', v:Number(cachedDifTcValidado)||0,
+            f:`IF(${tcValidadoRef}="","",ROUND(${tcRegistradoRef}-${tcValidadoRef},3))`, z:'0.000'};
         }
 
         if(fechaOrigenOutIdx >= 0 && tipoDocumentoOutIdx >= 0){
@@ -1650,6 +1686,36 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
               font:{color:{rgb:'000000'}},
               alignment:{horizontal:'center', vertical:'center'},
               border:bordeSuave
+            };
+      }
+    });
+
+
+    // Las dos columnas de la NUEVA regla 07/08 se distinguen en azul.
+    const columnasTcValidado = [tcValidadoOutIdx, difTcValidadoOutIdx].filter(idx => idx >= 0);
+    const bordeAzul = {
+      top:{style:'thin', color:{rgb:'5B9BD5'}},
+      bottom:{style:'thin', color:{rgb:'5B9BD5'}},
+      left:{style:'thin', color:{rgb:'5B9BD5'}},
+      right:{style:'thin', color:{rgb:'5B9BD5'}}
+    };
+    columnasTcValidado.forEach(colIdx=>{
+      const col = excelCol(colIdx);
+      for(let excelRow=1; excelRow<=premiumAOA.length; excelRow++){
+        const ref = `${col}${excelRow}`;
+        if(!wsPremium[ref]) wsPremium[ref] = {t:'s', v:''};
+        wsPremium[ref].s = excelRow === 1
+          ? {
+              fill:{patternType:'solid', fgColor:{rgb:'5B9BD5'}, bgColor:{rgb:'5B9BD5'}},
+              font:{bold:true, color:{rgb:'FFFFFF'}},
+              alignment:{horizontal:'center', vertical:'center', wrapText:true},
+              border:bordeAzul
+            }
+          : {
+              fill:{patternType:'solid', fgColor:{rgb:'DDEBF7'}, bgColor:{rgb:'DDEBF7'}},
+              font:{color:{rgb:'000000'}},
+              alignment:{horizontal:'center', vertical:'center'},
+              border:bordeAzul
             };
       }
     });
