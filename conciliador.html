@@ -597,6 +597,21 @@ table.report th,table.detail th{
     </div>
   </div>
 
+  <div class="card" id="cardTCC" style="margin-bottom:24px;border-color:#9CC2E5;background:#F4F9FF;">
+    <div class="card-label" style="color:#2F75B5;">Base 4 · obligatoria para validar TC</div>
+    <div class="card-title">Histórico de tipo de cambio SUNAT — Compras</div>
+    <p class="card-hint">Se usa para validar el TC del PLE. Para 01/02 usa la fecha de emisión; para 07/08 usa la fecha del comprobante original que se modifica.</p>
+    <label class="drop" id="dropTCC" style="border-color:#9CC2E5;background:#F8FBFF;">Haz clic o arrastra el Excel histórico aquí
+      <input type="file" id="fileTCC" accept=".xlsx,.xls,.csv" />
+    </label>
+    <div id="configTCC" style="display:none;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px;">
+      <div><label class="fld">Fecha</label><select id="colFechaTCC"></select></div>
+      <div><label class="fld">TC Compra</label><select id="colCompraTCC"></select></div>
+      <div><label class="fld">TC Venta</label><select id="colVentaTCC"></select></div>
+    </div>
+    <div class="footnote" id="estadoTCC">Sin cargar.</div>
+  </div>
+
   <div class="card" id="cardSIREManualC" style="margin-bottom:24px;">
     <div class="card-label">Respaldo manual · opcional</div>
     <div class="card-title">Cargar SIRE CONTA manualmente</div>
@@ -2134,6 +2149,7 @@ const HISTORICOS_COMPRAS_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3
 
 const state = {
   rce:null, sire:null, bancos:null, pleHistorico:null,
+  tc:{headers:[],rows:[],mapa:new Map(),fechaCol:0,compraCol:1,ventaCol:2,fileName:''},
   tipos:new Map(), historicosCargando:false, historicosError:''
 };
 let lastResult=null;
@@ -2264,7 +2280,9 @@ function parsePLE(text){
       moneda:String(f[24]||'').trim().toUpperCase(),tipoCambio:toNumber(f[25]),
       fechaOrigen:String(f[26]||'').trim(),raw:line
     };
-    r.fechaNorm=normalizarFecha(r.fechaEmision); r.periodoEmision=periodoDeFecha(r.fechaEmision); r.periodoRegistro=periodoPLE(r.periodo);
+    r.fechaNorm=normalizarFecha(r.fechaEmision);
+    r.fechaOrigenNorm=normalizarFecha(r.fechaOrigen);
+    r.periodoEmision=periodoDeFecha(r.fechaEmision); r.periodoRegistro=periodoPLE(r.periodo);
     r.baseImponible=r.biGravadoDG+r.biDGNG+r.biDNG; r.igvTotal=r.igvDG+r.igvDGNG+r.igvDNG;
     r.key=buildKey(r.rucProveedor,r.tipoCP,r.serie,r.nroCP); return r;
   });
@@ -2545,7 +2563,7 @@ function renderTipos(){
   for(const [cod,x] of state.tipos){let regla=x.especial?'Tratamiento especial':x.esperado?'Cruce principal con SIRE':'Revisión por tipo';h+=`<tr><td>${esc(x.label)}</td><td class="num">${x.cantidad}</td><td>${regla}</td></tr>`;}
   h+='</tbody>';document.getElementById('tablaTiposC').innerHTML=h;
 }
-function actualizarEstado(){const listo=!!(state.rce?.rows?.length&&state.sire?.rows?.length);document.getElementById('btnProcesarC').disabled=!listo;let m='Sube el PLE del periodo. El SIRE histórico se obtiene automáticamente.';if(state.rce&&!state.sire)m=state.historicosError||'PLE cargado. Falta SIRE histórico.';if(!state.rce&&state.sire)m='SIRE histórico conectado. Sube el PLE del periodo.';if(listo&&state.bancos?.rows?.length)m='Listo: PLE + SIRE histórico + Lista de Obligaciones.';else if(listo)m='Listo para conciliar PLE vs SIRE. La Lista de Obligaciones solo se necesita para casos bancarios.';document.getElementById('statusMsgC').textContent=m}
+function actualizarEstado(){const tienePLE=!!state.rce?.rows?.length,tieneSIRE=!!state.sire?.rows?.length,tieneTC=!!state.tc?.mapa?.size;const listo=tienePLE&&tieneSIRE&&tieneTC;document.getElementById('btnProcesarC').disabled=!listo;let m='Sube el PLE y el histórico de tipo de cambio. El SIRE histórico se obtiene automáticamente.';if(tienePLE&&!tieneSIRE)m=state.historicosError||'PLE cargado. Falta SIRE histórico.';else if(!tienePLE&&tieneSIRE)m='SIRE histórico conectado. Sube el PLE y el histórico de tipo de cambio.';else if(tienePLE&&tieneSIRE&&!tieneTC)m='PLE + SIRE listos. Falta cargar el histórico de tipo de cambio SUNAT de Compras.';else if(listo&&state.bancos?.rows?.length)m='Listo: PLE + SIRE histórico + TC SUNAT + Lista de Obligaciones.';else if(listo)m='Listo para conciliar. La validación TC aplicará fecha emisión para 01/02 y fecha origen para 07/08.';document.getElementById('statusMsgC').textContent=m}
 
 function normVoucher(v){return String(v??'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
 function iniciarBancos(){wireDrop('dropBancosC','fileBancosC',file=>{const rd=new FileReader();rd.onload=e=>{try{
@@ -2659,15 +2677,90 @@ function iniciarValidacionSunat(){
     document.getElementById('estadoValidacionSunatC').textContent=`${parsed.length.toLocaleString('es-PE')} comprobantes — ${file.name}`;document.getElementById('cardValidacionSunatC').classList.add('ready');marcarDrop('dropValidacionSunatC',file);
   },()=>document.getElementById('estadoValidacionSunatC').textContent='No se pudo leer Validación SUNAT.'));
 }
-function iniciarTC(){wireDrop('dropTCC','fileTCC',cargarTC);['colFechaTCC','colCompraTCC','colVentaTCC'].forEach(id=>document.getElementById(id).addEventListener('change',construirMapaTC))}
-function cargarTC(file){const rd=new FileReader();rd.onload=e=>{try{const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});const data=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:''});let hi=data.findIndex(r=>r.some(c=>/fecha/i.test(String(c)))&&r.some(c=>/compra|venta/i.test(String(c))));if(hi<0)hi=0;state.tc.headers=data[hi].map(x=>String(x??'').trim());state.tc.rows=data.slice(hi+1).filter(r=>r.some(v=>String(v??'').trim()));const opts=state.tc.headers.map((h,i)=>`<option value="${i}">${esc(h||'Col '+(i+1))}</option>`).join('');['colFechaTCC','colCompraTCC','colVentaTCC'].forEach(id=>document.getElementById(id).innerHTML=opts);const nh=state.tc.headers.map(normHeader);document.getElementById('colFechaTCC').value=Math.max(0,nh.findIndex(h=>h.includes('fecha')));document.getElementById('colCompraTCC').value=Math.max(0,nh.findIndex(h=>h.includes('compra')));let vi=nh.findIndex(h=>h.includes('venta'));document.getElementById('colVentaTCC').value=vi<0?Math.min(2,nh.length-1):vi;document.getElementById('configTCC').style.display='flex';document.getElementById('cardTCC').classList.add('ready');marcarDrop('dropTCC',file);construirMapaTC()}catch(err){console.error(err);document.getElementById('estadoTCC').textContent='No se pudo leer TC.'}};rd.readAsArrayBuffer(file)}
-function normalizarValorTCCompras(valor){
-  const n=toNumber(valor);
-  if(!Number.isFinite(n) || n===0) return 0;
+function iniciarTC(){
+  wireDrop('dropTCC','fileTCC',cargarTC);
+  ['colFechaTCC','colCompraTCC','colVentaTCC'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.addEventListener('change',construirMapaTC);
+  });
+}
+function normalizarValorTCCompras(v){
+  const n=toNumber(v);
+  if(!Number.isFinite(n) || n===0) return null;
+  // El histórico entregado por Contabilidad puede venir como 3998 = 3.998.
   return Math.abs(n)>=100 ? n/1000 : n;
 }
-function construirMapaTC(){const tc=state.tc;if(!tc.rows.length)return;tc.fechaCol=+document.getElementById('colFechaTCC').value;tc.compraCol=+document.getElementById('colCompraTCC').value;tc.ventaCol=+document.getElementById('colVentaTCC').value;tc.mapa=new Map();tc.rows.forEach(r=>{const f=normalizarFecha(r[tc.fechaCol]),v=normalizarValorTCCompras(r[tc.ventaCol]),c=normalizarValorTCCompras(r[tc.compraCol]);if(f&&v)tc.mapa.set(f,{compra:c,venta:v})});document.getElementById('estadoTCC').textContent=`${tc.mapa.size.toLocaleString('es-PE')} fechas disponibles.`}
-function tcVenta(fecha){const x=state.tc.mapa.get(normalizarFecha(fecha));return x?x.venta:null}
+function cargarTC(file){
+  const rd=new FileReader();
+  rd.onload=e=>{
+    try{
+      const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const data=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:''});
+      let hi=data.findIndex(r=>r.some(c=>/fecha/i.test(String(c)))&&r.some(c=>/compra|venta/i.test(String(c))));
+      if(hi<0) hi=0;
+      state.tc.headers=data[hi].map(x=>String(x??'').trim());
+      state.tc.rows=data.slice(hi+1).filter(r=>r.some(v=>String(v??'').trim()));
+      state.tc.fileName=file.name;
+      const opts=state.tc.headers.map((h,i)=>`<option value="${i}">${esc(h||'Col '+(i+1))}</option>`).join('');
+      ['colFechaTCC','colCompraTCC','colVentaTCC'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
+      const nh=state.tc.headers.map(normHeader);
+      const fi=nh.findIndex(h=>h.includes('fecha'));
+      const ci=nh.findIndex(h=>h.includes('compra'));
+      const vi=nh.findIndex(h=>h.includes('venta'));
+      document.getElementById('colFechaTCC').value=String(fi<0?0:fi);
+      document.getElementById('colCompraTCC').value=String(ci<0?Math.min(1,nh.length-1):ci);
+      document.getElementById('colVentaTCC').value=String(vi<0?Math.min(2,nh.length-1):vi);
+      document.getElementById('configTCC').style.display='grid';
+      document.getElementById('cardTCC').classList.add('ready');
+      marcarDrop('dropTCC',file);
+      construirMapaTC();
+      actualizarEstado();
+    }catch(err){
+      console.error(err);
+      document.getElementById('estadoTCC').textContent='No se pudo leer el histórico de tipo de cambio.';
+    }
+  };
+  rd.readAsArrayBuffer(file);
+}
+function construirMapaTC(){
+  const tc=state.tc;
+  if(!tc.rows.length)return;
+  tc.fechaCol=Number(document.getElementById('colFechaTCC').value);
+  tc.compraCol=Number(document.getElementById('colCompraTCC').value);
+  tc.ventaCol=Number(document.getElementById('colVentaTCC').value);
+  tc.mapa=new Map();
+  let validas=0,omitidas=0;
+  tc.rows.forEach(r=>{
+    const f=normalizarFecha(r[tc.fechaCol]);
+    const venta=normalizarValorTCCompras(r[tc.ventaCol]);
+    const compra=normalizarValorTCCompras(r[tc.compraCol]);
+    if(!f || venta===null){omitidas++;return;}
+    tc.mapa.set(f,{compra,venta});
+    validas++;
+  });
+  document.getElementById('estadoTCC').textContent=`${validas.toLocaleString('es-PE')} fechas disponibles${omitidas?` · ${omitidas.toLocaleString('es-PE')} sin TC válido`:''} — ${tc.fileName||''}`;
+}
+function tcVenta(fecha){
+  const k=normalizarFecha(fecha);
+  if(!k)return null;
+  const x=state.tc.mapa.get(k);
+  return x && Number.isFinite(x.venta) ? x.venta : null;
+}
+function fechaDDMMYYYY(fechaISO){
+  const m=String(fechaISO||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m?`${m[3]}/${m[2]}/${m[1]}`:'';
+}
+function datosTCValidadoCompras(x){
+  const es0708=x.tipoCP==='07'||x.tipoCP==='08';
+  const fechaNorm=es0708?x.fechaOrigenNorm:x.fechaNorm;
+  const fechaUsada=fechaDDMMYYYY(fechaNorm);
+  let tcSunat=null;
+  if(normTxt(x.moneda)==='PEN') tcSunat=1;
+  else if(normTxt(x.moneda)==='USD' && fechaNorm) tcSunat=tcVenta(fechaNorm);
+  const diferencia=(tcSunat===null || !Number.isFinite(Number(tcSunat))) ? null : Math.round((toNumber(x.tipoCambio)-Number(tcSunat))*1000)/1000;
+  return {es0708,fechaUsada,tcSunat,diferencia};
+}
 
 function nombreCanonico(v){
   return normTxt(v).replace(/[^A-Z0-9 ]/g,' ')
@@ -2840,6 +2933,7 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
       ['FUENTES'],
       ['PLE 8.1 Sprint del periodo', 'Sí'],
       ['SIRE histórico', 'Sí — automático'],
+      ['Histórico TC SUNAT Compras', state.tc?.mapa?.size ? `Sí — ${state.tc.mapa.size.toLocaleString('es-PE')} fechas` : 'No'],
       ['Lista de Obligaciones Sprint', state.bancos?.rows?.length ? 'Sí' : 'No'],
       ['PLE histórico (control adicional)', state.pleHistorico?.rows?.length ? 'Sí — '+state.pleHistorico.rows.length.toLocaleString('es-PE')+' filas' : 'No cargado'],
       [],
@@ -2867,15 +2961,10 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
     r.pleResultado.forEach(x=>{
       const ss = x.sireMatch || {};
       const v = x.comparacion?.validaciones || {};
-      const esNota0708 = x.tipoCP === '07' || x.tipoCP === '08';
-      const fechaUsadaTC = esNota0708 ? x.fechaOrigen : x.fechaEmision;
-      let tcSunatValidado = null;
-      if(x.moneda === 'PEN') tcSunatValidado = 1;
-      else if(x.moneda === 'USD' && fechaUsadaTC) tcSunatValidado = tcVenta(fechaUsadaTC);
-      const difTCValidado = tcSunatValidado == null ? '' : Math.round((Number(x.tipoCambio)-Number(tcSunatValidado))*1000)/1000;
+      const tcVal=datosTCValidadoCompras(x);
       a.push([
         x.estado, x.accion, x.duplicadoPLE?'Sí':'No', x.duplicadoSIRE?'Sí':'No', x.registradoAntes?'Sí':'No', x.historicoMatch?.periodoRegistro || '', x.periodoRegistro, x.rucProveedor, x.razonSocial, x.tipoCP, x.serie, padNum(x.nroCP),
-        x.fechaEmision, x.moneda, x.tipoCambio, esNota0708 ? x.fechaOrigen : '', fechaUsadaTC, tcSunatValidado == null ? '' : tcSunatValidado, difTCValidado, x.baseImponible, x.igvTotal, x.totalCP,
+        x.fechaEmision, x.moneda, x.tipoCambio, (tcVal.es0708?x.fechaOrigen:''), tcVal.fechaUsada, tcVal.tcSunat??'', tcVal.diferencia??'', x.baseImponible, x.igvTotal, x.totalCP,
         ss.rucProveedor || '', ss.razonSocial || '', ss.tipoCP || '', ss.serie || '', ss.nroCP ? padNum(ss.nroCP) : '',
         ss.fechaEmision || '', ss.moneda || '', ss.tipoCambio || '', ss.baseImponible ?? '', ss.igvTotal ?? '', ss.totalCP ?? '',
         marca(v.ruc), marca(v.proveedor), marca(v.tipo), marca(v.serie), marca(v.correlativo), marca(v.fecha),
@@ -2883,7 +2972,7 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
         x.comparacion?.diferencias?.join(', ') || '', x.sugerenciaBanco?.keySugerida || '', x.motivo
       ]);
     });
-    addSheet(wb, '02 PLE vs SIRE', a, [22,22,14,14,18,14,14,14,34,10,10,15,13,10,10,16,16,16,16,13,13,13,14,34,10,10,15,13,10,10,13,13,13,12,16,12,12,16,12,12,12,12,12,12,28,24,34], true, {kind:'detail', statusCol:0, blueCols:[15,16,17,18]});
+    addSheet(wb, '02 PLE vs SIRE', a, [22,22,14,14,18,14,14,14,34,10,10,15,13,10,10,16,16,16,16,13,13,13,14,34,10,10,15,13,10,10,13,13,13,12,16,12,12,16,12,12,12,12,12,12,28,24,34], true, {kind:'detail', statusCol:0, highlightCols:[15,16,17,18], highlightColor:'DDEBF7', highlightHeaderColor:'4472C4'});
 
     const p = [['Periodo SIRE','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Base','IGV','Total','Estado','Motivo']];
     pend.forEach(x=>p.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));
@@ -2957,9 +3046,7 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
     red: 'FDE8E8',
     redText: 'C62828',
     text: '333333',
-    white: 'FFFFFF',
-    blue: '4472C4',
-    blueSoft: 'D9EAF7'
+    white: 'FFFFFF'
   };
 
   function normalizeText(v){ return String(v ?? '').trim().toLowerCase(); }
@@ -3042,9 +3129,10 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
     for(let c=0; c<totalCols; c++){
       const ref = XLSX.utils.encode_cell({r:0,c});
       ensureCell(ref);
+      const esColResaltada=Array.isArray(opts.highlightCols)&&opts.highlightCols.includes(c);
       ws[ref].s = {
         font:{bold:true,color:{rgb:palette.white},sz:11},
-        fill:{fgColor:{rgb:palette.primaryDark}},
+        fill:{fgColor:{rgb:esColResaltada?(opts.highlightHeaderColor||'4472C4'):palette.primaryDark}},
         alignment:{horizontal:'center',vertical:'center',wrapText:true},
         border:baseBorder
       };
@@ -3063,7 +3151,9 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
         const isDate = isDateHeader(header);
         const isFlag = /correcto/.test(normalizeText(header));
         let fill = rowFill;
-        if(c === (opts.statusCol ?? -1) && statusColor) fill = statusColor;
+        const esColResaltada=Array.isArray(opts.highlightCols)&&opts.highlightCols.includes(c);
+        if(esColResaltada) fill=opts.highlightColor||'DDEBF7';
+        else if(c === (opts.statusCol ?? -1) && statusColor) fill = statusColor;
         else if(isFlag && String(cell.v || '').trim() === 'Sí') fill = 'EAF4E6';
         else if(isFlag && String(cell.v || '').trim() === 'No') fill = 'FDE9E7';
 
@@ -3075,25 +3165,6 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
         };
         if(isDate) cell.z = 'dd/mm/yyyy';
         else if(isNumericHeader(header)) cell.z = /tc|tipo de cambio/.test(normalizeText(header)) ? '#,##0.000' : '#,##0.00';
-      }
-    }
-  }
-
-  // Columnas de validación TC 07/08 de COMPRAS: azul para diferenciarlas.
-  if(kind !== 'summary' && Array.isArray(opts.blueCols) && opts.blueCols.length){
-    const blueCols = new Set(opts.blueCols);
-    for(const c of blueCols){
-      if(c < 0 || c >= totalCols) continue;
-      for(let r=0; r<aoa.length; r++){
-        const ref = XLSX.utils.encode_cell({r,c});
-        ensureCell(ref);
-        const cell = ws[ref];
-        cell.s = cell.s || {};
-        cell.s.fill = {fgColor:{rgb:r===0 ? palette.blue : palette.blueSoft}};
-        if(r===0){
-          cell.s.font = {bold:true,color:{rgb:palette.white},sz:11};
-          cell.s.alignment = {horizontal:'center',vertical:'center',wrapText:true};
-        }
       }
     }
   }
@@ -3197,7 +3268,7 @@ function corregirFormatosComprasExcelJS(wbExcel){
   });
 }
 
-buildCardsPrincipales();iniciarBancos();iniciarHistoricoManual();cargarHistoricosCompras();
+buildCardsPrincipales();iniciarBancos();iniciarHistoricoManual();iniciarTC();cargarHistoricosCompras();
 })();
 </script>
 <script>
