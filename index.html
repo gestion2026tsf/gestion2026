@@ -3013,6 +3013,14 @@ function fmtMontoRaw(n){
   return n.toLocaleString('es-PE',{minimumFractionDigits:0,maximumFractionDigits:2});
 }
 
+function fmtMontoExacto3(n){
+  if(n === null || n === undefined || !isFinite(n)) return '—';
+  return 'US$ ' + Number(n).toLocaleString('en-US',{
+    minimumFractionDigits:3,
+    maximumFractionDigits:3
+  });
+}
+
 /* ════════════════════════════════════════
    DASHBOARD UPDATE
    ════════════════════════════════════════ */
@@ -3060,7 +3068,7 @@ function updateDashboard(){
   setNetaSub('kpi-clientes-neta', netaClientes);
 
   const netaTotal=netaKey?d.reduce((sum,r)=>sum+parseNeta(r[netaKey]),0):0;
-  setText('kpi-neta', fmtMontoRaw(netaTotal));
+  setText('kpi-neta', fmtMontoExacto3(netaTotal));
 
   // Todo lo que es ranking por NETA se alimenta con la misma base filtrada.
   renderProducto(d,netaKey);
@@ -3181,13 +3189,13 @@ function renderNetaMes(d,netaKey){
     html+=`<tr>
       <td class="net-mes-label">${v.label}</td>
       <td class="net-ops">${v.count}</td>
-      ${netaKey?`<td class="net-amount">${fmtMonto(v.suma)}</td>`:''}
+      ${netaKey?`<td class="net-amount">${fmtMontoExacto3(v.suma)}</td>`:''}
     </tr>`;
   });
   html+=`</tbody><tfoot><tr class="net-tfoot">
     <td>TOTAL</td>
     <td>${totalOps}</td>
-    ${netaKey?`<td class="net-amount">${fmtMonto(totalNeta)}</td>`:''}
+    ${netaKey?`<td class="net-amount">${fmtMontoExacto3(totalNeta)}</td>`:''}
   </tr></tfoot></table>`;
   el.innerHTML=html;
   document.getElementById('badge-neta-mes').textContent=rows.length+' meses';
@@ -3309,7 +3317,7 @@ function renderEstCom(d){
         <span class="donut-legend-label" title="${escHTML(l)}">${escHTML(label)}</span>
         <span class="donut-legend-count">${c}</span>
         <span class="donut-legend-pct">${tasaTxt}</span>
-        <span class="donut-legend-neta">${fmtMontoRaw(neta)}</span>
+        <span class="donut-legend-neta">${fmtMontoExacto3(neta)}</span>
       </div>`;
   }).join('');
 }
