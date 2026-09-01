@@ -3000,17 +3000,20 @@ function setNetaSub(id,neta){
   if(!el)return;
   if(neta || neta===0){el.style.display='block';el.textContent='Neta: '+fmtMonto(neta);} else {el.style.display='none';el.textContent='—';}
 }
+function truncar3(n){
+  return Math.trunc(Number(n)*1000)/1000;
+}
 function fmtMonto(n){
   if(!n&&n!==0)return '—';
-  if(Math.abs(n)>=1e6)return 'US$ '+(n/1e6).toFixed(3)+'M';
-  if(Math.abs(n)>=1e3)return 'US$ '+(n/1e3).toFixed(3)+'K';
-  return 'US$ '+n.toLocaleString('es-PE',{minimumFractionDigits:3,maximumFractionDigits:3});
+  if(Math.abs(n)>=1e6)return 'US$ '+truncar3(n/1e6).toFixed(3)+'M';
+  if(Math.abs(n)>=1e3)return 'US$ '+truncar3(n/1e3).toFixed(3)+'K';
+  return 'US$ '+truncar3(n).toLocaleString('es-PE',{minimumFractionDigits:3,maximumFractionDigits:3});
 }
 function fmtMontoRaw(n){
   if(!n&&n!==0)return '—';
-  if(Math.abs(n)>=1e6)return (n/1e6).toFixed(3)+'M';
-  if(Math.abs(n)>=1e3)return (n/1e3).toFixed(3)+'K';
-  return n.toLocaleString('es-PE',{minimumFractionDigits:3,maximumFractionDigits:3});
+  if(Math.abs(n)>=1e6)return truncar3(n/1e6).toFixed(3)+'M';
+  if(Math.abs(n)>=1e3)return truncar3(n/1e3).toFixed(3)+'K';
+  return truncar3(n).toLocaleString('es-PE',{minimumFractionDigits:3,maximumFractionDigits:3});
 }
 
 /* ════════════════════════════════════════
