@@ -2541,6 +2541,12 @@ const COL_FUNC='FNCNR',COL_NETA='NETA',COL_FECHA='FECHA',COL_ESTGES='EST_GES',CO
 const PALETTE=['#5BC7C8','#F0005B','#F5B000','#7C3AED','#444444','#FF8AB8','#2F2F2F','#8A8A8A'];
 const CAMPOS_INTERNOS=['ItemInternalId','@odata.etag','ID'];
 
+function esDesistidoExcluido(fila){
+  const estadoGestion=String(fila?.[COL_ESTGES]||'').trim().toUpperCase();
+  return estadoGestion.includes('9.DESISTIDO.AGO26') ||
+         estadoGestion==='9.DESISTIDO.JUN26';
+}
+
 let allData=[],filteredData=[],dashData=[];
 let sortField='',sortDir=1,page=1,pageSize=25;
 let editingRow=null,isNewRecord=false,headers=[];
@@ -2610,7 +2616,7 @@ window.onload=()=>{
         const cache=localStorage.getItem('gestion_data_cache');
         if(cache){
           const parsed=JSON.parse(cache);
-          allData=parsed.data;headers=parsed.headers||[];
+          allData=(parsed.data||[]).filter(fila=>!esDesistidoExcluido(fila));headers=parsed.headers||[];
           applyDashFilter();filterTable();updateFiltros();updateDashFilters();
           const hace=Math.round((Date.now()-parsed.ts)/60000);
           showToast(`✓ Caché cargado (hace ${hace} min) — actualizando…`);
@@ -2657,8 +2663,7 @@ async function loadData(background=false){
         if(!tieneDatos) return false;
 
         // Excluir totalmente los desistidos: no cuentan, no suman y no aparecen.
-        const estadoGestion = String(o[COL_ESTGES]||'').trim().toUpperCase();
-        if(estadoGestion === '9.DESISTIDO.JUN26') return false;
+        if(esDesistidoExcluido(o)) return false;
 
         return true;
       });
@@ -2747,6 +2752,9 @@ function updateDashFilters(){
 }
 
 function applyDashFilter(){
+  // Protección permanente: aunque el registro provenga del caché o sea editado,
+  // nunca debe entrar al dashboard si contiene 9.DESISTIDO.AGO26.
+  allData=allData.filter(fila=>!esDesistidoExcluido(fila));
   const estGes=getEstadosSeleccionados();
   const zona=(document.getElementById('filtroZonaDash')?.value||'').trim();
   const producto=(document.getElementById('filtroProductoDash')?.value||'').trim();
