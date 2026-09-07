@@ -1,1 +1,3094 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Calculadora de Bono | TOTAL Servicios Financieros</title>
+
+<style>
+
+:root{
+    --magenta:#C2185B;
+    --magenta-dark:#9F1048;
+    --magenta-soft:#FCE7F0;
+
+    --orange:#DA671F;
+    --orange-dark:#B85212;
+    --orange-soft:#FFF0E4;
+
+    --black:#181419;
+    --text:#282228;
+
+    --gray:#716970;
+    --gray2:#9C949A;
+
+    --line:#E8E0E4;
+    --bg:#F8F6F7;
+    --white:#FFFFFF;
+
+    --green:#147D58;
+    --green-soft:#EAF7F2;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-variant-numeric:tabular-nums;
+}
+
+.page{
+    max-width:1500px;
+    margin:auto;
+    padding:25px 32px 55px;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:30px;
+    margin-bottom:21px;
+}
+
+.header h1{
+    margin:0;
+    font-size:36px;
+    line-height:1.05;
+    letter-spacing:-1.3px;
+    font-weight:800;
+}
+
+.header h1 span{
+    color:var(--magenta);
+}
+
+.header p{
+    margin:8px 0 0;
+    color:var(--gray);
+    font-size:14px;
+}
+
+
+/* =========================================
+   LOGO
+========================================= */
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.brand-circle{
+    width:55px;
+    height:55px;
+
+    border-radius:50%;
+    border:6px solid #F9AF00;
+
+    background:#151215;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#F9AF00;
+
+    font-size:28px;
+    font-weight:900;
+}
+
+.brand-total{
+    color:#E50063;
+    font-size:29px;
+    font-weight:900;
+    line-height:.9;
+}
+
+.brand-sub{
+    color:#DB8700;
+    font-size:12px;
+    font-weight:800;
+    margin-top:5px;
+}
+
+
+/* =========================================
+   PASOS SUPERIORES
+========================================= */
+
+.steps{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:17px;
+}
+
+.step{
+    border:1px solid var(--line);
+    background:#fff;
+    border-radius:14px;
+
+    min-height:51px;
+
+    padding:8px 12px;
+
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.step:nth-child(odd){
+    background:linear-gradient(90deg,#fff,#FCE8F0);
+}
+
+.step:nth-child(even){
+    background:linear-gradient(90deg,#fff,#FFF1E5);
+}
+
+.step-num{
+    width:32px;
+    height:32px;
+    min-width:32px;
+
+    border-radius:50%;
+
+    background:var(--magenta);
+    color:#fff;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:15px;
+    font-weight:800;
+}
+
+.step:nth-child(even) .step-num{
+    background:var(--orange);
+}
+
+.step-text{
+    font-size:12px;
+    font-weight:700;
+}
+
+
+/* =========================================
+   LAYOUT
+========================================= */
+
+.layout{
+    display:grid;
+    grid-template-columns:285px minmax(0,1fr);
+    gap:17px;
+    align-items:start;
+}
+
+
+/* =========================================
+   INPUT CARD
+========================================= */
+
+.input-card{
+    position:sticky;
+    top:15px;
+
+    background:#fff;
+
+    border:1px solid var(--line);
+    border-radius:17px;
+
+    padding:17px;
+
+    box-shadow:
+        0 4px 15px rgba(32,15,24,.035);
+}
+
+.input-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+
+.input-head h2{
+    margin:0;
+    font-size:17px;
+    font-weight:800;
+}
+
+.input-head span{
+    background:var(--magenta-soft);
+    color:var(--magenta);
+
+    border-radius:30px;
+
+    padding:4px 8px;
+
+    font-size:9px;
+    font-weight:800;
+}
+
+.field{
+    margin-bottom:10px;
+}
+
+.field label{
+    display:block;
+
+    font-size:10.5px;
+    font-weight:700;
+
+    color:#514950;
+
+    margin-bottom:4px;
+}
+
+.field input,
+.field select{
+    width:100%;
+
+    border:1px solid #DED5DA;
+    border-radius:9px;
+
+    background:#FCFBFC;
+
+    color:#292329;
+
+    padding:8px 9px;
+
+    font:inherit;
+    font-size:11.5px;
+
+    outline:none;
+
+    transition:.15s;
+}
+
+.field select{
+    cursor:pointer;
+}
+
+.field input:focus,
+.field select:focus{
+    background:#fff;
+
+    border-color:var(--magenta);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(194,24,91,.07);
+}
+
+.input-with-suffix{
+    display:grid;
+    grid-template-columns:1fr 22px;
+    gap:5px;
+    align-items:center;
+}
+
+.suffix{
+    color:var(--gray);
+    font-size:11px;
+    font-weight:700;
+    text-align:center;
+}
+
+.section-label{
+    margin:14px 0 9px;
+
+    padding-top:11px;
+
+    border-top:1px dashed var(--line);
+
+    color:var(--gray2);
+
+    font-size:9px;
+    font-weight:800;
+
+    letter-spacing:.6px;
+
+    text-transform:uppercase;
+}
+
+
+/* =========================================
+   BUTTON
+========================================= */
+
+.calculate-btn{
+    width:100%;
+
+    border:none;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--magenta-dark),
+            var(--magenta)
+        );
+
+    color:#fff;
+
+    border-radius:10px;
+
+    padding:10px 12px;
+
+    margin-top:7px;
+
+    font-size:12px;
+    font-weight:800;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 6px 14px
+        rgba(194,24,91,.17);
+
+    transition:.15s;
+}
+
+.calculate-btn:hover{
+    transform:translateY(-1px);
+
+    box-shadow:
+        0 8px 17px
+        rgba(194,24,91,.22);
+}
+
+.clear-btn{
+    width:100%;
+
+    border:none;
+    background:transparent;
+
+    color:var(--gray);
+
+    margin-top:7px;
+
+    padding:6px;
+
+    font-size:10px;
+
+    cursor:pointer;
+}
+
+
+/* =========================================
+   TOP SUMMARY
+========================================= */
+
+.summary{
+    background:
+        linear-gradient(
+            120deg,
+            #191419,
+            #251820
+        );
+
+    color:#fff;
+
+    border-radius:17px;
+
+    padding:17px 20px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+
+    margin-bottom:14px;
+}
+
+.summary small{
+    display:block;
+    color:#CBBFC5;
+    font-size:10px;
+    margin-bottom:4px;
+}
+
+.summary-person{
+    font-size:15px;
+    font-weight:700;
+}
+
+.summary-right{
+    text-align:right;
+}
+
+.summary-total{
+    color:#FFB329;
+
+    font-size:28px;
+    font-weight:800;
+
+    letter-spacing:-.5px;
+}
+
+.summary-caption{
+    color:#CBBFC5;
+    font-size:9px;
+}
+
+
+/* =========================================
+   BASE
+========================================= */
+
+.base-card{
+    border:1px solid var(--line);
+
+    background:#fff;
+
+    border-radius:17px;
+
+    padding:16px 19px;
+
+    margin-bottom:14px;
+}
+
+.base-top{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    align-items:start;
+}
+
+.base-card h2{
+    margin:0;
+    font-size:17px;
+}
+
+.base-card p{
+    margin:5px 0 0;
+    color:var(--gray);
+    font-size:11px;
+}
+
+.base-value{
+    text-align:right;
+}
+
+.base-value span{
+    display:block;
+
+    font-size:9px;
+    color:var(--gray);
+
+    margin-bottom:2px;
+}
+
+.base-value strong{
+    font-size:22px;
+}
+
+.base-formula{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    flex-wrap:wrap;
+
+    margin-top:13px;
+
+    padding-top:12px;
+
+    border-top:1px solid #F0EAED;
+}
+
+.formula-box{
+    padding:7px 10px;
+
+    border-radius:8px;
+
+    background:#F9F5F7;
+
+    font-size:12px;
+    font-weight:700;
+}
+
+.formula-box.magenta{
+    background:var(--magenta-soft);
+    color:var(--magenta-dark);
+}
+
+.formula-box.orange{
+    background:var(--orange-soft);
+    color:var(--orange-dark);
+}
+
+.formula-box.result{
+    background:var(--black);
+    color:#fff;
+}
+
+
+/* =========================================
+   4 FACTORS
+========================================= */
+
+.factor-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:13px;
+}
+
+.factor-card{
+    background:#fff;
+
+    border:1px solid var(--line);
+    border-radius:17px;
+
+    padding:15px;
+}
+
+.factor-head{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.circle{
+    width:34px;
+    height:34px;
+
+    min-width:34px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:var(--magenta);
+
+    color:#fff;
+
+    font-size:15px;
+    font-weight:800;
+}
+
+.factor-card.orange .circle{
+    background:var(--orange);
+}
+
+.factor-head h3{
+    margin:0;
+    font-size:15px;
+}
+
+.factor-description{
+    margin:
+        3px 0 9px 43px;
+
+    color:var(--gray);
+
+    font-size:10px;
+}
+
+.factor-current{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+
+    padding:8px 9px;
+
+    background:#FAF6F8;
+
+    border-radius:8px;
+
+    margin-bottom:9px;
+}
+
+.factor-current span{
+    color:var(--gray);
+    font-size:9px;
+    font-weight:700;
+}
+
+.factor-current strong{
+    font-size:11px;
+    color:var(--magenta);
+}
+
+.factor-card.orange
+.factor-current strong{
+    color:var(--orange);
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+.table-box{
+    overflow:hidden;
+
+    border:1px solid #EFE7EB;
+    border-radius:8px;
+}
+
+table{
+    width:100%;
+
+    border-collapse:collapse;
+
+    font-size:10.5px;
+}
+
+thead th{
+    background:#1B171B;
+    color:#fff;
+
+    padding:7px 8px;
+
+    text-align:left;
+}
+
+thead th:last-child{
+    text-align:right;
+}
+
+tbody td{
+    padding:5px 8px;
+
+    border-bottom:1px solid #F0EAED;
+}
+
+tbody td:last-child{
+    text-align:right;
+}
+
+tbody tr:last-child td{
+    border-bottom:none;
+}
+
+.factor-card:not(.orange)
+tbody tr.active{
+    background:#FCE4EE;
+    color:#B40B50;
+    font-weight:800;
+}
+
+.factor-card.orange
+tbody tr.active{
+    background:#FFF0DE;
+    color:#B55D0A;
+    font-weight:800;
+}
+
+
+/* =========================================
+   60 / 30 / 10
+========================================= */
+
+.split{
+    margin-top:14px;
+
+    border:1px solid var(--line);
+    border-radius:17px;
+
+    background:#fff;
+
+    padding:15px 17px;
+}
+
+.split-header h2{
+    margin:0;
+    font-size:16px;
+}
+
+.split-header p{
+    margin:3px 0 11px;
+    font-size:10px;
+    color:var(--gray);
+}
+
+.split-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+}
+
+.split-card{
+    padding:12px;
+
+    border-radius:11px;
+
+    text-align:center;
+}
+
+.split-card:nth-child(1),
+.split-card:nth-child(3){
+    background:var(--magenta-soft);
+}
+
+.split-card:nth-child(2){
+    background:var(--orange-soft);
+}
+
+.split-name{
+    font-size:9px;
+    font-weight:800;
+}
+
+.split-pct{
+    margin:2px 0;
+    font-size:25px;
+    font-weight:900;
+}
+
+.split-card:nth-child(1) .split-pct,
+.split-card:nth-child(3) .split-pct{
+    color:var(--magenta);
+}
+
+.split-card:nth-child(2) .split-pct{
+    color:var(--orange);
+}
+
+.split-card small{
+    color:var(--gray);
+    font-size:9px;
+}
+
+
+/* =========================================
+   RESULT CARDS
+========================================= */
+
+.results-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:13px;
+
+    margin-top:14px;
+}
+
+.result-card{
+    background:#fff;
+
+    border:1px solid var(--line);
+    border-radius:17px;
+
+    padding:16px;
+}
+
+.result-card h3{
+    margin:0;
+    font-size:15px;
+}
+
+.result-sub{
+    color:var(--gray);
+    font-size:10px;
+    margin-top:2px;
+}
+
+.result-number{
+    margin:8px 0 10px;
+
+    font-size:23px;
+    font-weight:900;
+}
+
+.result-card.monthly .result-number{
+    color:var(--magenta);
+}
+
+.result-card.quarter .result-number{
+    color:var(--orange);
+}
+
+.result-card.annual .result-number{
+    color:var(--magenta);
+}
+
+
+/* =========================================
+   CALCULATION EXPLANATION
+========================================= */
+
+.math-block{
+    background:#FBF9FA;
+
+    border-radius:10px;
+
+    padding:10px;
+
+    margin-bottom:8px;
+}
+
+.math-title{
+    color:var(--gray);
+    font-size:9px;
+    font-weight:700;
+    margin-bottom:3px;
+}
+
+.math-formula{
+    color:#282228;
+
+    font-size:10px;
+    line-height:1.55;
+
+    font-weight:600;
+}
+
+.math-result{
+    margin-top:4px;
+
+    color:var(--magenta-dark);
+
+    font-size:11px;
+    font-weight:800;
+}
+
+.result-card.quarter
+.math-result{
+    color:var(--orange-dark);
+}
+
+.explanation-line{
+    padding:7px 0;
+
+    border-top:1px solid #EEE7EA;
+}
+
+.explanation-label{
+    color:var(--gray);
+    font-size:9px;
+    margin-bottom:3px;
+}
+
+.explanation-formula{
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+
+    font-size:9.5px;
+}
+
+.explanation-formula span{
+    color:#504950;
+}
+
+.explanation-formula strong{
+    white-space:nowrap;
+}
+
+
+/* =========================================
+   FINAL
+========================================= */
+
+.final{
+    margin-top:14px;
+
+    background:#191419;
+
+    color:#fff;
+
+    border-radius:17px;
+
+    padding:16px 19px;
+}
+
+.final h2{
+    margin:0;
+    font-size:16px;
+}
+
+.final p{
+    margin:4px 0 11px;
+
+    color:#CFC4CA;
+
+    font-size:10px;
+}
+
+.final-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+}
+
+.final-item{
+    padding:11px;
+
+    border-radius:10px;
+
+    background:rgba(255,255,255,.065);
+}
+
+.final-item span{
+    display:block;
+
+    color:#CFC4CA;
+
+    font-size:8.5px;
+
+    margin-bottom:3px;
+}
+
+.final-item strong{
+    font-size:16px;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:1050px){
+
+    .layout{
+        grid-template-columns:1fr;
+    }
+
+    .input-card{
+        position:relative;
+        top:0;
+    }
+
+}
+
+@media(max-width:750px){
+
+    .page{
+        padding:18px 13px 40px;
+    }
+
+    .brand{
+        display:none;
+    }
+
+    .header h1{
+        font-size:29px;
+    }
+
+    .steps,
+    .factor-grid,
+    .results-grid,
+    .final-grid{
+        grid-template-columns:1fr;
+    }
+
+    .split-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="page">
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <div>
+
+        <h1>
+            Entiende
+            <span>tu bono</span>
+        </h1>
+
+        <p>
+            Ingresa tus resultados y revisa exactamente cómo se obtiene cada monto.
+        </p>
+
+    </div>
+
+
+    <div class="brand">
+
+        <div class="brand-circle">
+            T
+        </div>
+
+        <div>
+
+            <div class="brand-total">
+                TOTAL
+            </div>
+
+            <div class="brand-sub">
+                servicios financieros
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- PASOS -->
+
+<div class="steps">
+
+    <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+            Ingresa tus datos
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+            Identifica tu factor
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+            Revisa la multiplicación
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+            Mira cuánto te corresponde
+        </div>
+    </div>
+
+</div>
+
+
+<div class="layout">
+
+
+<!-- =====================================
+     INPUTS
+===================================== -->
+
+<div class="input-card">
+
+    <div class="input-head">
+
+        <h2>
+            Simula tu bono
+        </h2>
+
+        <span>
+            DATOS
+        </span>
+
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Funcionario
+        </label>
+
+        <select id="nombre">
+
+            <option value="">
+                Selecciona
+            </option>
+
+            <option>ANNY XIMENA VILLEGAS SANCHEZ</option>
+            <option>ARELI SARAN RUMICHE TORRES</option>
+            <option>BLANCA ISABEL HUAYCOCHEA MIRANDA</option>
+            <option>BRYAN STUART CHENETT ENRIQUEZ</option>
+            <option>CARMEN PERALTA ALVAREZ</option>
+            <option>CHRISTIAN CABALLERO VELASQUEZ</option>
+            <option>CHRISTIAN EDUARDO MUÑOZ AGRAMONTE</option>
+            <option>CLAUDIA ROSA CESPEDES CCESA</option>
+            <option>CRISTHIAN ANGEL VILELA HUAITA</option>
+            <option>DANIELA ANDREA ENCALADA CARBAJAL</option>
+            <option>DIEGO ALONSO ZAVALETA YPARRAGUIRRE</option>
+            <option>GABRIELA NATALÍ CASTREJON VARGAS</option>
+            <option>GREGORIO MOISES QUISPE GOMEZ</option>
+            <option>GUILLERMO GIOVANNI RIVERA ORDOÑEZ</option>
+            <option>JOAO FLORES SANTISTEBAN</option>
+            <option>JOSE LUIS DE LA CRUZ ESPINOZA</option>
+            <option>JOSELYN LISSET CUADROS CONTRERAS</option>
+            <option>JOSELYN LUCIA VALENTINA ZETA PINGO</option>
+            <option>MARIA TEREZA ROJAS GUTARRA</option>
+            <option>MERCY LISSETT ROSALES CHAVEZ</option>
+            <option>MICHAEL JAVIER MARTINEZ ROMERO</option>
+            <option>PAMELA HUAMAN CORDOVA</option>
+            <option>RAUL SERAFIN CONDORI CHURA</option>
+            <option>RONALD STEVEN MONTESINOS CHUPILLON</option>
+            <option>XIOMY MIYALEE AGURTO AMEZAGA</option>
+
+        </select>
+
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Mes
+        </label>
+
+        <select id="mes">
+
+            <option value="">
+                Selecciona
+            </option>
+
+            <option>ENERO</option>
+            <option>FEBRERO</option>
+            <option>MARZO</option>
+            <option>ABRIL</option>
+            <option>MAYO</option>
+            <option>JUNIO</option>
+            <option>JULIO</option>
+            <option>AGOSTO</option>
+            <option>SEPTIEMBRE</option>
+            <option>OCTUBRE</option>
+            <option>NOVIEMBRE</option>
+            <option>DICIEMBRE</option>
+
+        </select>
+
+    </div>
+
+
+    <div class="section-label">
+        Resultado comercial
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Colocación neta
+        </label>
+
+        <input
+            id="colocacion"
+            type="number"
+            value="488000"
+            min="0"
+        >
+
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Tasa % PP
+        </label>
+
+        <div class="input-with-suffix">
+
+            <input
+                id="tasa"
+                type="number"
+                value="18"
+                step=".1"
+            >
+
+            <span class="suffix">
+                %
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Número de clientes
+        </label>
+
+        <input
+            id="clientes"
+            type="number"
+            value="4"
+        >
+
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Mora
+        </label>
+
+        <div class="input-with-suffix">
+
+            <input
+                id="mora"
+                type="number"
+                value="2.6"
+                step=".1"
+            >
+
+            <span class="suffix">
+                %
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="section-label">
+        Resultado anual
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Utilidad neta
+        </label>
+
+        <input
+            id="utilidad"
+            type="number"
+            value="1"
+            min="0"
+            max="1"
+            step=".05"
+        >
+
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Presupuesto
+        </label>
+
+        <input
+            id="presupuesto"
+            type="number"
+            value="1"
+            min="0"
+            max="1"
+            step=".05"
+        >
+
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Competencias
+        </label>
+
+        <input
+            id="competencias"
+            type="number"
+            value="1"
+            min="0"
+            max="1"
+            step=".05"
+        >
+
+    </div>
+
+
+    <button
+        class="calculate-btn"
+        id="calculateBtn"
+    >
+        Calcular mi bono
+    </button>
+
+
+    <button
+        class="clear-btn"
+        id="resetBtn"
+    >
+        Limpiar simulación
+    </button>
+
+</div>
+
+
+
+<!-- =====================================
+     CONTENT
+===================================== -->
+
+<div>
+
+
+<!-- SUMMARY -->
+
+<div class="summary">
+
+    <div>
+
+        <small>
+            Simulación para
+        </small>
+
+        <div class="summary-person">
+
+            <span id="outNombre">
+                Selecciona un funcionario
+            </span>
+
+            ·
+
+            <span id="outMes">
+                Selecciona un mes
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="summary-right">
+
+        <div
+            id="outTotal"
+            class="summary-total"
+        >
+            US$ 0.00
+        </div>
+
+        <div class="summary-caption">
+            bono total calculado
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- BASE -->
+
+<div class="base-card">
+
+    <div class="base-top">
+
+        <div>
+
+            <h2>
+                1. Primero obtenemos tu base de bono
+            </h2>
+
+            <p>
+                Tu colocación se multiplica por el factor que corresponde a tu tramo.
+            </p>
+
+        </div>
+
+
+        <div class="base-value">
+
+            <span>
+                BASE CALCULADA
+            </span>
+
+            <strong id="outBase">
+                US$ 0.00
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="base-formula">
+
+        <div
+            class="formula-box magenta"
+            id="formulaColocacion"
+        >
+            US$ 0
+        </div>
+
+        <strong>
+            ×
+        </strong>
+
+        <div
+            class="formula-box orange"
+            id="formulaFactorColocacion"
+        >
+            0.0000
+        </div>
+
+        <strong>
+            =
+        </strong>
+
+        <div
+            class="formula-box result"
+            id="formulaBaseResultado"
+        >
+            US$ 0.00
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- FACTORES -->
+
+<div class="factor-grid">
+
+
+<!-- COLOCACION -->
+
+<div class="factor-card">
+
+    <div class="factor-head">
+
+        <div class="circle">
+            1
+        </div>
+
+        <h3>
+            Factor por colocación
+        </h3>
+
+    </div>
+
+
+    <div class="factor-description">
+        Busca tu monto. La fila resaltada es la que se usa.
+    </div>
+
+
+    <div class="factor-current">
+
+        <span>
+            TU FACTOR
+        </span>
+
+        <strong id="factorColocacionTexto">
+            0.0000
+        </strong>
+
+    </div>
+
+
+    <div class="table-box">
+
+        <table id="tablaColocacion">
+
+            <thead>
+                <tr>
+                    <th>Desde</th>
+                    <th>Factor</th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+
+<!-- TASA -->
+
+<div class="factor-card orange">
+
+    <div class="factor-head">
+
+        <div class="circle">
+            2
+        </div>
+
+        <h3>
+            Factor por tasa
+        </h3>
+
+    </div>
+
+
+    <div class="factor-description">
+        Tu tasa define el multiplicador de esta parte.
+    </div>
+
+
+    <div class="factor-current">
+
+        <span>
+            TU FACTOR
+        </span>
+
+        <strong id="factorTasaTexto">
+            0.00
+        </strong>
+
+    </div>
+
+
+    <div class="table-box">
+
+        <table id="tablaTasa">
+
+            <thead>
+                <tr>
+                    <th>Desde</th>
+                    <th>Factor</th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+
+<!-- CLIENTES -->
+
+<div class="factor-card">
+
+    <div class="factor-head">
+
+        <div class="circle">
+            3
+        </div>
+
+        <h3>
+            Factor por clientes
+        </h3>
+
+    </div>
+
+
+    <div class="factor-description">
+        La cantidad de clientes define esta parte trimestral.
+    </div>
+
+
+    <div class="factor-current">
+
+        <span>
+            TU FACTOR
+        </span>
+
+        <strong id="factorClientesTexto">
+            0.00
+        </strong>
+
+    </div>
+
+
+    <div class="table-box">
+
+        <table id="tablaClientes">
+
+            <thead>
+                <tr>
+                    <th>Desde</th>
+                    <th>Factor</th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+
+<!-- MORA -->
+
+<div class="factor-card orange">
+
+    <div class="factor-head">
+
+        <div class="circle">
+            4
+        </div>
+
+        <h3>
+            Factor por mora
+        </h3>
+
+    </div>
+
+
+    <div class="factor-description">
+        En mora, mientras menor sea el porcentaje, mejor.
+    </div>
+
+
+    <div class="factor-current">
+
+        <span>
+            TU FACTOR
+        </span>
+
+        <strong id="factorMoraTexto">
+            0.00
+        </strong>
+
+    </div>
+
+
+    <div class="table-box">
+
+        <table id="tablaMora">
+
+            <thead>
+                <tr>
+                    <th>Desde</th>
+                    <th>Factor</th>
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+
+<!-- 60 30 10 -->
+
+<div class="split">
+
+    <div class="split-header">
+
+        <h2>
+            2. Ahora dividimos la base
+        </h2>
+
+        <p>
+            La base no se paga completa en un solo momento.
+        </p>
+
+    </div>
+
+
+    <div class="split-grid">
+
+        <div class="split-card">
+
+            <div class="split-name">
+                MENSUAL
+            </div>
+
+            <div class="split-pct">
+                60%
+            </div>
+
+            <small>
+                Colocación + tasa
+            </small>
+
+        </div>
+
+
+        <div class="split-card">
+
+            <div class="split-name">
+                TRIMESTRAL
+            </div>
+
+            <div class="split-pct">
+                30%
+            </div>
+
+            <small>
+                Clientes + mora
+            </small>
+
+        </div>
+
+
+        <div class="split-card">
+
+            <div class="split-name">
+                ANUAL
+            </div>
+
+            <div class="split-pct">
+                10%
+            </div>
+
+            <small>
+                Resultados anuales
+            </small>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- RESULTADOS EXPLICADOS -->
+
+<div class="results-grid">
+
+
+<!-- MENSUAL -->
+
+<div class="result-card monthly">
+
+    <h3>
+        Bono mensual
+    </h3>
+
+    <div class="result-sub">
+        Parte mensual del bono
+    </div>
+
+    <div
+        class="result-number"
+        id="mensualTotal"
+    >
+        US$ 0.00
+    </div>
+
+
+    <div class="math-block">
+
+        <div class="math-title">
+            Primero obtenemos el 60% de tu base
+        </div>
+
+        <div
+            class="math-formula"
+            id="formulaBaseMensual"
+        >
+            US$ 0.00 × 60% = US$ 0.00
+        </div>
+
+    </div>
+
+
+    <div class="explanation-line">
+
+        <div class="explanation-label">
+            A. Por colocación
+        </div>
+
+        <div class="explanation-formula">
+
+            <span id="formulaMensualFlujo">
+                -
+            </span>
+
+            <strong id="mensualFlujo">
+                US$ 0.00
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="explanation-line">
+
+        <div class="explanation-label">
+            B. Por tasa
+        </div>
+
+        <div class="explanation-formula">
+
+            <span id="formulaMensualTasa">
+                -
+            </span>
+
+            <strong id="mensualTasa">
+                US$ 0.00
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="math-block">
+
+        <div class="math-title">
+            TOTAL MENSUAL
+        </div>
+
+        <div
+            class="math-formula"
+            id="formulaMensualTotal"
+        >
+            -
+        </div>
+
+        <div
+            class="math-result"
+            id="formulaMensualResultado"
+        >
+            US$ 0.00
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- TRIMESTRAL -->
+
+<div class="result-card quarter">
+
+    <h3>
+        Bono trimestral
+    </h3>
+
+    <div class="result-sub">
+        Parte trimestral del bono
+    </div>
+
+    <div
+        class="result-number"
+        id="trimestralTotal"
+    >
+        US$ 0.00
+    </div>
+
+
+    <div class="math-block">
+
+        <div class="math-title">
+            Primero obtenemos el 30% de tu base
+        </div>
+
+        <div
+            class="math-formula"
+            id="formulaBaseTrimestral"
+        >
+            US$ 0.00 × 30% = US$ 0.00
+        </div>
+
+    </div>
+
+
+    <div class="explanation-line">
+
+        <div class="explanation-label">
+            A. Por clientes
+        </div>
+
+        <div class="explanation-formula">
+
+            <span id="formulaTrimClientes">
+                -
+            </span>
+
+            <strong id="trimClientes">
+                US$ 0.00
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="explanation-line">
+
+        <div class="explanation-label">
+            B. Por mora
+        </div>
+
+        <div class="explanation-formula">
+
+            <span id="formulaTrimMora">
+                -
+            </span>
+
+            <strong id="trimMora">
+                US$ 0.00
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="math-block">
+
+        <div class="math-title">
+            TOTAL TRIMESTRAL
+        </div>
+
+        <div
+            class="math-formula"
+            id="formulaTrimestralTotal"
+        >
+            -
+        </div>
+
+        <div
+            class="math-result"
+            id="formulaTrimestralResultado"
+        >
+            US$ 0.00
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ANUAL -->
+
+<div class="result-card annual">
+
+    <h3>
+        Bono anual
+    </h3>
+
+    <div class="result-sub">
+        Parte anual del bono
+    </div>
+
+    <div
+        class="result-number"
+        id="anualTotal"
+    >
+        US$ 0.00
+    </div>
+
+
+    <div class="math-block">
+
+        <div class="math-title">
+            Primero obtenemos el 10% de tu base
+        </div>
+
+        <div
+            class="math-formula"
+            id="formulaBaseAnual"
+        >
+            US$ 0.00 × 10% = US$ 0.00
+        </div>
+
+    </div>
+
+
+    <div class="explanation-line">
+
+        <div class="explanation-label">
+            A. Utilidad neta
+        </div>
+
+        <div class="explanation-formula">
+
+            <span id="formulaAnualUtilidad">
+                -
+            </span>
+
+            <strong id="anualUtilidad">
+                US$ 0.00
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="explanation-line">
+
+        <div class="explanation-label">
+            B. Presupuesto
+        </div>
+
+        <div class="explanation-formula">
+
+            <span id="formulaAnualPresupuesto">
+                -
+            </span>
+
+            <strong id="anualPresupuesto">
+                US$ 0.00
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="explanation-line">
+
+        <div class="explanation-label">
+            C. Competencias
+        </div>
+
+        <div class="explanation-formula">
+
+            <span id="formulaAnualCompetencias">
+                -
+            </span>
+
+            <strong id="anualCompetencias">
+                US$ 0.00
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="math-block">
+
+        <div class="math-title">
+            TOTAL ANUAL
+        </div>
+
+        <div
+            class="math-formula"
+            id="formulaAnualTotal"
+        >
+            -
+        </div>
+
+        <div
+            class="math-result"
+            id="formulaAnualResultado"
+        >
+            US$ 0.00
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+
+<!-- FINAL -->
+
+<div class="final">
+
+    <h2>
+        ¿Cuándo corresponde cada parte?
+    </h2>
+
+    <p>
+        Son tres componentes diferentes. El total mostrado arriba no significa que todo se pague el mismo mes.
+    </p>
+
+
+    <div class="final-grid">
+
+        <div class="final-item">
+
+            <span>
+                MENSUAL
+            </span>
+
+            <strong id="finalMensual">
+                US$ 0.00
+            </strong>
+
+        </div>
+
+
+        <div class="final-item">
+
+            <span>
+                TRIMESTRAL
+            </span>
+
+            <strong id="finalTrimestral">
+                US$ 0.00
+            </strong>
+
+        </div>
+
+
+        <div class="final-item">
+
+            <span>
+                ANUAL
+            </span>
+
+            <strong id="finalAnual">
+                US$ 0.00
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+</div>
+</div>
+
+
+
+<script>
+
+/* =========================================
+   TABLAS
+========================================= */
+
+const TABLA_COLOCACION = [
+
+    [0,0],
+    [100000,0.0039],
+    [124500,0.0042],
+    [160000,0.0045],
+    [195000,0.0048],
+    [230000,0.0050],
+    [260000,0.0052],
+    [300000,0.0054],
+    [330000,0.0056],
+    [370000,0.0058],
+    [400000,0.0060]
+
+];
+
+
+const TABLA_TASA = [
+
+    [0,0],
+    [0.165,0.60],
+    [0.175,0.80],
+    [0.18,0.90],
+    [0.183,1.00],
+    [0.19,1.05],
+    [0.195,1.10]
+
+];
+
+
+const TABLA_CLIENTES = [
+
+    [0,0],
+    [2,0],
+    [3,0.50],
+    [4,1.00],
+    [5,1.10],
+    [6,1.20]
+
+];
+
+
+const TABLA_MORA = [
+
+    [0,1.10],
+    [0.02,1.10],
+    [0.025,1.05],
+    [0.05,1.00],
+    [0.055,0.70],
+    [0.06,0],
+    [1,0]
+
+];
+
+
+/* =========================================
+   FUNCTIONS
+========================================= */
+
+function buscarFactor(valor,tabla){
+
+    let factor = tabla[0][1];
+    let fila = 0;
+
+    for(let i=0;i<tabla.length;i++){
+
+        if(valor >= tabla[i][0]){
+
+            factor = tabla[i][1];
+            fila = i;
+
+        }else{
+
+            break;
+
+        }
+
+    }
+
+    return {
+        factor,
+        fila
+    };
+
+}
+
+
+function dinero(n){
+
+    return "US$ " +
+        Number(n).toLocaleString(
+            "en-US",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        );
+
+}
+
+
+function dinero0(n){
+
+    return "US$ " +
+        Number(n).toLocaleString(
+            "en-US",
+            {
+                maximumFractionDigits:0
+            }
+        );
+
+}
+
+
+function limitar01(n){
+
+    if(isNaN(n)){
+        return 0;
+    }
+
+    return Math.max(
+        0,
+        Math.min(
+            1,
+            n
+        )
+    );
+
+}
+
+
+function pintarTabla(
+    id,
+    tabla,
+    filaActiva,
+    formatoA,
+    formatoB
+){
+
+    document.querySelector(
+        "#" + id + " tbody"
+    ).innerHTML = tabla.map(
+        (r,i)=>`
+
+        <tr class="${i===filaActiva ? "active" : ""}">
+
+            <td>
+                ${formatoA(r[0])}
+            </td>
+
+            <td>
+                ${formatoB(r[1])}
+            </td>
+
+        </tr>
+
+        `
+    ).join("");
+
+}
+
+
+/* =========================================
+   CALCULATE
+========================================= */
+
+function calcular(){
+
+    const nombre =
+        document.getElementById("nombre").value
+        ||
+        "Selecciona un funcionario";
+
+
+    const mes =
+        document.getElementById("mes").value
+        ||
+        "Selecciona un mes";
+
+
+    const colocacion =
+        parseFloat(
+            document.getElementById("colocacion").value
+        )
+        ||
+        0;
+
+
+    const tasaPct =
+        parseFloat(
+            document.getElementById("tasa").value
+        )
+        ||
+        0;
+
+
+    const tasa =
+        tasaPct / 100;
+
+
+    const clientes =
+        parseFloat(
+            document.getElementById("clientes").value
+        )
+        ||
+        0;
+
+
+    const moraPct =
+        parseFloat(
+            document.getElementById("mora").value
+        )
+        ||
+        0;
+
+
+    const mora =
+        moraPct / 100;
+
+
+    const utilidad =
+        limitar01(
+            parseFloat(
+                document.getElementById("utilidad").value
+            )
+        );
+
+
+    const presupuesto =
+        limitar01(
+            parseFloat(
+                document.getElementById("presupuesto").value
+            )
+        );
+
+
+    const competencias =
+        limitar01(
+            parseFloat(
+                document.getElementById("competencias").value
+            )
+        );
+
+
+    /* FACTORES */
+
+    const fc =
+        buscarFactor(
+            colocacion,
+            TABLA_COLOCACION
+        );
+
+
+    const ft =
+        buscarFactor(
+            tasa,
+            TABLA_TASA
+        );
+
+
+    const fcli =
+        buscarFactor(
+            clientes,
+            TABLA_CLIENTES
+        );
+
+
+    const fm =
+        buscarFactor(
+            mora,
+            TABLA_MORA
+        );
+
+
+    /* BASE */
+
+    const base =
+        colocacion
+        *
+        fc.factor;
+
+
+    /* MENSUAL */
+
+    const baseMensual =
+        base
+        *
+        0.60;
+
+
+    const mensualFlujo =
+        baseMensual
+        *
+        0.60;
+
+
+    const mensualTasa =
+        baseMensual
+        *
+        0.40
+        *
+        ft.factor;
+
+
+    const mensual =
+        mensualFlujo
+        +
+        mensualTasa;
+
+
+    /* TRIMESTRAL */
+
+    const baseTrimestral =
+        base
+        *
+        0.30;
+
+
+    const trimClientes =
+        baseTrimestral
+        *
+        0.60
+        *
+        fcli.factor;
+
+
+    const trimMora =
+        baseTrimestral
+        *
+        0.40
+        *
+        fm.factor;
+
+
+    const trimestral =
+        trimClientes
+        +
+        trimMora;
+
+
+    /* ANUAL */
+
+    const baseAnual =
+        base
+        *
+        0.10;
+
+
+    const anualUtilidad =
+        baseAnual
+        *
+        0.10
+        *
+        utilidad;
+
+
+    const anualPresupuesto =
+        baseAnual
+        *
+        0.45
+        *
+        presupuesto;
+
+
+    const anualCompetencias =
+        baseAnual
+        *
+        0.45
+        *
+        competencias;
+
+
+    const anual =
+        anualUtilidad
+        +
+        anualPresupuesto
+        +
+        anualCompetencias;
+
+
+    const total =
+        mensual
+        +
+        trimestral
+        +
+        anual;
+
+
+    /* =================================
+       SUMMARY
+    ================================= */
+
+    document.getElementById(
+        "outNombre"
+    ).textContent =
+        nombre;
+
+
+    document.getElementById(
+        "outMes"
+    ).textContent =
+        mes;
+
+
+    document.getElementById(
+        "outTotal"
+    ).textContent =
+        dinero(total);
+
+
+    /* =================================
+       BASE
+    ================================= */
+
+    document.getElementById(
+        "outBase"
+    ).textContent =
+        dinero(base);
+
+
+    document.getElementById(
+        "formulaColocacion"
+    ).textContent =
+        dinero0(colocacion);
+
+
+    document.getElementById(
+        "formulaFactorColocacion"
+    ).textContent =
+        fc.factor.toFixed(4);
+
+
+    document.getElementById(
+        "formulaBaseResultado"
+    ).textContent =
+        dinero(base);
+
+
+    /* =================================
+       FACTORS
+    ================================= */
+
+    document.getElementById(
+        "factorColocacionTexto"
+    ).textContent =
+        dinero0(colocacion)
+        +
+        " → "
+        +
+        fc.factor.toFixed(4);
+
+
+    document.getElementById(
+        "factorTasaTexto"
+    ).textContent =
+        tasaPct.toFixed(1)
+        +
+        "% → "
+        +
+        ft.factor.toFixed(2);
+
+
+    document.getElementById(
+        "factorClientesTexto"
+    ).textContent =
+        clientes
+        +
+        " clientes → "
+        +
+        fcli.factor.toFixed(2);
+
+
+    document.getElementById(
+        "factorMoraTexto"
+    ).textContent =
+        moraPct.toFixed(1)
+        +
+        "% → "
+        +
+        fm.factor.toFixed(2);
+
+
+    /* =================================
+       MONTHLY EXPLANATION
+    ================================= */
+
+    document.getElementById(
+        "mensualTotal"
+    ).textContent =
+        dinero(mensual);
+
+
+    document.getElementById(
+        "formulaBaseMensual"
+    ).textContent =
+
+        dinero(base)
+
+        +
+
+        " × 60% = "
+
+        +
+
+        dinero(baseMensual);
+
+
+    document.getElementById(
+        "formulaMensualFlujo"
+    ).textContent =
+
+        dinero(baseMensual)
+
+        +
+
+        " × 60%";
+
+
+    document.getElementById(
+        "mensualFlujo"
+    ).textContent =
+        dinero(mensualFlujo);
+
+
+    document.getElementById(
+        "formulaMensualTasa"
+    ).textContent =
+
+        dinero(baseMensual)
+
+        +
+
+        " × 40% × "
+
+        +
+
+        ft.factor.toFixed(2);
+
+
+    document.getElementById(
+        "mensualTasa"
+    ).textContent =
+        dinero(mensualTasa);
+
+
+    document.getElementById(
+        "formulaMensualTotal"
+    ).textContent =
+
+        dinero(mensualFlujo)
+
+        +
+
+        " + "
+
+        +
+
+        dinero(mensualTasa);
+
+
+    document.getElementById(
+        "formulaMensualResultado"
+    ).textContent =
+        "= " + dinero(mensual);
+
+
+    /* =================================
+       QUARTER
+    ================================= */
+
+    document.getElementById(
+        "trimestralTotal"
+    ).textContent =
+        dinero(trimestral);
+
+
+    document.getElementById(
+        "formulaBaseTrimestral"
+    ).textContent =
+
+        dinero(base)
+
+        +
+
+        " × 30% = "
+
+        +
+
+        dinero(baseTrimestral);
+
+
+    document.getElementById(
+        "formulaTrimClientes"
+    ).textContent =
+
+        dinero(baseTrimestral)
+
+        +
+
+        " × 60% × "
+
+        +
+
+        fcli.factor.toFixed(2);
+
+
+    document.getElementById(
+        "trimClientes"
+    ).textContent =
+        dinero(trimClientes);
+
+
+    document.getElementById(
+        "formulaTrimMora"
+    ).textContent =
+
+        dinero(baseTrimestral)
+
+        +
+
+        " × 40% × "
+
+        +
+
+        fm.factor.toFixed(2);
+
+
+    document.getElementById(
+        "trimMora"
+    ).textContent =
+        dinero(trimMora);
+
+
+    document.getElementById(
+        "formulaTrimestralTotal"
+    ).textContent =
+
+        dinero(trimClientes)
+
+        +
+
+        " + "
+
+        +
+
+        dinero(trimMora);
+
+
+    document.getElementById(
+        "formulaTrimestralResultado"
+    ).textContent =
+        "= " + dinero(trimestral);
+
+
+    /* =================================
+       ANNUAL
+    ================================= */
+
+    document.getElementById(
+        "anualTotal"
+    ).textContent =
+        dinero(anual);
+
+
+    document.getElementById(
+        "formulaBaseAnual"
+    ).textContent =
+
+        dinero(base)
+
+        +
+
+        " × 10% = "
+
+        +
+
+        dinero(baseAnual);
+
+
+    document.getElementById(
+        "formulaAnualUtilidad"
+    ).textContent =
+
+        dinero(baseAnual)
+
+        +
+
+        " × 10% × "
+
+        +
+
+        utilidad.toFixed(2);
+
+
+    document.getElementById(
+        "anualUtilidad"
+    ).textContent =
+        dinero(anualUtilidad);
+
+
+    document.getElementById(
+        "formulaAnualPresupuesto"
+    ).textContent =
+
+        dinero(baseAnual)
+
+        +
+
+        " × 45% × "
+
+        +
+
+        presupuesto.toFixed(2);
+
+
+    document.getElementById(
+        "anualPresupuesto"
+    ).textContent =
+        dinero(anualPresupuesto);
+
+
+    document.getElementById(
+        "formulaAnualCompetencias"
+    ).textContent =
+
+        dinero(baseAnual)
+
+        +
+
+        " × 45% × "
+
+        +
+
+        competencias.toFixed(2);
+
+
+    document.getElementById(
+        "anualCompetencias"
+    ).textContent =
+        dinero(anualCompetencias);
+
+
+    document.getElementById(
+        "formulaAnualTotal"
+    ).textContent =
+
+        dinero(anualUtilidad)
+
+        +
+
+        " + "
+
+        +
+
+        dinero(anualPresupuesto)
+
+        +
+
+        " + "
+
+        +
+
+        dinero(anualCompetencias);
+
+
+    document.getElementById(
+        "formulaAnualResultado"
+    ).textContent =
+        "= " + dinero(anual);
+
+
+    /* =================================
+       FINAL
+    ================================= */
+
+    document.getElementById(
+        "finalMensual"
+    ).textContent =
+        dinero(mensual);
+
+
+    document.getElementById(
+        "finalTrimestral"
+    ).textContent =
+        dinero(trimestral);
+
+
+    document.getElementById(
+        "finalAnual"
+    ).textContent =
+        dinero(anual);
+
+
+    /* =================================
+       TABLES
+    ================================= */
+
+    pintarTabla(
+
+        "tablaColocacion",
+
+        TABLA_COLOCACION,
+
+        fc.fila,
+
+        v => dinero0(v),
+
+        v => v.toFixed(4)
+
+    );
+
+
+    pintarTabla(
+
+        "tablaTasa",
+
+        TABLA_TASA,
+
+        ft.fila,
+
+        v => (v*100).toFixed(1) + "%",
+
+        v => v.toFixed(2)
+
+    );
+
+
+    pintarTabla(
+
+        "tablaClientes",
+
+        TABLA_CLIENTES,
+
+        fcli.fila,
+
+        v => v,
+
+        v => v.toFixed(2)
+
+    );
+
+
+    pintarTabla(
+
+        "tablaMora",
+
+        TABLA_MORA,
+
+        fm.fila,
+
+        v => (v*100).toFixed(1) + "%",
+
+        v => v.toFixed(2)
+
+    );
+
+}
+
+
+/* =========================================
+   BUTTON
+========================================= */
+
+document.getElementById(
+    "calculateBtn"
+).addEventListener(
+    "click",
+    calcular
+);
+
+
+/* =========================================
+   RESET
+========================================= */
+
+document.getElementById(
+    "resetBtn"
+).addEventListener(
+    "click",
+    function(){
+
+        document.getElementById("nombre").value = "";
+        document.getElementById("mes").value = "";
+
+        document.getElementById("colocacion").value = 488000;
+        document.getElementById("tasa").value = 18;
+        document.getElementById("clientes").value = 4;
+        document.getElementById("mora").value = 2.6;
+
+        document.getElementById("utilidad").value = 1;
+        document.getElementById("presupuesto").value = 1;
+        document.getElementById("competencias").value = 1;
+
+        calcular();
+
+    }
+);
+
+
+/* FIRST LOAD */
+
+calcular();
+
+</script>
+
+</body>
+</html>
