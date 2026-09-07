@@ -28,9 +28,6 @@
     --line:#E8E0E4;
     --bg:#F8F6F7;
     --white:#FFFFFF;
-
-    --green:#147D58;
-    --green-soft:#EAF7F2;
 }
 
 *{
@@ -333,7 +330,9 @@ body{
 }
 
 
-/* BOTONES */
+/* ==================================================
+   BOTONES
+================================================== */
 
 .calculate-btn{
     width:100%;
@@ -623,7 +622,9 @@ body{
 }
 
 
-/* TABLAS */
+/* ==================================================
+   TABLAS
+================================================== */
 
 .table-box{
     overflow:hidden;
@@ -807,7 +808,7 @@ tbody tr.active{
 
 
 /* ==================================================
-   NUEVA EXPLICACIÓN
+   EXPLICACIONES
 ================================================== */
 
 .why-box{
@@ -847,7 +848,7 @@ tbody tr.active{
 
 
 /* ==================================================
-   CALCULO PRINCIPAL
+   BLOQUES MATEMÁTICOS
 ================================================== */
 
 .math-block{
@@ -893,7 +894,7 @@ tbody tr.active{
 
 
 /* ==================================================
-   COMPONENTE
+   COMPONENTES
 ================================================== */
 
 .component{
@@ -967,7 +968,7 @@ tbody tr.active{
 
 
 /* ==================================================
-   TOTAL DEL BLOQUE
+   TOTALES
 ================================================== */
 
 .total-box{
@@ -1065,7 +1066,9 @@ tbody tr.active{
 }
 
 
-/* RESPONSIVE */
+/* ==================================================
+   RESPONSIVE
+================================================== */
 
 @media(max-width:1050px){
 
@@ -1107,14 +1110,13 @@ tbody tr.active{
 </style>
 </head>
 
-
 <body>
 
 <div class="page">
 
 
 <!-- ==================================================
-     CABECERA
+     HEADER
 ================================================== -->
 
 <div class="header">
@@ -1156,7 +1158,6 @@ tbody tr.active{
 </div>
 
 
-
 <!-- ==================================================
      PASOS
 ================================================== -->
@@ -1164,58 +1165,34 @@ tbody tr.active{
 <div class="steps">
 
     <div class="step">
-
-        <div class="step-num">
-            1
-        </div>
-
+        <div class="step-num">1</div>
         <div class="step-text">
             Ingresa tus resultados
         </div>
-
     </div>
 
-
     <div class="step">
-
-        <div class="step-num">
-            2
-        </div>
-
+        <div class="step-num">2</div>
         <div class="step-text">
             Identifica tus factores
         </div>
-
     </div>
 
-
     <div class="step">
-
-        <div class="step-num">
-            3
-        </div>
-
+        <div class="step-num">3</div>
         <div class="step-text">
             Revisa cada multiplicación
         </div>
-
     </div>
 
-
     <div class="step">
-
-        <div class="step-num">
-            4
-        </div>
-
+        <div class="step-num">4</div>
         <div class="step-text">
             Mira cuánto te corresponde
         </div>
-
     </div>
 
 </div>
-
 
 
 <div class="layout">
@@ -1283,7 +1260,6 @@ tbody tr.active{
     </div>
 
 
-
     <div class="field">
 
         <label>
@@ -1314,11 +1290,9 @@ tbody tr.active{
     </div>
 
 
-
     <div class="section-label">
         Resultado comercial
     </div>
-
 
 
     <div class="field">
@@ -1330,11 +1304,11 @@ tbody tr.active{
         <input
             id="colocacion"
             type="number"
-            value="488000"
+            value="0"
+            min="0"
         >
 
     </div>
-
 
 
     <div class="field">
@@ -1348,8 +1322,9 @@ tbody tr.active{
             <input
                 id="tasa"
                 type="number"
-                value="18"
+                value="0"
                 step=".1"
+                min="0"
             >
 
             <span class="suffix">
@@ -1361,7 +1336,6 @@ tbody tr.active{
     </div>
 
 
-
     <div class="field">
 
         <label>
@@ -1371,11 +1345,11 @@ tbody tr.active{
         <input
             id="clientes"
             type="number"
-            value="4"
+            value="0"
+            min="0"
         >
 
     </div>
-
 
 
     <div class="field">
@@ -1389,8 +1363,9 @@ tbody tr.active{
             <input
                 id="mora"
                 type="number"
-                value="2.6"
+                value="0"
                 step=".1"
+                min="0"
             >
 
             <span class="suffix">
@@ -1402,11 +1377,9 @@ tbody tr.active{
     </div>
 
 
-
     <div class="section-label">
         Resultado anual
     </div>
-
 
 
     <div class="field">
@@ -1418,14 +1391,13 @@ tbody tr.active{
         <input
             id="utilidad"
             type="number"
-            value="1"
+            value="0"
             min="0"
             max="1"
             step=".05"
         >
 
     </div>
-
 
 
     <div class="field">
@@ -1437,14 +1409,13 @@ tbody tr.active{
         <input
             id="presupuesto"
             type="number"
-            value="1"
+            value="0"
             min="0"
             max="1"
             step=".05"
         >
 
     </div>
-
 
 
     <div class="field">
@@ -1456,14 +1427,13 @@ tbody tr.active{
         <input
             id="competencias"
             type="number"
-            value="1"
+            value="0"
             min="0"
             max="1"
             step=".05"
         >
 
     </div>
-
 
 
     <button
@@ -1482,7 +1452,6 @@ tbody tr.active{
     </button>
 
 </div>
-
 
 
 <!-- ==================================================
@@ -1535,7 +1504,6 @@ tbody tr.active{
     </div>
 
 </div>
-
 
 
 <!-- ==================================================
@@ -1613,7 +1581,6 @@ tbody tr.active{
 </div>
 
 
-
 <!-- ==================================================
      FACTORES
 ================================================== -->
@@ -1645,7 +1612,9 @@ tbody tr.active{
             TU RESULTADO
         </span>
 
-        <strong id="factorColocacionTexto"></strong>
+        <strong id="factorColocacionTexto">
+            US$ 0 → factor 0.0000
+        </strong>
 
     </div>
 
@@ -1654,12 +1623,10 @@ tbody tr.active{
         <table id="tablaColocacion">
 
             <thead>
-
                 <tr>
                     <th>Desde</th>
                     <th>Factor</th>
                 </tr>
-
             </thead>
 
             <tbody></tbody>
@@ -1669,7 +1636,6 @@ tbody tr.active{
     </div>
 
 </div>
-
 
 
 <div class="factor-card orange">
@@ -1696,7 +1662,9 @@ tbody tr.active{
             TU RESULTADO
         </span>
 
-        <strong id="factorTasaTexto"></strong>
+        <strong id="factorTasaTexto">
+            0.0% → factor 0.00
+        </strong>
 
     </div>
 
@@ -1718,7 +1686,6 @@ tbody tr.active{
     </div>
 
 </div>
-
 
 
 <div class="factor-card">
@@ -1745,7 +1712,9 @@ tbody tr.active{
             TU RESULTADO
         </span>
 
-        <strong id="factorClientesTexto"></strong>
+        <strong id="factorClientesTexto">
+            0 clientes → factor 0.00
+        </strong>
 
     </div>
 
@@ -1767,7 +1736,6 @@ tbody tr.active{
     </div>
 
 </div>
-
 
 
 <div class="factor-card orange">
@@ -1794,7 +1762,9 @@ tbody tr.active{
             TU RESULTADO
         </span>
 
-        <strong id="factorMoraTexto"></strong>
+        <strong id="factorMoraTexto">
+            0.0% → factor 1.10
+        </strong>
 
     </div>
 
@@ -1817,13 +1787,11 @@ tbody tr.active{
 
 </div>
 
-
 </div>
 
 
-
 <!-- ==================================================
-     DIVISION
+     DIVISIÓN
 ================================================== -->
 
 <div class="split">
@@ -1842,7 +1810,6 @@ tbody tr.active{
 
 
     <div class="split-grid">
-
 
         <div class="split-card">
 
@@ -1894,23 +1861,19 @@ tbody tr.active{
 
         </div>
 
-
     </div>
 
 </div>
 
 
-
 <!-- ==================================================
-     RESULTADOS EXPLICADOS
+     RESULTADOS
 ================================================== -->
 
 <div class="results-grid">
 
 
-<!-- ==================================================
-     MENSUAL
-================================================== -->
+<!-- MENSUAL -->
 
 <div class="result-card monthly">
 
@@ -1921,7 +1884,6 @@ tbody tr.active{
     <div class="result-sub">
         Parte mensual del bono
     </div>
-
 
     <div
         class="result-number"
@@ -1940,7 +1902,7 @@ tbody tr.active{
         <div class="why-text">
             Porque del total de tu base,
             <strong>el 60% pertenece al componente mensual.</strong>
-            Esa cantidad será la “bolsa mensual” que después se divide
+            Esa cantidad será la bolsa mensual que después se divide
             entre colocación y tasa.
         </div>
 
@@ -1957,19 +1919,18 @@ tbody tr.active{
             class="math-formula"
             id="formulaBaseMensual"
         >
+            US$ 0.00 × 60%
         </div>
 
         <div
             class="math-result"
             id="resultadoBaseMensual"
         >
+            = US$ 0.00
         </div>
 
     </div>
 
-
-
-    <!-- COLOCACION -->
 
     <div class="component">
 
@@ -1996,7 +1957,9 @@ tbody tr.active{
 
         <div class="component-formula">
 
-            <span id="formulaMensualFlujo"></span>
+            <span id="formulaMensualFlujo">
+                US$ 0.00 × 60%
+            </span>
 
             <strong id="mensualFlujo">
                 US$ 0.00
@@ -2006,9 +1969,6 @@ tbody tr.active{
 
     </div>
 
-
-
-    <!-- TASA -->
 
     <div class="component">
 
@@ -2029,12 +1989,15 @@ tbody tr.active{
             class="component-explanation"
             id="explicacionTasa"
         >
+            De la bolsa mensual, el 40% corresponde a tasa.
         </div>
 
 
         <div class="component-formula">
 
-            <span id="formulaMensualTasa"></span>
+            <span id="formulaMensualTasa">
+                US$ 0.00 × 40% × 0.00
+            </span>
 
             <strong id="mensualTasa">
                 US$ 0.00
@@ -2043,7 +2006,6 @@ tbody tr.active{
         </div>
 
     </div>
-
 
 
     <div class="total-box">
@@ -2056,12 +2018,14 @@ tbody tr.active{
             class="total-box-formula"
             id="formulaMensualTotal"
         >
+            US$ 0.00 + US$ 0.00
         </div>
 
         <div
             class="total-box-result"
             id="formulaMensualResultado"
         >
+            = US$ 0.00
         </div>
 
     </div>
@@ -2069,10 +2033,7 @@ tbody tr.active{
 </div>
 
 
-
-<!-- ==================================================
-     TRIMESTRAL
-================================================== -->
+<!-- TRIMESTRAL -->
 
 <div class="result-card quarter">
 
@@ -2083,7 +2044,6 @@ tbody tr.active{
     <div class="result-sub">
         Parte trimestral del bono
     </div>
-
 
     <div
         class="result-number"
@@ -2118,19 +2078,18 @@ tbody tr.active{
             class="math-formula"
             id="formulaBaseTrimestral"
         >
+            US$ 0.00 × 30%
         </div>
 
         <div
             class="math-result"
             id="resultadoBaseTrimestral"
         >
+            = US$ 0.00
         </div>
 
     </div>
 
-
-
-    <!-- CLIENTES -->
 
     <div class="component">
 
@@ -2151,12 +2110,15 @@ tbody tr.active{
             class="component-explanation"
             id="explicacionClientes"
         >
+            De la bolsa trimestral, el 60% corresponde al número de clientes.
         </div>
 
 
         <div class="component-formula">
 
-            <span id="formulaTrimClientes"></span>
+            <span id="formulaTrimClientes">
+                US$ 0.00 × 60% × 0.00
+            </span>
 
             <strong id="trimClientes">
                 US$ 0.00
@@ -2166,9 +2128,6 @@ tbody tr.active{
 
     </div>
 
-
-
-    <!-- MORA -->
 
     <div class="component">
 
@@ -2189,12 +2148,15 @@ tbody tr.active{
             class="component-explanation"
             id="explicacionMora"
         >
+            De la bolsa trimestral, el 40% corresponde a mora.
         </div>
 
 
         <div class="component-formula">
 
-            <span id="formulaTrimMora"></span>
+            <span id="formulaTrimMora">
+                US$ 0.00 × 40% × 1.10
+            </span>
 
             <strong id="trimMora">
                 US$ 0.00
@@ -2203,7 +2165,6 @@ tbody tr.active{
         </div>
 
     </div>
-
 
 
     <div class="total-box">
@@ -2216,12 +2177,14 @@ tbody tr.active{
             class="total-box-formula"
             id="formulaTrimestralTotal"
         >
+            US$ 0.00 + US$ 0.00
         </div>
 
         <div
             class="total-box-result"
             id="formulaTrimestralResultado"
         >
+            = US$ 0.00
         </div>
 
     </div>
@@ -2229,10 +2192,7 @@ tbody tr.active{
 </div>
 
 
-
-<!-- ==================================================
-     ANUAL
-================================================== -->
+<!-- ANUAL -->
 
 <div class="result-card annual">
 
@@ -2243,7 +2203,6 @@ tbody tr.active{
     <div class="result-sub">
         Parte anual del bono
     </div>
-
 
     <div
         class="result-number"
@@ -2279,16 +2238,17 @@ tbody tr.active{
             class="math-formula"
             id="formulaBaseAnual"
         >
+            US$ 0.00 × 10%
         </div>
 
         <div
             class="math-result"
             id="resultadoBaseAnual"
         >
+            = US$ 0.00
         </div>
 
     </div>
-
 
 
     <div class="component">
@@ -2310,19 +2270,23 @@ tbody tr.active{
             class="component-explanation"
             id="explicacionUtilidad"
         >
+            La utilidad representa el 10% de la bolsa anual.
         </div>
 
 
         <div class="component-formula">
 
-            <span id="formulaAnualUtilidad"></span>
+            <span id="formulaAnualUtilidad">
+                US$ 0.00 × 10% × 0.00
+            </span>
 
-            <strong id="anualUtilidad"></strong>
+            <strong id="anualUtilidad">
+                US$ 0.00
+            </strong>
 
         </div>
 
     </div>
-
 
 
     <div class="component">
@@ -2344,19 +2308,23 @@ tbody tr.active{
             class="component-explanation"
             id="explicacionPresupuesto"
         >
+            El presupuesto representa el 45% de la bolsa anual.
         </div>
 
 
         <div class="component-formula">
 
-            <span id="formulaAnualPresupuesto"></span>
+            <span id="formulaAnualPresupuesto">
+                US$ 0.00 × 45% × 0.00
+            </span>
 
-            <strong id="anualPresupuesto"></strong>
+            <strong id="anualPresupuesto">
+                US$ 0.00
+            </strong>
 
         </div>
 
     </div>
-
 
 
     <div class="component">
@@ -2378,19 +2346,23 @@ tbody tr.active{
             class="component-explanation"
             id="explicacionCompetencias"
         >
+            Competencias representa el otro 45% de la bolsa anual.
         </div>
 
 
         <div class="component-formula">
 
-            <span id="formulaAnualCompetencias"></span>
+            <span id="formulaAnualCompetencias">
+                US$ 0.00 × 45% × 0.00
+            </span>
 
-            <strong id="anualCompetencias"></strong>
+            <strong id="anualCompetencias">
+                US$ 0.00
+            </strong>
 
         </div>
 
     </div>
-
 
 
     <div class="total-box">
@@ -2403,21 +2375,21 @@ tbody tr.active{
             class="total-box-formula"
             id="formulaAnualTotal"
         >
+            US$ 0.00 + US$ 0.00 + US$ 0.00
         </div>
 
         <div
             class="total-box-result"
             id="formulaAnualResultado"
         >
+            = US$ 0.00
         </div>
 
     </div>
 
 </div>
 
-
 </div>
-
 
 
 <!-- ==================================================
@@ -2486,7 +2458,6 @@ tbody tr.active{
 </div>
 
 
-
 <script>
 
 /* ==================================================
@@ -2494,7 +2465,6 @@ tbody tr.active{
 ================================================== */
 
 const TABLA_COLOCACION = [
-
     [0,0],
     [100000,0.0039],
     [124500,0.0042],
@@ -2506,12 +2476,9 @@ const TABLA_COLOCACION = [
     [330000,0.0056],
     [370000,0.0058],
     [400000,0.0060]
-
 ];
 
-
 const TABLA_TASA = [
-
     [0,0],
     [0.165,0.60],
     [0.175,0.80],
@@ -2519,24 +2486,18 @@ const TABLA_TASA = [
     [0.183,1.00],
     [0.19,1.05],
     [0.195,1.10]
-
 ];
 
-
 const TABLA_CLIENTES = [
-
     [0,0],
     [2,0],
     [3,0.50],
     [4,1.00],
     [5,1.10],
     [6,1.20]
-
 ];
 
-
 const TABLA_MORA = [
-
     [0,1.10],
     [0.02,1.10],
     [0.025,1.05],
@@ -2544,60 +2505,35 @@ const TABLA_MORA = [
     [0.055,0.70],
     [0.06,0],
     [1,0]
-
 ];
 
 
 /* ==================================================
-   BUSCAR FACTOR
+   FUNCIONES
 ================================================== */
 
 function buscarFactor(valor,tabla){
 
-    let factor =
-        tabla[0][1];
+    let factor = tabla[0][1];
+    let fila = 0;
 
-    let fila =
-        0;
+    for(let i=0;i<tabla.length;i++){
 
-
-    for(
-        let i=0;
-        i<tabla.length;
-        i++
-    ){
-
-        if(
-            valor >= tabla[i][0]
-        ){
-
-            factor =
-                tabla[i][1];
-
-            fila =
-                i;
-
-        }
-        else{
-
+        if(valor >= tabla[i][0]){
+            factor = tabla[i][1];
+            fila = i;
+        }else{
             break;
-
         }
 
     }
-
 
     return{
         factor,
         fila
     };
-
 }
 
-
-/* ==================================================
-   FORMATOS
-================================================== */
 
 function dinero(valor){
 
@@ -2609,7 +2545,6 @@ function dinero(valor){
                 maximumFractionDigits:2
             }
         );
-
 }
 
 
@@ -2622,15 +2557,12 @@ function dinero0(valor){
                 maximumFractionDigits:0
             }
         );
-
 }
 
 
 function limitar01(valor){
 
-    if(
-        isNaN(valor)
-    ){
+    if(isNaN(valor)){
         return 0;
     }
 
@@ -2641,13 +2573,8 @@ function limitar01(valor){
             valor
         )
     );
-
 }
 
-
-/* ==================================================
-   PINTAR TABLAS
-================================================== */
 
 function pintarTabla(
     id,
@@ -2662,13 +2589,11 @@ function pintarTabla(
             "#" + id + " tbody"
         );
 
-
     tbody.innerHTML =
         tabla.map(
             (fila,index)=>{
 
                 return `
-
                     <tr class="${
                         index === filaActiva
                             ? "active"
@@ -2684,12 +2609,10 @@ function pintarTabla(
                         </td>
 
                     </tr>
-
                 `;
 
             }
         ).join("");
-
 }
 
 
@@ -2793,9 +2716,7 @@ function calcular(){
         );
 
 
-    /* ==================================================
-       FACTORES
-    ================================================== */
+    /* FACTORES */
 
     const fc =
         buscarFactor(
@@ -2803,20 +2724,17 @@ function calcular(){
             TABLA_COLOCACION
         );
 
-
     const ft =
         buscarFactor(
             tasa,
             TABLA_TASA
         );
 
-
     const fcli =
         buscarFactor(
             clientes,
             TABLA_CLIENTES
         );
-
 
     const fm =
         buscarFactor(
@@ -2825,9 +2743,7 @@ function calcular(){
         );
 
 
-    /* ==================================================
-       BASE
-    ================================================== */
+    /* BASE */
 
     const base =
         colocacion
@@ -2835,21 +2751,17 @@ function calcular(){
         fc.factor;
 
 
-    /* ==================================================
-       MENSUAL
-    ================================================== */
+    /* MENSUAL */
 
     const baseMensual =
         base
         *
         0.60;
 
-
     const mensualFlujo =
         baseMensual
         *
         0.60;
-
 
     const mensualTasa =
         baseMensual
@@ -2858,22 +2770,18 @@ function calcular(){
         *
         ft.factor;
 
-
     const mensual =
         mensualFlujo
         +
         mensualTasa;
 
 
-    /* ==================================================
-       TRIMESTRAL
-    ================================================== */
+    /* TRIMESTRAL */
 
     const baseTrimestral =
         base
         *
         0.30;
-
 
     const trimClientes =
         baseTrimestral
@@ -2882,7 +2790,6 @@ function calcular(){
         *
         fcli.factor;
 
-
     const trimMora =
         baseTrimestral
         *
@@ -2890,22 +2797,18 @@ function calcular(){
         *
         fm.factor;
 
-
     const trimestral =
         trimClientes
         +
         trimMora;
 
 
-    /* ==================================================
-       ANUAL
-    ================================================== */
+    /* ANUAL */
 
     const baseAnual =
         base
         *
         0.10;
-
 
     const anualUtilidad =
         baseAnual
@@ -2914,7 +2817,6 @@ function calcular(){
         *
         utilidad;
 
-
     const anualPresupuesto =
         baseAnual
         *
@@ -2922,14 +2824,12 @@ function calcular(){
         *
         presupuesto;
 
-
     const anualCompetencias =
         baseAnual
         *
         0.45
         *
         competencias;
-
 
     const anual =
         anualUtilidad
@@ -2947,21 +2847,17 @@ function calcular(){
         anual;
 
 
-    /* ==================================================
-       RESUMEN
-    ================================================== */
+    /* RESUMEN */
 
     document.getElementById(
         "outNombre"
     ).textContent =
         nombre;
 
-
     document.getElementById(
         "outMes"
     ).textContent =
         mes;
-
 
     document.getElementById(
         "outTotal"
@@ -2969,27 +2865,22 @@ function calcular(){
         dinero(total);
 
 
-    /* ==================================================
-       BASE
-    ================================================== */
+    /* BASE */
 
     document.getElementById(
         "outBase"
     ).textContent =
         dinero(base);
 
-
     document.getElementById(
         "formulaColocacion"
     ).textContent =
         dinero0(colocacion);
 
-
     document.getElementById(
         "formulaFactorColocacion"
     ).textContent =
         fc.factor.toFixed(4);
-
 
     document.getElementById(
         "formulaBaseResultado"
@@ -2997,9 +2888,7 @@ function calcular(){
         dinero(base);
 
 
-    /* ==================================================
-       FACTORES
-    ================================================== */
+    /* FACTORES */
 
     document.getElementById(
         "factorColocacionTexto"
@@ -3061,15 +2950,12 @@ function calcular(){
         fm.factor.toFixed(2);
 
 
-    /* ==================================================
-       MENSUAL
-    ================================================== */
+    /* MENSUAL */
 
     document.getElementById(
         "mensualTotal"
     ).textContent =
         dinero(mensual);
-
 
     document.getElementById(
         "formulaBaseMensual"
@@ -3081,7 +2967,6 @@ function calcular(){
 
         " × 60%";
 
-
     document.getElementById(
         "resultadoBaseMensual"
     ).textContent =
@@ -3091,7 +2976,6 @@ function calcular(){
         +
 
         dinero(baseMensual);
-
 
     document.getElementById(
         "formulaMensualFlujo"
@@ -3103,22 +2987,16 @@ function calcular(){
 
         " × 60%";
 
-
     document.getElementById(
         "mensualFlujo"
     ).textContent =
         dinero(mensualFlujo);
-
 
     document.getElementById(
         "explicacionTasa"
     ).innerHTML =
 
         "De la bolsa mensual, el <strong>40% corresponde a tasa.</strong> "
-
-        +
-
-        "Ese monto se multiplica por el factor obtenido según tu tasa. "
 
         +
 
@@ -3130,7 +3008,7 @@ function calcular(){
 
         +
 
-        "%</strong>, por eso te corresponde el factor <strong>"
+        "%</strong>, por eso tu factor es <strong>"
 
         +
 
@@ -3139,7 +3017,6 @@ function calcular(){
         +
 
         "</strong>.";
-
 
     document.getElementById(
         "formulaMensualTasa"
@@ -3155,12 +3032,10 @@ function calcular(){
 
         ft.factor.toFixed(2);
 
-
     document.getElementById(
         "mensualTasa"
     ).textContent =
         dinero(mensualTasa);
-
 
     document.getElementById(
         "formulaMensualTotal"
@@ -3176,7 +3051,6 @@ function calcular(){
 
         dinero(mensualTasa);
 
-
     document.getElementById(
         "formulaMensualResultado"
     ).textContent =
@@ -3188,15 +3062,12 @@ function calcular(){
         dinero(mensual);
 
 
-    /* ==================================================
-       TRIMESTRAL
-    ================================================== */
+    /* TRIMESTRAL */
 
     document.getElementById(
         "trimestralTotal"
     ).textContent =
         dinero(trimestral);
-
 
     document.getElementById(
         "formulaBaseTrimestral"
@@ -3208,7 +3079,6 @@ function calcular(){
 
         " × 30%";
 
-
     document.getElementById(
         "resultadoBaseTrimestral"
     ).textContent =
@@ -3219,16 +3089,11 @@ function calcular(){
 
         dinero(baseTrimestral);
 
-
     document.getElementById(
         "explicacionClientes"
     ).innerHTML =
 
-        "De la bolsa trimestral, el <strong>60% corresponde al número de clientes.</strong> "
-
-        +
-
-        "Luego se multiplica por el factor alcanzado. "
+        "De la bolsa trimestral, el <strong>60% corresponde a clientes.</strong> "
 
         +
 
@@ -3250,7 +3115,6 @@ function calcular(){
 
         "</strong>.";
 
-
     document.getElementById(
         "formulaTrimClientes"
     ).textContent =
@@ -3265,22 +3129,16 @@ function calcular(){
 
         fcli.factor.toFixed(2);
 
-
     document.getElementById(
         "trimClientes"
     ).textContent =
         dinero(trimClientes);
-
 
     document.getElementById(
         "explicacionMora"
     ).innerHTML =
 
         "De la bolsa trimestral, el <strong>40% corresponde a mora.</strong> "
-
-        +
-
-        "Ese monto se multiplica por el factor de mora. "
 
         +
 
@@ -3300,8 +3158,7 @@ function calcular(){
 
         +
 
-        "</strong>. Recuerda: en mora, menor porcentaje significa mejor factor.";
-
+        "</strong>.";
 
     document.getElementById(
         "formulaTrimMora"
@@ -3317,12 +3174,10 @@ function calcular(){
 
         fm.factor.toFixed(2);
 
-
     document.getElementById(
         "trimMora"
     ).textContent =
         dinero(trimMora);
-
 
     document.getElementById(
         "formulaTrimestralTotal"
@@ -3338,7 +3193,6 @@ function calcular(){
 
         dinero(trimMora);
 
-
     document.getElementById(
         "formulaTrimestralResultado"
     ).textContent =
@@ -3350,15 +3204,12 @@ function calcular(){
         dinero(trimestral);
 
 
-    /* ==================================================
-       ANUAL
-    ================================================== */
+    /* ANUAL */
 
     document.getElementById(
         "anualTotal"
     ).textContent =
         dinero(anual);
-
 
     document.getElementById(
         "formulaBaseAnual"
@@ -3370,7 +3221,6 @@ function calcular(){
 
         " × 10%";
 
-
     document.getElementById(
         "resultadoBaseAnual"
     ).textContent =
@@ -3381,7 +3231,6 @@ function calcular(){
 
         dinero(baseAnual);
 
-
     document.getElementById(
         "explicacionUtilidad"
     ).innerHTML =
@@ -3390,7 +3239,7 @@ function calcular(){
 
         +
 
-        "Además se multiplica por el nivel de cumplimiento registrado: <strong>"
+        "El cumplimiento registrado es <strong>"
 
         +
 
@@ -3399,7 +3248,6 @@ function calcular(){
         +
 
         "</strong>.";
-
 
     document.getElementById(
         "formulaAnualUtilidad"
@@ -3415,22 +3263,20 @@ function calcular(){
 
         utilidad.toFixed(2);
 
-
     document.getElementById(
         "anualUtilidad"
     ).textContent =
         dinero(anualUtilidad);
 
-
     document.getElementById(
         "explicacionPresupuesto"
     ).innerHTML =
 
-        "El logro del presupuesto representa el <strong>45% de la bolsa anual.</strong> "
+        "El presupuesto representa el <strong>45% de la bolsa anual.</strong> "
 
         +
 
-        "Después se aplica el nivel de cumplimiento: <strong>"
+        "El cumplimiento registrado es <strong>"
 
         +
 
@@ -3439,7 +3285,6 @@ function calcular(){
         +
 
         "</strong>.";
-
 
     document.getElementById(
         "formulaAnualPresupuesto"
@@ -3455,22 +3300,20 @@ function calcular(){
 
         presupuesto.toFixed(2);
 
-
     document.getElementById(
         "anualPresupuesto"
     ).textContent =
         dinero(anualPresupuesto);
 
-
     document.getElementById(
         "explicacionCompetencias"
     ).innerHTML =
 
-        "La evaluación de competencias representa el otro <strong>45% de la bolsa anual.</strong> "
+        "Competencias representa el otro <strong>45% de la bolsa anual.</strong> "
 
         +
 
-        "Se multiplica por el resultado de la evaluación: <strong>"
+        "El cumplimiento registrado es <strong>"
 
         +
 
@@ -3479,7 +3322,6 @@ function calcular(){
         +
 
         "</strong>.";
-
 
     document.getElementById(
         "formulaAnualCompetencias"
@@ -3495,12 +3337,10 @@ function calcular(){
 
         competencias.toFixed(2);
 
-
     document.getElementById(
         "anualCompetencias"
     ).textContent =
         dinero(anualCompetencias);
-
 
     document.getElementById(
         "formulaAnualTotal"
@@ -3524,7 +3364,6 @@ function calcular(){
 
         dinero(anualCompetencias);
 
-
     document.getElementById(
         "formulaAnualResultado"
     ).textContent =
@@ -3536,21 +3375,17 @@ function calcular(){
         dinero(anual);
 
 
-    /* ==================================================
-       FINAL
-    ================================================== */
+    /* FINAL */
 
     document.getElementById(
         "finalMensual"
     ).textContent =
         dinero(mensual);
 
-
     document.getElementById(
         "finalTrimestral"
     ).textContent =
         dinero(trimestral);
-
 
     document.getElementById(
         "finalAnual"
@@ -3558,9 +3393,7 @@ function calcular(){
         dinero(anual);
 
 
-    /* ==================================================
-       TABLAS
-    ================================================== */
+    /* TABLAS */
 
     pintarTabla(
 
@@ -3635,7 +3468,7 @@ function calcular(){
 
 
 /* ==================================================
-   BOTON CALCULAR
+   BOTÓN CALCULAR
 ================================================== */
 
 document.getElementById(
@@ -3647,7 +3480,7 @@ document.getElementById(
 
 
 /* ==================================================
-   RESET
+   LIMPIAR
 ================================================== */
 
 document.getElementById(
@@ -3666,31 +3499,31 @@ document.getElementById(
 
         document.getElementById(
             "colocacion"
-        ).value = 488000;
+        ).value = 0;
 
         document.getElementById(
             "tasa"
-        ).value = 18;
+        ).value = 0;
 
         document.getElementById(
             "clientes"
-        ).value = 4;
+        ).value = 0;
 
         document.getElementById(
             "mora"
-        ).value = 2.6;
+        ).value = 0;
 
         document.getElementById(
             "utilidad"
-        ).value = 1;
+        ).value = 0;
 
         document.getElementById(
             "presupuesto"
-        ).value = 1;
+        ).value = 0;
 
         document.getElementById(
             "competencias"
-        ).value = 1;
+        ).value = 0;
 
         calcular();
 
@@ -3699,7 +3532,7 @@ document.getElementById(
 
 
 /* ==================================================
-   INICIAL
+   CARGA INICIAL
 ================================================== */
 
 calcular();
