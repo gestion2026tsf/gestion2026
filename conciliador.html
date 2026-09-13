@@ -891,7 +891,7 @@ table.report th,table.detail th{
     <div class="htext">
       <div class="eyebrow">Conciliación de compras · PLE + SIRE + Obligaciones</div>
       <h1>Conciliador de Compras</h1>
-      <div style="display:inline-block;margin:6px 0 10px;padding:6px 10px;border:1px solid #e7a6be;border-radius:999px;background:#fff1f6;color:#9d2d59;font-family:var(--mono);font-size:11px;font-weight:700;">VERSIÓN COMPRAS · FECHAS SIRE CORREGIDAS · V12</div>
+      <div style="display:inline-block;margin:6px 0 10px;padding:6px 10px;border:1px solid #e7a6be;border-radius:999px;background:#fff1f6;color:#9d2d59;font-family:var(--mono);font-size:11px;font-weight:700;">VERSIÓN COMPRAS · PEDIDO FLAVIO VALIDADO · V13</div>
       <p>Valida el PLE 8.1 del periodo contra el histórico SIRE de SUNAT y utiliza la Lista de Obligaciones de Sprint únicamente como apoyo para documentos bancarios. Revisa si el comprobante está registrado y, si lo está, compara RUC, proveedor, tipo, serie, correlativo, fecha de emisión, moneda, tipo de cambio, base imponible, IGV y total. También realiza el cruce SIRE → PLE para identificar comprobantes del periodo que aún no aparecen en contabilidad.</p>
     </div>
   </header>
@@ -3166,33 +3166,39 @@ function datosTCValidadoCompras(x){
   const moneda=normTxt(x.moneda);
 
   let tcGeneral=null,difGeneral=null,tcEspecifico=null,difEspecifico=null;
-
-  // TC GENERAL: todos los comprobantes. USD usa la fecha de emision del propio documento; PEN = 1.
-  if(moneda==='PEN'){
-    tcGeneral=1;
-    difGeneral=0;
-  }else if(moneda==='USD' && fechaGeneralNorm){
-    tcGeneral=tcVenta(fechaGeneralNorm);
-    if(tcGeneral!==null && Number.isFinite(Number(tcGeneral)))
-      difGeneral=redondear3Compras(toNumber(x.tipoCambio)-Number(tcGeneral));
-  }
-
-  // TC ESPECIFICO: solo NC/ND (07/08), usando la fecha del comprobante que modifican/anulan.
-  if(es0708){
-    if(moneda==='PEN'){
-      tcEspecifico=1;
-      difEspecifico=0;
-    }else if(moneda==='USD' && fechaEspecificaNorm){
-      tcEspecifico=tcVenta(fechaEspecificaNorm);
-      if(tcEspecifico!==null && Number.isFinite(Number(tcEspecifico)))
-        difEspecifico=redondear3Compras(toNumber(x.tipoCambio)-Number(tcEspecifico));
-    }
-  }
-
   const alertas=[];
+  const faltantes=[];
+
+  // Flavio: la validación de TC se aplica a comprobantes en USD.
+  // En PEN no se inventa TC=1 ni diferencia=0: se deja vacío / No aplica.
   if(moneda==='USD'){
-    if(difGeneral!==null && Math.abs(difGeneral)>=0.001) alertas.push('TC general');
-    if(es0708 && difEspecifico!==null && Math.abs(difEspecifico)>=0.001) alertas.push('TC específico 07/08');
+    if(!fechaGeneralNorm){
+      faltantes.push('fecha para TC general');
+    }else{
+      tcGeneral=tcVenta(fechaGeneralNorm);
+      if(tcGeneral===null || !Number.isFinite(Number(tcGeneral))){
+        faltantes.push(`TC general no disponible (${fechaDDMMYYYY(fechaGeneralNorm)})`);
+      }else{
+        difGeneral=redondear3Compras(toNumber(x.tipoCambio)-Number(tcGeneral));
+        if(Math.abs(difGeneral)>=0.001) alertas.push('TC general');
+      }
+    }
+
+    // Para 07/08, además del TC general de la nota, validar el TC específico
+    // usando la fecha del comprobante original que fue modificado/anulado.
+    if(es0708){
+      if(!fechaEspecificaNorm){
+        faltantes.push('fecha para TC específico 07/08');
+      }else{
+        tcEspecifico=tcVenta(fechaEspecificaNorm);
+        if(tcEspecifico===null || !Number.isFinite(Number(tcEspecifico))){
+          faltantes.push(`TC específico 07/08 no disponible (${fechaDDMMYYYY(fechaEspecificaNorm)})`);
+        }else{
+          difEspecifico=redondear3Compras(toNumber(x.tipoCambio)-Number(tcEspecifico));
+          if(Math.abs(difEspecifico)>=0.001) alertas.push('TC específico 07/08');
+        }
+      }
+    }
   }
 
   // Si es 07/08 y el documento modificado viene incompleto, no dejarlo pasar silenciosamente.
@@ -3204,16 +3210,33 @@ function datosTCValidadoCompras(x){
     if(!String(x.nroCPOrigen||'').trim()) problemasOrigen.push('número CP modificado');
   }
 
+  const estadoTC = moneda!=='USD'
+    ? 'NO APLICA'
+    : faltantes.length
+      ? 'TC PENDIENTE DE VALIDAR'
+      : alertas.length
+        ? 'TC CON DIFERENCIA'
+        : 'TC VALIDADO';
+
   return {
-    es0708,
+    es0708,moneda,estadoTC,
     fechaGeneral:fechaDDMMYYYY(fechaGeneralNorm),
     fechaEspecifica:fechaDDMMYYYY(fechaEspecificaNorm),
-    tcGeneral,difGeneral,tcEspecifico,difEspecifico,alertas,problemasOrigen,
+    tcGeneral,difGeneral,tcEspecifico,difEspecifico,alertas,faltantes,problemasOrigen,
     // Compatibilidad con columnas antiguas, si alguna otra rutina aun las consulta.
     fechaUsada:fechaDDMMYYYY(es0708?fechaEspecificaNorm:fechaGeneralNorm),
     tcSunat:es0708?tcEspecifico:tcGeneral,
     diferencia:es0708?difEspecifico:difGeneral
   };
+}
+function fechaOrigenSireVisual(ple,sire){
+  if(!sire)return '';
+  const sNorm=sire.fechaOrigenNorm||normalizarFecha(sire.fechaOrigen||'');
+  const pNorm=ple?.fechaOrigenNorm||'';
+  // Si PLE y SIRE son equivalentes por inversión DD/MM, mostrar la fecha del PLE,
+  // porque es la relación explícita del documento 07/08 y evita seriales/fechas invertidas.
+  if(pNorm && sNorm && fechasOrigenEquivalentes(pNorm,sNorm)) return fechaDDMMYYYY(pNorm);
+  return fechaDDMMYYYY(sNorm) || String(sire.fechaOrigen||'').trim();
 }
 
 function nombreCanonico(v){
@@ -3341,6 +3364,18 @@ function procesar(){
         comp.diferencias=[...new Set([...(comp.diferencias||[]),...tcValidado.alertas.map(a=>a==='TC general'?'tcGeneralSunat':'tcEspecificoSunat')])];
       }
     }
+    if(tcValidado.faltantes?.length){
+      motivo += (motivo?' — ':'') + tcValidado.faltantes.join(' / ');
+      // Si el cruce PLE/SIRE estaba conciliado, no afirmar que el control de TC quedó validado.
+      // Se mantiene un estado explícito para que nunca pase silenciosamente por falta de histórico TC.
+      if(estado==='CONCILIADO' || estado==='CONCILIADO CON DIFERENCIAS'){
+        estado='TC PENDIENTE DE VALIDAR';
+        accion='Completar histórico de TC y volver a validar';
+      }else{
+        accion = accion==='Sin observación' ? 'Completar histórico de TC y volver a validar' : accion+' / Completar histórico de TC';
+      }
+      if(comp) comp.diferencias=[...new Set([...(comp.diferencias||[]),'tcHistoricoNoDisponible'])];
+    }
     if(tcValidado.problemasOrigen?.length){
       motivo += (motivo?' — ':'') + 'Datos 07/08 incompletos: '+tcValidado.problemasOrigen.join(', ');
       if(estado==='CONCILIADO') estado='CONCILIADO CON DIFERENCIAS';
@@ -3377,7 +3412,7 @@ function marca(v){return v===undefined?'No evaluado':v?'Correcto':'Revisar'}
 
 function renderResultados(r){
   const cr=contar(r.pleResultado,'estado'),total=r.pleResultado.length;let h='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';
-  ['CONCILIADO','CONCILIADO CON DIFERENCIAS','BANCO CONFIRMADO POR OBLIGACIONES','POSIBLE COINCIDENCIA','BANCO EN OBLIGACIONES — NO EN SIRE','REGISTRADO EN PERIODO ANTERIOR','TRATAMIENTO ESPECIAL','REVISIÓN POR TIPO','NO UBICADO EN SIRE'].forEach(e=>{const n=cr.get(e)||0;if(!n)return;const cls=e==='CONCILIADO'?'ok':(e==='NO UBICADO EN SIRE'||e==='BANCO EN OBLIGACIONES — NO EN SIRE')?'bad':e==='BANCO CONFIRMADO POR OBLIGACIONES'?'ok':'warn';h+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/total*100).toFixed(1)}%</td></tr>`});h+=`<tr><td>TOTAL PLE</td><td>${total}</td><td>100%</td></tr></tbody></table>`;
+  ['CONCILIADO','CONCILIADO CON DIFERENCIAS','TC PENDIENTE DE VALIDAR','BANCO CONFIRMADO POR OBLIGACIONES','POSIBLE COINCIDENCIA','BANCO EN OBLIGACIONES — NO EN SIRE','REGISTRADO EN PERIODO ANTERIOR','TRATAMIENTO ESPECIAL','REVISIÓN POR TIPO','NO UBICADO EN SIRE'].forEach(e=>{const n=cr.get(e)||0;if(!n)return;const cls=e==='CONCILIADO'?'ok':(e==='NO UBICADO EN SIRE'||e==='BANCO EN OBLIGACIONES — NO EN SIRE')?'bad':e==='BANCO CONFIRMADO POR OBLIGACIONES'?'ok':'warn';h+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/total*100).toFixed(1)}%</td></tr>`});h+=`<tr><td>TOTAL PLE</td><td>${total}</td><td>100%</td></tr></tbody></table>`;
   const dupPLELlaves=[...new Set(r.pleResultado.filter(x=>x.duplicadoPLE).map(x=>x.key))].length;
   const dupPLEFilas=r.pleResultado.filter(x=>x.duplicadoPLE).length;
   const dupSIRELlaves=[...new Set(r.sireResultado.filter(x=>x.duplicado).map(x=>x.key))].length;
@@ -3393,7 +3428,7 @@ function renderResultados(r){
   document.getElementById('resumenRCEHolder').innerHTML=h;
   const sr=r.sireResultado.filter(x=>x.estado!=='HISTÓRICO'),cs=contar(sr,'estado'),ts=sr.length||1;let hs='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';['REGISTRADO EN PLE','REGISTRADO EN PLE — CORREGIDO POR OBLIGACIONES','REGISTRADO EN PLE HISTÓRICO','POSIBLE COINCIDENCIA EN PLE','NO ENCONTRADO EN PLE — PENDIENTE DE VALIDAR'].forEach(e=>{const n=cs.get(e)||0;const cls=e.startsWith('REGISTRADO EN PLE')?'ok':e.startsWith('NO ENCONTRADO')?'bad':'warn';hs+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/ts*100).toFixed(1)}%</td></tr>`});hs+=`<tr><td>Periodo analizado</td><td>${r.periodoActual||'—'}</td><td>—</td></tr></tbody></table>`;document.getElementById('resumenSIREHolder').innerHTML=hs;
   let ht='<table class="report"><thead><tr><th>Tipo</th><th>Total</th><th>OK</th><th>Con diferencias</th><th>Posible</th><th>Especial</th><th>No ubicado</th></tr></thead><tbody>';for(const [cod,info] of state.tipos){const f=r.pleResultado.filter(x=>x.tipoCP===cod),ok=f.filter(x=>x.estado==='CONCILIADO').length,dif=f.filter(x=>x.estado==='CONCILIADO CON DIFERENCIAS').length,pos=f.filter(x=>x.estado==='POSIBLE COINCIDENCIA'||x.estado==='BANCO CONFIRMADO POR OBLIGACIONES'||x.estado==='BANCO EN OBLIGACIONES — NO EN SIRE').length,esp=f.filter(x=>x.estado==='TRATAMIENTO ESPECIAL'||x.estado==='REVISIÓN POR TIPO').length,no=f.filter(x=>x.estado==='NO UBICADO EN SIRE').length;ht+=`<tr><td>${esc(info.label)}</td><td>${f.length}</td><td class="ok">${ok}</td><td>${dif}</td><td>${pos}</td><td>${esp}</td><td class="${no?'bad':''}">${no}</td></tr>`}ht+='</tbody></table>';document.getElementById('resumenTipoHolder').innerHTML=ht;
-  const rows=r.pleResultado.slice(0,250);let body=rows.map(x=>{const t=x.tcValidado||datosTCValidadoCompras(x);return `<tr><td>${esc(x.rucProveedor)}</td><td>${esc(x.tipoCP)}</td><td>${esc(x.serie)}</td><td>${esc(padNum(x.nroCP))}</td><td>${esc(x.fechaEmision)}</td><td>${x.totalCP.toFixed(2)}</td><td>${esc(t.es0708?x.documentoOrigen:'')}</td><td>${esc(t.es0708?x.fechaOrigen:'')}</td><td>${t.difGeneral??''}</td><td>${t.es0708?(t.difEspecifico??''):''}</td><td>${x.duplicadoPLE?'Sí':'No'}</td><td>${x.duplicadoSIRE?'Sí':'No'}</td><td><span class="flag ${x.estado==='CONCILIADO'?'ok':(x.estado==='NO UBICADO EN SIRE'||x.estado==='BANCO EN OBLIGACIONES — NO EN SIRE')?'bad':x.estado==='BANCO CONFIRMADO POR OBLIGACIONES'?'ok':'warn'}">${esc(x.estado)}</span></td><td>${esc(x.motivo)}</td><td>${esc(x.sugerenciaBanco?.keySugerida||'')}</td></tr>`}).join('');document.getElementById('detailTableC').innerHTML='<thead><tr><th>RUC</th><th>Tipo</th><th>Serie</th><th>Correlativo</th><th>Fecha</th><th>Total</th><th>Documento modificado</th><th>Fecha doc. modificado</th><th>DIF TC general</th><th>DIF TC 07/08</th><th>Duplicado PLE</th><th>Duplicado SIRE</th><th>Estado</th><th>Motivo</th><th>Sugerencia banco</th></tr></thead><tbody>'+body+'</tbody>';
+  const rows=r.pleResultado.slice(0,250);let body=rows.map(x=>{const t=x.tcValidado||datosTCValidadoCompras(x);return `<tr><td>${esc(x.rucProveedor)}</td><td>${esc(x.tipoCP)}</td><td>${esc(x.serie)}</td><td>${esc(padNum(x.nroCP))}</td><td>${esc(x.fechaEmision)}</td><td>${x.totalCP.toFixed(2)}</td><td>${esc(t.es0708?x.documentoOrigen:'')}</td><td>${esc(t.es0708?fechaDDMMYYYY(x.fechaOrigenNorm):'')}</td><td>${t.difGeneral??''}</td><td>${t.es0708?(t.difEspecifico??''):''}</td><td>${esc(t.estadoTC)}</td><td>${x.duplicadoPLE?'Sí':'No'}</td><td>${x.duplicadoSIRE?'Sí':'No'}</td><td><span class="flag ${x.estado==='CONCILIADO'?'ok':(x.estado==='NO UBICADO EN SIRE'||x.estado==='BANCO EN OBLIGACIONES — NO EN SIRE')?'bad':x.estado==='BANCO CONFIRMADO POR OBLIGACIONES'?'ok':'warn'}">${esc(x.estado)}</span></td><td>${esc(x.motivo)}</td><td>${esc(x.sugerenciaBanco?.keySugerida||'')}</td></tr>`}).join('');document.getElementById('detailTableC').innerHTML='<thead><tr><th>RUC</th><th>Tipo</th><th>Serie</th><th>Correlativo</th><th>Fecha</th><th>Total</th><th>Documento modificado</th><th>Fecha doc. modificado</th><th>DIF TC general</th><th>DIF TC 07/08</th><th>Estado TC</th><th>Duplicado PLE</th><th>Duplicado SIRE</th><th>Estado</th><th>Motivo</th><th>Sugerencia banco</th></tr></thead><tbody>'+body+'</tbody>';
 }
 
 document.getElementById('btnProcesarC').addEventListener('click',()=>{const b=document.getElementById('btnProcesarC');b.disabled=true;b.textContent='Conciliando…';setTimeout(()=>{lastResult=procesar();renderResultados(lastResult);document.getElementById('resultsC').classList.add('is-visible');b.disabled=false;b.textContent='Conciliar nuevamente'},10)});
@@ -3454,7 +3489,7 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
 
     const head = ['Estado','Acción sugerida','Duplicado PLE','Duplicado SIRE','Registrado en periodo anterior','Periodo histórico','Periodo registro','RUC PLE','Proveedor PLE','Tipo PLE','Serie PLE','Correlativo PLE','Fecha PLE','Moneda PLE','TC PLE',
       'Fecha doc. modificado PLE','Tipo CP modificado PLE','Serie CP modificado PLE','Nro CP modificado PLE','Documento modificado PLE',
-      'Fecha TC general','TC General SUNAT','DIF TC General','Fecha TC específico 07/08','TC Específico 07/08','DIF TC Específico 07/08',
+      'Estado TC','Fecha TC general','TC General SUNAT','DIF TC General','Fecha TC específico 07/08','TC Específico 07/08','DIF TC Específico 07/08',
       'Base PLE','IGV PLE','Total PLE',
       'RUC SIRE','Proveedor SIRE','Tipo SIRE','Serie SIRE','Correlativo SIRE','Fecha SIRE','Moneda SIRE','TC SIRE',
       'Fecha doc. modificado SIRE','Tipo CP modificado SIRE','Serie CP modificado SIRE','Nro CP modificado SIRE','Documento modificado SIRE',
@@ -3469,12 +3504,12 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
       a.push([
         x.estado, x.accion, x.duplicadoPLE?'Sí':'No', x.duplicadoSIRE?'Sí':'No', x.registradoAntes?'Sí':'No', x.historicoMatch?.periodoRegistro || '', x.periodoRegistro, x.rucProveedor, x.razonSocial, x.tipoCP, x.serie, padNum(x.nroCP),
         x.fechaEmision, x.moneda, x.tipoCambio,
-        tcVal.es0708?x.fechaOrigen:'', tcVal.es0708?x.tipoCPOrigen:'', tcVal.es0708?x.serieOrigen:'', tcVal.es0708?padNum(x.nroCPOrigen):'', tcVal.es0708?x.documentoOrigen:'',
-        tcVal.fechaGeneral, tcVal.tcGeneral??'', tcVal.difGeneral??'', tcVal.es0708?tcVal.fechaEspecifica:'', tcVal.es0708?(tcVal.tcEspecifico??''):'', tcVal.es0708?(tcVal.difEspecifico??''):'',
+        tcVal.es0708?fechaDDMMYYYY(x.fechaOrigenNorm):'', tcVal.es0708?x.tipoCPOrigen:'', tcVal.es0708?x.serieOrigen:'', tcVal.es0708?(x.nroCPOrigen?padNum(x.nroCPOrigen):''):'', tcVal.es0708?x.documentoOrigen:'',
+        tcVal.estadoTC, tcVal.fechaGeneral, tcVal.tcGeneral??'', tcVal.difGeneral??'', tcVal.es0708?tcVal.fechaEspecifica:'', tcVal.es0708?(tcVal.tcEspecifico??''):'', tcVal.es0708?(tcVal.difEspecifico??''):'',
         x.baseImponible, x.igvTotal, x.totalCP,
         ss.rucProveedor || '', ss.razonSocial || '', ss.tipoCP || '', ss.serie || '', ss.nroCP ? padNum(ss.nroCP) : '',
         ss.fechaEmision || '', ss.moneda || '', ss.tipoCambio || '',
-        tcVal.es0708?(ss.fechaOrigen||''):'', tcVal.es0708?(ss.tipoCPOrigen||''):'', tcVal.es0708?(ss.serieOrigen||''):'', tcVal.es0708?(ss.nroCPOrigen?padNum(ss.nroCPOrigen):''):'', tcVal.es0708?(ss.documentoOrigen||''):'',
+        tcVal.es0708?fechaOrigenSireVisual(x,ss):'', tcVal.es0708?(ss.tipoCPOrigen||''):'', tcVal.es0708?(ss.serieOrigen||''):'', tcVal.es0708?(ss.nroCPOrigen?padNum(ss.nroCPOrigen):''):'', tcVal.es0708?(ss.documentoOrigen||''):'',
         ss.baseImponible ?? '', ss.igvTotal ?? '', ss.totalCP ?? '',
         marca(v.ruc), marca(v.proveedor), marca(v.tipo), marca(v.serie), marca(v.correlativo), marca(v.fecha),
         marca(v.moneda), marca(v.tipoCambio), marca(v.baseImponible), marca(v.igv), marca(v.total),
@@ -3482,7 +3517,7 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
         x.comparacion?.diferencias?.join(', ') || '', x.sugerenciaBanco?.keySugerida || '', x.motivo
       ]);
     });
-    addSheet(wb, '02 PLE vs SIRE', a, [22,24,14,14,18,14,14,14,34,10,12,15,13,10,10,16,14,14,17,25,14,14,14,18,18,18,13,13,13,14,34,10,12,15,13,10,10,16,14,14,17,25,13,13,13,12,16,12,12,16,12,12,12,12,12,12,16,16,16,20,30,24,44], true, {kind:'detail', statusCol:0, highlightCols:[15,16,17,18,19,20,21,22,23,24,25], highlightColor:'DDEBF7', highlightHeaderColor:'4472C4'});
+    addSheet(wb, '02 PLE vs SIRE', a, [22,24,14,14,18,14,14,14,34,10,12,15,13,10,10,16,14,14,17,25,22,14,14,14,18,18,18,13,13,13,14,34,10,12,15,13,10,10,16,14,14,17,25,13,13,13,12,16,12,12,16,12,12,12,12,12,12,16,16,16,20,30,24,44], true, {kind:'detail', statusCol:0, highlightCols:[15,16,17,18,19,20,21,22,23,24,25,26], highlightColor:'DDEBF7', highlightHeaderColor:'4472C4'});
 
     const p = [['Periodo SIRE','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Base','IGV','Total','Estado','Motivo']];
     pend.forEach(x=>p.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));
@@ -3505,12 +3540,12 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
 
     if(state.pleHistorico?.rows?.length){
       const ph=[['Periodo registro','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Fecha doc. modificado','Tipo CP modificado','Serie CP modificado','Nro CP modificado','Documento modificado','Llave']];
-      state.pleHistorico.rows.forEach(x=>ph.push([x.periodoRegistro||x.periodo||'',x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision||'',x.fechaOrigen||'',x.tipoCPOrigen||'',x.serieOrigen||'',x.nroCPOrigen?padNum(x.nroCPOrigen):'',x.documentoOrigen||'',x.key]));
+      state.pleHistorico.rows.forEach(x=>ph.push([x.periodoRegistro||x.periodo||'',x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision||'',fechaDDMMYYYY(x.fechaOrigenNorm)||x.fechaOrigen||'',x.tipoCPOrigen||'',x.serieOrigen||'',x.nroCPOrigen?padNum(x.nroCPOrigen):'',x.documentoOrigen||'',x.key]));
       addSheet(wb, '06 PLE histórico', ph, [16,14,34,10,12,15,14,18,16,16,18,26,38], true, {kind:'detail'});
     }
 
     const sh = [['Periodo','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Fecha doc. modificado','Tipo CP modificado','Serie CP modificado','Nro CP modificado','Documento modificado','Base','IGV','Total','Estado vs PLE','Motivo']];
-    r.sireResultado.forEach(x=>sh.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.fechaOrigen||'',x.tipoCPOrigen||'',x.serieOrigen||'',x.nroCPOrigen?padNum(x.nroCPOrigen):'',x.documentoOrigen||'',x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));
+    r.sireResultado.forEach(x=>sh.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,fechaDDMMYYYY(x.fechaOrigenNorm)||x.fechaOrigen||'',x.tipoCPOrigen||'',x.serieOrigen||'',x.nroCPOrigen?padNum(x.nroCPOrigen):'',x.documentoOrigen||'',x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));
     addSheet(wb, state.pleHistorico?.rows?.length ? '07 SIRE histórico' : '06 SIRE histórico', sh, [12,14,35,10,13,16,14,10,10,18,16,16,18,26,14,14,14,24,34], true, {kind:'detail', statusCol:17});
 
     const fn = `Papel_de_Trabajo_Compras_${new Date().toISOString().slice(0,10)}.xlsx`;
