@@ -24,11 +24,11 @@ button{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:poin
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="mark">2908</div><div><h1>Sistema de Pasivas · Operaciones por liquidar</h1><p>Premium → clasificación → antigüedad → reporte gerencial → Excel</p></div></div><div class="small">TOTAL Servicios Financieros</div></header>
+<header><div class="brand"><div class="mark">2908</div><div><h1>Sistema de Pasivas · Operaciones por liquidar</h1><p>Premium → clasificación → antigüedad → reporte gerencial → Excel · v2.1 CORREGIDA</p></div></div><div class="small">TOTAL Servicios Financieros</div></header>
 <main>
   <section class="panel">
     <div class="grid">
-      <div class="col6"><label>1. Reporte mensual de Premium (.xlsx / .xlsm)</label><input id="file" type="file" accept=".xlsx,.xlsm,.xls,.xlsb"/><div class="note">Carga únicamente el reporte de Premium. El sistema conserva la base original y ejecuta internamente las reglas de clasificación.</div></div>
+      <div class="col6"><label>1. Reporte mensual de Premium (.xlsx / .xlsm)</label><input id="file" type="file" accept=".xlsx,.xlsm,.xls,.xlsb"/><div class="note">Carga únicamente el reporte de Premium. El sistema conserva la base original, excluye automáticamente la fila final de totales y ejecuta internamente las reglas de clasificación.</div></div>
       <div class="col3"><label>2. Fecha de corte</label><input id="cutoff" type="date" readonly/><div class="note">Se detecta automáticamente usando el mes de la última <b>Fecha Vou</b> del reporte.</div></div>
       <div class="col3 actions"><button class="primary" id="analyze">Procesar Pasivas</button></div>
     </div>
@@ -82,7 +82,7 @@ function assign(target, refs, method, diff, mon, obs=''){
  target['Metodo Clasificacion']=method; target['Fila(s) Origen']=refs.map(x=>x.__excelRow).join(', '); target['Diferencia Cruce']=diff; target['Moneda Cruce']=mon; target['Observacion']=obs;
 }
 function analyzeRows(rows, cutoff, tol){
- const a=rows.map((r,i)=>({...r,__excelRow:headerRowIndex+2+i,'Estado CAF Original':stateOriginal(r)}));
+ const a=rows.map((r,i)=>({...r,__excelRow:r.__sourceRow??(headerRowIndex+2+i),'Estado CAF Original':stateOriginal(r)}));
  // Initialize original rows.
  for(const r of a){if(stateOriginal(r))r['Metodo Clasificacion']='ORIGINAL'}
  const targets=()=>a.filter(r=>rowIsTarget(r) && !r['Metodo Clasificacion']);
@@ -106,10 +106,11 @@ function analyzeRows(rows, cutoff, tol){
  return a;
 }
 function buildSummary(a,cutoff){
- const pen=a.reduce((z,r)=>z+n(r['Saldo Soles']),0),usd=a.reduce((z,r)=>z+n(r['Saldo Dólares']),0);const late=a.filter(r=>r['Alerta 30 dias']==='FUERA DE PLAZO').length;const unc=a.filter(r=>r['Metodo Clasificacion']==='SIN CLASIFICAR').length;
- const methods={};for(const r of a){const k=r['Metodo Clasificacion']||'SIN METODO';methods[k]=(methods[k]||0)+1}
- const agingMap={};for(const tr of ['FECHA POSTERIOR','SIN FECHA','00-30 dias','31-60 dias','61-90 dias','91-180 dias','Mas de 180 dias'])agingMap[tr]={pen:0,usd:0,count:0};for(const r of a){let tr=r['Tramo Antiguedad'];if(tr==='FECHA POSTERIOR')tr='FECHA POSTERIOR';if(!agingMap[tr])agingMap[tr]={pen:0,usd:0,count:0};agingMap[tr].pen+=n(r['Saldo Soles']);agingMap[tr].usd+=n(r['Saldo Dólares']);agingMap[tr].count++}
- const cg={};for(const r of a){const client=s(r.Cliente)||'(SIN CLIENTE)',ruc=s(r.Ruc),cur=currency(r),k=client+'|'+ruc+'|'+cur;(cg[k]??={client,ruc,cur,saldo:0,partidas:0,maxDays:null,late:0,states:new Set()});const g=cg[k];g.saldo+=balance(r,cur);g.partidas++;if(r['Dias Antiguedad']!==null){g.maxDays=g.maxDays===null?r['Dias Antiguedad']:Math.max(g.maxDays,r['Dias Antiguedad'])}if(r['Alerta 30 dias']==='FUERA DE PLAZO')g.late++;g.states.add(r['Estado CAF'])}
+ const detail=a.filter(r=>{const c=norm(r['Cuenta']);return c==='29180701'||c==='29280701'});
+ const pen=detail.reduce((z,r)=>z+n(r['Saldo Soles']),0),usd=detail.reduce((z,r)=>z+n(r['Saldo Dólares']),0);const late=detail.filter(r=>r['Alerta 30 dias']==='FUERA DE PLAZO').length;const unc=detail.filter(r=>r['Metodo Clasificacion']==='SIN CLASIFICAR').length;
+ const methods={};for(const r of detail){const k=r['Metodo Clasificacion']||'SIN METODO';methods[k]=(methods[k]||0)+1}
+ const agingMap={};for(const tr of ['FECHA POSTERIOR','SIN FECHA','00-30 dias','31-60 dias','61-90 dias','91-180 dias','Mas de 180 dias'])agingMap[tr]={pen:0,usd:0,count:0};for(const r of detail){let tr=r['Tramo Antiguedad'];if(tr==='FECHA POSTERIOR')tr='FECHA POSTERIOR';if(!agingMap[tr])agingMap[tr]={pen:0,usd:0,count:0};agingMap[tr].pen+=n(r['Saldo Soles']);agingMap[tr].usd+=n(r['Saldo Dólares']);agingMap[tr].count++}
+ const cg={};for(const r of detail){const client=s(r.Cliente)||'(SIN CLIENTE)',ruc=s(r.Ruc),cur=currency(r),k=client+'|'+ruc+'|'+cur;(cg[k]??={client,ruc,cur,saldo:0,partidas:0,maxDays:null,late:0,states:new Set()});const g=cg[k];g.saldo+=balance(r,cur);g.partidas++;if(r['Dias Antiguedad']!==null){g.maxDays=g.maxDays===null?r['Dias Antiguedad']:Math.max(g.maxDays,r['Dias Antiguedad'])}if(r['Alerta 30 dias']==='FUERA DE PLAZO')g.late++;g.states.add(r['Estado CAF'])}
  const totalsAbs={PEN:0,USD:0};Object.values(cg).forEach(g=>totalsAbs[g.cur]+=Math.abs(g.saldo));let clients=Object.values(cg).map(g=>({...g,state:g.states.size===1?[...g.states][0]:'MULTIPLES',materiality:totalsAbs[g.cur]?Math.abs(g.saldo)/totalsAbs[g.cur]:0,tramo:aging(g.maxDays)})).sort((x,y)=>Math.abs(y.saldo)-Math.abs(x.saldo));
  return {pen,usd,late,unc,methods,agingMap,clients,cutoff};
 }
@@ -143,7 +144,21 @@ function exportExcel(){
  XLSX.utils.book_append_sheet(wb,wsR,'Resumen Ejecutivo');XLSX.utils.book_append_sheet(wb,wsD,'Detalle Analizado');XLSX.utils.book_append_sheet(wb,wsT,'Top Clientes');XLSX.utils.book_append_sheet(wb,wsA,'Antiguedad');XLSX.utils.book_append_sheet(wb,wsM,'Clasificacion');XLSX.utils.book_append_sheet(wb,wsMail,'Correo Gerencial');
  const cut=$('cutoff').value||'corte';XLSX.writeFile(wb,`Pasivas_2908_Procesado_${cut}.xlsx`);
 }
-$('analyze').onclick=async()=>{try{if(!$('file').files.length)throw new Error('Selecciona primero el reporte de Premium.');if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel. Verifica tu conexión a internet al abrir el sistema.');progress(10);setStatus('Leyendo Excel...');const file=$('file').files[0];sourceFileName=file.name;const buf=await file.arrayBuffer();progress(30);const wb=XLSX.read(buf,{type:'array',cellDates:true,cellNF:true});sourceSheetName=wb.SheetNames.find(n=>/RptProvision_Conciliacion/i.test(n))||wb.SheetNames[0];const ws=wb.Sheets[sourceSheetName];const matrix=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});headerRowIndex=matrix.findIndex(row=>row.some(v=>norm(v)==='RUC')&&row.some(v=>norm(v)==='CLIENTE')&&row.some(v=>norm(v)==='CUENTA'));if(headerRowIndex<0)throw new Error('No encontré los encabezados Ruc / Cliente / Cuenta en el archivo.');headers=matrix[headerRowIndex].map(v=>s(v));const body=matrix.slice(headerRowIndex+1).filter(row=>row.some(v=>v!==null&&v!==''));rawRows=body.map(row=>Object.fromEntries(headers.map((h,i)=>[h,row[i]])));progress(50);setStatus(`Procesando ${rawRows.length.toLocaleString('es-PE')} partidas...`);const fechas=rawRows.map(r=>excelDate(r['Fecha Vou'])).filter(d=>d&&!isNaN(d));if(!fechas.length)throw new Error('No encontré fechas válidas en la columna Fecha Vou.');const maxFecha=new Date(Math.max(...fechas.map(d=>d.getTime())));const cutoff=new Date(maxFecha.getFullYear(),maxFecha.getMonth()+1,0);$('cutoff').value=`${cutoff.getFullYear()}-${String(cutoff.getMonth()+1).padStart(2,'0')}-${String(cutoff.getDate()).padStart(2,'0')}`;const tol=1.00;await new Promise(r=>setTimeout(r,20));analyzed=analyzeRows(rawRows,cutoff,tol);progress(80);summary=buildSummary(analyzed,cutoff);render();progress(100);setStatus(`Listo. Se analizaron <b>${analyzed.length.toLocaleString('es-PE')}</b> partidas de <b>${sourceFileName}</b>.`,'ok')}catch(e){console.error(e);progress(0);setStatus(e.message||String(e),'bad')}};
+$('analyze').onclick=async()=>{try{if(!$('file').files.length)throw new Error('Selecciona primero el reporte de Premium.');if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel. Verifica tu conexión a internet al abrir el sistema.');progress(10);setStatus('Leyendo Excel...');const file=$('file').files[0];sourceFileName=file.name;const buf=await file.arrayBuffer();progress(30);const wb=XLSX.read(buf,{type:'array',cellDates:true,cellNF:true});sourceSheetName=wb.SheetNames.find(n=>/RptProvision_Conciliacion/i.test(n))||wb.SheetNames[0];const ws=wb.Sheets[sourceSheetName];const matrix=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});headerRowIndex=matrix.findIndex(row=>row.some(v=>norm(v)==='RUC')&&row.some(v=>norm(v)==='CLIENTE')&&row.some(v=>norm(v)==='CUENTA'));if(headerRowIndex<0)throw new Error('No encontré los encabezados Ruc / Cliente / Cuenta en el archivo.');headers=matrix[headerRowIndex].map(v=>s(v));const body=matrix.slice(headerRowIndex+1).filter(row=>row.some(v=>v!==null&&v!==''));rawRows=body.map((row,idx)=>({...Object.fromEntries(headers.map((h,i)=>[h,row[i]])),__sourceRow:headerRowIndex+2+idx})).filter(r=>{
+  const cuenta=norm(r['Cuenta']);
+  const ruc=s(r['Ruc']).trim();
+  const cliente=s(r['Cliente']).trim();
+  // Solo partidas reales del rubro 29080701.
+  // La fila TOTAL de Premium no tiene RUC, Cliente ni Cuenta y queda fuera.
+  if(!(cuenta==='29180701' || cuenta==='29280701')) return false;
+  if(!ruc && !cliente) return false;
+  return true;
+});progress(50);
+if(!rawRows.length) throw new Error('No encontré partidas válidas de las cuentas 29180701 / 29280701.');
+const prePen=rawRows.reduce((z,r)=>z+n(r['Saldo Soles']),0);
+const preUsd=rawRows.reduce((z,r)=>z+n(r['Saldo Dólares']),0);
+setStatus(`Procesando <b>${rawRows.length.toLocaleString('es-PE')}</b> partidas reales. Saldo base: <b>${money(prePen,'PEN')}</b> y <b>${money(preUsd,'USD')}</b>.`);
+const fechas=rawRows.map(r=>excelDate(r['Fecha Vou'])).filter(d=>d&&!isNaN(d));if(!fechas.length)throw new Error('No encontré fechas válidas en la columna Fecha Vou.');const maxFecha=new Date(Math.max(...fechas.map(d=>d.getTime())));const cutoff=new Date(maxFecha.getFullYear(),maxFecha.getMonth()+1,0);$('cutoff').value=`${cutoff.getFullYear()}-${String(cutoff.getMonth()+1).padStart(2,'0')}-${String(cutoff.getDate()).padStart(2,'0')}`;const tol=1.00;await new Promise(r=>setTimeout(r,20));analyzed=analyzeRows(rawRows,cutoff,tol);progress(80);summary=buildSummary(analyzed,cutoff);render();progress(100);setStatus(`Listo · v2.1. Se analizaron <b>${analyzed.length.toLocaleString('es-PE')}</b> partidas reales de <b>${sourceFileName}</b>. La fila TOTAL del Premium quedó excluida. Saldos procesados: <b>${money(summary.pen,'PEN')}</b> y <b>${money(summary.usd,'USD')}</b>.`,'ok')}catch(e){console.error(e);progress(0);setStatus(e.message||String(e),'bad')}};
 $('export').onclick=exportExcel;$('copy').onclick=async()=>{await navigator.clipboard.writeText(buildMail());setStatus('Correo copiado al portapapeles.','ok')};$('downloadMail').onclick=()=>{const blob=new Blob([buildMail()],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Correo_Gerencial_Pasivas.txt';a.click();URL.revokeObjectURL(a.href)};
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');for(const id of ['clients','aging','methods','pending'])$('view-'+id).classList.toggle('hidden',id!==b.dataset.view)});
 </script>
