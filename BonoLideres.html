@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Entiende tu bono | Líder Leasing</title>
+<style>
+:root{
+  --mag:#e00063; --mag2:#b80b52; --magSoft:#fde7f1;
+  --org:#ff7300; --org2:#d85f00; --orgSoft:#fff0e3;
+  --ink:#161827; --muted:#667085; --line:#eadfe4; --bg:#f7f4f6;
+  --card:#fff; --dark:#202027; --ok:#fff4b3;
+}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif}
+.shell{max-width:1540px;margin:0 auto;padding:22px 28px 46px;background:
+ radial-gradient(circle at 7% 5%,rgba(224,0,99,.05),transparent 24%),
+ radial-gradient(circle at 96% 8%,rgba(255,115,0,.05),transparent 22%),#fff}
+.header{display:flex;justify-content:space-between;gap:28px;align-items:flex-start;margin-bottom:18px}
+.header h1{margin:0;font-size:48px;letter-spacing:-2px;line-height:1;font-weight:900}.header h1 span{color:var(--mag)}
+.header p{margin:10px 0 0;color:var(--muted);font-size:16px}.kicker{display:inline-flex;margin-top:14px;padding:8px 14px;border-radius:999px;background:var(--magSoft);color:var(--mag2);font-weight:900;font-size:12px}
+.brand{display:flex;align-items:center;gap:10px;min-width:290px;justify-content:flex-end}.mark{width:62px;height:62px;border:7px solid #f4a600;border-radius:50%;display:grid;place-items:center;color:#f4a600;font-size:30px;font-weight:1000;position:relative}.mark:before{content:"";position:absolute;top:11px;left:14px;right:14px;height:6px;background:#f4a600;border-radius:2px}.mark b{transform:translateY(5px)}
+.word{font-weight:1000;font-size:42px;letter-spacing:-2px;color:var(--mag);line-height:.85}.sub{font-size:13px;font-weight:900;color:#f4a600;margin-top:5px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.step{min-height:72px;padding:13px 15px;border:1px solid var(--line);border-radius:17px;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#fff,#fff7fb)}.step:nth-child(even){background:linear-gradient(135deg,#fff,#fff7ef)}.n{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--mag);color:#fff;font-weight:900;font-size:18px;box-shadow:0 7px 16px rgba(224,0,99,.18)}.step:nth-child(even) .n{background:var(--org);box-shadow:0 7px 16px rgba(255,115,0,.17)}.step b{font-size:13px}
+.layout{display:grid;grid-template-columns:320px minmax(0,1fr);gap:22px;align-items:start}.side{position:sticky;top:14px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 14px 34px rgba(58,21,38,.06)}
+.sideHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.sideHead h2{font-size:20px;margin:0}.pill{font-size:8px;font-weight:900;background:var(--magSoft);color:var(--mag2);padding:5px 8px;border-radius:999px}.sec{margin:14px 0 8px;padding-top:11px;border-top:1px dashed var(--line);font-size:9px;font-weight:900;letter-spacing:.8px;color:#9d7d8c;text-transform:uppercase}
+.field{margin-bottom:10px}.field label{display:block;font-size:10.5px;font-weight:800;margin-bottom:5px}.field input,.field select{width:100%;height:42px;border:1px solid #ded5da;border-radius:10px;background:#fff;padding:0 10px;font:inherit;font-size:12px;outline:none}.field input:focus,.field select:focus{border-color:var(--mag);box-shadow:0 0 0 3px rgba(224,0,99,.07)}.suffixWrap{display:grid;grid-template-columns:1fr 34px;border:1px solid #ded5da;border-radius:10px;overflow:hidden}.suffixWrap input{border:0;border-radius:0}.suffix{display:grid;place-items:center;border-left:1px solid #eee;font-weight:900;font-size:11px;background:#fafafa}
+.btn{width:100%;border:0;border-radius:11px;padding:12px;background:linear-gradient(90deg,var(--mag2),var(--mag));color:#fff;font-weight:900;cursor:pointer;margin-top:7px}.clear{width:100%;border:0;background:transparent;color:var(--muted);font-size:10px;padding:7px;cursor:pointer}
+.main{min-width:0}.summary{background:linear-gradient(120deg,#19191f,#2b2028);color:#fff;border-radius:19px;padding:17px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.summary small{color:#d3cbd0}.summary strong{font-size:16px}.total{font-size:28px;font-weight:900;color:#ffbd2f;text-align:right}
+.base{background:linear-gradient(180deg,#fff,#fffafd);border:1px solid var(--line);border-radius:22px;padding:22px 24px;margin-bottom:14px;box-shadow:0 12px 30px rgba(58,21,38,.05)}.baseTop{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:18px;align-items:center}.base h2{font-size:18px;margin:0}.base p{color:var(--muted);font-size:12px;line-height:1.55}.baseVal{background:#fff;border:1px solid #f0d9e4;border-radius:17px;padding:14px;text-align:center;box-shadow:0 9px 20px rgba(224,0,99,.06)}.baseVal span{display:block;color:#9b7e8c;font-size:9px;font-weight:900;letter-spacing:.7px}.baseVal strong{font-size:32px}.formula{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid #f0e8ec;margin-top:16px;padding-top:16px}.box{padding:10px 14px;border-radius:12px;font-weight:900;font-size:15px}.pink{background:var(--magSoft);color:var(--mag2)}.orange{background:var(--orgSoft);color:var(--org2)}.black{background:#202027;color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:17px;box-shadow:0 10px 24px rgba(58,21,38,.04)}.card h3{margin:0;font-size:17px}.tag{font-size:9px;font-weight:900;color:var(--muted);margin-top:2px}.big{font-size:27px;font-weight:1000;margin:10px 0 12px}.monthly .big{color:var(--mag)}.quarter .big{color:var(--org)}
+.calc{background:#fbf9fa;border-radius:12px;padding:10px;margin:8px 0}.calc small{display:block;color:var(--muted);font-weight:800;font-size:9px;margin-bottom:3px}.calc div{font-size:11px;font-weight:700;line-height:1.5}.calc strong{display:block;margin-top:4px;font-size:13px}.monthly .calc strong{color:var(--mag2)}.quarter .calc strong{color:var(--org2)}
+.row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border-top:1px solid #eee7ea;padding:10px 0}.row b{font-size:10px}.row span{font-size:9px;color:var(--muted);display:block;margin-top:3px}.val{font-weight:900;font-size:12px;white-space:nowrap}.totalBox{margin-top:8px;padding:11px;border-radius:11px;background:#fbf7f9}.totalBox b{font-size:9px;color:var(--muted)}.totalBox strong{display:block;font-size:18px;margin-top:3px}.monthly .totalBox strong{color:var(--mag2)}.quarter .totalBox strong{color:var(--org2)}
+.tables{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}.tcard{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}.tcard h4{margin:0;padding:10px 11px;background:#202027;color:#fff;font-size:11px}.tcard:nth-child(even) h4{background:#3a2a20}.tcard table{width:100%;border-collapse:collapse;font-size:11px}.tcard th,.tcard td{padding:7px 9px;border-bottom:1px solid #f0e9ec}.tcard th{background:#faf7f8;text-align:left}.tcard td:last-child,.tcard th:last-child{text-align:right}.active{background:#fde5ef!important;color:var(--mag2);font-weight:900}
+.note{margin-top:14px;border:1px solid #f1dde6;border-radius:16px;padding:13px 15px;background:linear-gradient(90deg,#fff8fb,#fffdf8);font-size:11px;color:#6f6270}.note b{color:var(--mag2)}
+@media(max-width:1100px){.layout{grid-template-columns:1fr}.side{position:relative;top:0}.tables{grid-template-columns:1fr 1fr}.header h1{font-size:40px}}
+@media(max-width:760px){.shell{padding:16px 12px}.header{flex-direction:column}.brand{justify-content:flex-start}.steps,.grid2,.tables{grid-template-columns:1fr}.baseTop{grid-template-columns:1fr}.baseVal{max-width:260px;justify-self:center;width:100%}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="header">
+    <div>
+      <h1>Entiende <span>tu bono</span></h1>
+      <p>Revisa paso a paso de dónde sale cada monto.</p>
+      <div class="kicker">👤&nbsp;&nbsp;LÍDER LEASING</div>
+    </div>
+    <div class="brand"><div class="mark"><b>T</b></div><div><div class="word">TOTAL</div><div class="sub">servicios financieros</div></div></div>
+  </header>
+
+  <div class="steps">
+    <div class="step"><div class="n">1</div><b>Ingresa resultados del equipo</b></div>
+    <div class="step"><div class="n">2</div><b>Obtén promedios por ejecutivo</b></div>
+    <div class="step"><div class="n">3</div><b>Identifica factores</b></div>
+    <div class="step"><div class="n">4</div><b>Revisa cuánto corresponde</b></div>
+  </div>
+
+  <div class="layout">
+    <aside class="side">
+      <div class="sideHead"><h2>Simula tu bono</h2><span class="pill">LÍDER</span></div>
+      <div class="field"><label>Líder</label><select id="nombre"><option value="">Selecciona</option><option>BLANCA ISABEL HUAYCOCHEA MIRANDA</option><option>EDER ROJAS BLAS</option></select></div>
+      <div class="field"><label>Mes</label><select id="mes"><option value="">Selecciona</option><option>ENERO</option><option>FEBRERO</option><option>MARZO</option><option>ABRIL</option><option>MAYO</option><option>JUNIO</option><option>JULIO</option><option>AGOSTO</option><option>SEPTIEMBRE</option><option>OCTUBRE</option><option>NOVIEMBRE</option><option>DICIEMBRE</option></select></div>
+      <div class="sec">Resultado mensual del equipo</div>
+      <div class="field"><label>Monto colocado total US$</label><input id="monto" type="number" min="0" value="0"></div>
+      <div class="field"><label>N.º de ejecutivos</label><input id="ejecutivos" type="number" min="1" value="1"></div>
+      <div class="field"><label>Tasa ponderada del equipo</label><div class="suffixWrap"><input id="tasa" type="number" min="0" step=".01" value="0"><div class="suffix">%</div></div></div>
+      <div class="sec">Resultado trimestral del equipo</div>
+      <div class="field"><label>Suma de clientes</label><input id="clientes" type="number" min="0" value="0"></div>
+      <div class="field"><label>Mora ponderada del equipo</label><div class="suffixWrap"><input id="mora" type="number" min="0" step=".01" value="0"><div class="suffix">%</div></div></div>
+      <button class="btn" id="calc">Calcular mi bono</button><button class="clear" id="reset">Limpiar simulación</button>
+    </aside>
+
+    <main class="main">
+      <section class="summary"><div><small>Simulación para</small><br><strong><span id="oNombre">Selecciona un líder</span> · <span id="oMes">Selecciona un mes</span></strong></div><div><div class="total" id="oTotal">US$ 0.00</div><small>mensual + trimestral</small></div></section>
+
+      <section class="base">
+        <div class="baseTop"><div><h2>1. Primero obtenemos el bono base del líder</h2><p>Sumamos la colocación del equipo, la dividimos entre el número de ejecutivos y con ese promedio buscamos el factor de colocación. El bono potencial se obtiene con la colocación total; luego se aplica el 35% correspondiente al cargo de jefatura.</p></div><div class="baseVal"><span>BONO LÍDER BASE</span><strong id="oBase">US$ 0.00</strong></div></div>
+        <div class="formula"><div class="box pink" id="fMonto">US$ 0</div><b>×</b><div class="box orange" id="fFactor">0.00%</div><b>=</b><div class="box black" id="fPotencial">US$ 0.00</div><b>× 35% =</b><div class="box black" id="fBase">US$ 0.00</div></div>
+      </section>
+
+      <div class="grid2">
+        <section class="card monthly"><h3>Bono mensual del líder</h3><div class="tag">60% del bono líder</div><div class="big" id="mTotal">US$ 0.00</div>
+          <div class="calc"><small>PROMEDIO POR EJECUTIVO</small><div id="mPromFormula">US$ 0 ÷ 1</div><strong id="mProm">US$ 0.00</strong></div>
+          <div class="calc"><small>BONO MENSUAL BASE</small><div id="mBaseFormula">US$ 0.00 × 60%</div><strong id="mBase">US$ 0.00</strong></div>
+          <div class="row"><div><b>Bono por flujo</b><span>Base mensual × 60%</span></div><div class="val" id="mFlujo">US$ 0.00</div></div>
+          <div class="row"><div><b>Bono por tasa</b><span id="mTasaTxt">Base mensual × 40% × factor tasa</span></div><div class="val" id="mTasa">US$ 0.00</div></div>
+          <div class="totalBox"><b>BONO MENSUAL A PAGAR</b><strong id="mPago">US$ 0.00</strong></div>
+        </section>
+
+        <section class="card quarter"><h3>Bono trimestral del líder</h3><div class="tag">30% del bono líder</div><div class="big" id="qTotal">US$ 0.00</div>
+          <div class="calc"><small>PROMEDIO DE CLIENTES POR EJECUTIVO</small><div id="qPromFormula">0 ÷ 1</div><strong id="qProm">0.00</strong></div>
+          <div class="calc"><small>BONO TRIMESTRAL BASE</small><div id="qBaseFormula">US$ 0.00 × 30%</div><strong id="qBase">US$ 0.00</strong></div>
+          <div class="row"><div><b>Bono por clientes</b><span id="qCliTxt">Base trimestral × 60% × factor clientes</span></div><div class="val" id="qCli">US$ 0.00</div></div>
+          <div class="row"><div><b>Bono por mora</b><span id="qMoraTxt">Base trimestral × 40% × factor mora</span></div><div class="val" id="qMora">US$ 0.00</div></div>
+          <div class="totalBox"><b>BONO TRIMESTRAL A PAGAR</b><strong id="qPago">US$ 0.00</strong></div>
+        </section>
+      </div>
+
+      <div class="tables">
+        <div class="tcard"><h4>TABLA COLOCACIÓN</h4><table id="tCol"><thead><tr><th>Desde</th><th>Factor</th></tr></thead><tbody></tbody></table></div>
+        <div class="tcard"><h4>TABLA TASA</h4><table id="tTasa"><thead><tr><th>Desde</th><th>Factor</th></tr></thead><tbody></tbody></table></div>
+        <div class="tcard"><h4>TABLA CLIENTES</h4><table id="tCli"><thead><tr><th>Desde</th><th>Factor</th></tr></thead><tbody></tbody></table></div>
+        <div class="tcard"><h4>TABLA MORA</h4><table id="tMora"><thead><tr><th>Desde</th><th>Factor</th></tr></thead><tbody></tbody></table></div>
+      </div>
+      <div class="note"><b>Importante:</b> este simulador replica la lógica visible en tus reportes de líderes para el componente mensual (60%) y trimestral (30%). El componente anual (10%) no lo he inventado porque en las capturas no aparece su regla detallada.</div>
+    </main>
+  </div>
+</div>
+<script>
+const COL=[[0,0],[100000,.0039],[124500,.0042],[160000,.0045],[195000,.0048],[230000,.0050],[260000,.0052],[300000,.0054],[330000,.0056],[370000,.0058],[400000,.0060]];
+const TASA=[[0,0],[.165,.60],[.175,.80],[.18,.90],[.183,1],[.19,1.05],[.195,1.10]];
+const CLI=[[0,0],[2,0],[3,.50],[4,1],[5,1.10],[6,1.20]];
+const MORA=[[0,1.10],[.02,1.10],[.025,1.05],[.05,1],[.055,.70],[.06,0],[1,0]];
+const $=id=>document.getElementById(id); const money=n=>'US$ '+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); const money0=n=>'US$ '+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
+function factor(v,t){let f=t[0][1],idx=0;for(let i=0;i<t.length;i++){if(v>=t[i][0]){f=t[i][1];idx=i}else break}return{f,idx}}
+function paint(id,t,idx,a,b){$(id).querySelector('tbody').innerHTML=t.map((r,i)=>`<tr class="${i===idx?'active':''}"><td>${a(r[0])}</td><td>${b(r[1])}</td></tr>`).join('')}
+function calc(){
+ const nombre=$('nombre').value||'Selecciona un líder', mes=$('mes').value||'Selecciona un mes';
+ const monto=+($('monto').value||0), eje=Math.max(1,+($('ejecutivos').value||1));
+ const tasaPct=+($('tasa').value||0), tasa=tasaPct/100, clientes=+($('clientes').value||0), moraPct=+($('mora').value||0), mora=moraPct/100;
+ const prom=monto/eje, fc=factor(prom,COL), ft=factor(tasa,TASA), promCli=clientes/eje, fcli=factor(promCli,CLI), fm=factor(mora,MORA);
+ const potencial=monto*fc.f, base=potencial*.35;
+ const mensualBase=base*.60, flujo=mensualBase*.60, bonoTasa=mensualBase*.40*ft.f, mensual=flujo+bonoTasa;
+ const trimestralBase=base*.30, bonoCli=trimestralBase*.60*fcli.f, bonoMora=trimestralBase*.40*fm.f, trimestral=bonoCli+bonoMora;
+ $('oNombre').textContent=nombre;$('oMes').textContent=mes;$('oTotal').textContent=money(mensual+trimestral);$('oBase').textContent=money(base);
+ $('fMonto').textContent=money0(monto);$('fFactor').textContent=(fc.f*100).toFixed(2)+'%';$('fPotencial').textContent=money(potencial);$('fBase').textContent=money(base);
+ $('mPromFormula').textContent=money0(monto)+' ÷ '+eje;$('mProm').textContent=money(prom);$('mBaseFormula').textContent=money(base)+' × 60%';$('mBase').textContent=money(mensualBase);$('mFlujo').textContent=money(flujo);$('mTasaTxt').textContent=`Base mensual × 40% × ${ft.f.toFixed(2)} (tasa ${tasaPct.toFixed(2)}%)`;$('mTasa').textContent=money(bonoTasa);$('mPago').textContent=money(mensual);$('mTotal').textContent=money(mensual);
+ $('qPromFormula').textContent=clientes.toFixed(0)+' ÷ '+eje;$('qProm').textContent=promCli.toFixed(2);$('qBaseFormula').textContent=money(base)+' × 30%';$('qBase').textContent=money(trimestralBase);$('qCliTxt').textContent=`Base trimestral × 60% × ${fcli.f.toFixed(2)} (prom. ${promCli.toFixed(2)})`;$('qCli').textContent=money(bonoCli);$('qMoraTxt').textContent=`Base trimestral × 40% × ${fm.f.toFixed(2)} (mora ${moraPct.toFixed(2)}%)`;$('qMora').textContent=money(bonoMora);$('qPago').textContent=money(trimestral);$('qTotal').textContent=money(trimestral);
+ paint('tCol',COL,fc.idx,v=>money0(v),v=>(v*100).toFixed(2)+'%'); paint('tTasa',TASA,ft.idx,v=>(v*100).toFixed(2)+'%',v=>(v*100).toFixed(0)+'%'); paint('tCli',CLI,fcli.idx,v=>v.toFixed(0),v=>(v*100).toFixed(0)+'%'); paint('tMora',MORA,fm.idx,v=>(v*100).toFixed(2)+'%',v=>(v*100).toFixed(0)+'%');
+}
+$('calc').onclick=calc;$('reset').onclick=()=>{['nombre','mes'].forEach(id=>$(id).value='');['monto','tasa','clientes','mora'].forEach(id=>$(id).value=0);$('ejecutivos').value=1;calc()};calc();
+</script>
+</body></html>
