@@ -1700,6 +1700,170 @@ tbody td{padding:9px 12px;font-size:13px;}
   .layout{grid-template-columns:1fr !important;}
   .input-card{position:relative !important;top:0 !important;}
 }
+
+
+/* ===== AJUSTE FINAL: LOGO COMPLETO + BASE DE BONO MÁS CLARA ===== */
+.header{
+    align-items:flex-start !important;
+}
+.brand{
+    flex:0 1 360px !important;
+    min-width:260px !important;
+    max-width:360px !important;
+    width:100% !important;
+    display:flex !important;
+    justify-content:flex-end !important;
+    overflow:visible !important;
+}
+.total-logo{
+    min-width:0 !important;
+    max-width:100% !important;
+    width:100% !important;
+    gap:10px !important;
+    justify-content:flex-end !important;
+    transform:none !important;
+}
+.total-logo-mark{
+    width:68px !important;
+    height:68px !important;
+    border-width:8px !important;
+    flex:0 0 68px !important;
+}
+.total-logo-mark::before{
+    top:13px !important;
+    left:15px !important;
+    right:15px !important;
+    height:7px !important;
+}
+.total-logo-t{
+    font-size:34px !important;
+    transform:translateY(5px) !important;
+}
+.total-logo-copy{
+    min-width:0 !important;
+    flex:1 1 auto !important;
+}
+.total-logo-word{
+    font-size:clamp(34px,3vw,49px) !important;
+    letter-spacing:-2px !important;
+    gap:0 !important;
+    white-space:nowrap !important;
+}
+.total-logo-word .logo-a{
+    width:31px !important;
+    height:36px !important;
+    margin:0 2px 0 3px !important;
+}
+.total-logo-word .logo-a::before{
+    left:1px !important;
+    border-left:15px solid transparent !important;
+    border-right:15px solid transparent !important;
+    border-bottom:36px solid #E40063 !important;
+}
+.total-logo-word .logo-a::after{
+    left:9px !important;
+    bottom:6px !important;
+    border-left:7px solid transparent !important;
+    border-right:7px solid transparent !important;
+    border-bottom:15px solid #fff !important;
+}
+.total-logo-sub{
+    margin-top:3px !important;
+    font-size:clamp(12px,1vw,16px) !important;
+    line-height:1.08 !important;
+    white-space:nowrap !important;
+}
+
+.base-card{
+    padding:24px 28px !important;
+    border-radius:24px !important;
+    background:linear-gradient(180deg,#fff 0%,#fffafc 100%) !important;
+    box-shadow:0 16px 38px rgba(58,21,38,.06) !important;
+}
+.base-top{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) 220px !important;
+    align-items:center !important;
+    gap:22px !important;
+}
+.base-top > div:first-child{
+    max-width:760px !important;
+}
+.base-card h2{
+    font-size:19px !important;
+    line-height:1.2 !important;
+    letter-spacing:-.4px !important;
+}
+.base-card p{
+    margin-top:8px !important;
+    font-size:13.5px !important;
+    line-height:1.65 !important;
+    max-width:760px !important;
+}
+.base-value{
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:center !important;
+    align-items:center !important;
+    min-height:110px !important;
+    padding:14px 18px !important;
+    border-radius:18px !important;
+    background:#fff !important;
+    border:1px solid #F1D9E4 !important;
+    text-align:center !important;
+    box-shadow:0 10px 24px rgba(214,11,94,.07) !important;
+}
+.base-value span{
+    font-size:11px !important;
+    font-weight:800 !important;
+    letter-spacing:.8px !important;
+    color:#8B7381 !important;
+}
+.base-value strong{
+    margin-top:4px !important;
+    font-size:34px !important;
+    line-height:1.05 !important;
+    color:#202131 !important;
+}
+.base-formula{
+    justify-content:center !important;
+    gap:12px !important;
+    margin-top:18px !important;
+    padding-top:18px !important;
+}
+.base-formula > strong{
+    font-size:26px !important;
+    line-height:1 !important;
+    color:#242536 !important;
+}
+.formula-box{
+    padding:12px 18px !important;
+    border-radius:14px !important;
+    font-size:18px !important;
+    box-shadow:0 8px 16px rgba(58,21,38,.05) !important;
+}
+
+@media(max-width:1180px){
+    .header{gap:20px !important;}
+    .brand{flex-basis:300px !important;max-width:300px !important;}
+    .total-logo-mark{width:60px !important;height:60px !important;flex-basis:60px !important;}
+    .total-logo-t{font-size:30px !important;}
+    .total-logo-word{font-size:clamp(30px,2.8vw,42px) !important;}
+    .total-logo-word .logo-a{width:27px !important;height:32px !important;}
+    .total-logo-word .logo-a::before{border-left:13px solid transparent !important;border-right:13px solid transparent !important;border-bottom:32px solid #E40063 !important;}
+    .total-logo-word .logo-a::after{left:8px !important;bottom:5px !important;border-left:6px solid transparent !important;border-right:6px solid transparent !important;border-bottom:13px solid #fff !important;}
+    .base-top{grid-template-columns:minmax(0,1fr) 190px !important;}
+    .base-value strong{font-size:30px !important;}
+}
+
+@media(max-width:900px){
+    .header{flex-direction:column !important;align-items:flex-start !important;}
+    .brand{max-width:100% !important;justify-content:flex-start !important;}
+    .total-logo{justify-content:flex-start !important;max-width:320px !important;}
+    .base-top{grid-template-columns:1fr !important;}
+    .base-value{max-width:260px !important;justify-self:center !important;width:100% !important;}
+}
+
 </style>
 </head>
 
