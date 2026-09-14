@@ -1,1 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sistema de Pasivas 2908</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+<style>
+:root{--mag:#c2185b;--orange:#da671f;--ink:#18202b;--muted:#6b7280;--bg:#f5f7fb;--card:#fff;--ok:#16794b;--warn:#a15c00;--bad:#b42318;--line:#e5e7eb;--blue:#0b6b93}
+*{box-sizing:border-box} body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#121722;color:#fff;padding:22px 34px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:14px}.mark{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--mag),var(--orange));display:grid;place-items:center;font-weight:800;font-size:18px}.brand h1{font-size:21px;margin:0}.brand p{margin:3px 0 0;color:#cbd5e1;font-size:12px}
+main{max-width:1450px;margin:auto;padding:26px}.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 18px rgba(18,23,34,.05);margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.col4{grid-column:span 4}.col3{grid-column:span 3}.col6{grid-column:span 6}.col12{grid-column:span 12}
+label{font-size:12px;font-weight:700;color:#4b5563;display:block;margin-bottom:7px} input[type=file],input[type=date],input[type=number]{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:11px;background:#fff;font:inherit}
+button{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer}.primary{background:var(--mag);color:#fff}.secondary{background:#202938;color:#fff}.ghost{background:#fff;border:1px solid #d1d5db;color:#374151}.orange{background:var(--orange);color:#fff}.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.note{font-size:12px;color:var(--muted);line-height:1.45;margin-top:8px}.status{padding:10px 12px;border-radius:10px;background:#eef2ff;color:#3730a3;font-size:13px;margin-top:12px}.status.ok{background:#ecfdf3;color:#067647}.status.bad{background:#fef3f2;color:#b42318}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}.kpi .t{font-size:11px;color:#6b7280;font-weight:800;text-transform:uppercase;letter-spacing:.5px}.kpi .v{font-size:25px;font-weight:800;margin-top:6px}.kpi .s{font-size:11px;color:#9ca3af;margin-top:4px}
+.sectionTitle{font-size:15px;font-weight:800;margin:0 0 12px}.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:12px;max-height:420px}table{width:100%;border-collapse:collapse;font-size:12px;background:#fff}th{position:sticky;top:0;background:#eef3f7;padding:9px;text-align:left;border-bottom:1px solid #d8dee6;white-space:nowrap}td{padding:8px 9px;border-bottom:1px solid #eef0f2;white-space:nowrap}.num{text-align:right}.badge{padding:3px 7px;border-radius:999px;font-size:10px;font-weight:800}.b-ok{background:#e8f7ef;color:#10754a}.b-warn{background:#fff5df;color:#9a5b00}.b-bad{background:#fdecea;color:#b42318}.b-info{background:#e8f3fb;color:#0b6b93}
+.mail{white-space:pre-wrap;background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:18px;line-height:1.55;font-size:13px;min-height:220px}.hidden{display:none}.progress{height:8px;background:#eee;border-radius:999px;overflow:hidden;margin-top:12px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--mag),var(--orange));transition:.25s}
+.tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.tab{background:#fff;border:1px solid #d1d5db;color:#4b5563}.tab.active{background:#202938;color:#fff;border-color:#202938}
+.small{font-size:11px;color:#6b7280}.right{text-align:right}.footer{font-size:11px;color:#9ca3af;text-align:center;padding:8px 0 24px}
+@media(max-width:900px){.col4,.col3,.col6{grid-column:span 12}header{padding:18px}main{padding:14px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="mark">2908</div><div><h1>Sistema de Pasivas · Operaciones por liquidar</h1><p>Premium → clasificación → antigüedad → reporte gerencial → Excel</p></div></div><div class="small">TOTAL Servicios Financieros</div></header>
+<main>
+  <section class="panel">
+    <div class="grid">
+      <div class="col6"><label>1. Reporte mensual de Premium (.xlsx / .xlsm)</label><input id="file" type="file" accept=".xlsx,.xlsm,.xls,.xlsb"/><div class="note">Carga únicamente el reporte de Premium. El sistema conserva la base original y ejecuta internamente las reglas de clasificación.</div></div>
+      <div class="col3"><label>2. Fecha de corte</label><input id="cutoff" type="date" readonly/><div class="note">Se detecta automáticamente usando el mes de la última <b>Fecha Vou</b> del reporte.</div></div>
+      <div class="col3 actions"><button class="primary" id="analyze">Procesar Pasivas</button></div>
+    </div>
+    <div id="status" class="status">Carga el reporte de Premium para comenzar.</div><div class="progress"><div class="bar" id="bar"></div></div>
+  </section>
 
+  <div id="result" class="hidden">
+    <section class="grid" style="margin-bottom:18px">
+      <div class="col3 kpi"><div class="t">Saldo total PEN</div><div class="v" id="kPen">-</div><div class="s">Saldo Soles del reporte</div></div>
+      <div class="col3 kpi"><div class="t">Saldo total USD</div><div class="v" id="kUsd">-</div><div class="s">Saldo Dólares del reporte</div></div>
+      <div class="col3 kpi"><div class="t">Fuera de plazo >30d</div><div class="v" id="kLate">-</div><div class="s">Partidas al corte</div></div>
+      <div class="col3 kpi"><div class="t">Sin clasificar</div><div class="v" id="kUnc">-</div><div class="s">Requieren revisión</div></div>
+    </section>
+
+    <section class="panel">
+      <div class="tabs"><button class="tab active" data-view="clients">Principales clientes</button><button class="tab" data-view="aging">Antigüedad</button><button class="tab" data-view="methods">Métodos de clasificación</button><button class="tab" data-view="pending">Sin clasificar</button></div>
+      <div id="view-clients"><h3 class="sectionTitle">Principales pendientes por cliente y moneda</h3><div class="tableWrap"><table id="tblClients"></table></div></div>
+      <div id="view-aging" class="hidden"><h3 class="sectionTitle">Antigüedad del saldo</h3><div class="tableWrap"><table id="tblAging"></table></div></div>
+      <div id="view-methods" class="hidden"><h3 class="sectionTitle">Resultado de la clasificación automática</h3><div class="tableWrap"><table id="tblMethods"></table></div></div>
+      <div id="view-pending" class="hidden"><h3 class="sectionTitle">Partidas que requieren revisión</h3><div class="tableWrap"><table id="tblPending"></table></div></div>
+    </section>
+
+    <section class="panel"><div class="grid"><div class="col8"><h3 class="sectionTitle">Correo gerencial generado</h3><div id="mail" class="mail"></div></div><div class="col4"><h3 class="sectionTitle">Salida</h3><div class="actions" style="display:grid"><button class="orange" id="export">Descargar Excel procesado</button><button class="secondary" id="copy">Copiar correo</button><button class="ghost" id="downloadMail">Descargar correo .txt</button></div><p class="note">El Excel incluye: <b>Resumen Ejecutivo</b>, <b>Detalle Analizado</b>, <b>Top Clientes</b>, <b>Antigüedad</b> y <b>Correo Gerencial</b>.</p><p class="note">Las columnas originales del reporte se mantienen; las columnas calculadas se agregan al final.</p></div></div></section>
+  </div>
+  <div class="footer">Sistema local: el archivo se procesa en tu navegador y no se envía a un servidor.</div>
+</main>
+<script>
+let rawRows=[], headers=[], analyzed=[], headerRowIndex=-1, sourceFileName='', sourceSheetName='', summary={};
+const $=id=>document.getElementById(id); const val=(o,k)=>o[k];
+function n(v){if(v===null||v===undefined||v==='')return 0; if(typeof v==='number')return isFinite(v)?v:0; const x=parseFloat(String(v).replace(/,/g,''));return isFinite(x)?x:0}
+function s(v){return v===null||v===undefined?'':String(v).trim()}
+function norm(v){return s(v).toUpperCase().replace(/[ÁÀÄ]/g,'A').replace(/[ÉÈË]/g,'E').replace(/[ÍÌÏ]/g,'I').replace(/[ÓÒÖ]/g,'O').replace(/[ÚÙÜ]/g,'U').replace(/\s+/g,' ')}
+function excelDate(v){if(v instanceof Date)return v;if(typeof v==='number'){const d=XLSX.SSF.parse_date_code(v);return d?new Date(d.y,d.m-1,d.d):null} if(!v)return null; const d=new Date(v);return isNaN(d)?null:d}
+function dateKey(v){const d=excelDate(v); if(!d)return ''; return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function daysBetween(a,b){const x=excelDate(a),y=excelDate(b);if(!x||!y)return null;return Math.floor((y-x)/86400000)}
+function money(v,cur='PEN'){return new Intl.NumberFormat('es-PE',{style:'currency',currency:cur==='USD'?'USD':'PEN',minimumFractionDigits:2}).format(v||0)}
+function num(v){return new Intl.NumberFormat('es-PE',{maximumFractionDigits:2}).format(v||0)}
+function pct(v){return new Intl.NumberFormat('es-PE',{style:'percent',minimumFractionDigits:1,maximumFractionDigits:1}).format(v||0)}
+function setStatus(txt,cls=''){const el=$('status');el.className='status '+cls;el.innerHTML=txt}
+function progress(x){$('bar').style.width=x+'%'}
+function balance(r,cur){return cur==='USD'?n(r['Saldo Dólares']):n(r['Saldo Soles'])}
+function currency(r){const usd=Math.abs(n(r['Saldo Dólares'])), pen=Math.abs(n(r['Saldo Soles'])); if(usd>0 && pen===0)return 'USD'; if(pen>0 && usd===0)return 'PEN'; if(usd>0)return 'USD'; return 'PEN'}
+function oppositeClose(a,b,tol){return Math.abs(a+b)<=tol}
+function aging(days){if(days===null)return 'SIN FECHA'; if(days<0)return 'FECHA POSTERIOR'; if(days<=30)return '00-30 dias'; if(days<=60)return '31-60 dias'; if(days<=90)return '61-90 dias'; if(days<=180)return '91-180 dias'; return 'Mas de 180 dias'}
+function stateOriginal(r){return s(r['Estado CAF'])}
+function rowIsTarget(r){return !stateOriginal(r)}
+function pickState(rows){const states=[...new Set(rows.map(x=>s(x['Estado CAF Original']||x['Estado CAF'])).filter(Boolean))]; return states.length===1?states[0]:(states.length>1?'MULTIPLES':'SIN CLASIFICAR')}
+function keyRuc(r){return norm(r['Ruc'])||norm(r['Cliente'])}
+function assign(target, refs, method, diff, mon, obs=''){
+ target['Estado CAF']=pickState(refs); if(!target['Estado CAF']||target['Estado CAF']==='SIN CLASIFICAR') target['Estado CAF']='SIN CLASIFICAR';
+ target['Metodo Clasificacion']=method; target['Fila(s) Origen']=refs.map(x=>x.__excelRow).join(', '); target['Diferencia Cruce']=diff; target['Moneda Cruce']=mon; target['Observacion']=obs;
+}
+function analyzeRows(rows, cutoff, tol){
+ const a=rows.map((r,i)=>({...r,__excelRow:headerRowIndex+2+i,'Estado CAF Original':stateOriginal(r)}));
+ // Initialize original rows.
+ for(const r of a){if(stateOriginal(r))r['Metodo Clasificacion']='ORIGINAL'}
+ const targets=()=>a.filter(r=>rowIsTarget(r) && !r['Metodo Clasificacion']);
+ const refsFor=t=>a.filter(r=>r!==t && !!s(r['Estado CAF Original']) && keyRuc(r)===keyRuc(t) && currency(r)===currency(t));
+ // 1:1 mismo documento.
+ for(const t of targets()){const cur=currency(t),bt=balance(t,cur),doc=norm(t['Número Doc']);if(!doc)continue;const cand=refsFor(t).filter(r=>norm(r['Número Doc'])===doc && oppositeClose(bt,balance(r,cur),tol));if(cand.length){cand.sort((x,y)=>Math.abs(bt+balance(x,cur))-Math.abs(bt+balance(y,cur)));assign(t,[cand[0]],'CRUCE 1:1 MISMO DOCUMENTO',Math.abs(bt+balance(cand[0],cur)),cur)}}
+ // Agrupado mismo documento: combinaciones de 2 o 3 referencias.
+ for(const t of targets()){const cur=currency(t),bt=balance(t,cur),doc=norm(t['Número Doc']);if(!doc)continue;const c=refsFor(t).filter(r=>norm(r['Número Doc'])===doc).slice(0,20);let best=null;outer:for(let i=0;i<c.length;i++)for(let j=i+1;j<c.length;j++){let d=Math.abs(bt+balance(c[i],cur)+balance(c[j],cur));if(d<=tol){best={refs:[c[i],c[j]],d};break outer}for(let k=j+1;k<c.length;k++){d=Math.abs(bt+balance(c[i],cur)+balance(c[j],cur)+balance(c[k],cur));if(d<=tol){best={refs:[c[i],c[j],c[k]],d};break outer}}}if(best)assign(t,best.refs,'CRUCE AGRUPADO MISMO DOCUMENTO',best.d,cur)}
+ // 1:1 misma fecha.
+ for(const t of targets()){const cur=currency(t),bt=balance(t,cur),dk=dateKey(t['Fecha Vou']);if(!dk)continue;const cand=refsFor(t).filter(r=>dateKey(r['Fecha Vou'])===dk && oppositeClose(bt,balance(r,cur),tol));if(cand.length){cand.sort((x,y)=>Math.abs(bt+balance(x,cur))-Math.abs(bt+balance(y,cur)));assign(t,[cand[0]],'CRUCE 1:1 MISMA FECHA',Math.abs(bt+balance(cand[0],cur)),cur)}}
+ // 1:1 cliente.
+ for(const t of targets()){const cur=currency(t),bt=balance(t,cur);const cand=refsFor(t).filter(r=>oppositeClose(bt,balance(r,cur),tol));if(cand.length){cand.sort((x,y)=>Math.abs(bt+balance(x,cur))-Math.abs(bt+balance(y,cur)));assign(t,[cand[0]],'CRUCE 1:1 CLIENTE',Math.abs(bt+balance(cand[0],cur)),cur)}}
+ // Excepción cliente con 2 líneas: si queda exactamente un target y una referencia para el cliente/moneda.
+ const groups={};for(const r of a){const k=keyRuc(r)+'|'+currency(r);(groups[k]??=[]).push(r)}
+ for(const g of Object.values(groups)){if(g.length!==2)continue;const t=g.find(r=>rowIsTarget(r)&&!r['Metodo Clasificacion']), ref=g.find(r=>!!s(r['Estado CAF Original']));if(t&&ref){const cur=currency(t),d=Math.abs(balance(t,cur)+balance(ref,cur));assign(t,[ref],'EXCEPCION CLIENTE CON 2 LINEAS',d,cur,d>tol?'VALIDAR DIFERENCIA MAYOR A LA TOLERANCIA':'')}}
+ // Saldo neto cliente dentro de tolerancia: solo targets restantes, contra conjunto del cliente.
+ const rucGroups={};for(const r of a){(rucGroups[keyRuc(r)]??=[]).push(r)}
+ for(const g of Object.values(rucGroups)){const pend=g.filter(r=>rowIsTarget(r)&&!r['Metodo Clasificacion']);if(!pend.length)continue;const refs=g.filter(r=>!!s(r['Estado CAF Original']));if(!refs.length)continue;const netPen=g.reduce((z,r)=>z+n(r['Saldo Soles']),0),netUsd=g.reduce((z,r)=>z+n(r['Saldo Dólares']),0);if(Math.abs(netPen)<=tol && Math.abs(netUsd)<=tol){for(const t of pend)assign(t,refs,'SALDO NETO CLIENTE DENTRO DE TOLERANCIA',Math.max(Math.abs(netPen),Math.abs(netUsd)),'PEN/USD','VALIDAR COMPENSACION GLOBAL DEL CLIENTE')}}
+ // Restantes sin clasificar + antigüedad.
+ for(const r of a){if(rowIsTarget(r)&&!r['Metodo Clasificacion']){r['Estado CAF']='SIN CLASIFICAR';r['Metodo Clasificacion']='SIN CLASIFICAR';r['Observacion']='REVISAR CLASIFICACION'} const d=daysBetween(r['Fecha Vou'],cutoff);r['Dias Antiguedad']=d;r['Tramo Antiguedad']=aging(d);r['Alerta 30 dias']=d===null?'SIN FECHA':d<0?'FECHA POSTERIOR AL CORTE':d>30?'FUERA DE PLAZO':'DENTRO DE PLAZO';r['Huella de fila']=[s(r.Ruc),s(r['Número Doc']),dateKey(r['Fecha Vou']),s(r.Planilla),s(r.Correlativo),Math.round(n(r.Debe)*100),Math.round(n(r.Haber)*100),Math.round(n(r.Cargo)*100),Math.round(n(r.Abono)*100)].join('|')}
+ return a;
+}
+function buildSummary(a,cutoff){
+ const pen=a.reduce((z,r)=>z+n(r['Saldo Soles']),0),usd=a.reduce((z,r)=>z+n(r['Saldo Dólares']),0);const late=a.filter(r=>r['Alerta 30 dias']==='FUERA DE PLAZO').length;const unc=a.filter(r=>r['Metodo Clasificacion']==='SIN CLASIFICAR').length;
+ const methods={};for(const r of a){const k=r['Metodo Clasificacion']||'SIN METODO';methods[k]=(methods[k]||0)+1}
+ const agingMap={};for(const tr of ['FECHA POSTERIOR','SIN FECHA','00-30 dias','31-60 dias','61-90 dias','91-180 dias','Mas de 180 dias'])agingMap[tr]={pen:0,usd:0,count:0};for(const r of a){let tr=r['Tramo Antiguedad'];if(tr==='FECHA POSTERIOR')tr='FECHA POSTERIOR';if(!agingMap[tr])agingMap[tr]={pen:0,usd:0,count:0};agingMap[tr].pen+=n(r['Saldo Soles']);agingMap[tr].usd+=n(r['Saldo Dólares']);agingMap[tr].count++}
+ const cg={};for(const r of a){const client=s(r.Cliente)||'(SIN CLIENTE)',ruc=s(r.Ruc),cur=currency(r),k=client+'|'+ruc+'|'+cur;(cg[k]??={client,ruc,cur,saldo:0,partidas:0,maxDays:null,late:0,states:new Set()});const g=cg[k];g.saldo+=balance(r,cur);g.partidas++;if(r['Dias Antiguedad']!==null){g.maxDays=g.maxDays===null?r['Dias Antiguedad']:Math.max(g.maxDays,r['Dias Antiguedad'])}if(r['Alerta 30 dias']==='FUERA DE PLAZO')g.late++;g.states.add(r['Estado CAF'])}
+ const totalsAbs={PEN:0,USD:0};Object.values(cg).forEach(g=>totalsAbs[g.cur]+=Math.abs(g.saldo));let clients=Object.values(cg).map(g=>({...g,state:g.states.size===1?[...g.states][0]:'MULTIPLES',materiality:totalsAbs[g.cur]?Math.abs(g.saldo)/totalsAbs[g.cur]:0,tramo:aging(g.maxDays)})).sort((x,y)=>Math.abs(y.saldo)-Math.abs(x.saldo));
+ return {pen,usd,late,unc,methods,agingMap,clients,cutoff};
+}
+function renderTable(el,heads,rows){el.innerHTML='<thead><tr>'+heads.map(h=>`<th>${h}</th>`).join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map((x,i)=>`<td class="${i>0?'num':''}">${x??''}</td>`).join('')+'</tr>').join('')+'</tbody>'}
+function render(){
+ $('kPen').textContent=money(summary.pen,'PEN');$('kUsd').textContent=money(summary.usd,'USD');$('kLate').textContent=num(summary.late);$('kUnc').textContent=num(summary.unc);
+ const top=summary.clients.slice(0,20);renderTable($('tblClients'),['Cliente','Moneda','Saldo','Materialidad','Días más antiguo','Tramo','Partidas','Estado CAF'],top.map(g=>[g.client,g.cur,money(g.saldo,g.cur),pct(g.materiality),g.maxDays??'',g.tramo,g.partidas,g.state]));
+ renderTable($('tblAging'),['Tramo','Saldo PEN','Saldo USD','Partidas'],Object.entries(summary.agingMap).map(([k,g])=>[k,money(g.pen,'PEN'),money(g.usd,'USD'),g.count]));
+ renderTable($('tblMethods'),['Método','Partidas'],Object.entries(summary.methods).sort((a,b)=>b[1]-a[1]).map(([k,v])=>[k,v]));
+ const pend=analyzed.filter(r=>r['Metodo Clasificacion']==='SIN CLASIFICAR').sort((x,y)=>Math.max(Math.abs(n(y['Saldo Soles'])),Math.abs(n(y['Saldo Dólares'])))-Math.max(Math.abs(n(x['Saldo Soles'])),Math.abs(n(x['Saldo Dólares'])))).slice(0,200);
+ renderTable($('tblPending'),['Fila','RUC','Cliente','Cuenta','Fecha Vou','Planilla','Contrato','Saldo PEN','Saldo USD','Antigüedad'],pend.map(r=>[r.__excelRow,s(r.Ruc),s(r.Cliente),s(r.Cuenta),dateKey(r['Fecha Vou']),s(r.Planilla),s(r.Contrato),money(n(r['Saldo Soles']),'PEN'),money(n(r['Saldo Dólares']),'USD'),r['Tramo Antiguedad']]));
+ $('mail').textContent=buildMail();$('result').classList.remove('hidden')
+}
+function buildMail(){const d=summary.cutoff;const ds=d.toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'});const month=d.toLocaleDateString('es-PE',{month:'long',year:'numeric'});const topPen=summary.clients.filter(x=>x.cur==='PEN'&&x.saldo>0).slice(0,10);const lines=topPen.map((g,i)=>`${i+1}. ${g.client}: ${money(g.saldo,'PEN')} (${pct(g.materiality)})`).join('\n');return `Hola Janet / Williams,\n\nCompartimos el análisis de operaciones en trámite (abonos pendientes de aplicación) al cierre del ${ds}, para su apoyo con la revisión y aplicaciones correspondientes.\n\nResumen del rubro 29080701 procesado desde Premium:\n• Saldo total en soles: ${money(summary.pen,'PEN')}\n• Saldo total en dólares: ${money(summary.usd,'USD')}\n• Partidas con antigüedad mayor a 30 días: ${num(summary.late)}\n• Partidas que continúan sin clasificar: ${num(summary.unc)}\n\nPrincipales saldos en soles al cierre de ${month}:\n${lines||'Sin saldos positivos en PEN.'}\n\nAsimismo, se adjunta el detalle procesado con la clasificación automática, antigüedad y partidas que requieren revisión manual.\n\nSaludos,`}
+function styleHeader(ws,range){for(let C=range.s.c;C<=range.e.c;C++){const addr=XLSX.utils.encode_cell({r:range.s.r,c:C});if(!ws[addr])continue;ws[addr].s={font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1F2937'}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'thin',color:{rgb:'D1D5DB'}}}}}}
+function autoWidth(ws,max=40){const range=XLSX.utils.decode_range(ws['!ref']);const widths=[];for(let C=range.s.c;C<=range.e.c;C++){let m=10;for(let R=range.s.r;R<=Math.min(range.e.r,250);R++){const cell=ws[XLSX.utils.encode_cell({r:R,c:C})];if(cell&&cell.v!=null)m=Math.max(m,String(cell.v).length+2)}widths.push({wch:Math.min(m,max)})}ws['!cols']=widths}
+function aoaSheet(aoa){const ws=XLSX.utils.aoa_to_sheet(aoa);if(ws['!ref'])styleHeader(ws,XLSX.utils.decode_range(ws['!ref']));autoWidth(ws);return ws}
+function exportExcel(){
+ const calcHeaders=['Estado CAF Original','Metodo Clasificacion','Fila(s) Origen','Diferencia Cruce','Moneda Cruce','Dias Antiguedad','Tramo Antiguedad','Alerta 30 dias','Observacion','Huella de fila'];
+ const outHeaders=[...headers];for(const h of calcHeaders)if(!outHeaders.includes(h))outHeaders.push(h);
+ const detail=[outHeaders,...analyzed.map(r=>outHeaders.map(h=>r[h] instanceof Date?r[h]:r[h]??''))];
+ const top=[['Cliente','RUC','Moneda','Estado CAF','Saldo','Materialidad %','Dias mas antiguo','Tramo','Partidas','Fuera de plazo'],...summary.clients.map(g=>[g.client,g.ruc,g.cur,g.state,g.saldo,g.materiality,g.maxDays,g.tramo,g.partidas,g.late])];
+ const agingAoA=[['Anticuamiento','Saldo S/','Saldo US$','Partidas'],...Object.entries(summary.agingMap).map(([k,g])=>[k,g.pen,g.usd,g.count])];
+ const methodsAoA=[['Metodo de clasificacion','Partidas'],...Object.entries(summary.methods).sort((a,b)=>b[1]-a[1])];
+ const resumen=[['CONTROL DE PARTIDAS PENDIENTES - CUENTA 2908'],['Fecha de corte',summary.cutoff],[],['Indicador','Resultado'],['SALDO TOTAL S/',summary.pen],['SALDO TOTAL US$',summary.usd],['PARTIDAS > 30 DIAS',summary.late],['SIN CLASIFICAR',summary.unc],[],...methodsAoA];
+ const mailAoA=[['CORREO GERENCIAL'],[buildMail()]];
+ const wb=XLSX.utils.book_new();
+ const wsR=XLSX.utils.aoa_to_sheet(resumen);wsR['!cols']=[{wch:42},{wch:24}];if(wsR['A1'])wsR['A1'].s={font:{bold:true,color:{rgb:'FFFFFF'},sz:14},fill:{fgColor:{rgb:'C2185B'}}};
+ const wsD=XLSX.utils.aoa_to_sheet(detail,{cellDates:true});styleHeader(wsD,{s:{r:0,c:0},e:{r:0,c:outHeaders.length-1}});autoWidth(wsD,38);wsD['!freeze']={xSplit:0,ySplit:1};
+ const wsT=aoaSheet(top); const wsA=aoaSheet(agingAoA); const wsM=aoaSheet(methodsAoA); const wsMail=XLSX.utils.aoa_to_sheet(mailAoA);wsMail['!cols']=[{wch:120}];if(wsMail['A1'])wsMail['A1'].s={font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'DA671F'}}};if(wsMail['A2'])wsMail['A2'].s={alignment:{wrapText:true,vertical:'top'}};wsMail['!rows']=[{}, {hpt:260}];
+ XLSX.utils.book_append_sheet(wb,wsR,'Resumen Ejecutivo');XLSX.utils.book_append_sheet(wb,wsD,'Detalle Analizado');XLSX.utils.book_append_sheet(wb,wsT,'Top Clientes');XLSX.utils.book_append_sheet(wb,wsA,'Antiguedad');XLSX.utils.book_append_sheet(wb,wsM,'Clasificacion');XLSX.utils.book_append_sheet(wb,wsMail,'Correo Gerencial');
+ const cut=$('cutoff').value||'corte';XLSX.writeFile(wb,`Pasivas_2908_Procesado_${cut}.xlsx`);
+}
+$('analyze').onclick=async()=>{try{if(!$('file').files.length)throw new Error('Selecciona primero el reporte de Premium.');if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel. Verifica tu conexión a internet al abrir el sistema.');progress(10);setStatus('Leyendo Excel...');const file=$('file').files[0];sourceFileName=file.name;const buf=await file.arrayBuffer();progress(30);const wb=XLSX.read(buf,{type:'array',cellDates:true,cellNF:true});sourceSheetName=wb.SheetNames.find(n=>/RptProvision_Conciliacion/i.test(n))||wb.SheetNames[0];const ws=wb.Sheets[sourceSheetName];const matrix=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});headerRowIndex=matrix.findIndex(row=>row.some(v=>norm(v)==='RUC')&&row.some(v=>norm(v)==='CLIENTE')&&row.some(v=>norm(v)==='CUENTA'));if(headerRowIndex<0)throw new Error('No encontré los encabezados Ruc / Cliente / Cuenta en el archivo.');headers=matrix[headerRowIndex].map(v=>s(v));const body=matrix.slice(headerRowIndex+1).filter(row=>row.some(v=>v!==null&&v!==''));rawRows=body.map(row=>Object.fromEntries(headers.map((h,i)=>[h,row[i]])));progress(50);setStatus(`Procesando ${rawRows.length.toLocaleString('es-PE')} partidas...`);const fechas=rawRows.map(r=>excelDate(r['Fecha Vou'])).filter(d=>d&&!isNaN(d));if(!fechas.length)throw new Error('No encontré fechas válidas en la columna Fecha Vou.');const maxFecha=new Date(Math.max(...fechas.map(d=>d.getTime())));const cutoff=new Date(maxFecha.getFullYear(),maxFecha.getMonth()+1,0);$('cutoff').value=`${cutoff.getFullYear()}-${String(cutoff.getMonth()+1).padStart(2,'0')}-${String(cutoff.getDate()).padStart(2,'0')}`;const tol=1.00;await new Promise(r=>setTimeout(r,20));analyzed=analyzeRows(rawRows,cutoff,tol);progress(80);summary=buildSummary(analyzed,cutoff);render();progress(100);setStatus(`Listo. Se analizaron <b>${analyzed.length.toLocaleString('es-PE')}</b> partidas de <b>${sourceFileName}</b>.`,'ok')}catch(e){console.error(e);progress(0);setStatus(e.message||String(e),'bad')}};
+$('export').onclick=exportExcel;$('copy').onclick=async()=>{await navigator.clipboard.writeText(buildMail());setStatus('Correo copiado al portapapeles.','ok')};$('downloadMail').onclick=()=>{const blob=new Blob([buildMail()],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Correo_Gerencial_Pasivas.txt';a.click();URL.revokeObjectURL(a.href)};
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');for(const id of ['clients','aging','methods','pending'])$('view-'+id).classList.toggle('hidden',id!==b.dataset.view)});
+</script>
+</body></html>
