@@ -136,6 +136,12 @@ tbody tr.active{background:#FFF0F6;color:#B50A4F;font-weight:900}
 
 /* BONOS */
 .bonus-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.mora-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.mora-pair .section-card{margin-bottom:0;height:100%}
+.mora-pair .calc-panel{height:calc(100% - 38px)}
+@media(max-width:980px){.mora-pair{grid-template-columns:1fr}}
+
 .bonus-card{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
 .bonus-card.monthly{border-top:3px solid var(--magenta)}
 .bonus-card.annual{border-top:3px solid var(--orange)}
@@ -615,24 +621,26 @@ tbody tr.active{background:#FFF0F6;color:#B50A4F;font-weight:900}
           <div class="formula-row"><div class="formula-box magenta" id="formulaResultado">US$ 0.00</div><span class="formula-op">×</span><div class="formula-box orange" id="formulaFactorResultado">0.00%</div><span class="formula-op">=</span><div class="formula-box result" id="formulaBaseResultado">US$ 0.00</div></div>
         </section>
 
-        <section class="section-card step-panel step-panel-4">
-          <div class="section-title"><div class="section-badge step-badge-4">4</div><div><h2>Bono mensual preliminar</h2><p>Del Bono Potencial Total se calcula el 90%.</p></div></div>
-          <div class="calc-panel calc-panel-4">
-            <div class="calc-kicker">BONO MENSUAL PRELIMINAR</div>
-            <p>Este monto corresponde al 90% del Bono Potencial Total, antes de aplicar el factor de mora.</p>
-            <div class="math-compact"><small>90% DEL BONO POTENCIAL TOTAL</small><strong id="formulaBaseMensual">US$ 0.00 × 90%</strong><div class="math-result" id="resultadoBaseMensual">= US$ 0.00</div></div>
-          </div>
-        </section>
+        <div class="mora-pair">
+          <section class="section-card step-panel step-panel-4">
+            <div class="section-title"><div class="section-badge step-badge-4">4</div><div><h2>Bono mensual preliminar</h2><p>Del Bono Potencial Total se calcula el 90%.</p></div></div>
+            <div class="calc-panel calc-panel-4">
+              <div class="calc-kicker">BONO MENSUAL PRELIMINAR</div>
+              <p>Este monto corresponde al 90% del Bono Potencial Total, antes de aplicar el factor de mora.</p>
+              <div class="math-compact"><small>90% DEL BONO POTENCIAL TOTAL</small><strong id="formulaBaseMensual">US$ 0.00 × 90%</strong><div class="math-result" id="resultadoBaseMensual">= US$ 0.00</div></div>
+            </div>
+          </section>
 
-        <section class="section-card step-panel step-panel-5">
-          <div class="section-title"><div class="section-badge step-badge-5">5</div><div><h2>Aplicación del factor de mora</h2><p>El Bono mensual preliminar se ajusta según el factor de mora correspondiente.</p></div></div>
-          <div class="calc-panel calc-panel-5">
-            <div class="calc-kicker">PAGO MENSUAL AJUSTADO POR EL FACTOR DE MORA</div>
-            <p>Se aplica el factor de mora al Bono mensual preliminar para obtener la base mensual ajustada.</p>
-            <div class="notice" style="margin-top:8px">Condiciones de mora: saldos vencidos mayores a 15 días · seguimiento de la mora por 12 meses · exclusión de la cartera judicial · mora igual o mayor a 9%: factor 0%.</div>
-            <div class="math-compact"><small>FACTOR DE MORA</small><strong id="formulaAjusteMora">US$ 0.00 × 100%</strong><div class="math-result" id="resultadoAjusteMora">= US$ 0.00</div></div>
-          </div>
-        </section>
+          <section class="section-card step-panel step-panel-5">
+            <div class="section-title"><div class="section-badge step-badge-5">5</div><div><h2>Aplicación del factor de mora</h2><p>El Bono mensual preliminar se ajusta según el factor de mora correspondiente.</p></div></div>
+            <div class="calc-panel calc-panel-5">
+              <div class="calc-kicker">PAGO MENSUAL AJUSTADO POR EL FACTOR DE MORA</div>
+              <p>Se aplica el factor de mora al Bono mensual preliminar para obtener la base mensual ajustada.</p>
+              <div class="notice" style="margin-top:8px">Condiciones de mora: saldos vencidos mayores a 15 días · seguimiento de la mora por 12 meses · exclusión de la cartera judicial · mora igual o mayor a 9%: factor 0%.</div>
+              <div class="math-compact"><small>FACTOR DE MORA</small><strong id="formulaAjusteMora">US$ 0.00 × 100%</strong><div class="math-result" id="resultadoAjusteMora">= US$ 0.00</div></div>
+            </div>
+          </section>
+        </div>
 
         <section class="section-card bonus-section">
           <div class="bonus-grid">
