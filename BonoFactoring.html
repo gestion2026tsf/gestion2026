@@ -39,7 +39,7 @@ body{
 .header h1{margin:0;color:var(--ink);font-size:42px;line-height:1;letter-spacing:-1.8px;font-weight:900}
 .header h1 span{color:var(--magenta)}
 .header p{margin:8px 0 0;color:var(--muted);font-size:14px}
-.brand{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.header-actions{display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex:0 0 auto}.brand{display:flex;align-items:center;gap:10px;flex:0 0 auto}
 .logo-mark{width:54px;height:54px;border:6px solid var(--gold);border-radius:50%;display:grid;place-items:center;background:#fff}
 .logo-mark span{color:var(--gold);font-family:Arial Black,Arial,sans-serif;font-weight:1000;font-size:29px;line-height:1}
 .logo-word{font-family:Arial Black,Arial,sans-serif;color:#E40063;font-size:38px;line-height:.9;letter-spacing:-1.8px}
@@ -431,7 +431,7 @@ tbody tr.active{background:#FFF0F6;color:#B50A4F;font-weight:900}
 @media(max-width:1180px){
   .steps{grid-template-columns:repeat(3,minmax(0,1fr)) !important;}
 }
-@media(max-width:760px){
+@media(max-width:760px){.header-actions{align-items:flex-start}.pdf-btn{align-self:flex-start}
   .steps{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
   .header h1{font-size:28px !important;}
 }
@@ -540,7 +540,7 @@ tbody tr.active{background:#FFF0F6;color:#B50A4F;font-weight:900}
 .header p{color:#696E78!important}
 .logo-word{color:#17191E!important}
 .logo-sub{color:#D5A000!important}
-.pdf-btn{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:8px 12px;border-radius:10px;background:#17191E;color:#fff;text-decoration:none;font-size:10px;font-weight:900;border:1px solid #17191E;transition:.18s ease}
+.pdf-btn{display:inline-flex;align-items:center;gap:7px;margin-top:0;padding:8px 12px;border-radius:10px;background:#17191E;color:#fff;text-decoration:none;font-size:10px;font-weight:900;border:1px solid #17191E;transition:.18s ease}
 .pdf-btn:hover{background:#D5A000;color:#17191E;border-color:#D5A000;transform:translateY(-1px)}
 .section-title h2,.factor-head h3,.bonus-head h3{color:#17191E!important}
 .section-title p,.factor-head p,.bonus-head p{color:#777C86!important}
@@ -564,11 +564,13 @@ tbody tr.active{background:#FFF0F6;color:#B50A4F;font-weight:900}
         <div class="header-kicker">FUNCIONARIO DE NEGOCIOS FACTORING</div>
         <h1><span>Tu bono</span>, fácil de entender</h1>
         <p>Conoce cómo se calcula tu bonificación.</p>
-        <a class="pdf-btn" href="Guia_Bonificacion_Factoring_2026.pdf" download>⬇ Descargar guía PDF</a>
       </div>
-      <div class="brand" aria-label="TOTAL servicios financieros">
-        <div class="logo-mark"><span>T</span></div>
-        <div><div class="logo-word">TOTAL</div><div class="logo-sub">servicios financieros</div></div>
+      <div class="header-actions">
+        <div class="brand" aria-label="TOTAL servicios financieros">
+          <div class="logo-mark"><span>T</span></div>
+          <div><div class="logo-word">TOTAL</div><div class="logo-sub">servicios financieros</div></div>
+        </div>
+        <a class="pdf-btn" href="Guia_Bonificacion_Factoring_2026.pdf" download="Guia_Bonificacion_Factoring_2026.pdf">⬇ Descargar guía PDF</a>
       </div>
     </div>
 
