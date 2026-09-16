@@ -369,7 +369,7 @@ tbody tr.active{background:#FFF0F6;color:#B50A4F;font-weight:900}
   margin-top:2px !important;
 }
 .steps{
-  grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+  grid-template-columns:repeat(7,minmax(0,1fr)) !important;
   gap:6px !important;
   margin:0 !important;
 }
@@ -397,6 +397,31 @@ tbody tr.active{background:#FFF0F6;color:#B50A4F;font-weight:900}
 .main{
   padding-top:0 !important;
 }
+
+/* ===== GUÍA VISUAL POR PASOS ===== */
+.step-1,.step-3,.step-5,.step-7{background:#FFF5F9 !important;border-color:#F3D8E4 !important}
+.step-2,.step-4,.step-6{background:#FFF8F1 !important;border-color:#F3E0CF !important}
+.step-1 .step-num,.step-3 .step-num,.step-5 .step-num,.step-7 .step-num{background:var(--magenta) !important}
+.step-2 .step-num,.step-4 .step-num,.step-6 .step-num{background:var(--orange) !important}
+.step-panel{border-width:1px !important;box-shadow:none !important}
+.step-panel-4{border-color:#F1D8C4 !important;background:#FFFCF8 !important}
+.step-panel-5{border-color:#F0D7E2 !important;background:#FFFBFD !important}
+.step-panel-6{border-color:#F1D8C4 !important;background:#FFFCF8 !important}
+.step-panel-7{border-color:#F0D7E2 !important;background:#FFFBFD !important}
+.step-badge-4,.step-badge-6{background:var(--orange) !important}
+.step-badge-5,.step-badge-7{background:var(--magenta) !important}
+.calc-panel{padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#fff}
+.calc-panel-4{border-color:#F2DDCC;background:#FFF9F3}
+.calc-panel-5{border-color:#F2DCE6;background:#FFF8FB}
+.calc-kicker{font-size:9px;font-weight:900;letter-spacing:.45px;margin-bottom:4px}
+.calc-panel-4 .calc-kicker{color:#B85B0F}
+.calc-panel-5 .calc-kicker{color:#B20B50}
+.calc-panel p{margin:0 0 9px;color:var(--gray);font-size:9px;line-height:1.45}
+.bonus-title-row{display:flex;align-items:center;gap:9px;min-width:0}
+.bonus-title-row .section-badge{width:30px;height:30px;min-width:30px;font-size:12px}
+.bonus-title-row h3{margin:0}
+.bonus-title-row p{margin:2px 0 0}
+@media(max-width:1400px){.steps{grid-template-columns:repeat(4,minmax(0,1fr)) !important;}}
 @media(max-width:1180px){
   .steps{grid-template-columns:repeat(3,minmax(0,1fr)) !important;}
 }
@@ -404,6 +429,101 @@ tbody tr.active{background:#FFF0F6;color:#B50A4F;font-weight:900}
   .steps{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
   .header h1{font-size:28px !important;}
 }
+
+
+/* ===== 7 PASOS: UN COLOR DIFERENTE POR PASO ===== */
+.step:nth-child(1){--step-color:#D60B5E;--step-soft:#FDE7F0;border-color:#F4CADB;background:linear-gradient(135deg,#fff 0%,#FFF5F9 100%)}
+.step:nth-child(2){--step-color:#F47A16;--step-soft:#FFF0E2;border-color:#F4DCC8;background:linear-gradient(135deg,#fff 0%,#FFF8F1 100%)}
+.step:nth-child(3){--step-color:#7C3AED;--step-soft:#F1EAFE;border-color:#E3D7FA;background:linear-gradient(135deg,#fff 0%,#F9F6FF 100%)}
+.step:nth-child(4){--step-color:#2563EB;--step-soft:#EAF2FF;border-color:#D8E5FF;background:linear-gradient(135deg,#fff 0%,#F5F9FF 100%)}
+.step:nth-child(5){--step-color:#0F9D7A;--step-soft:#E6F7F2;border-color:#D1EEE5;background:linear-gradient(135deg,#fff 0%,#F5FCFA 100%)}
+.step:nth-child(6){--step-color:#D97706;--step-soft:#FFF4DE;border-color:#F3E0B8;background:linear-gradient(135deg,#fff 0%,#FFFBF3 100%)}
+.step:nth-child(7){--step-color:#475569;--step-soft:#EEF2F6;border-color:#DCE3EA;background:linear-gradient(135deg,#fff 0%,#F8FAFC 100%)}
+.step .step-num{background:var(--step-color)!important;box-shadow:0 6px 14px color-mix(in srgb,var(--step-color) 24%, transparent)!important}
+
+/* Colores de referencia en las secciones de cálculo */
+[data-step="1"] .circle,[data-step="1"] .step-badge{background:#D60B5E!important}
+[data-step="2"] .circle,[data-step="2"] .step-badge{background:#F47A16!important}
+[data-step="3"] .circle,[data-step="3"] .step-badge{background:#7C3AED!important}
+[data-step="4"] .circle,[data-step="4"] .step-badge{background:#2563EB!important}
+[data-step="5"] .circle,[data-step="5"] .step-badge{background:#0F9D7A!important}
+[data-step="6"] .circle,[data-step="6"] .step-badge{background:#D97706!important}
+[data-step="7"] .circle,[data-step="7"] .step-badge{background:#475569!important}
+
+
+
+/* ===== AJUSTE VISUAL: LAVANDAS SUAVES Y CADA CALCULO CON SU COLOR ===== */
+:root{
+  --s1:#D90A63; --s1-soft:#FFF2F7; --s1-line:#F3CFE0;
+  --s2:#F28A22; --s2-soft:#FFF7EE; --s2-line:#F3DDC5;
+  --s3:#E45756; --s3-soft:#FFF4F3; --s3-line:#F1D5D3;
+  --s4:#2B7A78; --s4-soft:#F0F8F7; --s4-line:#CFE6E3;
+  --s5:#C99A1A; --s5-soft:#FFF9E9; --s5-line:#EFE1AC;
+  --s6:#A64B2A; --s6-soft:#FFF4EF; --s6-line:#E8CFC4;
+  --s7:#596275; --s7-soft:#F3F5F8; --s7-line:#D8DDE5;
+}
+.header-kicker{background:#FFF0F6;color:#B50A55}
+.header h1 span{color:#C21F79}
+.steps{gap:10px}
+.step{min-height:58px;padding:9px 10px;border-radius:15px;box-shadow:none !important}
+.step-num{width:28px;height:28px;min-width:28px;font-size:12px}
+.step-text{font-size:10px;line-height:1.22}
+.step:nth-child(1){--step-color:var(--s1);--step-soft:var(--s1-soft);border-color:var(--s1-line)!important;background:linear-gradient(135deg,#fff 0%,var(--s1-soft) 100%)!important}
+.step:nth-child(2){--step-color:var(--s2);--step-soft:var(--s2-soft);border-color:var(--s2-line)!important;background:linear-gradient(135deg,#fff 0%,var(--s2-soft) 100%)!important}
+.step:nth-child(3){--step-color:var(--s3);--step-soft:var(--s3-soft);border-color:var(--s3-line)!important;background:linear-gradient(135deg,#fff 0%,var(--s3-soft) 100%)!important}
+.step:nth-child(4){--step-color:var(--s4);--step-soft:var(--s4-soft);border-color:var(--s4-line)!important;background:linear-gradient(135deg,#fff 0%,var(--s4-soft) 100%)!important}
+.step:nth-child(5){--step-color:var(--s5);--step-soft:var(--s5-soft);border-color:var(--s5-line)!important;background:linear-gradient(135deg,#fff 0%,var(--s5-soft) 100%)!important}
+.step:nth-child(6){--step-color:var(--s6);--step-soft:var(--s6-soft);border-color:var(--s6-line)!important;background:linear-gradient(135deg,#fff 0%,var(--s6-soft) 100%)!important}
+.step:nth-child(7){--step-color:var(--s7);--step-soft:var(--s7-soft);border-color:var(--s7-line)!important;background:linear-gradient(135deg,#fff 0%,var(--s7-soft) 100%)!important}
+.step:nth-child(1) .step-num{background:var(--s1)!important}.step:nth-child(2) .step-num{background:var(--s2)!important}.step:nth-child(3) .step-num{background:var(--s3)!important}.step:nth-child(4) .step-num{background:var(--s4)!important}.step:nth-child(5) .step-num{background:var(--s5)!important}.step:nth-child(6) .step-num{background:var(--s6)!important}.step:nth-child(7) .step-num{background:var(--s7)!important}
+
+.input-card.step-section-1{background:var(--s1-soft);border-color:var(--s1-line)}
+.step-section-1 .input-icon{background:#FFE0EC;color:var(--s1)}
+.step-section-1 .section-label{color:#A34A72;border-top-color:#EED7E1}
+.step-section-1 .calculate-btn{background:linear-gradient(135deg,#D90A63 0%,#B20A50 100%)}
+.step-section-1 .field input:focus,.step-section-1 .input-with-suffix:focus-within{border-color:var(--s1);box-shadow:0 0 0 3px rgba(217,10,99,.10)}
+.step-section-1 .rule-box{border-color:var(--s1-line);background:#fff}
+.step-section-1 .rule-title{color:var(--s1)}
+.step-section-1 .rule-note{background:#FFF0F6;color:#A34A72}
+
+.step-section-2{background:var(--s2-soft);border-color:var(--s2-line)}
+.step-section-2 .section-badge{background:var(--s2)!important}
+.step-section-2 .factor-card{border-color:var(--s2-line);background:#fff}
+.step-section-2 .factor-current{background:#FFF7EE}
+.step-section-2 tbody tr.active{background:#FFF0E1 !important;color:#B85B0F !important}
+.step-section-2 .factor-card.orange tbody tr.active{background:#FFF0E1 !important;color:#B85B0F !important}
+
+.step-section-3{background:var(--s3-soft);border-color:var(--s3-line)}
+.step-section-3 .section-badge{background:var(--s3)!important}
+.step-section-3 .potential-value{border-color:var(--s3-line);background:#FFF9F8}
+.step-section-3 .formula-box.magenta{background:#FFE8E7;color:#B83E3D}
+.step-section-3 .formula-box.orange{background:#FFF0EF;color:#B83E3D}
+.step-section-3 .formula-box.result{background:var(--s3);color:#fff}
+
+.step-panel-4{border-color:var(--s4-line)!important;background:var(--s4-soft)!important}
+.step-badge-4{background:var(--s4)!important}
+.calc-panel-4{border-color:var(--s4-line)!important;background:#FBFCFF!important}
+.calc-panel-4 .calc-kicker,.step-panel-4 h2{color:#236B69}
+
+.step-panel-5{border-color:var(--s5-line)!important;background:var(--s5-soft)!important}
+.step-badge-5{background:var(--s5)!important}
+.calc-panel-5{border-color:var(--s5-line)!important;background:#FDFCFF!important}
+.calc-panel-5 .calc-kicker,.step-panel-5 h2{color:#9A7310}
+.step-panel-5 .notice{background:#FFF8E6;border-color:#EEDFA6;color:#7F6510}
+
+.step-panel-6{border-color:var(--s6-line)!important;background:var(--s6-soft)!important}
+.step-badge-6{background:var(--s6)!important}
+.step-panel-6 .bonus-number{color:#934122}
+.step-panel-6 .component-badge{background:#F8E7DF;color:#934122}
+.step-panel-6 .total-box{background:#FFF8F4;border-color:var(--s6-line)}
+
+.step-panel-7{border-color:var(--s7-line)!important;background:var(--s7-soft)!important}
+.step-badge-7{background:var(--s7)!important}
+.step-panel-7 .bonus-number{color:#4F5869}
+.step-panel-7 .component-badge{background:#E9ECF1;color:#4F5869}
+.step-panel-7 .total-box{background:#F6F7F9;border-color:var(--s7-line)}
+.step-panel-7 .notice{background:#EEF1F5;border-color:#D9DEE6;color:#4F5869}
+.step-panel-7 .math-result,.step-panel-6 .math-result,.step-panel-5 .math-result,.step-panel-4 .math-result{color:inherit}
 
 </style>
 </head>
@@ -423,16 +543,17 @@ tbody tr.active{background:#FFF0F6;color:#B50A4F;font-weight:900}
     </div>
 
     <div class="steps">
-      <div class="step"><div class="step-num">1</div><div class="step-text">Ingresa tus resultados de Factoring</div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-text">Identifica las tablas y factores</div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-text">Calcula el Bono Potencial Total</div></div>
-      <div class="step"><div class="step-num">4</div><div class="step-text">Aplica el factor de mora al Bono mensual 90%</div></div>
-      <div class="step"><div class="step-num">5</div><div class="step-text">Obtén el Bono mensual final</div></div>
-      <div class="step"><div class="step-num">6</div><div class="step-text">Revisa el Bono anual 10%</div></div>
+      <div class="step step-1"><div class="step-num">1</div><div class="step-text">Ingresa tus resultados de Factoring</div></div>
+      <div class="step step-2"><div class="step-num">2</div><div class="step-text">Identifica las tablas y factores</div></div>
+      <div class="step step-3"><div class="step-num">3</div><div class="step-text">Calcula el Bono Potencial Total</div></div>
+      <div class="step step-4"><div class="step-num">4</div><div class="step-text">Calcula el Bono mensual preliminar</div></div>
+      <div class="step step-5"><div class="step-num">5</div><div class="step-text">Aplica el factor de mora</div></div>
+      <div class="step step-6"><div class="step-num">6</div><div class="step-text">Obtén el Bono mensual final</div></div>
+      <div class="step step-7"><div class="step-num">7</div><div class="step-text">Revisa el Bono anual</div></div>
     </div>
 
     <div class="layout">
-      <aside class="input-card">
+      <aside class="input-card step-section-1">
         <div class="input-head">
           <div class="input-icon">▦</div>
           <div><h2>Resultados de Factoring</h2><p>Ingresa las cifras mensuales del funcionario.</p></div>
@@ -465,7 +586,7 @@ tbody tr.active{background:#FFF0F6;color:#B50A4F;font-weight:900}
       </aside>
 
       <main class="main">
-        <section class="section-card">
+        <section class="section-card step-section-2">
           <div class="section-title"><div class="section-badge">2</div><div><h2>Tablas y factores</h2><p>Las tres tablas del esquema se muestran juntas para identificar los factores antes de calcular el bono.</p></div></div>
           <div class="factor-grid">
             <div class="factor-card">
@@ -486,7 +607,7 @@ tbody tr.active{background:#FFF0F6;color:#B50A4F;font-weight:900}
           </div>
         </section>
 
-        <section class="section-card potential-card">
+        <section class="section-card potential-card step-section-3">
           <div>
             <div class="section-title" style="margin-bottom:0"><div class="section-badge">3</div><div><h2>Bono Potencial Total</h2><p>El factor de la Tabla de Consecución se aplica al resultado mensual para obtener el Bono Potencial Total. Con este bono potencial total se calculan los demás componentes.</p></div></div>
           </div>
@@ -494,30 +615,36 @@ tbody tr.active{background:#FFF0F6;color:#B50A4F;font-weight:900}
           <div class="formula-row"><div class="formula-box magenta" id="formulaResultado">US$ 0.00</div><span class="formula-op">×</span><div class="formula-box orange" id="formulaFactorResultado">0.00%</div><span class="formula-op">=</span><div class="formula-box result" id="formulaBaseResultado">US$ 0.00</div></div>
         </section>
 
-        <section class="section-card">
-          <div class="section-title"><div class="section-badge orange">4</div><div><h2>Bono mensual 90%</h2><p>Pago mensual ajustado por el factor de mora.</p></div></div>
-          <div class="mora-explain">
-            <h3>Pago mensual ajustado por el factor de mora</h3>
-            <p>Del Bono Potencial Total se calcula el 90%. Luego se aplica el factor de mora correspondiente a cada funcionario.</p>
-            <div class="notice" style="margin-top:8px">Condiciones de mora: saldos vencidos mayores a 15 días · seguimiento de la mora por 12 meses · exclusión de la cartera judicial · mora igual o mayor a 9%: factor 0%.</div>
-            <div class="mora-calc-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-              <div class="math-compact" style="margin-top:0"><small>90% DEL BONO POTENCIAL TOTAL</small><strong id="formulaBaseMensual">US$ 0.00 × 90%</strong><div class="math-result" id="resultadoBaseMensual">= US$ 0.00</div></div>
-              <div class="math-compact" style="margin-top:0"><small>FACTOR DE MORA</small><strong id="formulaAjusteMora">US$ 0.00 × 100%</strong><div class="math-result" id="resultadoAjusteMora">= US$ 0.00</div></div>
-            </div>
+        <section class="section-card step-panel step-panel-4">
+          <div class="section-title"><div class="section-badge step-badge-4">4</div><div><h2>Bono mensual preliminar</h2><p>Del Bono Potencial Total se calcula el 90%.</p></div></div>
+          <div class="calc-panel calc-panel-4">
+            <div class="calc-kicker">BONO MENSUAL PRELIMINAR</div>
+            <p>Este monto corresponde al 90% del Bono Potencial Total, antes de aplicar el factor de mora.</p>
+            <div class="math-compact"><small>90% DEL BONO POTENCIAL TOTAL</small><strong id="formulaBaseMensual">US$ 0.00 × 90%</strong><div class="math-result" id="resultadoBaseMensual">= US$ 0.00</div></div>
           </div>
         </section>
 
-        <section class="section-card">
+        <section class="section-card step-panel step-panel-5">
+          <div class="section-title"><div class="section-badge step-badge-5">5</div><div><h2>Aplicación del factor de mora</h2><p>El Bono mensual preliminar se ajusta según el factor de mora correspondiente.</p></div></div>
+          <div class="calc-panel calc-panel-5">
+            <div class="calc-kicker">PAGO MENSUAL AJUSTADO POR EL FACTOR DE MORA</div>
+            <p>Se aplica el factor de mora al Bono mensual preliminar para obtener la base mensual ajustada.</p>
+            <div class="notice" style="margin-top:8px">Condiciones de mora: saldos vencidos mayores a 15 días · seguimiento de la mora por 12 meses · exclusión de la cartera judicial · mora igual o mayor a 9%: factor 0%.</div>
+            <div class="math-compact"><small>FACTOR DE MORA</small><strong id="formulaAjusteMora">US$ 0.00 × 100%</strong><div class="math-result" id="resultadoAjusteMora">= US$ 0.00</div></div>
+          </div>
+        </section>
+
+        <section class="section-card bonus-section">
           <div class="bonus-grid">
-            <div class="bonus-card monthly">
-              <div class="bonus-head"><div><h3>5. Bono mensual final</h3><p>60% Resultado mensual + 40% Consecución de clientes</p></div><div class="bonus-number" id="mensualTotal">US$ 0.00</div></div>
+            <div class="bonus-card monthly step-panel step-panel-6">
+              <div class="bonus-head"><div class="bonus-title-row"><span class="section-badge step-badge-6">6</span><div><h3>Bono mensual final</h3><p>60% Resultado mensual + 40% Consecución de clientes</p></div></div><div class="bonus-number" id="mensualTotal">US$ 0.00</div></div>
               <div class="component"><div class="component-title"><strong>60% Resultado mensual</strong><span class="component-badge">60%</span></div><p>60% del bono mensual resultado.</p><div class="component-formula"><span id="formulaMensualResultado">US$ 0.00 × 60%</span><strong id="mensualResultado">US$ 0.00</strong></div></div>
               <div class="component"><div class="component-title"><strong>40% Consecución de clientes</strong><span class="component-badge">40%</span></div><p id="explicacionClientes">El 40% se multiplica por el factor de clientes correspondiente.</p><div class="component-formula"><span id="formulaMensualClientes">US$ 0.00 × 40% × 0%</span><strong id="mensualClientes">US$ 0.00</strong></div></div>
               <div class="total-box"><small>BONO MENSUAL FINAL</small><div id="formulaMensualTotal">US$ 0.00 + US$ 0.00</div><strong id="formulaMensualResultadoFinal">= US$ 0.00</strong></div>
             </div>
 
-            <div class="bonus-card annual">
-              <div class="bonus-head"><div><h3>6. Bono anual</h3><p>10% del Bono Potencial Total</p></div><div class="bonus-number" id="anualTotal">US$ 0.00</div></div>
+            <div class="bonus-card annual step-panel step-panel-7">
+              <div class="bonus-head"><div class="bonus-title-row"><span class="section-badge step-badge-7">7</span><div><h3>Bono anual</h3><p>10% del Bono Potencial Total</p></div></div><div class="bonus-number" id="anualTotal">US$ 0.00</div></div>
               <div class="math-compact"><small>BONO ANUAL 10%</small><strong id="formulaBaseAnual">US$ 0.00 × 10%</strong><div class="math-result" id="resultadoBaseAnual">= US$ 0.00</div></div>
               <div class="component"><div class="component-title"><strong>50% Utilidad neta de la compañía</strong><span class="component-badge">50%</span></div><p>Condición del Bono anual.</p></div>
               <div class="component"><div class="component-title"><strong>50% Evaluación de Desempeño</strong><span class="component-badge">50%</span></div><p>Condición del Bono anual.</p></div>
