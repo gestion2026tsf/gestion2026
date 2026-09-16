@@ -22,9 +22,11 @@
   --green:#1D7A46;
 }
 *{box-sizing:border-box}
+html{scrollbar-gutter:stable;}
 body{
   margin:0;
   min-height:100vh;
+  overflow-x:hidden;
   font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
   color:var(--text);
   background:
@@ -67,8 +69,8 @@ body{
 .step:nth-child(even) .step-num{background:var(--orange);box-shadow:0 8px 18px rgba(244,122,22,.2)}
 .step-text{font-size:14px;line-height:1.35;font-weight:850;color:#111827}
 
-.layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:22px;align-items:start}
-.input-card{position:sticky;top:18px;width:100%;background:#fff;border:1px solid #ECE5E9;border-radius:20px;padding:20px 18px;box-shadow:0 14px 34px rgba(58,21,38,.07)}
+.layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:22px;align-items:start;width:100%;min-width:0}
+.input-card{position:relative;top:auto;width:100%;min-width:0;align-self:start;background:#fff;border:1px solid #ECE5E9;border-radius:20px;padding:20px 18px;box-shadow:0 14px 34px rgba(58,21,38,.07)}
 .input-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #F0E8EC}
 .input-title-row{display:flex;align-items:center;gap:10px}
 .input-icon{width:40px;height:40px;min-width:40px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:linear-gradient(145deg,#FFEAF3,#F9D8E8);color:#B2084D;font-size:20px;font-weight:900;box-shadow:inset 0 0 0 1px #F5D3E1}
@@ -90,7 +92,7 @@ body{
 .calculate-btn:hover{transform:translateY(-1px)}
 .clear-btn{width:100%;border:none;background:transparent;color:var(--gray);margin-top:5px;padding:6px;font-size:9.5px;cursor:pointer}
 
-.main{width:100%;max-width:1060px;justify-self:center}
+.main{width:100%;max-width:1060px;min-width:0;justify-self:center}
 .summary{background:linear-gradient(120deg,#191419,#251820);color:#fff;border-radius:22px;padding:22px 25px;display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:14px;box-shadow:0 14px 35px rgba(24,20,25,.12)}
 .summary small{display:block;color:#CBBFC5;font-size:10px;margin-bottom:4px}.summary-person{font-size:15px;font-weight:700}.summary-right{text-align:right}.summary-total{color:#FFB329;font-size:34px;font-weight:900}.summary-caption{color:#CBBFC5;font-size:9px}
 
@@ -142,6 +144,18 @@ body{
 @media(max-width:1180px){.layout{grid-template-columns:1fr}.main{max-width:none}.header{flex-direction:column;align-items:flex-start}.brand{flex:0 0 auto;justify-content:flex-start}.header h1{font-size:40px}.step-text{font-size:11px}.base-top{grid-template-columns:minmax(0,1fr) 160px}.factor-grid{grid-template-columns:1fr 1fr}.factor-card:last-child{grid-column:1/-1}}
 @media(max-width:760px){.page{width:100%;margin:0;padding:18px 12px 30px;border-radius:0}.header h1{font-size:36px}.brand{width:100%;justify-content:center}.total-logo{justify-content:center;max-width:none}.total-logo-word{font-size:40px}.total-logo-mark{width:62px;height:62px;flex-basis:62px}.total-logo-t{font-size:34px}.steps{grid-template-columns:1fr 1fr}.base-top{grid-template-columns:1fr}.base-value{width:100%;max-width:240px;justify-self:center}.factor-grid,.results-grid{grid-template-columns:1fr}.factor-card:last-child{grid-column:auto}.new-rule-head{align-items:flex-start;flex-direction:column}.new-rule-title{max-width:none}.new-rule-pill{align-self:flex-start}}
 @media(max-width:520px){.steps{grid-template-columns:1fr}}
+
+
+/* ===== ESTABILIDAD DE LAYOUT AL HACER SCROLL ===== */
+.page,.header,.steps,.layout,.input-card,.main,.card,.summary,.factor-grid,.results-grid,.final{min-width:0;}
+.header,.steps,.layout,.main{transform:none!important;}
+.input-card{position:relative!important;top:auto!important;}
+.table-box,.new-rule-table-wrap{max-width:100%;overflow:hidden;}
+.factor-current strong,.summary-person,.new-rule-title,.new-rule-copy{overflow-wrap:anywhere;}
+@media (min-width:1181px){
+  .layout{grid-template-columns:360px minmax(0,1fr)!important;}
+  .input-card{position:relative!important;top:auto!important;}
+}
 
 </style>
 </head>
