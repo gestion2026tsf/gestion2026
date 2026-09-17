@@ -136,7 +136,8 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
 
 .component-total{margin-top:8px;border-radius:10px;padding:9px 11px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:950}
 .step7 .component-total{background:#FFF0E9;border:1px solid var(--s7-line);color:#8E3F20}
-.step8 .component-total{background:#F0F2F6;border:1px solid var(--s8-line);color:#3F495C}
+.step8 .component-total{background:var(--s8-soft);border:1px solid var(--s8-line);color:#445065}
+.step9 .component-total{background:var(--s9-soft);border:1px solid var(--s9-line);color:#243043}
 .component-total .label{font-size:9px;letter-spacing:.25px;text-transform:uppercase}
 .component-total .value{font-size:16px;white-space:nowrap}
 .quarter-breakdown{margin:0 0 14px;border:1px solid #E3DFE4;border-radius:14px;background:#fff;overflow:hidden}
@@ -145,13 +146,21 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
 .quarter-breakdown .qb-head .sub{font-size:8.5px;color:#C9CDD5;font-weight:800;margin-top:2px}
 .quarter-breakdown .qb-body{display:grid;grid-template-columns:1fr 1fr 1.12fr;gap:0}
 .quarter-breakdown .qb-item{padding:11px 13px;border-right:1px solid #ECE9ED}
-.quarter-breakdown .qb-item:last-child{border-right:0;background:#FFF6FA}
+.quarter-breakdown .qb-item:last-child{border-right:0}
+.quarter-breakdown .qb-item.qb-result{background:var(--s8-soft)}
+.quarter-breakdown .qb-item.qb-clients{background:var(--s9-soft)}
+.quarter-breakdown .qb-item.qb-final{background:#FFF6FA}
 .quarter-breakdown .qb-label{font-size:8.5px;color:#707785;font-weight:900;text-transform:uppercase}
 .quarter-breakdown .qb-value{font-size:18px;color:#111827;font-weight:950;margin-top:3px}
-.quarter-breakdown .qb-item:last-child .qb-value{color:var(--magenta);font-size:22px}
+.quarter-breakdown .qb-item.qb-result .qb-label,.quarter-breakdown .qb-item.qb-result .qb-value{color:#445065}
+.quarter-breakdown .qb-item.qb-clients .qb-label,.quarter-breakdown .qb-item.qb-clients .qb-value{color:#243043}
+.quarter-breakdown .qb-item.qb-final .qb-label{color:var(--magenta)}
+.quarter-breakdown .qb-item.qb-final .qb-value{color:var(--magenta);font-size:22px}
 @media(max-width:900px){.quarter-breakdown .qb-body{grid-template-columns:1fr}.quarter-breakdown .qb-item{border-right:0;border-bottom:1px solid #ECE9ED}.quarter-breakdown .qb-item:last-child{border-bottom:0}}
 .annual-box{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .annual-col{background:#fff;border:1px solid #E4E5E8;border-radius:9px;padding:9px}
+.annual-col.annual-total-card{background:var(--s10-soft);border-color:var(--s10-line)}
+.annual-col.annual-conditions{background:#fff;border-color:#E4E5E8}
 .annual-col h4{margin:0 0 4px;font-size:10px}.annual-col .big{font-size:18px;font-weight:950}.annual-col p{font-size:8.5px;color:#656D7A;margin:3px 0 0;line-height:1.35}
 .annual-months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 8px}
 .annual-month-card{background:#fff;border:1px solid #E6E3EF;border-radius:10px;padding:8px 9px}
@@ -869,13 +878,13 @@ body.all-mode .quarter-breakdown{display:block !important}
         <button type="button" class="step-nav" data-guide-target="1"><div class="n">1</div><div class="t">Ingresa los datos del trimestre</div></button>
         <button type="button" class="step-nav" data-guide-target="2"><div class="n">2</div><div class="t">Halla el promedio por ejecutivo</div></button>
         <button type="button" class="step-nav" data-guide-target="3"><div class="n">3</div><div class="t">Identifica tus factores</div></button>
-        <button type="button" class="step-nav" data-guide-target="4"><div class="n">4</div><div class="t">Calcula el Bono Potencial</div></button>
-        <button type="button" class="step-nav" data-guide-target="5"><div class="n">5</div><div class="t">Aplica el Cargo de jefatura Gerente Zonal</div></button>
-        <button type="button" class="step-nav" data-guide-target="6"><div class="n">6</div><div class="t">Calcula el Bono Trimestral 70%</div></button>
+        <button type="button" class="step-nav" data-guide-target="4"><div class="n">4</div><div class="t">Calcula el Bono Potencial (BASE)</div></button>
+        <button type="button" class="step-nav" data-guide-target="5"><div class="n">5</div><div class="t">Aplica el % de cargo del gerente zonal</div></button>
+        <button type="button" class="step-nav" data-guide-target="6"><div class="n">6</div><div class="t">Calcula el Bono Trimestral (70%)</div></button>
         <button type="button" class="step-nav" data-guide-target="7"><div class="n">7</div><div class="t">Aplica el índice de mora</div></button>
         <button type="button" class="step-nav" data-guide-target="8"><div class="n">8</div><div class="t">60% bono trimestral resultado</div></button>
         <button type="button" class="step-nav" data-guide-target="9"><div class="n">9</div><div class="t">40% bono trimestral clientes</div></button>
-        <button type="button" class="step-nav" data-guide-target="10"><div class="n">10</div><div class="t">Revisa el Bono Anual 30%</div></button>
+        <button type="button" class="step-nav" data-guide-target="10"><div class="n">10</div><div class="t">Revisa el Bono Anual (30%)</div></button>
       </div>
     </div>
 
@@ -976,14 +985,14 @@ body.all-mode .quarter-breakdown{display:block !important}
         <div class="pair">
           <section class="section step4" data-guide-step="4">
             <div class="section-inner">
-              <div class="step-head"><div class="step-num">4</div><div class="step-copy"><h3>Calcula el Bono Potencial</h3><p>El factor de consecución del resultado promedio por ejecutivo se aplica al resultado consolidado de la zona.</p></div></div>
+              <div class="step-head"><div class="step-num">4</div><div class="step-copy"><h3>Calcula el Bono Potencial (BASE)</h3><p>El factor de consecución del resultado promedio por ejecutivo se aplica al resultado consolidado de la zona.</p></div></div>
               <div id="potentialOnlyLines"></div>
             </div>
           </section>
 
           <section class="section step5" data-guide-step="5">
             <div class="section-inner">
-              <div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Aplica el Cargo de jefatura Gerente Zonal</h3><p>Al Bono Potencial se aplica el Cargo de jefatura Gerente Zonal y el Factor de Eficiencia.</p></div></div>
+              <div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Aplica el % de cargo del gerente zonal</h3><p>Al Bono Potencial se aplica el Cargo de jefatura Gerente Zonal y el Factor de Eficiencia.</p></div></div>
               <div id="cargoLines"></div>
             </div>
           </section>
@@ -992,7 +1001,7 @@ body.all-mode .quarter-breakdown{display:block !important}
         <div class="pair">
           <section class="section step6" data-guide-step="6">
             <div class="section-inner">
-              <div class="step-head"><div class="step-num">6</div><div class="step-copy"><h3>Calcula el Bono Trimestral 70%</h3><p>Se calcula el 70% del bono después de aplicar el Cargo de jefatura Gerente Zonal.</p></div></div>
+              <div class="step-head"><div class="step-num">6</div><div class="step-copy"><h3>Calcula el Bono Trimestral (70%)</h3><p>Se calcula el 70% del bono después de aplicar el Cargo de jefatura Gerente Zonal.</p></div></div>
               <div id="prelimLines"></div>
             </div>
           </section>
@@ -1025,22 +1034,22 @@ body.all-mode .quarter-breakdown{display:block !important}
 
         <div class="quarter-breakdown" data-guide-extra="9">
           <div class="qb-head">
-            <div><div class="title">Bono Trimestral Final</div><div class="sub">Suma de los componentes de Resultado y Clientes</div></div>
+            <div><div class="title">Bono Trimestral Final (70%)</div><div class="sub">Suma de los componentes de Resultado y Clientes</div></div>
           </div>
           <div class="qb-body">
-            <div class="qb-item"><div class="qb-label">60% Resultado</div><div class="qb-value" id="finalResult60">US$ 0.00</div></div>
-            <div class="qb-item"><div class="qb-label">40% Clientes</div><div class="qb-value" id="finalClients40">US$ 0.00</div></div>
-            <div class="qb-item"><div class="qb-label">Bono Trimestral Final</div><div class="qb-value" id="finalQuarterBonus">US$ 0.00</div></div>
+            <div class="qb-item qb-result"><div class="qb-label">60% Resultado</div><div class="qb-value" id="finalResult60">US$ 0.00</div></div>
+            <div class="qb-item qb-clients"><div class="qb-label">40% Clientes</div><div class="qb-value" id="finalClients40">US$ 0.00</div></div>
+            <div class="qb-item qb-final"><div class="qb-label">Bono Trimestral Final (70%)</div><div class="qb-value" id="finalQuarterBonus">US$ 0.00</div></div>
           </div>
         </div>
 
         <section class="section step10" data-guide-step="10">
           <div class="section-inner">
-            <div class="step-head"><div class="step-num">10</div><div class="step-copy"><h3>Revisa el Bono Anual 30%</h3><p>30% del bono después del factor de cargo. No constituye un pago asegurado.</p></div></div>
+            <div class="step-head"><div class="step-num">10</div><div class="step-copy"><h3>Revisa el Bono Anual (30%)</h3><p>30% del bono después del factor de cargo. No constituye un pago asegurado.</p></div></div>
             <div class="annual-months" id="annualMonths"></div>
             <div class="annual-box">
-              <div class="annual-col"><h4>Componente anual acumulado del trimestre</h4><div class="big" id="annualTotal">US$ 0.00</div><p>Corresponde a la suma del componente anual de los tres meses.</p></div>
-              <div class="annual-col"><h4>Condición de pago</h4><p><strong>50% Utilidad neta de la compañía</strong><br><strong>50% Evaluación de Desempeño</strong><br><br>Su pago está sujeto al cumplimiento de ambas condiciones.</p></div>
+              <div class="annual-col annual-total-card"><h4>Componente anual acumulado del trimestre (30%)</h4><div class="big" id="annualTotal">US$ 0.00</div><p>Corresponde a la suma del componente anual de los tres meses.</p></div>
+              <div class="annual-col annual-conditions"><h4>Condición de pago</h4><p><strong>50% Utilidad neta de la compañía</strong><br><strong>50% Evaluación de Desempeño</strong><br><br>Su pago está sujeto al cumplimiento de ambas condiciones.</p></div>
             </div>
           </div>
         </section>
@@ -1143,7 +1152,7 @@ function renderTablesForMonth(i){
   document.getElementById('tblMora').innerHTML=MORA_ROWS.map(r=>`<tr class="${x.mora>=r[0]&&x.mora<=r[1]?'active-mora':''}"><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('');
 
   document.getElementById('factorStatus').innerHTML=`
-    <div class="factor-pill result"><strong>Mes ${i} · Resultado promedio por ejecutivo</strong><span class="factor-value">${money(x.avg)} → ${pct(x.rf[2])}</span><br>${money(x.result)} ÷ ${num(x.executives)} ejecutivos</div>
+    <div class="factor-pill result"><strong>Mes ${i} · Resultado promedio por ejecutivo</strong><span class="factor-value">${money(x.avg)} → ${pct(x.rf[2])}</span></div>
     <div class="factor-pill clients"><strong>Mes ${i} · Clientes por ejecutivo</strong><span class="factor-value">${num(x.clientsAvg)} → ${pct(x.cf[2])}</span><br>${num(x.clients)} clientes ÷ ${num(x.executives)} ejecutivos</div>
     <div class="factor-pill mora"><strong>Mes ${i} · Índice de mora</strong><span class="factor-value">${x.mora.toFixed(2)}% → ${pct(x.mf[2])}</span><br>Se usa directamente el % de mora ingresado</div>`;
 }
@@ -1187,7 +1196,7 @@ function renderCalculated(showOkMessage=true){
   const eff=(parseFloat(document.getElementById('eff').value)||0)/100;
   const m=[1,2,3].map(i=>calcMonth(i,cargo,eff));
 
-  document.getElementById('avgSummary').innerHTML=m.map(x=>`<div class="month-card"><div class="m">Mes ${x.i}</div><div class="v">${money(x.avg)}</div><div class="d">${money(x.result)} ÷ ${num(x.executives)} ejecutivos · Factor ${pct(x.rf[2])}</div></div>`).join('');
+  document.getElementById('avgSummary').innerHTML=m.map(x=>`<div class="month-card"><div class="m">Mes ${x.i}</div><div class="v">${money(x.avg)}</div><div class="d">${money(x.result)} ÷ ${num(x.executives)} ejecutivos</div></div>`).join('');
 
   document.getElementById('potentialOnlyLines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong> · Factor ${pct(x.rf[2])}<br>${money(x.result)} × ${pct(x.rf[2])}</div><div class="rightf">${money(x.baseBeforeCargo)}</div></div>`).join('');
 
@@ -1277,13 +1286,13 @@ const GUIDE_STEPS = {
   1:['Ingresa los datos del trimestre','Registra Mes 1, Mes 2 y Mes 3. Estos datos alimentan todo el cálculo.'],
   2:['Halla el promedio por ejecutivo','Se divide el resultado de cada mes entre la cantidad de ejecutivos asignados.'],
   3:['Identifica tus factores','Ubica el factor de resultado, clientes y mora que corresponde a cada mes.'],
-  4:['Calcula el Bono Potencial','Aplica el factor de consecución al resultado consolidado de la zona.'],
-  5:['Aplica el Cargo de jefatura','Sobre el Bono Potencial se aplica el Cargo de jefatura Gerente Zonal y el Factor de Eficiencia.'],
-  6:['Calcula el Bono Trimestral 70%','Toma el 70% del bono después del Cargo de jefatura.'],
+  4:['Calcula el Bono Potencial (BASE)','Aplica el factor de consecución al resultado consolidado de la zona.'],
+  5:['Aplica el % de cargo del gerente zonal','Sobre el Bono Potencial se aplica el % de cargo del gerente zonal y el Factor de Eficiencia.'],
+  6:['Calcula el Bono Trimestral (70%)','Toma el 70% del bono después del cargo del gerente zonal.'],
   7:['Aplica el índice de mora','El bono trimestral de cada mes se ajusta con el factor de mora.'],
   8:['Resultado + Clientes','Revisa juntos el 60% por resultado y el 40% por clientes para entender cómo se forma el Bono Trimestral Final.'],
   9:['Resultado + Clientes','Revisa juntos el 60% por resultado y el 40% por clientes para entender cómo se forma el Bono Trimestral Final.'],
-  10:['Revisa el Bono Anual 30%','Consulta el componente anual de cada mes, el acumulado trimestral y sus condiciones de pago.']
+  10:['Revisa el Bono Anual (30%)','Consulta el componente anual de cada mes, el acumulado trimestral y sus condiciones de pago.']
 };
 let guideStep = 1;
 let guideMode = true;
