@@ -130,6 +130,23 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
 .formula-line{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 8px;border-radius:9px;background:#FAFAFB;border:1px solid #ECECEE;margin-top:5px}
 .formula-line .leftf{font-size:9px;color:#505765;line-height:1.3;min-width:0}
 .formula-line .rightf{font-size:13px;font-weight:950;color:#16181E;white-space:nowrap}
+
+.component-total{margin-top:8px;border-radius:10px;padding:9px 11px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:950}
+.step7 .component-total{background:#FFF0E9;border:1px solid var(--s7-line);color:#8E3F20}
+.step8 .component-total{background:#F0F2F6;border:1px solid var(--s8-line);color:#3F495C}
+.component-total .label{font-size:9px;letter-spacing:.25px;text-transform:uppercase}
+.component-total .value{font-size:16px;white-space:nowrap}
+.quarter-breakdown{margin:0 0 14px;border:1px solid #E3DFE4;border-radius:14px;background:#fff;overflow:hidden}
+.quarter-breakdown .qb-head{padding:10px 13px;background:#17191F;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.quarter-breakdown .qb-head .title{font-size:14px;font-weight:950}
+.quarter-breakdown .qb-head .sub{font-size:8.5px;color:#C9CDD5;font-weight:800;margin-top:2px}
+.quarter-breakdown .qb-body{display:grid;grid-template-columns:1fr 1fr 1.12fr;gap:0}
+.quarter-breakdown .qb-item{padding:11px 13px;border-right:1px solid #ECE9ED}
+.quarter-breakdown .qb-item:last-child{border-right:0;background:#FFF6FA}
+.quarter-breakdown .qb-label{font-size:8.5px;color:#707785;font-weight:900;text-transform:uppercase}
+.quarter-breakdown .qb-value{font-size:18px;color:#111827;font-weight:950;margin-top:3px}
+.quarter-breakdown .qb-item:last-child .qb-value{color:var(--magenta);font-size:22px}
+@media(max-width:900px){.quarter-breakdown .qb-body{grid-template-columns:1fr}.quarter-breakdown .qb-item{border-right:0;border-bottom:1px solid #ECE9ED}.quarter-breakdown .qb-item:last-child{border-bottom:0}}
 .annual-box{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .annual-col{background:#fff;border:1px solid #E4E5E8;border-radius:9px;padding:9px}
 .annual-col h4{margin:0 0 4px;font-size:10px}.annual-col .big{font-size:18px;font-weight:950}.annual-col p{font-size:8.5px;color:#656D7A;margin:3px 0 0;line-height:1.35}
@@ -487,6 +504,7 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
             <div class="section-inner">
               <div class="step-head"><div class="step-num">7</div><div class="step-copy"><h3>60% bono trimestral resultado</h3><p>Se calcula el 60% del bono trimestral ajustado por mora.</p></div></div>
               <div id="result60Lines"></div>
+              <div class="component-total"><span class="label">Total 60% Resultado del trimestre</span><span class="value" id="result60Total">US$ 0.00</span></div>
             </div>
           </section>
 
@@ -494,8 +512,20 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
             <div class="section-inner">
               <div class="step-head"><div class="step-num">8</div><div class="step-copy"><h3>40% bono trimestral clientes</h3><p>Se calcula el promedio de clientes por ejecutivo, se aplica su factor y se obtiene el Bono Trimestral Final.</p></div></div>
               <div id="clients40Lines"></div>
+              <div class="component-total"><span class="label">Total 40% Clientes del trimestre</span><span class="value" id="clients40Total">US$ 0.00</span></div>
             </div>
           </section>
+        </div>
+
+        <div class="quarter-breakdown">
+          <div class="qb-head">
+            <div><div class="title">Bono Trimestral Final</div><div class="sub">Suma de los componentes de Resultado y Clientes</div></div>
+          </div>
+          <div class="qb-body">
+            <div class="qb-item"><div class="qb-label">60% Resultado</div><div class="qb-value" id="finalResult60">US$ 0.00</div></div>
+            <div class="qb-item"><div class="qb-label">40% Clientes</div><div class="qb-value" id="finalClients40">US$ 0.00</div></div>
+            <div class="qb-item"><div class="qb-label">Bono Trimestral Final</div><div class="qb-value" id="finalQuarterBonus">US$ 0.00</div></div>
+          </div>
         </div>
 
         <section class="section step9">
@@ -510,7 +540,7 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
 
         <div class="final">
           <div class="final-copy"><div class="small">RESULTADO DEL TRIMESTRE</div><div class="big">Bono trimestral a pagar</div></div>
-          <div class="final-number"><div class="label">SUMA DE LOS 3 BONOS MENSUALES</div><div class="amount" id="quarterTotal">US$ 0.00</div></div>
+          <div class="final-number"><div class="label">60% RESULTADO + 40% CLIENTES</div><div class="amount" id="quarterTotal">US$ 0.00</div></div>
         </div>
       </main>
     </div>
@@ -651,10 +681,20 @@ function renderCalculated(showOkMessage=true){
 
   document.getElementById('result60Lines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong><br>${money(x.adjusted)} × 60%</div><div class="rightf">${money(x.res60)}</div></div>`).join('');
 
-  document.getElementById('clients40Lines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong><br>Clientes por ejecutivo: ${num(x.clientsAvg)} → factor ${pct(x.cf[2])}<br>${money(x.adjusted)} × 40% × ${pct(x.cf[2])}<br><strong>Bono mensual del mes:</strong> ${money(x.res60)} + ${money(x.cli40)}</div><div class="rightf">${money(x.monthly)}</div></div>`).join('');
+  document.getElementById('clients40Lines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong><br>Clientes por ejecutivo: ${num(x.clientsAvg)} → factor ${pct(x.cf[2])}<br>${money(x.adjusted)} × 40% × ${pct(x.cf[2])}</div><div class="rightf">${money(x.cli40)}</div></div>`).join('');
 
-  document.getElementById('quarterTotal').textContent=money(m.reduce((s,x)=>s+x.monthly,0));
-  document.getElementById('annualTotal').textContent=money(m.reduce((s,x)=>s+x.annual,0));
+  const result60Total=m.reduce((sum,x)=>sum+x.res60,0);
+  const clients40Total=m.reduce((sum,x)=>sum+x.cli40,0);
+  const quarter=result60Total+clients40Total;
+  const annual=m.reduce((sum,x)=>sum+x.annual,0);
+
+  document.getElementById('result60Total').textContent=money(result60Total);
+  document.getElementById('clients40Total').textContent=money(clients40Total);
+  document.getElementById('finalResult60').textContent=money(result60Total);
+  document.getElementById('finalClients40').textContent=money(clients40Total);
+  document.getElementById('finalQuarterBonus').textContent=money(quarter);
+  document.getElementById('quarterTotal').textContent=money(quarter);
+  document.getElementById('annualTotal').textContent=money(annual);
 
   if(showOkMessage){
     document.getElementById('calcBtn').classList.add('calculated');
