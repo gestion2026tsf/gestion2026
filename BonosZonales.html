@@ -136,8 +136,8 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
 
 .component-total{margin-top:8px;border-radius:10px;padding:9px 11px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:950}
 .step7 .component-total{background:#FFF0E9;border:1px solid var(--s7-line);color:#8E3F20}
-.step8 .component-total{background:var(--s8-soft);border:1px solid var(--s8-line);color:#445065}
-.step9 .component-total{background:var(--s9-soft);border:1px solid var(--s9-line);color:#243043}
+.step8 .component-total{background:#EEF4FF;border:1px solid #C9D8F5;color:#294165;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+.step9 .component-total{background:#EEF7F1;border:1px solid #CDE7D8;color:#1F4A39;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
 .component-total .label{font-size:9px;letter-spacing:.25px;text-transform:uppercase}
 .component-total .value{font-size:16px;white-space:nowrap}
 .quarter-breakdown{margin:0 0 14px;border:1px solid #E3DFE4;border-radius:14px;background:#fff;overflow:hidden}
@@ -147,23 +147,30 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
 .quarter-breakdown .qb-body{display:grid;grid-template-columns:1fr 1fr 1.12fr;gap:0}
 .quarter-breakdown .qb-item{padding:11px 13px;border-right:1px solid #ECE9ED}
 .quarter-breakdown .qb-item:last-child{border-right:0}
-.quarter-breakdown .qb-item.qb-result{background:var(--s8-soft)}
-.quarter-breakdown .qb-item.qb-clients{background:var(--s9-soft)}
-.quarter-breakdown .qb-item.qb-final{background:#FFF6FA}
+.quarter-breakdown .qb-item.qb-result{background:#EEF4FF}
+.quarter-breakdown .qb-item.qb-clients{background:#EEF7F1}
+.quarter-breakdown .qb-item.qb-final{background:#FFF3F8}
 .quarter-breakdown .qb-label{font-size:8.5px;color:#707785;font-weight:900;text-transform:uppercase}
 .quarter-breakdown .qb-value{font-size:18px;color:#111827;font-weight:950;margin-top:3px}
-.quarter-breakdown .qb-item.qb-result .qb-label,.quarter-breakdown .qb-item.qb-result .qb-value{color:#445065}
-.quarter-breakdown .qb-item.qb-clients .qb-label,.quarter-breakdown .qb-item.qb-clients .qb-value{color:#243043}
+.quarter-breakdown .qb-item.qb-result .qb-label,.quarter-breakdown .qb-item.qb-result .qb-value{color:#294165}
+.quarter-breakdown .qb-item.qb-clients .qb-label,.quarter-breakdown .qb-item.qb-clients .qb-value{color:#1F4A39}
 .quarter-breakdown .qb-item.qb-final .qb-label{color:var(--magenta)}
 .quarter-breakdown .qb-item.qb-final .qb-value{color:var(--magenta);font-size:22px}
 @media(max-width:900px){.quarter-breakdown .qb-body{grid-template-columns:1fr}.quarter-breakdown .qb-item{border-right:0;border-bottom:1px solid #ECE9ED}.quarter-breakdown .qb-item:last-child{border-bottom:0}}
 .annual-box{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .annual-col{background:#fff;border:1px solid #E4E5E8;border-radius:9px;padding:9px}
-.annual-col.annual-total-card{background:var(--s10-soft);border-color:var(--s10-line)}
+.annual-col.annual-total-card{background:#F4F1FF;border-color:#D7CDF7}
 .annual-col.annual-conditions{background:#fff;border-color:#E4E5E8}
+.annual-total-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:4px}
+.annual-total-head h4{margin:2px 0 0;font-size:10px;line-height:1.25}
+.annual-total-badge{width:26px;height:26px;min-width:26px;border-radius:8px;display:grid;place-items:center;background:var(--s10);color:#fff;font-size:10px;font-weight:950;box-shadow:0 5px 12px rgba(123,97,200,.20)}
 .annual-col h4{margin:0 0 4px;font-size:10px}.annual-col .big{font-size:18px;font-weight:950}.annual-col p{font-size:8.5px;color:#656D7A;margin:3px 0 0;line-height:1.35}
+.annual-banner{margin:0 0 10px;border:1px solid #1F2430;border-radius:14px;overflow:hidden;background:#fff}
+.annual-banner .annual-head{padding:11px 14px;background:#17191F;color:#fff}
+.annual-banner .annual-title{font-size:14px;font-weight:950}
+.annual-banner .annual-sub{font-size:8.5px;color:#C9CDD5;font-weight:800;margin-top:2px}
 .annual-months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 8px}
-.annual-month-card{background:#fff;border:1px solid #E6E3EF;border-radius:10px;padding:8px 9px}
+.annual-month-card{background:#FBFAFF;border:1px solid #DED8F6;border-radius:10px;padding:8px 9px}
 .annual-month-card .m{font-size:8px;font-weight:950;color:#7B61C8;text-transform:uppercase}
 .annual-month-card .v{font-size:15px;font-weight:950;color:#191D25;margin-top:3px}
 .annual-month-card .d{font-size:8px;color:#6C7381;margin-top:2px;line-height:1.25}
@@ -846,6 +853,18 @@ body.all-mode .quarter-breakdown{display:block !important}
   .guide-intro-grid{grid-template-columns:1fr}
 }
 
+
+/* CABECERA NEGRA DEL COMPONENTE ANUAL */
+.annual-section{padding:0!important;overflow:hidden!important;background:#fff!important;border-color:#DCD7EA!important}
+.annual-section .section-inner{padding:12px!important}
+.annual-banner-header{margin:0!important;border:0!important;border-radius:0!important}
+.annual-banner-header .annual-head{padding:13px 16px!important}
+.annual-banner-header .annual-title{font-size:16px!important}
+.annual-banner-header .annual-sub{font-size:9px!important}
+.annual-banner-header .annual-head{display:flex!important;align-items:center!important;gap:12px!important}
+.annual-badge-10{width:34px;height:34px;min-width:34px;border-radius:10px;display:grid;place-items:center;background:var(--s10);color:#fff;font-size:12px;font-weight:950;box-shadow:0 6px 14px rgba(123,97,200,.22)}
+.annual-head-copy{min-width:0}
+
 </style>
 </head>
 <body>
@@ -1043,12 +1062,12 @@ body.all-mode .quarter-breakdown{display:block !important}
           </div>
         </div>
 
-        <section class="section step10" data-guide-step="10">
+        <section class="section step10 annual-section" data-guide-step="10">
+          <div class="annual-banner annual-banner-header"><div class="annual-head"><div class="annual-badge-10">10</div><div class="annual-head-copy"><div class="annual-title">Componente Anual (30%)</div><div class="annual-sub">Resumen del componente anual del trimestre</div></div></div></div>
           <div class="section-inner">
-            <div class="step-head"><div class="step-num">10</div><div class="step-copy"><h3>Revisa el Bono Anual (30%)</h3><p>30% del bono después del factor de cargo. No constituye un pago asegurado.</p></div></div>
             <div class="annual-months" id="annualMonths"></div>
             <div class="annual-box">
-              <div class="annual-col annual-total-card"><h4>Componente anual acumulado del trimestre (30%)</h4><div class="big" id="annualTotal">US$ 0.00</div><p>Corresponde a la suma del componente anual de los tres meses.</p></div>
+              <div class="annual-col annual-total-card"><div class="annual-total-head"><div class="annual-total-badge">10</div><h4>Componente anual acumulado del trimestre (30%)</h4></div><div class="big" id="annualTotal">US$ 0.00</div><p>Corresponde a la suma del componente anual de los tres meses.</p></div>
               <div class="annual-col annual-conditions"><h4>Condición de pago</h4><p><strong>50% Utilidad neta de la compañía</strong><br><strong>50% Evaluación de Desempeño</strong><br><br>Su pago está sujeto al cumplimiento de ambas condiciones.</p></div>
             </div>
           </div>
