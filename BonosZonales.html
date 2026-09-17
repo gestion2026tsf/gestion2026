@@ -508,31 +508,54 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
 }
 
 
-/* Selector independiente para visualizar factores por mes */
+/* Selector visible para cambiar los factores entre Mes 1, Mes 2 y Mes 3 */
+.factor-month-switcher{
+  display:grid;
+  grid-template-columns:auto minmax(330px,520px);
+  align-items:center;
+  gap:12px;
+  margin:0 0 12px;
+  padding:9px 10px;
+  border:1px solid #E9E3E6;
+  border-radius:12px;
+  background:#fff;
+}
+.factor-month-label{
+  font-size:9px;
+  font-weight:950;
+  color:#687080;
+  letter-spacing:.35px;
+}
 .factor-month-tabs{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
   gap:8px;
-  margin:0 0 10px;
+  margin:0;
 }
 .factor-month-btn{
-  height:34px;
-  border:1px solid #E0E3E8;
+  height:36px;
+  border:1px solid #DDE2E8;
   border-radius:10px;
-  background:#fff;
-  color:#5A6170;
+  background:#F9FAFB;
+  color:#4E5666;
   font-size:10px;
   font-weight:900;
   cursor:pointer;
+  transition:background .15s ease,border-color .15s ease,color .15s ease;
 }
 .factor-month-btn.active{
   background:var(--s3);
   color:#fff;
   border-color:var(--s3);
+  box-shadow:0 4px 10px rgba(229,90,90,.16);
 }
 .factor-month-btn:focus-visible{
   outline:2px solid rgba(229,90,90,.25);
   outline-offset:2px;
+}
+@media(max-width:780px){
+  .factor-month-switcher{grid-template-columns:1fr;gap:7px}
+  .factor-month-label{text-align:center}
 }
 
 /* Paso 3: todo perfectamente alineado */
@@ -739,10 +762,13 @@ td{
         <section class="section step3">
           <div class="section-inner">
             <div class="step-head"><div class="step-num">3</div><div class="step-copy"><h3>Identifica tus factores</h3><p>Consulta aquí los factores de consecución, clientes y mora que se aplican durante el cálculo.</p></div></div>
-            <div class="factor-month-tabs" aria-label="Seleccionar mes para visualizar factores">
-              <button type="button" class="factor-month-btn active" data-factor-month="1">Mes 1</button>
-              <button type="button" class="factor-month-btn" data-factor-month="2">Mes 2</button>
-              <button type="button" class="factor-month-btn" data-factor-month="3">Mes 3</button>
+            <div class="factor-month-switcher">
+              <div class="factor-month-label">VER FACTORES DEL MES</div>
+              <div class="factor-month-tabs" aria-label="Seleccionar mes para visualizar factores">
+                <button type="button" class="factor-month-btn active" data-factor-month="1">Mes 1</button>
+                <button type="button" class="factor-month-btn" data-factor-month="2">Mes 2</button>
+                <button type="button" class="factor-month-btn" data-factor-month="3">Mes 3</button>
+              </div>
             </div>
             <div class="factor-status" id="factorStatus"></div>
             <div class="tables">
