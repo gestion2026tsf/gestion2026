@@ -664,6 +664,160 @@ td{
   .table-card{min-height:auto !important}
 }
 
+
+
+/* =========================================================
+   MODO GUIADO / VER TODO
+   ========================================================= */
+.step1{background:linear-gradient(180deg,#fff,var(--s1-soft));border-color:var(--s1-line)}
+.step1 .step-num{background:var(--s1)}
+
+.mode-toggle{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:3px;
+  border:1px solid #E2E6EC;
+  border-radius:11px;
+  background:#F7F8FA;
+  flex:0 0 auto;
+}
+.mode-btn{
+  border:0;
+  background:transparent;
+  color:#566071;
+  min-height:32px;
+  padding:0 10px;
+  border-radius:8px;
+  font:inherit;
+  font-size:9px;
+  font-weight:900;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.mode-btn.active{
+  background:#fff;
+  color:#151A24;
+  box-shadow:0 2px 8px rgba(17,24,39,.08);
+}
+.step-nav{
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+  appearance:none;
+  -webkit-appearance:none;
+}
+.step-nav.active-step{
+  box-shadow:0 0 0 2px rgba(23,25,31,.08),0 5px 14px rgba(17,24,39,.08);
+  transform:translateY(-1px);
+}
+.step-nav:focus-visible,.mode-btn:focus-visible,.guide-nav-btn:focus-visible{
+  outline:2px solid rgba(214,11,94,.28);
+  outline-offset:2px;
+}
+
+.guide-story{
+  display:none;
+  margin:0 0 10px;
+  padding:10px 12px;
+  border:1px solid #E4DDF1;
+  border-radius:12px;
+  background:linear-gradient(90deg,#F8F6FF,#FFF);
+}
+.guide-story.show{display:flex;align-items:flex-start;gap:10px}
+.guide-story-badge{
+  width:28px;height:28px;min-width:28px;border-radius:9px;
+  display:grid;place-items:center;background:#7B61C8;color:#fff;
+  font-size:11px;font-weight:950;
+}
+.guide-story-copy .kicker{font-size:8px;font-weight:950;color:#7B61C8;text-transform:uppercase;letter-spacing:.45px}
+.guide-story-copy .title{font-size:13px;font-weight:950;color:#161B26;margin-top:1px}
+.guide-story-copy .desc{font-size:9px;color:#6C7380;line-height:1.35;margin-top:2px}
+
+.guide-intro-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.guide-intro-card{
+  background:#fff;
+  border:1px solid #E9E5E9;
+  border-radius:11px;
+  padding:10px;
+}
+.guide-intro-card .label{font-size:8px;font-weight:950;color:#707784;text-transform:uppercase}
+.guide-intro-card .value{font-size:13px;font-weight:950;color:#171B24;margin-top:3px}
+.guide-intro-card .small{font-size:8px;color:#747B88;margin-top:2px;line-height:1.3}
+.guide-tip{
+  margin-top:9px;
+  padding:9px 10px;
+  border-radius:10px;
+  background:#FFF4F8;
+  border:1px solid #F2D1DF;
+  font-size:9px;
+  color:#7E3656;
+  line-height:1.35;
+}
+
+.guide-footer{
+  display:none;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
+  padding:10px 0 2px;
+  border-top:1px solid #EEE9ED;
+}
+body.guide-mode .guide-footer{display:grid;grid-template-columns:auto minmax(160px,1fr) auto}
+.guide-nav-btn{
+  min-height:38px;
+  padding:0 16px;
+  border-radius:10px;
+  border:1px solid #D9DEE6;
+  background:#fff;
+  color:#293142;
+  font-size:10px;
+  font-weight:950;
+  cursor:pointer;
+}
+.guide-nav-btn.primary{background:var(--magenta);border-color:var(--magenta);color:#fff}
+.guide-nav-btn:disabled{opacity:.38;cursor:not-allowed}
+.guide-progress-wrap{min-width:0;display:grid;grid-template-columns:auto minmax(80px,1fr);align-items:center;gap:8px}
+.guide-progress-text{font-size:9px;font-weight:900;color:#505867;white-space:nowrap}
+.guide-progress{height:6px;border-radius:999px;background:#ECEFF3;overflow:hidden}
+.guide-progress > span{display:block;height:100%;width:10%;background:var(--magenta);border-radius:999px;transition:width .2s ease}
+
+/* En modo guiado solo se ve un paso a la vez */
+body.guide-mode .main [data-guide-step]{display:none !important}
+body.guide-mode .main [data-guide-step].guide-active{display:block !important}
+body.guide-mode .main .pair{display:block !important}
+body.guide-mode .main .pair > .section{margin-bottom:0}
+body.guide-mode .quarter-breakdown{display:none !important}
+body.guide-mode .quarter-breakdown.guide-active{display:block !important}
+body.guide-mode .guide-intro{display:none !important}
+body.guide-mode .guide-intro.guide-active{display:block !important}
+body.guide-mode .guide-story{display:flex}
+body.guide-mode .section.guide-active{animation:guideFade .18s ease}
+@keyframes guideFade{from{opacity:.35}to{opacity:1}}
+
+/* Ver todo vuelve al formato clásico */
+body.all-mode .guide-story,
+body.all-mode .guide-footer,
+body.all-mode .guide-intro{display:none !important}
+body.all-mode .main [data-guide-step]{display:block !important}
+body.all-mode .pair{display:grid !important}
+body.all-mode .quarter-breakdown{display:block !important}
+
+@media(max-width:1180px){
+  .mode-toggle{order:3;width:100%;justify-content:flex-end;background:transparent;border:0;padding:0}
+  .brand-box{flex-wrap:wrap !important;max-width:360px}
+}
+@media(max-width:900px){
+  .mode-toggle{justify-content:flex-start}
+  body.guide-mode .guide-footer{grid-template-columns:1fr 1fr}
+  .guide-progress-wrap{grid-column:1/-1;grid-row:1}
+  .guide-intro-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -684,21 +838,25 @@ td{
               <div class="brand-sub">servicios financieros</div>
             </div>
           </div>
+          <div class="mode-toggle" aria-label="Modo de visualización">
+            <button type="button" class="mode-btn active" id="guidedModeBtn">▣ Modo guiado</button>
+            <button type="button" class="mode-btn" id="allModeBtn">☷ Ver todo</button>
+          </div>
           <a class="pdf-btn" href="./Guia_Bonificacion_Zonal_Factoring.pdf" target="_blank" rel="noopener noreferrer">📄 Ver guía PDF</a>
         </div>
       </header>
 
       <div class="steps" aria-label="Paso a paso del cálculo">
-        <div class="step-nav"><div class="n">1</div><div class="t">Ingresa los datos del trimestre</div></div>
-        <div class="step-nav"><div class="n">2</div><div class="t">Halla el promedio por ejecutivo</div></div>
-        <div class="step-nav"><div class="n">3</div><div class="t">Identifica tus factores</div></div>
-        <div class="step-nav"><div class="n">4</div><div class="t">Calcula el Bono Potencial</div></div>
-        <div class="step-nav"><div class="n">5</div><div class="t">Aplica el Cargo de jefatura Gerente Zonal</div></div>
-        <div class="step-nav"><div class="n">6</div><div class="t">Calcula el Bono Trimestral 70%</div></div>
-        <div class="step-nav"><div class="n">7</div><div class="t">Aplica el índice de mora</div></div>
-        <div class="step-nav"><div class="n">8</div><div class="t">60% bono trimestral resultado</div></div>
-        <div class="step-nav"><div class="n">9</div><div class="t">40% bono trimestral clientes</div></div>
-        <div class="step-nav"><div class="n">10</div><div class="t">Revisa el Bono Anual 30%</div></div>
+        <button type="button" class="step-nav" data-guide-target="1"><div class="n">1</div><div class="t">Ingresa los datos del trimestre</div></button>
+        <button type="button" class="step-nav" data-guide-target="2"><div class="n">2</div><div class="t">Halla el promedio por ejecutivo</div></button>
+        <button type="button" class="step-nav" data-guide-target="3"><div class="n">3</div><div class="t">Identifica tus factores</div></button>
+        <button type="button" class="step-nav" data-guide-target="4"><div class="n">4</div><div class="t">Calcula el Bono Potencial</div></button>
+        <button type="button" class="step-nav" data-guide-target="5"><div class="n">5</div><div class="t">Aplica el Cargo de jefatura Gerente Zonal</div></button>
+        <button type="button" class="step-nav" data-guide-target="6"><div class="n">6</div><div class="t">Calcula el Bono Trimestral 70%</div></button>
+        <button type="button" class="step-nav" data-guide-target="7"><div class="n">7</div><div class="t">Aplica el índice de mora</div></button>
+        <button type="button" class="step-nav" data-guide-target="8"><div class="n">8</div><div class="t">60% bono trimestral resultado</div></button>
+        <button type="button" class="step-nav" data-guide-target="9"><div class="n">9</div><div class="t">40% bono trimestral clientes</div></button>
+        <button type="button" class="step-nav" data-guide-target="10"><div class="n">10</div><div class="t">Revisa el Bono Anual 30%</div></button>
       </div>
     </div>
 
@@ -758,14 +916,34 @@ td{
       </aside>
 
       <main class="main">
-        <section class="section step2">
+        <div class="guide-story" id="guideStory" aria-live="polite">
+          <div class="guide-story-badge" id="guideStoryBadge">1</div>
+          <div class="guide-story-copy">
+            <div class="kicker">RECORRIDO GUIADO</div>
+            <div class="title" id="guideStoryTitle">Ingresa los datos del trimestre</div>
+            <div class="desc" id="guideStoryDesc">Empieza registrando los datos de Mes 1, Mes 2 y Mes 3. El resto del recorrido se irá explicando paso a paso.</div>
+          </div>
+        </div>
+
+        <section class="section step1 guide-intro" data-guide-step="1">
+          <div class="section-inner">
+            <div class="step-head"><div class="step-num">1</div><div class="step-copy"><h3>Ingresa los datos del trimestre</h3><p>Completa el formulario de la izquierda para cada mes. Los cálculos usan esos datos para construir todo el recorrido.</p></div></div>
+            <div class="guide-intro-grid">
+              <div class="guide-intro-card"><div class="label">Dato 1</div><div class="value">Resultado de Factoring</div><div class="small">Monto generado por la zona en el mes.</div></div>
+              <div class="guide-intro-card"><div class="label">Dato 2</div><div class="value">Ejecutivos y clientes</div><div class="small">Permiten hallar el promedio y el factor de clientes.</div></div>
+              <div class="guide-intro-card"><div class="label">Dato 3</div><div class="value">Índice de mora</div><div class="small">Se usa para ajustar el bono trimestral.</div></div>
+            </div>
+            <div class="guide-tip"><strong>Tip:</strong> usa las pestañas Mes 1, Mes 2 y Mes 3 del formulario. Cuando termines, pulsa <strong>Calcular bono</strong> y continúa con Siguiente.</div>
+          </div>
+        </section>
+        <section class="section step2" data-guide-step="2">
           <div class="section-inner">
             <div class="step-head"><div class="step-num">2</div><div class="step-copy"><h3>Halla el promedio del resultado por ejecutivo</h3><p>Se divide el resultado acumulado de la zona entre todos los ejecutivos asignados, incluso si alguno no generó resultados.</p></div></div>
             <div class="month-summary" id="avgSummary"></div>
           </div>
         </section>
 
-        <section class="section step3">
+        <section class="section step3" data-guide-step="3">
           <div class="section-inner">
             <div class="step-head"><div class="step-num">3</div><div class="step-copy"><h3>Identifica tus factores</h3><p>Consulta aquí los factores de consecución, clientes y mora que se aplican durante el cálculo.</p></div></div>
             <div class="factor-month-switcher">
@@ -786,14 +964,14 @@ td{
         </section>
 
         <div class="pair">
-          <section class="section step4">
+          <section class="section step4" data-guide-step="4">
             <div class="section-inner">
               <div class="step-head"><div class="step-num">4</div><div class="step-copy"><h3>Calcula el Bono Potencial</h3><p>El factor de consecución del resultado promedio por ejecutivo se aplica al resultado consolidado de la zona.</p></div></div>
               <div id="potentialOnlyLines"></div>
             </div>
           </section>
 
-          <section class="section step5">
+          <section class="section step5" data-guide-step="5">
             <div class="section-inner">
               <div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Aplica el Cargo de jefatura Gerente Zonal</h3><p>Al Bono Potencial se aplica el Cargo de jefatura Gerente Zonal y el Factor de Eficiencia.</p></div></div>
               <div id="cargoLines"></div>
@@ -802,14 +980,14 @@ td{
         </div>
 
         <div class="pair">
-          <section class="section step6">
+          <section class="section step6" data-guide-step="6">
             <div class="section-inner">
               <div class="step-head"><div class="step-num">6</div><div class="step-copy"><h3>Calcula el Bono Trimestral 70%</h3><p>Se calcula el 70% del bono después de aplicar el Cargo de jefatura Gerente Zonal.</p></div></div>
               <div id="prelimLines"></div>
             </div>
           </section>
 
-          <section class="section step7">
+          <section class="section step7" data-guide-step="7">
             <div class="section-inner">
               <div class="step-head"><div class="step-num">7</div><div class="step-copy"><h3>Aplica el índice de mora</h3><p>El Bono Trimestral 70% de cada mes se ajusta según la tabla de índice de mora.</p></div></div>
               <div id="moraLines"></div>
@@ -818,7 +996,7 @@ td{
         </div>
 
         <div class="pair">
-          <section class="section step8">
+          <section class="section step8" data-guide-step="8">
             <div class="section-inner">
               <div class="step-head"><div class="step-num">8</div><div class="step-copy"><h3>60% bono trimestral resultado</h3><p>Se calcula el 60% del bono trimestral ajustado por mora.</p></div></div>
               <div id="result60Lines"></div>
@@ -826,7 +1004,7 @@ td{
             </div>
           </section>
 
-          <section class="section step9">
+          <section class="section step9" data-guide-step="9">
             <div class="section-inner">
               <div class="step-head"><div class="step-num">9</div><div class="step-copy"><h3>40% bono trimestral clientes</h3><p>Se calcula el promedio de clientes por ejecutivo, se aplica su factor y se obtiene el Bono Trimestral Final.</p></div></div>
               <div id="clients40Lines"></div>
@@ -835,7 +1013,7 @@ td{
           </section>
         </div>
 
-        <div class="quarter-breakdown">
+        <div class="quarter-breakdown" data-guide-extra="9">
           <div class="qb-head">
             <div><div class="title">Bono Trimestral Final</div><div class="sub">Suma de los componentes de Resultado y Clientes</div></div>
           </div>
@@ -846,7 +1024,7 @@ td{
           </div>
         </div>
 
-        <section class="section step10">
+        <section class="section step10" data-guide-step="10">
           <div class="section-inner">
             <div class="step-head"><div class="step-num">10</div><div class="step-copy"><h3>Revisa el Bono Anual 30%</h3><p>30% del bono después del factor de cargo. No constituye un pago asegurado.</p></div></div>
             <div class="annual-months" id="annualMonths"></div>
@@ -860,6 +1038,15 @@ td{
         <div class="final" style="display:none">
           <div class="final-copy"><div class="small">RESULTADO DEL TRIMESTRE</div><div class="big">Bono trimestral a pagar</div></div>
           <div class="final-number"><div class="label">60% RESULTADO + 40% CLIENTES</div><div class="amount" id="quarterTotal">US$ 0.00</div></div>
+        </div>
+
+        <div class="guide-footer" id="guideFooter">
+          <button type="button" class="guide-nav-btn" id="prevStepBtn">← Anterior</button>
+          <div class="guide-progress-wrap">
+            <div class="guide-progress-text" id="guideProgressText">Paso 1 de 10</div>
+            <div class="guide-progress"><span id="guideProgressBar"></span></div>
+          </div>
+          <button type="button" class="guide-nav-btn primary" id="nextStepBtn">Siguiente →</button>
         </div>
       </main>
     </div>
@@ -1071,12 +1258,107 @@ Array.from(document.querySelectorAll('.month-panel input')).forEach(inp=>{
    renderCalculated(true);
  });
 
+
+
+// =========================================================
+// MODO GUIADO
+// =========================================================
+const GUIDE_STEPS = {
+  1:['Ingresa los datos del trimestre','Registra Mes 1, Mes 2 y Mes 3. Estos datos alimentan todo el cálculo.'],
+  2:['Halla el promedio por ejecutivo','Se divide el resultado de cada mes entre la cantidad de ejecutivos asignados.'],
+  3:['Identifica tus factores','Ubica el factor de resultado, clientes y mora que corresponde a cada mes.'],
+  4:['Calcula el Bono Potencial','Aplica el factor de consecución al resultado consolidado de la zona.'],
+  5:['Aplica el Cargo de jefatura','Sobre el Bono Potencial se aplica el Cargo de jefatura Gerente Zonal y el Factor de Eficiencia.'],
+  6:['Calcula el Bono Trimestral 70%','Toma el 70% del bono después del Cargo de jefatura.'],
+  7:['Aplica el índice de mora','El bono trimestral de cada mes se ajusta con el factor de mora.'],
+  8:['Calcula el 60% por resultado','Del bono ajustado por mora se obtiene el componente de Resultado.'],
+  9:['Calcula el 40% por clientes','Se aplica el factor de clientes y se completa el Bono Trimestral Final.'],
+  10:['Revisa el Bono Anual 30%','Consulta el componente anual de cada mes, el acumulado trimestral y sus condiciones de pago.']
+};
+let guideStep = 1;
+let guideMode = true;
+
+function updateGuideUI(){
+  document.body.classList.toggle('guide-mode',guideMode);
+  document.body.classList.toggle('all-mode',!guideMode);
+
+  const guidedBtn=document.getElementById('guidedModeBtn');
+  const allBtn=document.getElementById('allModeBtn');
+  if(guidedBtn) guidedBtn.classList.toggle('active',guideMode);
+  if(allBtn) allBtn.classList.toggle('active',!guideMode);
+
+  document.querySelectorAll('[data-guide-step]').forEach(el=>{
+    el.classList.toggle('guide-active',guideMode && Number(el.dataset.guideStep)===guideStep);
+  });
+  document.querySelectorAll('[data-guide-extra]').forEach(el=>{
+    el.classList.toggle('guide-active',guideMode && Number(el.dataset.guideExtra)===guideStep);
+  });
+  document.querySelectorAll('[data-guide-target]').forEach(el=>{
+    el.classList.toggle('active-step',guideMode && Number(el.dataset.guideTarget)===guideStep);
+  });
+
+  const story=GUIDE_STEPS[guideStep];
+  if(story){
+    document.getElementById('guideStoryBadge').textContent=guideStep;
+    document.getElementById('guideStoryTitle').textContent=story[0];
+    document.getElementById('guideStoryDesc').textContent=story[1];
+  }
+  const progressText=document.getElementById('guideProgressText');
+  const progressBar=document.getElementById('guideProgressBar');
+  if(progressText) progressText.textContent=`Paso ${guideStep} de 10`;
+  if(progressBar) progressBar.style.width=`${guideStep*10}%`;
+
+  const prev=document.getElementById('prevStepBtn');
+  const next=document.getElementById('nextStepBtn');
+  if(prev) prev.disabled=guideStep===1;
+  if(next){
+    next.disabled=false;
+    next.textContent=guideStep===10?'Volver al inicio ↺':'Siguiente →';
+  }
+  if(guideMode){
+    requestAnimationFrame(syncHeaderHeight);
+  }
+}
+
+function setGuideStep(step,scroll=true){
+  guideStep=Math.max(1,Math.min(10,Number(step)||1));
+  updateGuideUI();
+  if(scroll){
+    const main=document.querySelector('.main');
+    if(main){
+      const y=main.getBoundingClientRect().top + window.scrollY - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--headerH'))||140) - 8;
+      window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+    }
+  }
+}
+
+document.querySelectorAll('[data-guide-target]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    guideMode=true;
+    setGuideStep(btn.dataset.guideTarget,true);
+  });
+});
+
+document.getElementById('guidedModeBtn')?.addEventListener('click',()=>{
+  guideMode=true;
+  updateGuideUI();
+});
+document.getElementById('allModeBtn')?.addEventListener('click',()=>{
+  guideMode=false;
+  updateGuideUI();
+});
+document.getElementById('prevStepBtn')?.addEventListener('click',()=>setGuideStep(guideStep-1,true));
+document.getElementById('nextStepBtn')?.addEventListener('click',()=>{
+  if(guideStep===10) setGuideStep(1,true); else setGuideStep(guideStep+1,true);
+});
+
 window.addEventListener('load',()=>{
   syncHeaderHeight();
   requestAnimationFrame(syncHeaderHeight);
   setTimeout(syncHeaderHeight,120);
   selectMonth(1);
   renderCalculated(false);
+  updateGuideUI();
 });
 window.addEventListener('resize',syncHeaderHeight);
 if('ResizeObserver' in window){
