@@ -143,15 +143,45 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
   .tables{grid-template-columns:1fr}
 }
 @media(max-width:900px){
-  .top-sticky{position:relative;top:auto}
-  .layout{grid-template-columns:1fr}
-  .left{position:relative;top:auto}
+  :root{--sidebarW:280px}
   .steps{grid-template-columns:repeat(3,minmax(0,1fr))}
   .tables,.factor-status,.month-summary,.pair,.annual-box{grid-template-columns:1fr}
+  .header h1{font-size:29px}
 }
 @media(max-width:620px){
-  .page{padding:6px}.shell{padding:0 8px 12px}.header{flex-direction:column;align-items:flex-start}.brand-box{align-items:flex-start}.header h1{font-size:27px}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}
+  .page{padding:6px}
+  .shell{padding:0 8px 12px}
+  .top-sticky{position:relative;top:auto}
+  .header{flex-direction:column;align-items:flex-start}
+  .brand-box{align-items:flex-start}
+  .header h1{font-size:27px;white-space:normal}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .layout{grid-template-columns:1fr}
+  .left{position:relative;top:auto}
+  .two{grid-template-columns:1fr}
 }
+
+/* FIJO Y ESTABLE EN ESCRITORIO */
+.top-sticky{
+  position:sticky !important;
+  top:0 !important;
+  z-index:3000 !important;
+  background:#fff !important;
+  box-shadow:0 8px 18px rgba(17,24,39,.045);
+}
+.left{
+  position:sticky !important;
+  top:calc(var(--headerH) + 10px) !important;
+  align-self:start !important;
+  z-index:80;
+}
+.layout,.main,.left,.input-card,.section{min-width:0}
+.section,.input-card,.table-card,.month-card,.formula-line{transform:none!important;transition:none!important}
+@media(max-width:620px){
+  .top-sticky{position:relative !important;top:auto !important}
+  .left{position:relative !important;top:auto !important}
+}
+
 </style>
 </head>
 <body>
