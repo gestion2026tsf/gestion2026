@@ -17,6 +17,7 @@
   --s7:#B4512A; --s7-soft:#FFF6F1; --s7-line:#EBCFC3;
   --s8:#5D6678; --s8-soft:#F6F7F9; --s8-line:#DCE1E7;
   --s9:#202A3A; --s9-soft:#F4F6F8; --s9-line:#DCE1E8;
+  --s10:#7B61C8; --s10-soft:#F7F4FF; --s10-line:#DDD4F4;
   --headerH:142px;
   --sidebarW:330px;
 }
@@ -42,10 +43,10 @@ body{margin:0;overflow-x:hidden;font-family:Inter,-apple-system,BlinkMacSystemFo
 .pdf-btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:var(--black);color:#fff;padding:8px 11px;border-radius:10px;font-size:10px;font-weight:900}
 
 /* PASOS: todos visibles y compactos */
-.steps{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px}
-.step-nav{min-height:42px;padding:5px 7px;border-radius:10px;display:flex;align-items:center;gap:6px;min-width:0}
+.steps{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;align-items:stretch;width:100%;min-width:0}
+.step-nav{min-height:42px;padding:5px 7px;border-radius:10px;display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden}
 .step-nav .n{width:26px;height:26px;min-width:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:10px;font-weight:950}
-.step-nav .t{font-size:8.5px;line-height:1.08;font-weight:850;color:#2F3542;overflow:hidden}
+.step-nav .t{font-size:8.4px;line-height:1.08;font-weight:850;color:#2F3542;overflow:hidden;text-wrap:balance}
 .step-nav:nth-child(1){background:var(--s1-soft);border:1px solid var(--s1-line)} .step-nav:nth-child(1) .n{background:var(--s1)}
 .step-nav:nth-child(2){background:var(--s2-soft);border:1px solid var(--s2-line)} .step-nav:nth-child(2) .n{background:var(--s2)}
 .step-nav:nth-child(3){background:var(--s3-soft);border:1px solid var(--s3-line)} .step-nav:nth-child(3) .n{background:var(--s3)}
@@ -152,6 +153,11 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
 .annual-box{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .annual-col{background:#fff;border:1px solid #E4E5E8;border-radius:9px;padding:9px}
 .annual-col h4{margin:0 0 4px;font-size:10px}.annual-col .big{font-size:18px;font-weight:950}.annual-col p{font-size:8.5px;color:#656D7A;margin:3px 0 0;line-height:1.35}
+.annual-months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 8px}
+.annual-month-card{background:#fff;border:1px solid #E6E3EF;border-radius:10px;padding:8px 9px}
+.annual-month-card .m{font-size:8px;font-weight:950;color:#7B61C8;text-transform:uppercase}
+.annual-month-card .v{font-size:15px;font-weight:950;color:#191D25;margin-top:3px}
+.annual-month-card .d{font-size:8px;color:#6C7381;margin-top:2px;line-height:1.25}
 .final{background:#17191F;color:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .final-copy .small{font-size:8px;color:#C9CDD5;font-weight:900}.final-copy .big{font-size:15px;font-weight:950;margin-top:2px}.final-number{text-align:right}.final-number .label{font-size:7.5px;color:#B9C0CB;font-weight:900}.final-number .amount{font-size:22px;font-weight:950;margin-top:2px}
 
@@ -164,7 +170,7 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
 @media(max-width:900px){
   :root{--sidebarW:280px}
   .steps{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .tables,.factor-status,.month-summary,.pair,.annual-box{grid-template-columns:1fr}
+  .tables,.factor-status,.month-summary,.pair,.annual-box,.annual-months{grid-template-columns:1fr}
   .header h1{font-size:29px}
 }
 @media(max-width:620px){
@@ -219,7 +225,7 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
     left:50% !important;
     right:auto !important;
     transform:translateX(-50%) !important;
-    width:min(calc(100vw - 24px),1456px) !important;
+    width:min(calc(100vw - 24px),1454px) !important;
     z-index:5000 !important;
     background:#fff !important;
     border:1px solid #ECE7EA !important;
@@ -318,7 +324,7 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
     left:50% !important;
     right:auto !important;
     transform:translateX(-50%) !important;
-    width:min(calc(100vw - 24px),1456px) !important;
+    width:min(calc(100vw - 24px),1454px) !important;
     z-index:9999 !important;
     background:#fff !important;
   }
@@ -843,6 +849,7 @@ td{
         <section class="section step10">
           <div class="section-inner">
             <div class="step-head"><div class="step-num">10</div><div class="step-copy"><h3>Revisa el Bono Anual 30%</h3><p>30% del bono después del factor de cargo. No constituye un pago asegurado.</p></div></div>
+            <div class="annual-months" id="annualMonths"></div>
             <div class="annual-box">
               <div class="annual-col"><h4>Componente anual acumulado del trimestre</h4><div class="big" id="annualTotal">US$ 0.00</div><p>Corresponde a la suma del componente anual de los tres meses.</p></div>
               <div class="annual-col"><h4>Condición de pago</h4><p><strong>50% Utilidad neta de la compañía</strong><br><strong>50% Evaluación de Desempeño</strong><br><br>Su pago está sujeto al cumplimiento de ambas condiciones.</p></div>
@@ -1001,6 +1008,8 @@ function renderCalculated(showOkMessage=true){
   const clients40Total=m.reduce((sum,x)=>sum+x.cli40,0);
   const quarter=result60Total+clients40Total;
   const annual=m.reduce((sum,x)=>sum+x.annual,0);
+
+  document.getElementById('annualMonths').innerHTML=m.map(x=>`<div class="annual-month-card"><div class="m">Mes ${x.i}</div><div class="v">${money(x.annual)}</div><div class="d">${money(x.base)} × 30% componente anual</div></div>`).join('');
 
   document.getElementById('result60Total').textContent=money(result60Total);
   document.getElementById('clients40Total').textContent=money(clients40Total);
