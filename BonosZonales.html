@@ -14,9 +14,10 @@
   --s3:#E85454;--s3-soft:#FFF5F4;--s3-line:#F0D2D0;
   --s4:#2D8582;--s4-soft:#F2FAF9;--s4-line:#C9E2DF;
   --s5:#D0A00D;--s5-soft:#FFF9E8;--s5-line:#ECD99D;
-  --s6:#B4512A;--s6-soft:#FFF5F0;--s6-line:#EACFC2;
-  --s7:#5D6678;--s7-soft:#F5F6F8;--s7-line:#D9DEE5;
-  --s8:#202A3A;--s8-soft:#F3F5F7;--s8-line:#D9DEE6;
+  --s6:#138783;--s6-soft:#F2FAF9;--s6-line:#C9E2DF;
+  --s7:#B4512A;--s7-soft:#FFF5F0;--s7-line:#EACFC2;
+  --s8:#5D6678;--s8-soft:#F5F6F8;--s8-line:#D9DEE5;
+  --s9:#202A3A;--s9-soft:#F3F5F7;--s9-line:#D9DEE6;
   --headerH:172px;
 }
 *{box-sizing:border-box}
@@ -34,25 +35,16 @@ body{margin:0;overflow-x:hidden;font-family:Inter,-apple-system,BlinkMacSystemFo
 .header h1 span{color:#D6A000}.header p{margin:5px 0 0;font-size:13px;color:#606775}
 .brand-box{min-width:210px;display:flex;flex-direction:column;align-items:flex-end;gap:7px}.brand{display:flex;align-items:center;gap:9px}.brand-circle{width:48px;height:48px;border:4px solid #F0A800;border-radius:50%;display:grid;place-items:center;font-size:21px;font-weight:900;color:#F0A800}.brand-title{font-size:34px;font-weight:950;line-height:.9;letter-spacing:-1.6px;color:#17191E}.brand-sub{font-size:9px;font-weight:800;color:#D79B00;margin-top:5px}.pdf-btn{display:inline-flex;align-items:center;gap:7px;text-decoration:none;background:var(--black);color:#fff;border:0;padding:9px 14px;border-radius:11px;font-size:11px;font-weight:850}
 
-.steps{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px}
-.step-nav{height:48px;padding:6px 8px;border-radius:11px;display:flex;align-items:center;gap:7px;overflow:hidden;border:1px solid var(--line);background:#fff}
-.step-nav .n{width:25px;height:25px;min-width:25px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:10px;font-weight:900}.step-nav .t{font-size:8.5px;line-height:1.08;font-weight:850;color:#2F3542;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.step-nav:nth-child(1){background:linear-gradient(135deg,#fff,var(--s1-soft));border-color:var(--s1-line)}.step-nav:nth-child(1) .n{background:var(--s1)}
-.step-nav:nth-child(2){background:linear-gradient(135deg,#fff,var(--s2-soft));border-color:var(--s2-line)}.step-nav:nth-child(2) .n{background:var(--s2)}
-.step-nav:nth-child(3){background:linear-gradient(135deg,#fff,var(--s3-soft));border-color:var(--s3-line)}.step-nav:nth-child(3) .n{background:var(--s3)}
-.step-nav:nth-child(4){background:linear-gradient(135deg,#fff,var(--s4-soft));border-color:var(--s4-line)}.step-nav:nth-child(4) .n{background:var(--s4)}
-.step-nav:nth-child(5){background:linear-gradient(135deg,#fff,var(--s5-soft));border-color:var(--s5-line)}.step-nav:nth-child(5) .n{background:var(--s5)}
-.step-nav:nth-child(6){background:linear-gradient(135deg,#fff,var(--s6-soft));border-color:var(--s6-line)}.step-nav:nth-child(6) .n{background:var(--s6)}
-.step-nav:nth-child(7){background:linear-gradient(135deg,#fff,var(--s7-soft));border-color:var(--s7-line)}.step-nav:nth-child(7) .n{background:var(--s7)}
-.step-nav:nth-child(8){background:linear-gradient(135deg,#fff,var(--s8-soft));border-color:var(--s8-line)}.step-nav:nth-child(8) .n{background:var(--s8)}
-
+.steps{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:7px}
+.step-nav{height:48px;padding:6px 8px;border-radius:11px;display:flex;align-items:center;gap:7px;overflow:hidden;border:1px solid #E8D9A8;background:linear-gradient(135deg,#FFFDF7,#FFF6DD)}
+.step-nav .n{width:25px;height:25px;min-width:25px;border-radius:50%;display:grid;place-items:center;color:#fff;background:#D6A000;font-size:10px;font-weight:900}.step-nav .t{font-size:8.4px;line-height:1.08;font-weight:850;color:#2F3542;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* LAYOUT FIJO: dos columnas con anchos estables */
 .layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:16px;align-items:start;margin-top:14px}
 .left{position:sticky;top:calc(var(--headerH) + 12px);align-self:start}
 .input-card{border:1px solid var(--s1-line);border-radius:16px;background:linear-gradient(180deg,#fff 0%,var(--s1-soft) 100%);overflow:hidden}
 .input-head{padding:13px 15px;background:var(--s1-soft);border-bottom:1px solid var(--s1-line)}.input-head .eyebrow{font-size:9px;font-weight:900;color:var(--s1);letter-spacing:.55px}.input-head h2{font-size:19px;margin:3px 0 0;color:#17191F}.input-body{padding:12px 13px}.month-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}.month-tab{border:1px solid #E1E3E7;background:#FAFAFB;padding:8px 6px;border-radius:10px;font-size:11px;font-weight:850;color:#555;cursor:pointer}.month-tab.active{background:#17191F;color:#fff;border-color:#17191F}.month-panel{display:none}.month-panel.active{display:block}.field{margin-bottom:9px}.field label{display:block;font-size:10px;font-weight:850;color:#555D6A;margin:0 0 5px}.field input{width:100%;border:1px solid #DADDE3;border-radius:10px;padding:9px 10px;font-size:14px;font-weight:750;color:#151820;outline:none;background:#fff}.field input:focus{border-color:#D0A00D;box-shadow:0 0 0 3px rgba(208,160,13,.10)}.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.controls{margin-top:10px;padding-top:10px;border-top:1px solid #ECE8EC}.control-title{font-size:10px;font-weight:900;color:#5E6470;margin-bottom:8px}.mini-field{display:grid;grid-template-columns:minmax(0,1fr) 92px 14px;align-items:center;gap:7px;margin-bottom:8px}.mini-field label{font-size:10px;color:#6B7280;font-weight:750}.mini-field input{width:100%;border:1px solid #DADDE3;border-radius:9px;padding:8px;font-weight:850;text-align:right}.btn{width:100%;border:0;background:#17191F;color:#fff;border-radius:11px;padding:10px 14px;font-size:12px;font-weight:900;cursor:pointer;margin-top:4px}.btn.calculated{background:#16784A}.calc-status{height:22px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:10px;font-weight:800;color:#16784A;opacity:0;visibility:hidden}.calc-status.show{opacity:1;visibility:visible}.calc-status .check{font-weight:950}.input-note{display:none}
 
-.main{min-width:0;width:100%}.section{border:1px solid #E9E5E8;border-radius:15px;background:#fff;margin:0 0 11px;overflow:hidden}.section-inner{padding:13px}.step-head{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px}.step-num{flex:0 0 auto;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:950}.step-copy h3{margin:0;font-size:15.5px;color:#1A1D24}.step-copy p{margin:3px 0 0;font-size:10px;color:#737A87}.step2{background:linear-gradient(180deg,#fff 0%,var(--s2-soft) 100%);border-color:var(--s2-line)}.step2 .step-num{background:var(--s2)}.step3{background:linear-gradient(180deg,#fff 0%,var(--s3-soft) 100%);border-color:var(--s3-line)}.step3 .step-num{background:var(--s3)}.step4{background:linear-gradient(180deg,#fff 0%,var(--s4-soft) 100%);border-color:var(--s4-line)}.step4 .step-num{background:var(--s4)}.step5{background:linear-gradient(180deg,#fff 0%,var(--s5-soft) 100%);border-color:var(--s5-line)}.step5 .step-num{background:var(--s5)}.step6{background:linear-gradient(180deg,#fff 0%,var(--s6-soft) 100%);border-color:var(--s6-line)}.step6 .step-num{background:var(--s6)}.step7{background:linear-gradient(180deg,#fff 0%,var(--s7-soft) 100%);border-color:var(--s7-line)}.step7 .step-num{background:var(--s7)}.step8{background:linear-gradient(180deg,#fff 0%,var(--s8-soft) 100%);border-color:var(--s8-line)}.step8 .step-num{background:var(--s8)}
+.main{min-width:0;width:100%}.section{border:1px solid #E9E5E8;border-radius:15px;background:#fff;margin:0 0 11px;overflow:hidden}.section-inner{padding:13px}.step-head{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px}.step-num{flex:0 0 auto;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:950}.step-copy h3{margin:0;font-size:15.5px;color:#1A1D24}.step-copy p{margin:3px 0 0;font-size:10px;color:#737A87}.step2{background:linear-gradient(180deg,#fff 0%,var(--s2-soft) 100%);border-color:var(--s2-line)}.step2 .step-num{background:var(--s2)}.step3{background:linear-gradient(180deg,#fff 0%,var(--s3-soft) 100%);border-color:var(--s3-line)}.step3 .step-num{background:var(--s3)}.step4{background:linear-gradient(180deg,#fff 0%,var(--s4-soft) 100%);border-color:var(--s4-line)}.step4 .step-num{background:var(--s4)}.step5{background:linear-gradient(180deg,#fff 0%,var(--s5-soft) 100%);border-color:var(--s5-line)}.step5 .step-num{background:var(--s5)}.step6{background:linear-gradient(180deg,#fff 0%,var(--s6-soft) 100%);border-color:var(--s6-line)}.step6 .step-num{background:var(--s6)}.step7{background:linear-gradient(180deg,#fff 0%,var(--s7-soft) 100%);border-color:var(--s7-line)}.step7 .step-num{background:var(--s7)}.step8{background:linear-gradient(180deg,#fff 0%,var(--s8-soft) 100%);border-color:var(--s8-line)}.step8 .step-num{background:var(--s8)}.step9{background:linear-gradient(180deg,#fff 0%,var(--s9-soft) 100%);border-color:var(--s9-line)}.step9 .step-num{background:var(--s9)}
 .tables{display:grid;grid-template-columns:1.25fr .9fr .8fr;gap:9px;align-items:stretch}.table-card{border:1px solid #E3E6EA;border-radius:10px;overflow:hidden;background:#fff;min-width:0}.table-title{padding:8px 9px;font-size:9.5px;font-weight:900;color:#fff;text-transform:uppercase}.table-title.result{background:var(--magenta)}.table-title.clients{background:var(--orange)}.table-title.mora{background:var(--teal)}table{border-collapse:collapse;width:100%;font-size:9.5px;table-layout:fixed}th{padding:6px;background:#F6F6F7;color:#606775;font-weight:850;text-align:center}td{padding:5px 6px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#tblResult tr.active-result td{background:#FDEAF2;color:#A70A49;font-weight:900}#tblClients tr.active-clients td{background:#FFF0E5;color:#B45309;font-weight:900}#tblMora tr.active-mora td{background:#EAF8F7;color:#0F766E;font-weight:900}
 .factor-status{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 9px}.factor-pill{border:1px solid #E7E3E7;background:#fff;border-radius:10px;padding:8px 10px;font-size:9.5px;line-height:1.3;color:#59606D}.factor-pill strong{display:block;font-size:10px;margin-bottom:2px;color:#1B1F27}.factor-pill.result{border-color:#F3CADB;background:#FFF7FA}.factor-pill.clients{border-color:#F1D6B8;background:#FFF9F3}.factor-pill.mora{border-color:#C9E2DF;background:#F4FBFA}.factor-pill .factor-value{font-weight:950;font-size:12px;color:#111827}.validation{min-height:22px;margin-top:4px;font-size:10px;font-weight:800;color:#B42318;text-align:center;display:flex;align-items:center;justify-content:center}.validation.ok{color:#16784A}
 .month-summary,.calc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.month-card,.calc-box{border:1px solid #E8E4E8;border-radius:11px;padding:10px;background:#fff;min-width:0}.month-card .m,.calc-label{font-size:9px;font-weight:900;color:#777;text-transform:uppercase}.month-card .v,.calc-value{font-size:18px;font-weight:950;color:#111827;margin-top:4px}.month-card .d,.calc-formula{font-size:9px;color:#6B7280;margin-top:3px;line-height:1.35}.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}.step5-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.subcalc{background:rgba(255,255,255,.78);border:1px solid var(--s5-line);border-radius:10px;padding:9px}.subcalc-title{font-size:10px;font-weight:900;color:#6A5410;margin-bottom:5px}.formula-line{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:9px 10px;border-radius:10px;background:#F8F8F9;border:1px solid #ECECEE;margin-top:6px}.formula-line .leftf{font-size:9.5px;color:#505765;line-height:1.35;min-width:0}.formula-line .rightf{font-size:15px;font-weight:950;color:#16181E;white-space:nowrap}.annual-box{display:grid;grid-template-columns:1fr 1fr;gap:10px}.annual-col{background:#fff;border:1px solid #E4E5E8;border-radius:11px;padding:11px}.annual-col h4{margin:0 0 5px;font-size:11px}.annual-col .big{font-size:20px;font-weight:950}.annual-col p{font-size:9.5px;color:#656D7A;margin:4px 0 0;line-height:1.45}.final{background:#17191F;color:#fff;border-radius:14px;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;gap:18px}.final-copy .small{font-size:9px;color:#C9CDD5;font-weight:800}.final-copy .big{font-size:18px;font-weight:950;margin-top:2px}.final-number{text-align:right}.final-number .label{font-size:8.5px;color:#B9C0CB;font-weight:800}.final-number .amount{font-size:28px;font-weight:950;margin-top:2px}
@@ -69,6 +61,48 @@ body{margin:0;overflow-x:hidden;font-family:Inter,-apple-system,BlinkMacSystemFo
   .left{position:relative;top:auto}
 }
 @media(max-width:900px){.tables,.pair,.step5-grid,.annual-box,.month-summary{grid-template-columns:1fr}.header{flex-direction:column;align-items:flex-start}.brand-box{align-items:flex-start}.page{padding:8px}.shell{padding:12px}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* AJUSTE FINAL: CABECERA Y LAYOUT ESTABLE */
+.top-sticky{position:sticky!important;top:0!important;z-index:1000!important;background:#fff!important;box-shadow:0 8px 18px rgba(31,35,45,.06)!important;contain:layout paint;will-change:auto}
+.header,.steps,.layout,.left,.main,.section{min-width:0}
+.step-nav{background:linear-gradient(135deg,#FFFDF7,#FFF6DD)!important;border-color:#E8D9A8!important}
+.step-nav .n{background:#D6A000!important;color:#fff!important}
+.left{position:sticky!important;top:calc(var(--headerH) + 10px)!important;align-self:start!important}
+.section,.input-card,.table-card,.month-card,.calc-box,.formula-line{transform:none!important;transition:none!important}
+@media(max-width:1320px){.steps{grid-template-columns:repeat(5,minmax(0,1fr))!important}.layout{grid-template-columns:330px minmax(0,1fr)!important}}
+@media(max-width:1050px){.top-sticky{position:sticky!important;top:0!important}.layout{grid-template-columns:1fr!important}.left{position:relative!important;top:auto!important}.steps{grid-template-columns:repeat(3,minmax(0,1fr))!important}.tables{grid-template-columns:1fr!important}.pair{grid-template-columns:1fr!important}}
+@media(max-width:700px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+
+/* ===== AJUSTE SOLICITADO: pasos con sus colores + tablas uniformes ===== */
+/* Se recuperan los colores originales de cada paso */
+.step-nav:nth-child(1){background:linear-gradient(135deg,#fff,var(--s1-soft))!important;border-color:var(--s1-line)!important}
+.step-nav:nth-child(1) .n{background:var(--s1)!important}
+.step-nav:nth-child(2){background:linear-gradient(135deg,#fff,var(--s2-soft))!important;border-color:var(--s2-line)!important}
+.step-nav:nth-child(2) .n{background:var(--s2)!important}
+.step-nav:nth-child(3){background:linear-gradient(135deg,#fff,var(--s3-soft))!important;border-color:var(--s3-line)!important}
+.step-nav:nth-child(3) .n{background:var(--s3)!important}
+.step-nav:nth-child(4){background:linear-gradient(135deg,#fff,var(--s4-soft))!important;border-color:var(--s4-line)!important}
+.step-nav:nth-child(4) .n{background:var(--s4)!important}
+.step-nav:nth-child(5){background:linear-gradient(135deg,#fff,var(--s5-soft))!important;border-color:var(--s5-line)!important}
+.step-nav:nth-child(5) .n{background:var(--s5)!important}
+.step-nav:nth-child(6){background:linear-gradient(135deg,#fff,var(--s6-soft))!important;border-color:var(--s6-line)!important}
+.step-nav:nth-child(6) .n{background:var(--s6)!important}
+.step-nav:nth-child(7){background:linear-gradient(135deg,#fff,var(--s7-soft))!important;border-color:var(--s7-line)!important}
+.step-nav:nth-child(7) .n{background:var(--s7)!important}
+.step-nav:nth-child(8){background:linear-gradient(135deg,#fff,var(--s8-soft))!important;border-color:var(--s8-line)!important}
+.step-nav:nth-child(8) .n{background:var(--s8)!important}
+.step-nav:nth-child(9){background:linear-gradient(135deg,#fff,var(--s9-soft))!important;border-color:var(--s9-line)!important}
+.step-nav:nth-child(9) .n{background:var(--s9)!important}
+
+/* SOLO las cabeceras de las 3 tablas usan el mismo color */
+.table-title.result,
+.table-title.clients,
+.table-title.mora{
+  background:#D6A000!important;
+  color:#fff!important;
+}
 
 </style>
 
@@ -93,7 +127,7 @@ body{overflow-x:hidden!important;overflow-y:visible!important}
 .brand-circle{width:44px!important;height:44px!important;border-width:4px!important;font-size:20px!important}
 .brand-title{font-size:32px!important}.brand-sub{font-size:9px!important}
 .pdf-btn{padding:8px 12px!important;border-radius:10px!important;font-size:11px!important}
-.steps{grid-template-columns:repeat(8,minmax(0,1fr))!important;gap:6px!important;margin:0!important}
+.steps{grid-template-columns:repeat(9,minmax(0,1fr))!important;gap:6px!important;margin:0!important}
 .step-nav{height:42px!important;min-height:42px!important;padding:5px 7px!important;border-radius:9px!important;overflow:hidden!important}
 .step-nav .n{width:22px!important;height:22px!important;min-width:22px!important;font-size:9px!important}
 .step-nav .t{font-size:8px!important;line-height:1.08!important}
@@ -115,6 +149,17 @@ body{overflow-x:hidden!important;overflow-y:visible!important}
 @media(max-width:1250px){.steps{grid-template-columns:repeat(4,minmax(0,1fr))!important}.layout{grid-template-columns:310px minmax(0,1fr)!important}}
 @media(max-width:1050px){.top-sticky{position:relative!important;top:auto!important}.layout{grid-template-columns:1fr!important}.left{position:relative!important;top:auto!important}.steps{grid-template-columns:repeat(4,minmax(0,1fr))!important}.tables{grid-template-columns:1fr!important}.pair,.step5-grid{grid-template-columns:1fr!important}}
 @media(max-width:700px){.page{padding:8px!important}.shell{padding:11px!important}.header{flex-direction:column!important;align-items:flex-start!important}.brand-box{align-items:flex-start!important}.steps{grid-template-columns:repeat(2,minmax(0,1fr))!important}.header h1{font-size:29px!important}}
+
+/* AJUSTE FINAL: CABECERA Y LAYOUT ESTABLE */
+.top-sticky{position:sticky!important;top:0!important;z-index:1000!important;background:#fff!important;box-shadow:0 8px 18px rgba(31,35,45,.06)!important;contain:layout paint;will-change:auto}
+.header,.steps,.layout,.left,.main,.section{min-width:0}
+.step-nav{background:linear-gradient(135deg,#FFFDF7,#FFF6DD)!important;border-color:#E8D9A8!important}
+.step-nav .n{background:#D6A000!important;color:#fff!important}
+.left{position:sticky!important;top:calc(var(--headerH) + 10px)!important;align-self:start!important}
+.section,.input-card,.table-card,.month-card,.calc-box,.formula-line{transform:none!important;transition:none!important}
+@media(max-width:1320px){.steps{grid-template-columns:repeat(5,minmax(0,1fr))!important}.layout{grid-template-columns:330px minmax(0,1fr)!important}}
+@media(max-width:1050px){.top-sticky{position:sticky!important;top:0!important}.layout{grid-template-columns:1fr!important}.left{position:relative!important;top:auto!important}.steps{grid-template-columns:repeat(3,minmax(0,1fr))!important}.tables{grid-template-columns:1fr!important}.pair{grid-template-columns:1fr!important}}
+@media(max-width:700px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 </style>
 </head>
 <body>
@@ -136,10 +181,11 @@ body{overflow-x:hidden!important;overflow-y:visible!important}
       <div class="step-nav"><div class="n">2</div><div class="t">Calcula tus factores</div></div>
       <div class="step-nav"><div class="n">3</div><div class="t">Halla el promedio por ejecutivo</div></div>
       <div class="step-nav"><div class="n">4</div><div class="t">Calcula Bono Potencial y factor de cargo</div></div>
-      <div class="step-nav"><div class="n">5</div><div class="t">Bono Trimestral 70% e índice de mora</div></div>
-      <div class="step-nav"><div class="n">6</div><div class="t">60% bono trimestral resultado</div></div>
-      <div class="step-nav"><div class="n">7</div><div class="t">40% bono trimestral clientes</div></div>
-      <div class="step-nav"><div class="n">8</div><div class="t">Revisa el Bono Anual 30%</div></div>
+      <div class="step-nav"><div class="n">5</div><div class="t">Calcula el Bono Trimestral 70%</div></div>
+      <div class="step-nav"><div class="n">6</div><div class="t">Aplica el índice de mora</div></div>
+      <div class="step-nav"><div class="n">7</div><div class="t">60% bono trimestral resultado</div></div>
+      <div class="step-nav"><div class="n">8</div><div class="t">40% bono trimestral clientes</div></div>
+      <div class="step-nav"><div class="n">9</div><div class="t">Revisa el Bono Anual 30%</div></div>
     </div>
   </div>
 
@@ -199,19 +245,21 @@ body{overflow-x:hidden!important;overflow-y:visible!important}
       <section class="section step4"><div class="section-inner"><div class="step-head"><div class="step-num">4</div><div class="step-copy"><h3>Calcula el Bono Potencial y aplica el Cargo de jefatura Gerente Zonal</h3><p>El factor de consecución se obtiene con el promedio por ejecutivo y se aplica al resultado consolidado de la zona. Luego se aplica el Cargo de jefatura Gerente Zonal y, cuando corresponda, el Factor de Eficiencia.</p></div></div><div class="month-summary" id="potentialSummary"></div></div></section>
 
       <section class="section step5"><div class="section-inner">
-        <div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Bono Trimestral 70% e índice de mora</h3><p>Primero se calcula el 70% y luego se ajusta según la tabla de índice de mora.</p></div></div>
-        <div class="step5-grid">
-          <div class="subcalc"><div class="subcalc-title">Bono Trimestral 70%</div><div id="prelimLines"></div></div>
-          <div class="subcalc"><div class="subcalc-title">Cálculo según tabla de índice de mora</div><div id="moraLines"></div></div>
-        </div>
+        <div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Calcula el Bono Trimestral 70%</h3><p>Se calcula el 70% del bono después de aplicar el Cargo de jefatura Gerente Zonal.</p></div></div>
+        <div id="prelimLines"></div>
+      </div></section>
+
+      <section class="section step6"><div class="section-inner">
+        <div class="step-head"><div class="step-num">6</div><div class="step-copy"><h3>Aplica el índice de mora</h3><p>El Bono Trimestral 70% de cada mes se ajusta según la tabla de índice de mora.</p></div></div>
+        <div id="moraLines"></div>
       </div></section>
 
       <div class="pair">
-        <section class="section step6"><div class="section-inner"><div class="step-head"><div class="step-num">6</div><div class="step-copy"><h3>60% bono trimestral resultado</h3><p>Se calcula el 60% del bono trimestral ajustado por mora.</p></div></div><div id="result60Lines"></div></div></section>
-        <section class="section step7"><div class="section-inner"><div class="step-head"><div class="step-num">7</div><div class="step-copy"><h3>40% bono trimestral clientes</h3><p>Se calcula el promedio de clientes por ejecutivo, se aplica su factor y se obtiene el Bono Trimestral Final.</p></div></div><div id="clients40Lines"></div></div></section>
+        <section class="section step7"><div class="section-inner"><div class="step-head"><div class="step-num">7</div><div class="step-copy"><h3>60% bono trimestral resultado</h3><p>Se calcula el 60% del bono trimestral ajustado por mora.</p></div></div><div id="result60Lines"></div></div></section>
+        <section class="section step8"><div class="section-inner"><div class="step-head"><div class="step-num">8</div><div class="step-copy"><h3>40% bono trimestral clientes</h3><p>Se calcula el promedio de clientes por ejecutivo, se aplica su factor y se obtiene el Bono Trimestral Final.</p></div></div><div id="clients40Lines"></div></div></section>
       </div>
 
-      <section class="section step8"><div class="section-inner"><div class="step-head"><div class="step-num">8</div><div class="step-copy"><h3>Revisa el Bono Anual 30%</h3><p>30% del bono después del factor de cargo. No constituye un pago asegurado.</p></div></div>
+      <section class="section step9"><div class="section-inner"><div class="step-head"><div class="step-num">9</div><div class="step-copy"><h3>Revisa el Bono Anual 30%</h3><p>30% del bono después del factor de cargo. No constituye un pago asegurado.</p></div></div>
         <div class="annual-box"><div class="annual-col"><h4>Componente anual acumulado del trimestre</h4><div class="big" id="annualTotal">US$ 0.00</div><p>Corresponde a la suma del componente anual de los tres meses.</p></div><div class="annual-col"><h4>Condición de pago</h4><p><strong>50% Utilidad neta de la compañía</strong><br><strong>50% Evaluación de Desempeño</strong><br><br>Su pago está sujeto al cumplimiento de ambas condiciones.</p></div></div>
       </div></section>
 
@@ -362,5 +410,21 @@ document.getElementById('calcBtn').addEventListener('click',()=>{
 });
 
 renderTablesForMonth(1);
+</script>
+
+<script>
+(function(){
+  const top=document.querySelector('.top-sticky');
+  if(!top) return;
+  let last=0;
+  function syncHeader(){
+    const h=Math.ceil(top.getBoundingClientRect().height);
+    if(h!==last){ document.documentElement.style.setProperty('--headerH', h+'px'); last=h; }
+  }
+  window.addEventListener('load', syncHeader, {once:true});
+  window.addEventListener('resize', syncHeader);
+  if('ResizeObserver' in window){ new ResizeObserver(syncHeader).observe(top); }
+  syncHeader();
+})();
 </script>
 </body></html>
