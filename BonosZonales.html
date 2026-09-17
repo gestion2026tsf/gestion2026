@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -38,6 +39,72 @@ body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Aria
 @media(max-width:1280px){.steps{grid-template-columns:repeat(4,minmax(0,1fr))}.left{top:206px}}
 @media(max-width:1100px){.layout{grid-template-columns:330px minmax(0,1fr)}.tables{grid-template-columns:1fr 1fr}.tables .table-card:last-child{grid-column:1/-1}.calc-grid{grid-template-columns:1fr 1fr}.month-summary{grid-template-columns:1fr}.header h1{font-size:35px}}
 @media(max-width:820px){.page{padding:10px}.shell{padding:15px}.top-sticky{position:static}.header{flex-direction:column}.brand-box{align-items:flex-start}.layout{grid-template-columns:1fr}.left{position:static}.pair,.tables,.calc-grid,.annual-box{grid-template-columns:1fr}.tables .table-card:last-child{grid-column:auto}.steps{grid-template-columns:repeat(2,1fr)}.header h1{font-size:32px}.final{align-items:flex-start;flex-direction:column}.final-number{text-align:left}}
+
+/* AJUSTE VISUAL: compacto, uniforme y scroll estable */
+html{overflow-y:scroll;scroll-behavior:auto}
+body{overflow-x:hidden}
+.shell{padding:20px;border-radius:20px}
+.top-sticky{position:sticky;top:0;z-index:80;background:rgba(255,255,255,.98);backdrop-filter:blur(8px);padding-bottom:8px;box-shadow:0 6px 16px rgba(17,24,39,.04)}
+.header{margin-bottom:10px;align-items:center}.header h1{font-size:36px}.header p{margin-top:5px}.brand-circle{width:46px;height:46px;font-size:21px}.brand-title{font-size:34px}.brand-box{min-width:210px;gap:7px}.pdf-btn{padding:8px 13px}
+.steps{gap:8px;margin-top:8px}.step-nav{min-height:42px;padding:6px 8px;border-radius:10px;background:#fff!important;border-color:#E3E6EA!important;box-shadow:none!important}.step-nav .n{background:#1F2937!important}.step-nav .t{font-size:8.5px;color:#313743}
+.step-nav:nth-child(1) .n,.step-nav:nth-child(2) .n,.step-nav:nth-child(3) .n,.step-nav:nth-child(4) .n,.step-nav:nth-child(5) .n,.step-nav:nth-child(6) .n,.step-nav:nth-child(7) .n,.step-nav:nth-child(8) .n{background:#1F2937!important}
+.layout{grid-template-columns:340px minmax(0,1fr);gap:14px;margin-top:12px}.left{top:132px}.input-card{border-color:#E2E5E9;background:#FAFAFB;box-shadow:none}.input-head{background:#F7F7F8;border-color:#E2E5E9}.input-head .eyebrow{color:#B48600}.input-body{padding:12px}.field{margin-bottom:8px}.field input{padding:9px 10px}.month-tab{padding:7px}.controls{margin-top:9px;padding-top:9px}.btn{padding:10px 12px}
+.section{margin-bottom:10px;border-color:#E3E6EA;border-radius:14px;box-shadow:none;background:#fff!important}.section-inner{padding:12px}.step-head{margin-bottom:8px}.step-num{background:#1F2937!important;width:28px;height:28px;border-radius:8px}.step-copy h3{font-size:15px}.step-copy p{font-size:10px}.factor-section{border-color:#E3E6EA!important;background:#fff!important}.tables{gap:8px}.table-card{border-color:#E3E6EA;border-radius:10px}.table-title{padding:8px 9px}.table-title.result,.table-title.clients,.table-title.mora{background:#1F2937}.active-row td{background:#FFF3BF}.calc-grid,.month-summary{gap:8px}.month-card,.calc-box{padding:10px;border-radius:10px}.calc-value{font-size:18px}.formula-line{padding:9px 10px;margin-top:6px}.pair{gap:10px}.final{border-radius:14px;padding:15px 18px}.annual-box{gap:10px}
+@media(max-width:1100px){.steps{grid-template-columns:repeat(4,1fr)}.layout{grid-template-columns:1fr}.left{position:relative;top:auto}.top-sticky{position:relative}.tables{grid-template-columns:1fr}.pair{grid-template-columns:1fr}}
+
+
+
+/* === COLORES POR PASO: visibles pero suaves, manteniendo scroll estable === */
+.step-nav{background:#fff!important;border-width:1px!important;box-shadow:none!important}
+.step-nav:nth-child(1){background:linear-gradient(135deg,#fff,var(--s1-soft))!important;border-color:var(--s1-line)!important}
+.step-nav:nth-child(1) .n{background:var(--s1)!important}
+.step-nav:nth-child(2){background:linear-gradient(135deg,#fff,var(--s2-soft))!important;border-color:var(--s2-line)!important}
+.step-nav:nth-child(2) .n{background:var(--s2)!important}
+.step-nav:nth-child(3){background:linear-gradient(135deg,#fff,var(--s3-soft))!important;border-color:var(--s3-line)!important}
+.step-nav:nth-child(3) .n{background:var(--s3)!important}
+.step-nav:nth-child(4){background:linear-gradient(135deg,#fff,var(--s4-soft))!important;border-color:var(--s4-line)!important}
+.step-nav:nth-child(4) .n{background:var(--s4)!important}
+.step-nav:nth-child(5){background:linear-gradient(135deg,#fff,var(--s5-soft))!important;border-color:var(--s5-line)!important}
+.step-nav:nth-child(5) .n{background:var(--s5)!important}
+.step-nav:nth-child(6){background:linear-gradient(135deg,#fff,var(--s6-soft))!important;border-color:var(--s6-line)!important}
+.step-nav:nth-child(6) .n{background:var(--s6)!important}
+.step-nav:nth-child(7){background:linear-gradient(135deg,#fff,var(--s7-soft))!important;border-color:var(--s7-line)!important}
+.step-nav:nth-child(7) .n{background:var(--s7)!important}
+.step-nav:nth-child(8){background:linear-gradient(135deg,#fff,var(--s8-soft))!important;border-color:var(--s8-line)!important}
+.step-nav:nth-child(8) .n{background:var(--s8)!important}
+
+/* Bloques del contenido con el mismo color de su paso */
+.section.step2{background:linear-gradient(180deg,#fff 0%,var(--s2-soft) 100%)!important;border-color:var(--s2-line)!important}
+.section.step2 .step-num{background:var(--s2)!important}
+.section.step3{background:linear-gradient(180deg,#fff 0%,var(--s3-soft) 100%)!important;border-color:var(--s3-line)!important}
+.section.step3 .step-num{background:var(--s3)!important}
+.section.step4{background:linear-gradient(180deg,#fff 0%,var(--s4-soft) 100%)!important;border-color:var(--s4-line)!important}
+.section.step4 .step-num{background:var(--s4)!important}
+.section.step5{background:linear-gradient(180deg,#fff 0%,var(--s5-soft) 100%)!important;border-color:var(--s5-line)!important}
+.section.step5 .step-num{background:var(--s5)!important}
+.section.step6{background:linear-gradient(180deg,#fff 0%,var(--s6-soft) 100%)!important;border-color:var(--s6-line)!important}
+.section.step6 .step-num{background:var(--s6)!important}
+.section.step7{background:linear-gradient(180deg,#fff 0%,var(--s7-soft) 100%)!important;border-color:var(--s7-line)!important}
+.section.step7 .step-num{background:var(--s7)!important}
+.section.step8{background:linear-gradient(180deg,#fff 0%,var(--s8-soft) 100%)!important;border-color:var(--s8-line)!important}
+.section.step8 .step-num{background:var(--s8)!important}
+
+/* Paso 1: panel de entrada */
+.input-card{background:linear-gradient(180deg,#fff 0%,var(--s1-soft) 100%)!important;border-color:var(--s1-line)!important}
+.input-head{background:var(--s1-soft)!important;border-color:var(--s1-line)!important}
+.input-head .eyebrow{color:var(--s1)!important}
+
+/* Tablas conservan sus colores propios */
+.table-title.result{background:var(--magenta)!important}
+.table-title.clients{background:var(--orange)!important}
+.table-title.mora{background:var(--teal)!important}
+
+/* Compacto y estable */
+.step-nav{min-height:40px}
+.section{transition:none!important}
+.step-nav,.section,.input-card{transform:none!important}
+html{scroll-behavior:auto!important}
+
 </style>
 </head>
 <body>
@@ -56,12 +123,12 @@ body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Aria
     </header>
     <div class="steps" aria-label="Paso a paso del cálculo">
       <div class="step-nav"><div class="n">1</div><div class="t">Ingresa los datos del trimestre</div></div>
-      <div class="step-nav"><div class="n">2</div><div class="t">Halla el promedio por ejecutivo</div></div>
-      <div class="step-nav"><div class="n">3</div><div class="t">Calcula Bono Potencial y factor de cargo</div></div>
-      <div class="step-nav"><div class="n">4</div><div class="t">Calcula el Bono Trimestral preliminar</div></div>
-      <div class="step-nav"><div class="n">5</div><div class="t">Aplica el factor de mora</div></div>
-      <div class="step-nav"><div class="n">6</div><div class="t">Calcula 60% por resultado</div></div>
-      <div class="step-nav"><div class="n">7</div><div class="t">Calcula 40% clientes y bono final</div></div>
+      <div class="step-nav"><div class="n">2</div><div class="t">Calcula tus factores</div></div>
+      <div class="step-nav"><div class="n">3</div><div class="t">Halla el promedio por ejecutivo</div></div>
+      <div class="step-nav"><div class="n">4</div><div class="t">Calcula Bono Potencial y factor de cargo</div></div>
+      <div class="step-nav"><div class="n">5</div><div class="t">Bono preliminar y factor de mora</div></div>
+      <div class="step-nav"><div class="n">6</div><div class="t">Calcula el 60% por resultado</div></div>
+      <div class="step-nav"><div class="n">7</div><div class="t">Calcula el 40% clientes y bono final</div></div>
       <div class="step-nav"><div class="n">8</div><div class="t">Revisa el componente anual</div></div>
     </div>
   </div>
@@ -96,14 +163,14 @@ body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Aria
             <div class="mini-field"><label>Factor cargo Gerente Zonal</label><input id="cargo" type="number" min="0" step="0.01" value="30"><span style="font-size:10px;font-weight:800">%</span></div>
             <div class="mini-field"><label>Factor de eficiencia</label><input id="eff" type="number" min="0" step="0.01" value="100"><span style="font-size:10px;font-weight:800">%</span></div>
             <button class="btn" id="calcBtn">CALCULAR BONO</button>
-            <div class="input-note">El 30% corresponde al factor de cargo del presente trimestre. Desde enero de 2027 la guía indica 20%. El factor de eficiencia queda en 100% por defecto porque la guía aún no define su valor para 2027.</div>
+            <div class="input-note"></div>
           </div>
         </div>
       </div>
     </aside>
 
     <main class="main">
-      <section class="section step1"><div class="section-inner"><div class="step-head"><div class="step-num">↗</div><div class="step-copy"><h3>Tablas y factores del esquema</h3><p>Consulta aquí los factores de consecución, clientes y mora que se aplican durante el cálculo.</p></div></div>
+      <section class="section step2 factor-section"><div class="section-inner"><div class="step-head"><div class="step-num">2</div><div class="step-copy"><h3>Calcula tus factores</h3><p>Consulta aquí los factores de consecución, clientes y mora que se aplican durante el cálculo.</p></div></div>
         <div class="tables">
           <div class="table-card"><div class="table-title result">Tabla de Consecución</div><table><thead><tr><th>Desde</th><th>Hasta</th><th>Factor</th></tr></thead><tbody id="tblResult"></tbody></table></div>
           <div class="table-card"><div class="table-title clients">Consecución de Clientes</div><table><thead><tr><th>Desde</th><th>Hasta</th><th>Factor</th></tr></thead><tbody id="tblClients"></tbody></table></div>
@@ -111,12 +178,12 @@ body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Aria
         </div>
       </div></section>
 
-      <section class="section step2"><div class="section-inner"><div class="step-head"><div class="step-num">2</div><div class="step-copy"><h3>Halla el promedio del resultado por ejecutivo</h3><p>Se divide el resultado acumulado de la zona entre todos los ejecutivos asignados, incluso si alguno no generó resultados.</p></div></div><div class="month-summary" id="avgSummary"></div></div></section>
+      <section class="section step3"><div class="section-inner"><div class="step-head"><div class="step-num">3</div><div class="step-copy"><h3>Halla el promedio del resultado por ejecutivo</h3><p>Se divide el resultado acumulado de la zona entre todos los ejecutivos asignados, incluso si alguno no generó resultados.</p></div></div><div class="month-summary" id="avgSummary"></div></div></section>
 
-      <section class="section step3"><div class="section-inner"><div class="step-head"><div class="step-num">3</div><div class="step-copy"><h3>Calcula el Bono Potencial y aplica el factor de cargo</h3><p>El factor de consecución se obtiene con el promedio por ejecutivo, pero se aplica al resultado consolidado de la zona. Luego se aplica cargo y eficiencia.</p></div></div><div class="month-summary" id="potentialSummary"></div></div></section>
+      <section class="section step4"><div class="section-inner"><div class="step-head"><div class="step-num">4</div><div class="step-copy"><h3>Calcula el Bono Potencial y aplica el factor de cargo</h3><p>El factor de consecución se obtiene con el promedio por ejecutivo, pero se aplica al resultado consolidado de la zona. Luego se aplica cargo y eficiencia.</p></div></div><div class="month-summary" id="potentialSummary"></div></div></section>
 
       <div class="pair">
-        <section class="section step4"><div class="section-inner"><div class="step-head"><div class="step-num">4</div><div class="step-copy"><h3>Calcula el Bono Trimestral preliminar</h3><p>70% del bono después de aplicar el factor de cargo.</p></div></div><div id="prelimLines"></div></div></section>
+        <section class="section step5"><div class="section-inner"><div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Calcula el Bono Trimestral preliminar</h3><p>70% del bono después de aplicar el factor de cargo.</p></div></div><div id="prelimLines"></div></div></section>
         <section class="section step5"><div class="section-inner"><div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Aplica el factor de mora</h3><p>El bono trimestral de cada mes se ajusta según la tabla de mora.</p></div></div><div id="moraLines"></div></div></section>
       </div>
 
