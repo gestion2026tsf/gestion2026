@@ -174,6 +174,11 @@ th,td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* Nada cambia de tamaño al pasar el mouse o recalcular */
 .pdf-btn,.btn,.step-nav,.section,.table-card,.input-card{transform:none!important;transition:none!important}
 .active-row td{font-weight:900}
+/* Resaltado dinámico por tabla */
+#tblResult tr.active-result td{background:#FDEAF2!important;color:#A70A49!important;font-weight:900;border-top-color:#F6C9D9!important}
+#tblClients tr.active-clients td{background:#FFF0E5!important;color:#B45309!important;font-weight:900;border-top-color:#FFD3B3!important}
+#tblMora tr.active-mora td{background:#EAF8F7!important;color:#0F766E!important;font-weight:900;border-top-color:#BFE8E4!important}
+
 
 @media(max-width:1250px){
   .steps{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -268,6 +273,75 @@ th,td{overflow:hidden!important;text-overflow:ellipsis!important;white-space:now
   .left{position:relative!important;top:auto!important}
 }
 
+
+/* Confirmacion visual al calcular */
+.calc-status{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-top:8px;
+  min-height:34px;
+  border:1px solid #B7E4C7;
+  background:#F0FFF4;
+  color:#16733A;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:800;
+}
+.calc-status.show{display:flex}
+.calc-status .check{
+  width:20px;height:20px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:#1F9D55;color:#fff;font-size:13px;font-weight:900;
+}
+.btn.calculated{background:#1F9D55!important;color:#fff!important}
+
+</style>
+
+<style>
+/* ===== VERSION LIMPIA Y ESTABLE ===== */
+:root{--headerH:0px}
+html{scrollbar-gutter:stable;overflow-y:scroll!important;overflow-x:hidden!important;scroll-behavior:auto!important}
+body{overflow-x:hidden!important;overflow-y:visible!important}
+.page{max-width:1500px!important;margin:0 auto!important;padding:14px 16px 28px!important}
+.shell{padding:16px 18px 22px!important;border-radius:20px!important;overflow:visible!important}
+.top-sticky{
+  position:sticky!important;top:0!important;left:auto!important;right:auto!important;width:auto!important;
+  z-index:1000!important;background:#fff!important;margin:0!important;padding:0 0 9px!important;
+  border-bottom:1px solid #ece8ec!important;box-shadow:0 5px 14px rgba(17,24,39,.045)!important;
+}
+.top-spacer{display:none!important;height:0!important}
+.header{min-height:0!important;margin:0 0 9px!important;align-items:center!important;gap:16px!important}
+.header-kicker{padding:5px 11px!important;margin-bottom:6px!important}
+.header h1{font-size:34px!important;line-height:1.02!important;letter-spacing:-1.3px!important}
+.header p{font-size:12px!important;margin-top:4px!important}
+.brand-box{min-width:200px!important;gap:6px!important}
+.brand-circle{width:44px!important;height:44px!important;border-width:4px!important;font-size:20px!important}
+.brand-title{font-size:32px!important}.brand-sub{font-size:9px!important}
+.pdf-btn{padding:8px 12px!important;border-radius:10px!important;font-size:11px!important}
+.steps{grid-template-columns:repeat(8,minmax(0,1fr))!important;gap:6px!important;margin:0!important}
+.step-nav{height:42px!important;min-height:42px!important;padding:5px 7px!important;border-radius:9px!important;overflow:hidden!important}
+.step-nav .n{width:22px!important;height:22px!important;min-width:22px!important;font-size:9px!important}
+.step-nav .t{font-size:8px!important;line-height:1.08!important}
+.layout{grid-template-columns:330px minmax(0,1fr)!important;gap:12px!important;margin-top:12px!important;align-items:start!important}
+.left{position:sticky!important;top:calc(var(--headerH) + 8px)!important;max-height:none!important;overflow:visible!important;align-self:start!important}
+.input-card{border-radius:14px!important;box-shadow:none!important}
+.input-head{padding:11px 13px!important}.input-head h2{font-size:18px!important}
+.input-body{padding:11px 12px!important}.month-tabs{margin-bottom:9px!important}.month-tab{padding:7px 5px!important}
+.field{margin-bottom:7px!important}.field label{font-size:9.5px!important;margin-bottom:4px!important}.field input{padding:8px 9px!important;font-size:13px!important;border-radius:9px!important}
+.controls{margin-top:8px!important;padding-top:8px!important}.control-title{margin-bottom:6px!important}.mini-field{grid-template-columns:1fr 82px auto!important;gap:6px!important;margin-bottom:6px!important}.mini-field input{padding:7px!important}.btn{padding:9px 11px!important;margin-top:4px!important}
+.main{min-width:0!important;width:100%!important}.section{margin-bottom:9px!important;border-radius:13px!important;overflow:hidden!important;box-shadow:none!important}.section-inner{padding:11px!important}
+.step-head{margin-bottom:7px!important;gap:9px!important}.step-num{width:27px!important;height:27px!important;border-radius:8px!important}.step-copy h3{font-size:14.5px!important}.step-copy p{font-size:9.6px!important}
+.tables{grid-template-columns:1.22fr .9fr .76fr!important;gap:8px!important}.table-card{border-radius:9px!important}.table-title{padding:7px 8px!important;font-size:9px!important}th{padding:5px 6px!important}td{padding:4px 6px!important}
+.month-summary{gap:7px!important}.month-card{padding:9px!important;border-radius:10px!important}.month-card .v{font-size:17px!important}.month-card .d{font-size:8.8px!important}
+.pair{gap:9px!important;align-items:start!important}.formula-line{padding:8px 9px!important;margin-top:5px!important;border-radius:9px!important}.formula-line .leftf{font-size:9.4px!important}.formula-line .rightf{font-size:14px!important}
+.step5-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.subcalc{background:rgba(255,255,255,.72);border:1px solid var(--s5-line);border-radius:10px;padding:8px}.subcalc-title{font-size:10px;font-weight:900;color:#6a5410;margin:0 0 4px}
+.final{padding:13px 16px!important;border-radius:13px!important}.annual-box{gap:9px!important}
+.pdf-btn,.btn,.step-nav,.section,.table-card,.input-card,.month-tab{transform:none!important;transition:none!important}
+@media(max-width:1250px){.steps{grid-template-columns:repeat(4,minmax(0,1fr))!important}.layout{grid-template-columns:310px minmax(0,1fr)!important}}
+@media(max-width:1050px){.top-sticky{position:relative!important;top:auto!important}.layout{grid-template-columns:1fr!important}.left{position:relative!important;top:auto!important}.steps{grid-template-columns:repeat(4,minmax(0,1fr))!important}.tables{grid-template-columns:1fr!important}.pair,.step5-grid{grid-template-columns:1fr!important}}
+@media(max-width:700px){.page{padding:8px!important}.shell{padding:11px!important}.header{flex-direction:column!important;align-items:flex-start!important}.brand-box{align-items:flex-start!important}.steps{grid-template-columns:repeat(2,minmax(0,1fr))!important}.header h1{font-size:29px!important}}
 </style>
 </head>
 <body>
@@ -308,25 +382,29 @@ th,td{overflow:hidden!important;text-overflow:ellipsis!important;white-space:now
             <button class="month-tab" data-month="3">Mes 3</button>
           </div>
           <div class="month-panel active" id="month1">
-            <div class="field"><label>Resultado de Factoring de la zona (US$)</label><input id="result1" type="number" step="0.01" value="55000"></div>
-            <div class="two"><div class="field"><label>Cantidad de ejecutivos</label><input id="exec1" type="number" min="1" step="1" value="11"></div><div class="field"><label>Cantidad de clientes</label><input id="clients1" type="number" min="0" step="1" value="176"></div></div>
-            <div class="field"><label>Índice de mora de cartera (%)</label><input id="mora1" type="number" min="0" step="0.01" value="1.15"></div>
+            <div class="field"><label>Resultado de Factoring de la zona (US$)</label><input id="result1" type="number" step="0.01" value="0"></div>
+            <div class="two"><div class="field"><label>Cantidad de ejecutivos</label><input id="exec1" type="number" min="0" step="1" value="0"></div><div class="field"><label>Cantidad de clientes</label><input id="clients1" type="number" min="0" step="1" value="0"></div></div>
+            <div class="field"><label>Índice de mora de cartera (%)</label><input id="mora1" type="number" min="0" step="0.01" value="0"></div>
           </div>
           <div class="month-panel" id="month2">
-            <div class="field"><label>Resultado de Factoring de la zona (US$)</label><input id="result2" type="number" step="0.01" value="55000"></div>
-            <div class="two"><div class="field"><label>Cantidad de ejecutivos</label><input id="exec2" type="number" min="1" step="1" value="11"></div><div class="field"><label>Cantidad de clientes</label><input id="clients2" type="number" min="0" step="1" value="176"></div></div>
-            <div class="field"><label>Índice de mora de cartera (%)</label><input id="mora2" type="number" min="0" step="0.01" value="1.15"></div>
+            <div class="field"><label>Resultado de Factoring de la zona (US$)</label><input id="result2" type="number" step="0.01" value="0"></div>
+            <div class="two"><div class="field"><label>Cantidad de ejecutivos</label><input id="exec2" type="number" min="0" step="1" value="0"></div><div class="field"><label>Cantidad de clientes</label><input id="clients2" type="number" min="0" step="1" value="0"></div></div>
+            <div class="field"><label>Índice de mora de cartera (%)</label><input id="mora2" type="number" min="0" step="0.01" value="0"></div>
           </div>
           <div class="month-panel" id="month3">
-            <div class="field"><label>Resultado de Factoring de la zona (US$)</label><input id="result3" type="number" step="0.01" value="55000"></div>
-            <div class="two"><div class="field"><label>Cantidad de ejecutivos</label><input id="exec3" type="number" min="1" step="1" value="11"></div><div class="field"><label>Cantidad de clientes</label><input id="clients3" type="number" min="0" step="1" value="176"></div></div>
-            <div class="field"><label>Índice de mora de cartera (%)</label><input id="mora3" type="number" min="0" step="0.01" value="1.15"></div>
+            <div class="field"><label>Resultado de Factoring de la zona (US$)</label><input id="result3" type="number" step="0.01" value="0"></div>
+            <div class="two"><div class="field"><label>Cantidad de ejecutivos</label><input id="exec3" type="number" min="0" step="1" value="0"></div><div class="field"><label>Cantidad de clientes</label><input id="clients3" type="number" min="0" step="1" value="0"></div></div>
+            <div class="field"><label>Índice de mora de cartera (%)</label><input id="mora3" type="number" min="0" step="0.01" value="0"></div>
           </div>
           <div class="controls">
             <div class="control-title">PARÁMETROS DEL ESQUEMA</div>
-            <div class="mini-field"><label>Cargo de jefatura Gerente Zonal</label><input id="cargo" type="number" min="0" step="0.01" value="30"><span style="font-size:10px;font-weight:800">%</span></div>
-            <div class="mini-field"><label>Factor de Eficiencia</label><input id="eff" type="number" min="0" step="0.01" value="100"><span style="font-size:10px;font-weight:800">%</span></div>
+            <div class="mini-field"><label>Cargo de jefatura Gerente Zonal</label><input id="cargo" type="number" min="0" step="0.01" value="0"><span style="font-size:10px;font-weight:800">%</span></div>
+            <div class="mini-field"><label>Factor de Eficiencia</label><input id="eff" type="number" min="0" step="0.01" value="0"><span style="font-size:10px;font-weight:800">%</span></div>
             <button class="btn" id="calcBtn">CALCULAR BONO</button>
+            <div class="calc-status" id="calcStatus" aria-live="polite">
+              <span class="check">✓</span>
+              <span>Bono calculado correctamente</span>
+            </div>
             <div class="input-note"></div>
           </div>
         </div>
@@ -346,14 +424,17 @@ th,td{overflow:hidden!important;text-overflow:ellipsis!important;white-space:now
 
       <section class="section step4"><div class="section-inner"><div class="step-head"><div class="step-num">4</div><div class="step-copy"><h3>Calcula el Bono Potencial y aplica el Cargo de jefatura Gerente Zonal</h3><p>El factor de consecución se obtiene con el promedio por ejecutivo y se aplica al resultado consolidado de la zona. Luego se aplica el Cargo de jefatura Gerente Zonal y, cuando corresponda, el Factor de Eficiencia.</p></div></div><div class="month-summary" id="potentialSummary"></div></div></section>
 
-      <div class="pair">
-        <section class="section step5"><div class="section-inner"><div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Calcula el Bono Trimestral 70%</h3><p>Se calcula el Bono Trimestral 70% después de aplicar el Cargo de jefatura Gerente Zonal.</p></div></div><div id="prelimLines"></div></div></section>
-        <section class="section step5"><div class="section-inner"><div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Cálculo según tabla de índice de mora</h3><p>El bono trimestral de cada mes se ajusta según la tabla de mora.</p></div></div><div id="moraLines"></div></div></section>
-      </div>
+      <section class="section step5"><div class="section-inner">
+        <div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Bono Trimestral 70% e índice de mora</h3><p>Primero se calcula el 70% y luego se ajusta según la tabla de índice de mora.</p></div></div>
+        <div class="step5-grid">
+          <div class="subcalc"><div class="subcalc-title">Bono Trimestral 70%</div><div id="prelimLines"></div></div>
+          <div class="subcalc"><div class="subcalc-title">Cálculo según tabla de índice de mora</div><div id="moraLines"></div></div>
+        </div>
+      </div></section>
 
       <div class="pair">
-        <section class="section step6"><div class="section-inner"><div class="step-head"><div class="step-num">6</div><div class="step-copy"><h3>Calcula 60% resultado + 40% clientes</h3><p>El 60% se paga por resultado. El 40% se multiplica por el factor de clientes promedio por ejecutivo.</p></div></div><div id="splitLines"></div></div></section>
-        <section class="section step7"><div class="section-inner"><div class="step-head"><div class="step-num">7</div><div class="step-copy"><h3>40% bono trimestral clientes y Bono Trimestral Final</h3><p>El 40% se ajusta por el factor de clientes y luego se suma al 60% de resultado. Los tres resultados mensuales se acumulan y se pagan al cierre del trimestre.</p></div></div><div id="monthlyLines"></div></div></section>
+        <section class="section step6"><div class="section-inner"><div class="step-head"><div class="step-num">6</div><div class="step-copy"><h3>60% bono trimestral resultado</h3><p>Se calcula el 60% del bono trimestral ajustado por mora.</p></div></div><div id="result60Lines"></div></div></section>
+        <section class="section step7"><div class="section-inner"><div class="step-head"><div class="step-num">7</div><div class="step-copy"><h3>40% bono trimestral clientes</h3><p>Se calcula el promedio de clientes por ejecutivo, se aplica su factor y se obtiene el Bono Trimestral Final.</p></div></div><div id="clients40Lines"></div></div></section>
       </div>
 
       <section class="section step8"><div class="section-inner"><div class="step-head"><div class="step-num">8</div><div class="step-copy"><h3>Revisa el Bono Anual 30%</h3><p>30% del bono después del factor de cargo. No constituye un pago asegurado.</p></div></div>
@@ -376,19 +457,25 @@ const pct=n=>(Number(n)*100).toFixed(2).replace('.00','')+'%';
 const getResultFactor=v=>RESULT_ROWS.find(r=>v>=r[0]&&v<=r[1])||RESULT_ROWS.at(-1);
 const getClientFactor=v=>CLIENT_ROWS.find(r=>v>=r[0]&&v<=r[1])||CLIENT_ROWS.at(-1);
 const getMoraFactor=v=>MORA_ROWS.find(r=>v>=r[0]&&v<=r[1])||MORA_ROWS.at(-1);
+function inRange(value,row,index,rows){
+ const min=row[0], max=row[1];
+ // Para evitar que un valor de frontera pinte dos filas, usamos intervalos sin solapamiento.
+ if(index===0 && max===Infinity) return value>=min;
+ return value>=min && value<=max;
+}
 function renderTables(activeAvg,activeClients,activeMora){
- document.getElementById('tblResult').innerHTML=RESULT_ROWS.map(r=>`<tr class="${activeAvg>=r[0]&&activeAvg<=r[1]?'active-row':''}"><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join('');
- document.getElementById('tblClients').innerHTML=CLIENT_ROWS.map(r=>`<tr class="${activeClients>=r[0]&&activeClients<=r[1]?'active-row':''}"><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join('');
- document.getElementById('tblMora').innerHTML=MORA_ROWS.map(r=>`<tr class="${activeMora>=r[0]&&activeMora<=r[1]?'active-row':''}"><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('');
+ document.getElementById('tblResult').innerHTML=RESULT_ROWS.map((r,i)=>`<tr class="${inRange(activeAvg,r,i,RESULT_ROWS)?'active-result':''}"><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join('');
+ document.getElementById('tblClients').innerHTML=CLIENT_ROWS.map((r,i)=>`<tr class="${inRange(activeClients,r,i,CLIENT_ROWS)?'active-clients':''}"><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join('');
+ document.getElementById('tblMora').innerHTML=MORA_ROWS.map((r,i)=>`<tr class="${inRange(activeMora,r,i,MORA_ROWS)?'active-mora':''}"><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('');
 }
 function calcMonth(i,cargo,eff){
  const result=Math.max(0,parseFloat(document.getElementById('result'+i).value)||0);
- const executives=Math.max(1,parseFloat(document.getElementById('exec'+i).value)||1);
+ const executives=Math.max(0,parseFloat(document.getElementById('exec'+i).value)||0);
  const clients=Math.max(0,parseFloat(document.getElementById('clients'+i).value)||0);
  const mora=Math.max(0,parseFloat(document.getElementById('mora'+i).value)||0);
- const avg=result/executives; const rf=getResultFactor(avg); const baseBeforeCargo=result*rf[2];
+ const avg=executives>0?result/executives:0; const rf=getResultFactor(avg); const baseBeforeCargo=result*rf[2];
  const base=baseBeforeCargo*cargo*eff; const mf=getMoraFactor(mora); const prelim=base*.70; const adjusted=prelim*mf[2];
- const res60=adjusted*.60; const clientsAvg=clients/executives; const cf=getClientFactor(clientsAvg); const cli40=adjusted*.40*cf[2];
+ const res60=adjusted*.60; const clientsAvg=executives>0?clients/executives:0; const cf=getClientFactor(clientsAvg); const cli40=adjusted*.40*cf[2];
  const monthly=res60+cli40; const annual=base*.30;
  return {i,result,executives,clients,mora,avg,rf,baseBeforeCargo,base,mf,prelim,adjusted,res60,clientsAvg,cf,cli40,monthly,annual};
 }
@@ -400,13 +487,33 @@ function calculate(){
  document.getElementById('potentialSummary').innerHTML=m.map(x=>`<div class="month-card"><div class="m">Mes ${x.i} · Factor ${pct(x.rf[2])}</div><div class="v">${money(x.base)}</div><div class="d">${money(x.result)} × ${pct(x.rf[2])} × ${pct(cargo)} Cargo de jefatura × ${pct(eff)} Factor de Eficiencia</div></div>`).join('');
  document.getElementById('prelimLines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong><br>${money(x.base)} × 70%</div><div class="rightf">${money(x.prelim)}</div></div>`).join('');
  document.getElementById('moraLines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong> · Mora ${x.mora.toFixed(2)}% → factor ${pct(x.mf[2])}<br>${money(x.prelim)} × ${pct(x.mf[2])}</div><div class="rightf">${money(x.adjusted)}</div></div>`).join('');
- document.getElementById('splitLines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong><br>60% resultado = ${money(x.res60)}<br>Clientes/ejec. = ${num(x.clientsAvg)} → factor ${pct(x.cf[2])}<br>40% clientes ajustado = ${money(x.cli40)}</div><div class="rightf">${money(x.res60+x.cli40)}</div></div>`).join('');
- document.getElementById('monthlyLines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong><br>${money(x.res60)} + ${money(x.cli40)}</div><div class="rightf">${money(x.monthly)}</div></div>`).join('');
+ document.getElementById('result60Lines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong><br>${money(x.adjusted)} × 60%</div><div class="rightf">${money(x.res60)}</div></div>`).join('');
+ document.getElementById('clients40Lines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong><br>Clientes por ejecutivo: ${num(x.clientsAvg)} → factor ${pct(x.cf[2])}<br>${money(x.adjusted)} × 40% × ${pct(x.cf[2])}<br><strong>Bono Trimestral Final:</strong> ${money(x.res60)} + ${money(x.cli40)}</div><div class="rightf">${money(x.monthly)}</div></div>`).join('');
  const quarter=m.reduce((s,x)=>s+x.monthly,0), annual=m.reduce((s,x)=>s+x.annual,0);
  document.getElementById('quarterTotal').textContent=money(quarter); document.getElementById('annualTotal').textContent=money(annual);
 }
+// Actualiza cálculos y resaltados mientras se escriben los datos, sin esperar al botón.
+document.querySelectorAll('.month-panel input, .controls input').forEach(inp=>{
+  inp.addEventListener('input', calculate);
+  inp.addEventListener('change', calculate);
+});
+
 document.querySelectorAll('.month-tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.month-tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.month-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById('month'+btn.dataset.month).classList.add('active');calculate();}));
-document.getElementById('calcBtn').addEventListener('click',calculate);document.querySelectorAll('input').forEach(x=>x.addEventListener('input',calculate));calculate();
+document.getElementById('calcBtn').addEventListener('click',()=>{
+  calculate();
+  const btn=document.getElementById('calcBtn');
+  const status=document.getElementById('calcStatus');
+  btn.classList.add('calculated');
+  btn.textContent='✓ BONO CALCULADO';
+  status.classList.add('show');
+  clearTimeout(window.__calcOkTimer);
+  window.__calcOkTimer=setTimeout(()=>{
+    btn.classList.remove('calculated');
+    btn.textContent='CALCULAR BONO';
+    status.classList.remove('show');
+  },3000);
+});
+document.querySelectorAll('input').forEach(x=>x.addEventListener('input',calculate));calculate();
 </script>
 
 <script>
@@ -453,4 +560,23 @@ document.getElementById('calcBtn').addEventListener('click',calculate);document.
 })();
 </script>
 
+
+<script>
+(function(){
+  const root=document.documentElement;
+  const header=document.querySelector('.top-sticky');
+  if(!header) return;
+  function syncHeader(){
+    if(window.innerWidth>1050){
+      root.style.setProperty('--headerH', Math.ceil(header.getBoundingClientRect().height)+'px');
+    }else{
+      root.style.setProperty('--headerH','0px');
+    }
+  }
+  syncHeader();
+  window.addEventListener('resize',syncHeader,{passive:true});
+  window.addEventListener('load',syncHeader,{once:true});
+  if('ResizeObserver' in window){new ResizeObserver(syncHeader).observe(header);}
+})();
+</script>
 </body></html>
