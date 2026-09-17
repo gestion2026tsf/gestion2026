@@ -189,6 +189,114 @@ td{padding:7px 8px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
 .step-nav:nth-child(9){background:var(--s9-soft);border-color:var(--s9-line)}
 .step-nav:nth-child(9) .n{background:var(--s9)}
 
+
+
+/* ===== AJUSTE VISUAL FINAL: MAS LIMPIO, MENOS TOSCO ===== */
+:root{
+  --headerH:152px;
+}
+body{font-size:14px}
+.page{padding:10px 12px}
+.shell{border-radius:18px;padding:10px 12px 16px;box-shadow:0 6px 18px rgba(44,31,39,.035)}
+
+.top-sticky{
+  width:min(calc(100vw - 24px),1476px);
+  padding:8px 12px 10px;
+  border-radius:0 0 16px 16px;
+  box-shadow:0 6px 16px rgba(44,31,39,.06)
+}
+.header{min-height:72px;margin-bottom:8px;gap:14px}
+.header-kicker{padding:5px 10px;font-size:9px;margin-bottom:4px}
+.header h1{font-size:34px;letter-spacing:-1px}
+.header p{font-size:12px;margin-top:4px}
+.brand-box{min-width:185px;gap:5px}
+.brand{gap:8px}
+.brand-circle{width:46px;height:46px;border-width:3px;font-size:22px}
+.brand-title{font-size:38px;letter-spacing:-1.3px}
+.brand-sub{font-size:9px;margin-top:3px}
+.pdf-btn{padding:8px 12px;border-radius:10px;font-size:11px}
+
+.steps{gap:6px}
+.step-nav{min-height:40px;padding:5px 7px;border-radius:10px;gap:6px}
+.step-nav .n{width:23px;height:23px;min-width:23px;font-size:10px}
+.step-nav .t{font-size:8.2px;line-height:1.04}
+
+.layout{margin-top:10px}
+.left{
+  top:calc(var(--headerH) + 12px);
+  width:330px;
+  left:max(12px, calc(50% - 750px + 12px));
+  max-height:calc(100vh - var(--headerH) - 20px);
+}
+.main{margin-left:346px}
+.input-card{border-radius:14px;box-shadow:none}
+.input-head{padding:10px 12px}
+.input-head .eyebrow{font-size:9px}
+.input-head h2{font-size:18px;margin-top:3px}
+.input-body{padding:10px}
+.month-tabs{gap:6px;margin-bottom:9px}
+.month-tab{padding:7px 6px;border-radius:9px;font-size:11px}
+.field{margin-bottom:7px}
+.field label{font-size:10px;margin-bottom:4px}
+.field input{padding:8px 9px;border-radius:9px;font-size:13px}
+.two{gap:7px}
+.controls{margin-top:8px;padding-top:9px}
+.control-title{font-size:10px;margin-bottom:6px}
+.mini-field{grid-template-columns:minmax(0,1fr) 78px 12px;gap:6px;margin-bottom:6px}
+.mini-field label{font-size:10px}
+.mini-field input{padding:7px 8px;border-radius:9px;font-size:13px}
+.mini-field .unit{font-size:11px}
+.btn{padding:9px 11px;border-radius:10px;font-size:11px;margin-top:4px}
+.status-row{min-height:18px;margin-top:6px;gap:8px}
+.calc-status,.validation{font-size:9px}
+.left::-webkit-scrollbar{width:6px}
+
+.section{border-radius:14px;margin-bottom:9px;box-shadow:none}
+.section-inner{padding:11px}
+.step-head{gap:8px;margin-bottom:7px}
+.step-num{width:30px;height:30px;border-radius:9px;font-size:13px}
+.step-copy h3{font-size:14px}
+.step-copy p{font-size:9.5px;margin-top:2px}
+
+.factor-status{gap:7px;margin-bottom:8px}
+.factor-pill{padding:7px 9px;border-radius:9px;font-size:9px}
+.factor-pill strong{font-size:9.5px;margin-bottom:1px}
+.factor-pill .factor-value{font-size:12px}
+.tables{gap:7px}
+.table-card{border-radius:9px}
+.table-title{padding:7px 8px;font-size:9px}
+table{font-size:10.5px}
+th{padding:5px 5px}
+td{padding:4px 5px}
+.month-summary{gap:7px}
+.month-card{padding:8px;border-radius:10px}
+.month-card .m{font-size:8.5px}
+.month-card .v{font-size:15px;margin-top:3px}
+.month-card .d{font-size:8.5px;margin-top:2px}
+.pair{gap:8px}
+.formula-line{padding:8px 9px;border-radius:9px;margin-top:5px;gap:8px}
+.formula-line .leftf{font-size:9.5px}
+.formula-line .rightf{font-size:14px}
+.annual-box{gap:8px}
+.annual-col{padding:9px;border-radius:10px}
+.annual-col h4{font-size:10.5px}
+.annual-col .big{font-size:18px}
+.annual-col p{font-size:9px}
+.final{padding:11px 13px;border-radius:12px}
+.final-copy .small{font-size:8px}
+.final-copy .big{font-size:15px}
+.final-number .label{font-size:7.5px}
+.final-number .amount{font-size:23px}
+
+@media(max-width:1320px){
+  .left{width:310px;left:max(10px, calc(50% - 660px + 10px))}
+  .main{margin-left:326px}
+}
+@media(max-width:1080px){
+  .left{position:relative;top:auto;left:auto;width:auto;max-height:none;overflow:visible;padding-right:0}
+  .main{margin-left:0}
+}
+
 </style>
 </head>
 <body>
