@@ -182,6 +182,170 @@ td{padding:4px 5px;border-top:1px solid #EFEDEF;text-align:center;color:#424955;
   .left{position:relative !important;top:auto !important}
 }
 
+
+
+/* =========================================================
+   FIJO REAL: CABECERA + FORMULARIO
+   Estas reglas finales prevalecen sobre cualquier sticky anterior.
+   ========================================================= */
+@media (min-width: 901px){
+  :root{ --sidebarW:330px; }
+
+  body{ padding-top:0 !important; }
+  .page{ padding-top:10px !important; }
+
+  .top-sticky{
+    position:fixed !important;
+    top:0 !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:min(calc(100vw - 24px),1456px) !important;
+    z-index:5000 !important;
+    background:#fff !important;
+    border:1px solid #ECE7EA !important;
+    border-top:0 !important;
+    border-radius:0 0 18px 18px !important;
+    padding:10px 14px 11px !important;
+    box-shadow:0 8px 22px rgba(17,24,39,.07) !important;
+    backdrop-filter:none !important;
+  }
+
+  /* Reservamos exactamente el alto de la cabecera fija */
+  .shell{
+    padding-top:calc(var(--headerH) + 14px) !important;
+  }
+
+  .layout{
+    display:block !important;
+    position:relative !important;
+    margin-top:0 !important;
+    min-height:1200px;
+  }
+
+  .left{
+    position:fixed !important;
+    top:calc(var(--headerH) + 14px) !important;
+    left:max(12px, calc(50% - 740px + 12px)) !important;
+    width:var(--sidebarW) !important;
+    max-height:calc(100vh - var(--headerH) - 26px) !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    z-index:4000 !important;
+    padding-right:4px !important;
+    scrollbar-gutter:stable !important;
+  }
+
+  .left::-webkit-scrollbar{ width:8px; }
+  .left::-webkit-scrollbar-thumb{
+    background:#DDD7DC;
+    border-radius:999px;
+    border:2px solid transparent;
+    background-clip:padding-box;
+  }
+  .left::-webkit-scrollbar-track{ background:transparent; }
+
+  .main{
+    margin-left:calc(var(--sidebarW) + 16px) !important;
+    width:auto !important;
+    min-width:0 !important;
+  }
+
+  /* Nada de saltos o transiciones al hacer scroll */
+  .top-sticky,.left,.main,.section,.input-card,.table-card,.month-card,.formula-line{
+    transition:none !important;
+    animation:none !important;
+  }
+}
+
+/* En pantallas medianas/pequeñas volvemos al flujo normal para no cortar contenido */
+@media (max-width: 900px){
+  .top-sticky{
+    position:relative !important;
+    top:auto !important;
+    left:auto !important;
+    transform:none !important;
+    width:100% !important;
+    border-radius:16px !important;
+  }
+  .shell{ padding-top:0 !important; }
+  .layout{ display:grid !important; grid-template-columns:1fr !important; }
+  .left{
+    position:relative !important;
+    top:auto !important;
+    left:auto !important;
+    width:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    padding-right:0 !important;
+  }
+  .main{ margin-left:0 !important; }
+}
+
+
+
+/* =========================================================
+   FIJOS DE VERDAD - CABECERA + FORMULARIO
+   Solo el contenido derecho se desplaza.
+   ========================================================= */
+@media (min-width: 901px){
+  :root{ --sidebarW: 330px; }
+
+  html,body{ overflow-x:hidden !important; }
+
+  .top-sticky{
+    position:fixed !important;
+    top:0 !important;
+    left:50% !important;
+    right:auto !important;
+    transform:translateX(-50%) !important;
+    width:min(calc(100vw - 24px),1456px) !important;
+    z-index:9999 !important;
+    background:#fff !important;
+  }
+
+  .shell{
+    padding-top:calc(var(--headerH) + 14px) !important;
+  }
+
+  .layout{
+    display:block !important;
+    position:relative !important;
+    margin-top:0 !important;
+    min-height:1200px !important;
+  }
+
+  .left{
+    position:fixed !important;
+    top:calc(var(--headerH) + 14px) !important;
+    left:max(12px, calc(50% - 740px + 12px)) !important;
+    width:var(--sidebarW) !important;
+    z-index:9990 !important;
+    max-height:none !important;
+    overflow:visible !important;
+    padding-right:0 !important;
+  }
+
+  .input-card{
+    max-height:none !important;
+    overflow:hidden !important;
+  }
+
+  .main{
+    margin-left:calc(var(--sidebarW) + 18px) !important;
+    width:auto !important;
+    min-width:0 !important;
+  }
+
+  .top-sticky,.left,.main,.section,.input-card{
+    transform:none;
+    transition:none !important;
+    animation:none !important;
+  }
+
+  .top-sticky{ transform:translateX(-50%) !important; }
+}
+
 </style>
 </head>
 <body>
