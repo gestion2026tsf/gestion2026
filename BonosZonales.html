@@ -799,6 +799,19 @@ body.guide-mode .main [data-guide-step]{display:none !important}
 body.guide-mode .main [data-guide-step].guide-active{display:block !important}
 body.guide-mode .main .pair{display:block !important}
 body.guide-mode .main .pair > .section{margin-bottom:0}
+body.guide-mode .main .pair-8-9.guide-combined{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:8px !important;
+  align-items:stretch !important;
+}
+body.guide-mode .main .pair-8-9.guide-combined > .section{
+  display:block !important;
+  height:100%;
+}
+@media(max-width:900px){
+  body.guide-mode .main .pair-8-9.guide-combined{grid-template-columns:1fr !important}
+}
 body.guide-mode .quarter-breakdown{display:none !important}
 body.guide-mode .quarter-breakdown.guide-active{display:block !important}
 body.guide-mode .guide-intro{display:none !important}
@@ -992,7 +1005,7 @@ body.all-mode .quarter-breakdown{display:block !important}
           </section>
         </div>
 
-        <div class="pair">
+        <div class="pair pair-8-9">
           <section class="section step8" data-guide-step="8">
             <div class="section-inner">
               <div class="step-head"><div class="step-num">8</div><div class="step-copy"><h3>60% bono trimestral resultado</h3><p>Se calcula el 60% del bono trimestral ajustado por mora.</p></div></div>
@@ -1268,8 +1281,8 @@ const GUIDE_STEPS = {
   5:['Aplica el Cargo de jefatura','Sobre el Bono Potencial se aplica el Cargo de jefatura Gerente Zonal y el Factor de Eficiencia.'],
   6:['Calcula el Bono Trimestral 70%','Toma el 70% del bono después del Cargo de jefatura.'],
   7:['Aplica el índice de mora','El bono trimestral de cada mes se ajusta con el factor de mora.'],
-  8:['Calcula el 60% por resultado','Del bono ajustado por mora se obtiene el componente de Resultado.'],
-  9:['Calcula el 40% por clientes','Se aplica el factor de clientes y se completa el Bono Trimestral Final.'],
+  8:['Resultado + Clientes','Revisa juntos el 60% por resultado y el 40% por clientes para entender cómo se forma el Bono Trimestral Final.'],
+  9:['Resultado + Clientes','Revisa juntos el 60% por resultado y el 40% por clientes para entender cómo se forma el Bono Trimestral Final.'],
   10:['Revisa el Bono Anual 30%','Consulta el componente anual de cada mes, el acumulado trimestral y sus condiciones de pago.']
 };
 let guideStep = 1;
@@ -1301,20 +1314,31 @@ function updateGuideUI(){
   document.body.style.setProperty('--guide-soft',colors[1]);
   document.body.style.setProperty('--guide-line',colors[2]);
 
+  const combined89 = guideStep===8 || guideStep===9;
+
   document.querySelectorAll('[data-guide-step]').forEach(el=>{
-    el.classList.toggle('guide-active',guideMode && Number(el.dataset.guideStep)===guideStep);
+    const step=Number(el.dataset.guideStep);
+    const active=guideMode && (combined89 ? (step===8 || step===9) : step===guideStep);
+    el.classList.toggle('guide-active',active);
   });
   document.querySelectorAll('[data-guide-extra]').forEach(el=>{
-    el.classList.toggle('guide-active',guideMode && Number(el.dataset.guideExtra)===guideStep);
+    const extra=Number(el.dataset.guideExtra);
+    const active=guideMode && (combined89 ? extra===9 : extra===guideStep);
+    el.classList.toggle('guide-active',active);
   });
   document.querySelectorAll('[data-guide-target]').forEach(el=>{
-    el.classList.toggle('active-step',guideMode && Number(el.dataset.guideTarget)===guideStep);
+    const target=Number(el.dataset.guideTarget);
+    const active=guideMode && (combined89 ? (target===8 || target===9) : target===guideStep);
+    el.classList.toggle('active-step',active);
   });
+
+  const pair89=document.querySelector('.pair-8-9');
+  if(pair89) pair89.classList.toggle('guide-combined',guideMode && combined89);
 
   const progressText=document.getElementById('guideProgressText');
   const progressBar=document.getElementById('guideProgressBar');
-  if(progressText) progressText.textContent=`Paso ${guideStep} de 10`;
-  if(progressBar) progressBar.style.width=`${guideStep*10}%`;
+  if(progressText) progressText.textContent=combined89?'Pasos 8 y 9 de 10':`Paso ${guideStep} de 10`;
+  if(progressBar) progressBar.style.width=`${combined89?90:guideStep*10}%`;
 
   const prev=document.getElementById('prevStepBtn');
   const next=document.getElementById('nextStepBtn');
@@ -1329,7 +1353,9 @@ function updateGuideUI(){
 }
 
 function setGuideStep(step,scroll=true){
-  guideStep=Math.max(1,Math.min(10,Number(step)||1));
+  let requested=Math.max(1,Math.min(10,Number(step)||1));
+  if(requested===9) requested=8;
+  guideStep=requested;
   updateGuideUI();
   if(scroll){
     const main=document.querySelector('.main');
@@ -1355,9 +1381,14 @@ document.getElementById('allModeBtn')?.addEventListener('click',()=>{
   guideMode=false;
   updateGuideUI();
 });
-document.getElementById('prevStepBtn')?.addEventListener('click',()=>setGuideStep(guideStep-1,true));
+document.getElementById('prevStepBtn')?.addEventListener('click',()=>{
+  if(guideStep===10) setGuideStep(8,true);
+  else setGuideStep(guideStep-1,true);
+});
 document.getElementById('nextStepBtn')?.addEventListener('click',()=>{
-  if(guideStep===10) setGuideStep(1,true); else setGuideStep(guideStep+1,true);
+  if(guideStep===10) setGuideStep(1,true);
+  else if(guideStep===8) setGuideStep(10,true);
+  else setGuideStep(guideStep+1,true);
 });
 
 window.addEventListener('load',()=>{
