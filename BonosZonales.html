@@ -198,6 +198,76 @@ th,td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .header h1{font-size:31px}
 }
 
+
+
+/* ===== CORRECCION DEFINITIVA: CABECERA Y COSTADO REALMENTE FIJOS ===== */
+:root{--fixed-header-h:210px}
+html{scrollbar-gutter:stable;overflow-x:clip!important}
+body{overflow-x:clip!important;overflow-y:visible!important}
+.page,.shell{overflow:visible!important}
+.page{padding-top:14px!important}
+.shell{position:relative!important}
+
+.top-sticky{
+  position:fixed!important;
+  top:10px!important;
+  left:max(16px,calc((100vw - 1500px)/2 + 16px))!important;
+  right:max(16px,calc((100vw - 1500px)/2 + 16px))!important;
+  width:auto!important;
+  z-index:9999!important;
+  margin:0!important;
+  padding:16px 20px 11px!important;
+  background:#fff!important;
+  border:1px solid #E8E2E6!important;
+  border-radius:20px!important;
+  box-shadow:0 10px 28px rgba(17,24,39,.10)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.top-spacer{height:var(--fixed-header-h);display:block;pointer-events:none}
+
+.header{min-height:0!important;margin:0 0 10px!important;align-items:center!important}
+.header h1{font-size:37px!important;line-height:1!important}
+.header-kicker{margin-bottom:7px!important}
+.brand-box{min-width:205px!important}
+.brand-circle{width:48px!important;height:48px!important}
+.brand-title{font-size:34px!important}
+.steps{margin:0!important;gap:7px!important}
+.step-nav{height:44px!important;min-height:44px!important;padding:6px 8px!important}
+.step-nav .t{font-size:8.4px!important;line-height:1.08!important}
+
+.layout{margin-top:0!important;grid-template-columns:350px minmax(0,1fr)!important;gap:14px!important;align-items:start!important}
+.left{
+  position:sticky!important;
+  top:calc(var(--fixed-header-h) + 22px)!important;
+  align-self:start!important;
+  max-height:none!important;
+  overflow:visible!important;
+  overscroll-behavior:auto!important;
+  scrollbar-width:auto!important;
+}
+.input-card{overflow:hidden!important}
+.main{min-width:0!important}
+.section{scroll-margin-top:calc(var(--fixed-header-h) + 24px)!important}
+
+/* Evita reflujo visual y saltos */
+.step-nav,.section,.input-card,.table-card,.month-card,.calc-box,.formula-line,.pdf-btn,.btn{
+  transition:none!important;
+  transform:none!important;
+}
+.tables{align-items:stretch!important}
+.table-card{min-width:0!important}
+table{table-layout:fixed!important}
+th,td{overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+
+@media(max-width:1100px){
+  :root{--fixed-header-h:0px}
+  .top-sticky{position:relative!important;top:auto!important;left:auto!important;right:auto!important;border:0!important;border-bottom:1px solid #ECE8EC!important;border-radius:0!important;box-shadow:none!important;padding:0 0 10px!important}
+  .top-spacer{display:none!important}
+  .layout{grid-template-columns:1fr!important;margin-top:14px!important}
+  .left{position:relative!important;top:auto!important}
+}
+
 </style>
 </head>
 <body>
@@ -205,7 +275,7 @@ th,td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   <div class="top-sticky">
     <header class="header">
       <div class="header-copy">
-        <div class="header-kicker">GERENTE ZONAL FACTORING</div>
+        <div class="header-kicker">GERENTE ZONAL</div>
         <h1><span>Tu bono</span>, fácil de entender</h1>
         <p>Conoce cómo se calcula tu bonificación.</p>
       </div>
@@ -219,12 +289,13 @@ th,td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       <div class="step-nav"><div class="n">2</div><div class="t">Calcula tus factores</div></div>
       <div class="step-nav"><div class="n">3</div><div class="t">Halla el promedio por ejecutivo</div></div>
       <div class="step-nav"><div class="n">4</div><div class="t">Calcula Bono Potencial y factor de cargo</div></div>
-      <div class="step-nav"><div class="n">5</div><div class="t">Bono preliminar y factor de mora</div></div>
-      <div class="step-nav"><div class="n">6</div><div class="t">Calcula el 60% por resultado</div></div>
-      <div class="step-nav"><div class="n">7</div><div class="t">Calcula el 40% clientes y bono final</div></div>
-      <div class="step-nav"><div class="n">8</div><div class="t">Revisa el componente anual</div></div>
+      <div class="step-nav"><div class="n">5</div><div class="t">Bono Trimestral 70% e índice de mora</div></div>
+      <div class="step-nav"><div class="n">6</div><div class="t">60% bono trimestral resultado</div></div>
+      <div class="step-nav"><div class="n">7</div><div class="t">40% bono trimestral clientes</div></div>
+      <div class="step-nav"><div class="n">8</div><div class="t">Revisa el Bono Anual 30%</div></div>
     </div>
   </div>
+  <div class="top-spacer" aria-hidden="true"></div>
 
   <div class="layout">
     <aside class="left">
@@ -253,8 +324,8 @@ th,td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
           </div>
           <div class="controls">
             <div class="control-title">PARÁMETROS DEL ESQUEMA</div>
-            <div class="mini-field"><label>Factor cargo Gerente Zonal</label><input id="cargo" type="number" min="0" step="0.01" value="30"><span style="font-size:10px;font-weight:800">%</span></div>
-            <div class="mini-field"><label>Factor de eficiencia</label><input id="eff" type="number" min="0" step="0.01" value="100"><span style="font-size:10px;font-weight:800">%</span></div>
+            <div class="mini-field"><label>Cargo de jefatura Gerente Zonal</label><input id="cargo" type="number" min="0" step="0.01" value="30"><span style="font-size:10px;font-weight:800">%</span></div>
+            <div class="mini-field"><label>Factor de Eficiencia</label><input id="eff" type="number" min="0" step="0.01" value="100"><span style="font-size:10px;font-weight:800">%</span></div>
             <button class="btn" id="calcBtn">CALCULAR BONO</button>
             <div class="input-note"></div>
           </div>
@@ -273,19 +344,19 @@ th,td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
       <section class="section step3"><div class="section-inner"><div class="step-head"><div class="step-num">3</div><div class="step-copy"><h3>Halla el promedio del resultado por ejecutivo</h3><p>Se divide el resultado acumulado de la zona entre todos los ejecutivos asignados, incluso si alguno no generó resultados.</p></div></div><div class="month-summary" id="avgSummary"></div></div></section>
 
-      <section class="section step4"><div class="section-inner"><div class="step-head"><div class="step-num">4</div><div class="step-copy"><h3>Calcula el Bono Potencial y aplica el factor de cargo</h3><p>El factor de consecución se obtiene con el promedio por ejecutivo, pero se aplica al resultado consolidado de la zona. Luego se aplica cargo y eficiencia.</p></div></div><div class="month-summary" id="potentialSummary"></div></div></section>
+      <section class="section step4"><div class="section-inner"><div class="step-head"><div class="step-num">4</div><div class="step-copy"><h3>Calcula el Bono Potencial y aplica el Cargo de jefatura Gerente Zonal</h3><p>El factor de consecución se obtiene con el promedio por ejecutivo y se aplica al resultado consolidado de la zona. Luego se aplica el Cargo de jefatura Gerente Zonal y, cuando corresponda, el Factor de Eficiencia.</p></div></div><div class="month-summary" id="potentialSummary"></div></div></section>
 
       <div class="pair">
-        <section class="section step5"><div class="section-inner"><div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Calcula el Bono Trimestral preliminar</h3><p>70% del bono después de aplicar el factor de cargo.</p></div></div><div id="prelimLines"></div></div></section>
-        <section class="section step5"><div class="section-inner"><div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Aplica el factor de mora</h3><p>El bono trimestral de cada mes se ajusta según la tabla de mora.</p></div></div><div id="moraLines"></div></div></section>
+        <section class="section step5"><div class="section-inner"><div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Calcula el Bono Trimestral 70%</h3><p>Se calcula el Bono Trimestral 70% después de aplicar el Cargo de jefatura Gerente Zonal.</p></div></div><div id="prelimLines"></div></div></section>
+        <section class="section step5"><div class="section-inner"><div class="step-head"><div class="step-num">5</div><div class="step-copy"><h3>Cálculo según tabla de índice de mora</h3><p>El bono trimestral de cada mes se ajusta según la tabla de mora.</p></div></div><div id="moraLines"></div></div></section>
       </div>
 
       <div class="pair">
         <section class="section step6"><div class="section-inner"><div class="step-head"><div class="step-num">6</div><div class="step-copy"><h3>Calcula 60% resultado + 40% clientes</h3><p>El 60% se paga por resultado. El 40% se multiplica por el factor de clientes promedio por ejecutivo.</p></div></div><div id="splitLines"></div></div></section>
-        <section class="section step7"><div class="section-inner"><div class="step-head"><div class="step-num">7</div><div class="step-copy"><h3>Calcula 40% clientes y obtén el Bono Trimestral Final</h3><p>El 40% se ajusta por el factor de clientes y luego se suma al 60% de resultado. Los tres resultados mensuales se acumulan y se pagan al cierre del trimestre.</p></div></div><div id="monthlyLines"></div></div></section>
+        <section class="section step7"><div class="section-inner"><div class="step-head"><div class="step-num">7</div><div class="step-copy"><h3>40% bono trimestral clientes y Bono Trimestral Final</h3><p>El 40% se ajusta por el factor de clientes y luego se suma al 60% de resultado. Los tres resultados mensuales se acumulan y se pagan al cierre del trimestre.</p></div></div><div id="monthlyLines"></div></div></section>
       </div>
 
-      <section class="section step8"><div class="section-inner"><div class="step-head"><div class="step-num">8</div><div class="step-copy"><h3>Revisa el componente anual</h3><p>30% del bono después del factor de cargo. No constituye un pago asegurado.</p></div></div>
+      <section class="section step8"><div class="section-inner"><div class="step-head"><div class="step-num">8</div><div class="step-copy"><h3>Revisa el Bono Anual 30%</h3><p>30% del bono después del factor de cargo. No constituye un pago asegurado.</p></div></div>
         <div class="annual-box"><div class="annual-col"><h4>Componente anual acumulado del trimestre</h4><div class="big" id="annualTotal">US$ 0.00</div><p>Corresponde a la suma del componente anual de los tres meses.</p></div><div class="annual-col"><h4>Condición de pago</h4><p><strong>50% Utilidad neta de la compañía</strong><br><strong>50% Evaluación de Desempeño</strong><br><br>Su pago está sujeto al cumplimiento de ambas condiciones.</p></div></div>
       </div></section>
 
@@ -326,7 +397,7 @@ function calculate(){
  const m=[1,2,3].map(i=>calcMonth(i,cargo,eff));
  const current=Number(document.querySelector('.month-tab.active').dataset.month)-1; renderTables(m[current].avg,m[current].clientsAvg,m[current].mora);
  document.getElementById('avgSummary').innerHTML=m.map(x=>`<div class="month-card"><div class="m">Mes ${x.i}</div><div class="v">US$ ${num(x.avg)}</div><div class="d">${money(x.result)} ÷ ${num(x.executives)} ejecutivos</div></div>`).join('');
- document.getElementById('potentialSummary').innerHTML=m.map(x=>`<div class="month-card"><div class="m">Mes ${x.i} · Factor ${pct(x.rf[2])}</div><div class="v">${money(x.base)}</div><div class="d">${money(x.result)} × ${pct(x.rf[2])} × ${pct(cargo)} cargo × ${pct(eff)} eficiencia</div></div>`).join('');
+ document.getElementById('potentialSummary').innerHTML=m.map(x=>`<div class="month-card"><div class="m">Mes ${x.i} · Factor ${pct(x.rf[2])}</div><div class="v">${money(x.base)}</div><div class="d">${money(x.result)} × ${pct(x.rf[2])} × ${pct(cargo)} Cargo de jefatura × ${pct(eff)} Factor de Eficiencia</div></div>`).join('');
  document.getElementById('prelimLines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong><br>${money(x.base)} × 70%</div><div class="rightf">${money(x.prelim)}</div></div>`).join('');
  document.getElementById('moraLines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong> · Mora ${x.mora.toFixed(2)}% → factor ${pct(x.mf[2])}<br>${money(x.prelim)} × ${pct(x.mf[2])}</div><div class="rightf">${money(x.adjusted)}</div></div>`).join('');
  document.getElementById('splitLines').innerHTML=m.map(x=>`<div class="formula-line"><div class="leftf"><strong>Mes ${x.i}</strong><br>60% resultado = ${money(x.res60)}<br>Clientes/ejec. = ${num(x.clientsAvg)} → factor ${pct(x.cf[2])}<br>40% clientes ajustado = ${money(x.cli40)}</div><div class="rightf">${money(x.res60+x.cli40)}</div></div>`).join('');
@@ -353,6 +424,32 @@ document.getElementById('calcBtn').addEventListener('click',calculate);document.
   sync();
   window.addEventListener('resize',sync,{passive:true});
   if('ResizeObserver' in window){ new ResizeObserver(sync).observe(top); }
+})();
+</script>
+
+
+<script>
+(function(){
+  const root=document.documentElement;
+  const header=document.querySelector('.top-sticky');
+  const spacer=document.querySelector('.top-spacer');
+  if(!header || !spacer) return;
+  function syncFixedHeader(){
+    if(window.matchMedia('(max-width:1100px)').matches){
+      root.style.setProperty('--fixed-header-h','0px');
+      spacer.style.height='0px';
+      return;
+    }
+    const h=Math.ceil(header.getBoundingClientRect().height);
+    root.style.setProperty('--fixed-header-h',h+'px');
+    spacer.style.height=h+'px';
+  }
+  syncFixedHeader();
+  window.addEventListener('resize',syncFixedHeader,{passive:true});
+  if('ResizeObserver' in window){
+    new ResizeObserver(syncFixedHeader).observe(header);
+  }
+  window.addEventListener('load',syncFixedHeader,{once:true});
 })();
 </script>
 
