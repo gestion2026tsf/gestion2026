@@ -339,6 +339,47 @@ html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!import
 }
 
 </style>
+
+<style id="border-fix-final">
+/* SOLO AJUSTE VISUAL DE BORDES - NO TOCA FUNCIONES NI LAYOUT */
+html,body{background:#f6f4f6!important}
+.page{padding-left:12px!important;padding-right:12px!important}
+.shell{
+  border:0!important;
+  box-shadow:none!important;
+  background:#fff!important;
+}
+.top-sticky{
+  border:0!important;
+  border-bottom:1px solid #ece8ec!important;
+  box-shadow:0 5px 14px rgba(17,24,39,.045)!important;
+}
+.input-card{
+  border:1px solid rgba(214,11,94,.18)!important;
+  box-shadow:0 3px 10px rgba(17,24,39,.025)!important;
+}
+.input-head{border-bottom:1px solid rgba(214,11,94,.12)!important}
+.section{
+  border:1px solid #ece9ed!important;
+  box-shadow:none!important;
+}
+.step2{border-color:rgba(242,138,34,.22)!important}
+.step3{border-color:rgba(229,90,90,.20)!important}
+.step4{border-color:rgba(45,133,130,.20)!important}
+.step5{border-color:rgba(208,160,13,.22)!important}
+.step6{border-color:rgba(19,135,131,.20)!important}
+.step7{border-color:rgba(180,81,42,.18)!important}
+.step8{border-color:rgba(93,102,120,.18)!important}
+.step9{border-color:rgba(32,42,58,.16)!important}
+.table-card,.month-card,.formula-line,.annual-col,.factor-pill{
+  border-color:#ece9ed!important;
+  box-shadow:none!important;
+}
+.field input,.mini-field input,.month-tab{border-color:#dde1e7!important}
+.controls{border-top-color:#eeeaf0!important}
+/* evita el borde gris/negro visual en los extremos */
+body::before,body::after,.page::before,.page::after,.shell::before,.shell::after{display:none!important;content:none!important}
+</style>
 </head>
 <body>
 <div class="page">
