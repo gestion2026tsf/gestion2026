@@ -930,6 +930,30 @@ table.report th,table.detail th{
 @media(max-width:1100px){#viewCompras .sources-dashboard{grid-template-columns:1fr 1fr;}#viewCompras .base-obl{grid-column:1/-1;}}
 @media(max-width:760px){#viewCompras .sources-dashboard{grid-template-columns:1fr;}#viewCompras .base-obl{grid-column:auto;}#viewCompras .base-dash-card{min-height:unset;}}
 
+
+/* ===== CORRECCION FINAL COMPRAS ===== */
+#viewCompras #cardsPrincipalesC{
+  display:block !important;
+  width:100% !important;
+  margin:0 0 24px !important;
+}
+#viewCompras #cardsPrincipalesC > .sources-dashboard{
+  width:100% !important;
+  max-width:none !important;
+}
+#viewCompras .sources-dashboard{
+  grid-template-columns:repeat(3,minmax(280px,1fr)) !important;
+  width:100% !important;
+}
+@media(max-width:1100px){
+  #viewCompras .sources-dashboard{grid-template-columns:repeat(2,minmax(280px,1fr)) !important;}
+  #viewCompras .base-obl{grid-column:1/-1;}
+}
+@media(max-width:760px){
+  #viewCompras .sources-dashboard{grid-template-columns:1fr !important;}
+  #viewCompras .base-obl{grid-column:auto;}
+}
+
 </style>
 </head>
 <body>
@@ -1017,12 +1041,11 @@ table.report th,table.detail th{
     <div class="htext">
       <div class="eyebrow">Conciliación de compras · PLE + SIRE + Obligaciones</div>
       <h1>Conciliador de Compras</h1>
-      <div style="display:inline-block;margin:6px 0 10px;padding:6px 10px;border:1px solid #e7a6be;border-radius:999px;background:#fff1f6;color:#9d2d59;font-family:var(--mono);font-size:11px;font-weight:700;">VERSIÓN COMPRAS · PEDIDO FLAVIO VALIDADO · V13</div>
       <p>Valida el PLE 8.1 del periodo contra el histórico SIRE de SUNAT y incorpora la Lista de Obligaciones de Sprint como cruce complementario por Voucher/CUO y como apoyo para documentos bancarios. Revisa si el comprobante está registrado y, si lo está, compara RUC, proveedor, tipo, serie, correlativo, fecha de emisión, moneda, tipo de cambio, base imponible, IGV y total. También realiza el cruce SIRE → PLE para identificar comprobantes del periodo que aún no aparecen en contabilidad.</p>
     </div>
   </header>
 
-  <div class="grid3" id="cardsPrincipalesC"></div>
+  <div id="cardsPrincipalesC"></div>
 
   <div class="card" id="cardTCC" style="margin-bottom:24px;border-color:#9CC2E5;background:#F4F9FF;">
     <div class="card-label" style="color:#2F75B5;">Base 4 · obligatoria para validar TC</div>
