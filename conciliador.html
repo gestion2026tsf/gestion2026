@@ -981,6 +981,18 @@ table.report th,table.detail th{
     <div class="section-title">Resumen por tipo de comprobante</div>
     <div id="resumenTipoHolder"></div>
 
+    <!-- NUEVO FLAVIO: cruce visible con Lista de Obligaciones. No reemplaza ningún resumen anterior. -->
+    <div class="section-title">Resumen — PLE / SIRE / Lista de Obligaciones</div>
+    <div id="resumenObligacionesHolder"></div>
+    <div class="download-row" style="margin-top:12px;">
+      <button class="ghost" id="btnToggleObligaciones">Ver detalle de Obligaciones</button>
+      <span class="status-msg" id="detalleObligacionesMsg"></span>
+    </div>
+    <div id="detalleObligacionesBox" style="display:none;margin-bottom:22px;">
+      <div class="detail-wrap"><table class="detail" id="detailObligacionesC"></table></div>
+      <p class="footnote">Cruce auxiliar por Voucher/CUO exacto. Conserva intactos los estados y reglas actuales del conciliador PLE ↔ SIRE.</p>
+    </div>
+
     <div class="download-row">
       <button class="ghost" id="btnDescargarC">Descargar papel de trabajo (.xlsx)</button>
       <span class="status-msg" id="downloadMsgC"></span>
@@ -2977,7 +2989,26 @@ function iniciarBancos(){wireDrop('dropBancosC','fileBancosC',file=>{const rd=ne
     let serie='',numero=''; if(documento.includes('-')){const p=documento.lastIndexOf('-');serie=documento.slice(0,p).replace(/^(FP|PP)-/i,'');numero=documento.slice(p+1)}
     if(!serie)serie=String(valorPorAlias(x,['Serie'])).trim(); if(!numero)numero=String(valorPorAlias(x,['Correlativo','Numero','Número'])).trim();
     const voucher=String(valorPorAlias(x,['Voucher','CUO','Voucher Contable'])).trim();
-    return {voucher,voucherNorm:normVoucher(voucher),documento,proveedor:String(valorPorAlias(x,['Busqueda','Proveedor','Razon Social','Razón Social'])).trim(),tipoDocumento:String(valorPorAlias(x,['TipoDocumento','Tipo Documento'])).trim(),serie,numero,monto:toNumber(valorPorAlias(x,['MontoObligacion','Monto Obligacion','Importe','Monto'])),fecha:normalizarFecha(valorPorAlias(x,['FechaDocumento','Fecha Documento','Fecha'])),raw:x};
+    return {
+      voucher,voucherNorm:normVoucher(voucher),documento,
+      proveedor:String(valorPorAlias(x,['Busqueda','Proveedor','Razon Social','Razón Social'])).trim(),
+      tipoDocumento:String(valorPorAlias(x,['TipoDocumento','Tipo Documento'])).trim(),
+      serie,numero,
+      monto:toNumber(valorPorAlias(x,['MontoObligacion','Monto Obligacion','Importe','Monto'])),
+      fecha:normalizarFecha(valorPorAlias(x,['FechaDocumento','Fecha Documento','Fecha'])),
+      // NUEVO FLAVIO: datos adicionales de la Lista de Obligaciones.
+      estadoDocumento:String(valorPorAlias(x,['EstadoDocumento','Estado Documento','Estado'])).trim(),
+      fechaVencimiento:normalizarFecha(valorPorAlias(x,['FechaVencimiento','Fecha Vencimiento'])),
+      fechaPago:normalizarFecha(valorPorAlias(x,['FechaPago','Fecha Pago'])),
+      voucherPago:String(valorPorAlias(x,['VoucherPago','Voucher Pago'])).trim(),
+      comentarios:String(valorPorAlias(x,['Comentarios','Comentario'])).trim(),
+      monedaDocumento:String(valorPorAlias(x,['MonedaDocumento','Moneda Documento','Moneda'])).trim(),
+      registroNumero:String(valorPorAlias(x,['RegistroNumero','Registro Numero'])).trim(),
+      numeroDocumentoInterno:String(valorPorAlias(x,['NumeroDocumentoInterno','Número Documento Interno'])).trim(),
+      tipoPago:String(valorPorAlias(x,['TipoPago','Tipo Pago'])).trim(),
+      generarPago:String(valorPorAlias(x,['GenerarPago','Generar Pago'])).trim(),
+      raw:x
+    };
   }).filter(x=>x.voucherNorm&&x.serie&&x.numero);
   const porVoucher=new Map(); parsed.forEach(x=>{if(!porVoucher.has(x.voucherNorm))porVoucher.set(x.voucherNorm,[]);porVoucher.get(x.voucherNorm).push(x)});
   state.bancos={rows:parsed,porVoucher,fileName:file.name};document.getElementById('estadoBancosC').textContent=`${parsed.length.toLocaleString('es-PE')} filas — ${file.name}`;document.getElementById('cardBancosC').classList.add('ready');marcarDrop('dropBancosC',file);actualizarEstado();
@@ -2991,7 +3022,14 @@ function sugerirBanco(r){
   const key=buildKey(r.rucProveedor,r.tipoCP,best.serie,best.numero);
   const proveedorObligacion=String(best.proveedor||'').trim();
   const esBancoObligacion=/\bBANCO\b|SCOTIABANK|INTERBANK|BBVA|BCP|CREDITO DEL PERU|FINANCIER/i.test(proveedorObligacion);
-  return {voucher:r.cuo,voucherObligacion:best.voucher,documentoObligacion:best.documento,proveedorObligacion,tipoDocumentoObligacion:best.tipoDocumento,esBancoObligacion,serie:best.serie,numero:padNum(best.numero),keySugerida:key,encontradaEnSIRE:state.sireSet?.has(key)||false,monto:best.monto,fecha:best.fecha,metodo:'VOUCHER/CUO EXACTO'};
+  return {
+    voucher:r.cuo,voucherObligacion:best.voucher,documentoObligacion:best.documento,proveedorObligacion,
+    tipoDocumentoObligacion:best.tipoDocumento,esBancoObligacion,serie:best.serie,numero:padNum(best.numero),
+    keySugerida:key,encontradaEnSIRE:state.sireSet?.has(key)||false,monto:best.monto,fecha:best.fecha,metodo:'VOUCHER/CUO EXACTO',
+    // Campos adicionales solo informativos; no alteran la lógica bancaria existente.
+    estadoDocumento:best.estadoDocumento||'',fechaVencimiento:best.fechaVencimiento||'',fechaPago:best.fechaPago||'',
+    voucherPago:best.voucherPago||'',comentarios:best.comentarios||'',monedaDocumento:best.monedaDocumento||''
+  };
 }
 
 function iniciarHistoricoManual(){
@@ -3294,6 +3332,125 @@ function buscarCandidato(ple,sireRows){
   return bestScore>=6?{row:best,score:bestScore}:null;
 }
 
+// =========================================================
+// NUEVO FLAVIO — CRUCE PLE / SIRE / LISTA DE OBLIGACIONES
+// Se agrega como capa informativa. NO cambia la conciliación PLE ↔ SIRE.
+// Relación principal: CUO del PLE = Voucher de Lista de Obligaciones.
+// =========================================================
+function analizarObligaciones(pleResultado){
+  const rows=state.bancos?.rows||[];
+  const porVoucher=state.bancos?.porVoucher||new Map();
+  if(!rows.length){
+    return {disponible:false,pleCruce:[],noPLE:[],noPLEVouchers:0,totalFilas:0,totalVouchers:0,estados:new Map(),tipos:new Map()};
+  }
+
+  const pleVoucherSet=new Set();
+  pleResultado.forEach(x=>{const v=normVoucher(x.cuo);if(v)pleVoucherSet.add(v)});
+
+  const pleCruce=pleResultado.map(x=>{
+    const voucherNorm=normVoucher(x.cuo);
+    const obligaciones=voucherNorm?(porVoucher.get(voucherNorm)||[]):[];
+    const tieneObligaciones=obligaciones.length>0;
+    // Confirmación estricta en SIRE: llave exacta original o llave corregida por Obligaciones.
+    const sireExacto=!!(x.key&&state.sireSet?.has(x.key));
+    const sireCorregido=!!x.sugerenciaBanco?.encontradaEnSIRE;
+    const tieneSIRE=sireExacto||sireCorregido;
+
+    let resultado='';
+    if(tieneObligaciones&&tieneSIRE) resultado='EN PLE + SIRE + OBLIGACIONES';
+    else if(tieneObligaciones&&!tieneSIRE) resultado='EN PLE + OBLIGACIONES — NO CONFIRMADO EN SIRE';
+    else if(!tieneObligaciones&&tieneSIRE) resultado='EN PLE + SIRE — NO EN OBLIGACIONES';
+    else resultado='EN PLE — NO EN OBLIGACIONES NI SIRE EXACTO';
+
+    const unicos=a=>[...new Set(a.filter(v=>String(v??'').trim()!=='').map(v=>String(v).trim()))];
+    return {
+      ...x,
+      obligacionMatch:tieneObligaciones,
+      obligacionResultado:resultado,
+      obligaciones,
+      obligacionFilas:obligaciones.length,
+      obligacionDocumentos:unicos(obligaciones.map(o=>o.documento)).join(' | '),
+      obligacionTipos:unicos(obligaciones.map(o=>o.tipoDocumento)).join(' | '),
+      obligacionEstados:unicos(obligaciones.map(o=>o.estadoDocumento)).join(' | '),
+      obligacionMonto:obligaciones.reduce((a,o)=>a+toNumber(o.monto),0),
+      obligacionVencimientos:unicos(obligaciones.map(o=>fechaDDMMYYYY(o.fechaVencimiento)||o.fechaVencimiento)).join(' | '),
+      obligacionFechasPago:unicos(obligaciones.map(o=>fechaDDMMYYYY(o.fechaPago)||o.fechaPago)).join(' | '),
+      obligacionVoucherPago:unicos(obligaciones.map(o=>o.voucherPago)).join(' | '),
+      obligacionComentarios:unicos(obligaciones.map(o=>o.comentarios)).join(' | '),
+      obligacionMonedas:unicos(obligaciones.map(o=>o.monedaDocumento)).join(' | '),
+      obligacionTieneSIRE:tieneSIRE
+    };
+  });
+
+  const noPLE=rows.filter(o=>o.voucherNorm&&!pleVoucherSet.has(o.voucherNorm));
+  const noPLEVouchers=new Set(noPLE.map(o=>o.voucherNorm)).size;
+  const totalVouchers=new Set(rows.map(o=>o.voucherNorm).filter(Boolean)).size;
+  const estados=contar(rows,'estadoDocumento');
+  const tipos=contar(rows,'tipoDocumento');
+  return {disponible:true,pleCruce,noPLE,noPLEVouchers,totalFilas:rows.length,totalVouchers,estados,tipos};
+}
+
+function renderResumenObligaciones(r){
+  const holder=document.getElementById('resumenObligacionesHolder');
+  const msg=document.getElementById('detalleObligacionesMsg');
+  if(!holder)return;
+  const o=r.obligacionesResultado;
+  if(!o?.disponible){
+    holder.innerHTML='<div class="card"><div class="card-title">Lista de Obligaciones no cargada</div><p class="card-hint">El conciliador PLE ↔ SIRE continúa funcionando igual. Carga la Lista de Obligaciones para habilitar este nuevo cruce.</p></div>';
+    if(msg)msg.textContent='';
+    return;
+  }
+  const c=contar(o.pleCruce,'obligacionResultado');
+  const categorias=[
+    'EN PLE + SIRE + OBLIGACIONES',
+    'EN PLE + SIRE — NO EN OBLIGACIONES',
+    'EN PLE + OBLIGACIONES — NO CONFIRMADO EN SIRE',
+    'EN PLE — NO EN OBLIGACIONES NI SIRE EXACTO'
+  ];
+  const total=o.pleCruce.length||1;
+  let h='<table class="report"><thead><tr><th>Resultado del cruce</th><th>Cantidad PLE</th><th>% PLE</th></tr></thead><tbody>';
+  categorias.forEach(e=>{const n=c.get(e)||0;const cls=e==='EN PLE + SIRE + OBLIGACIONES'?'ok':e.includes('NO EN OBLIGACIONES')||e.includes('NO CONFIRMADO')?'warn':'';h+=`<tr><td>${esc(e)}</td><td class="${cls}">${n}</td><td>${(n/total*100).toFixed(1)}%</td></tr>`});
+  h+=`<tr><td>Vouchers de Obligaciones sin localizar en el PLE cargado</td><td class="${o.noPLEVouchers?'warn':'ok'}">${o.noPLEVouchers}</td><td>—</td></tr>`;
+  h+=`<tr><td>Total Lista de Obligaciones cargada</td><td>${o.totalFilas.toLocaleString('es-PE')} filas</td><td>${o.totalVouchers.toLocaleString('es-PE')} vouchers</td></tr>`;
+  h+='</tbody></table>';
+
+  if(o.estados?.size){
+    h+='<div style="margin-top:18px"><table class="report"><thead><tr><th>EstadoDocumento en Obligaciones</th><th>Filas</th></tr></thead><tbody>';
+    [...o.estados.entries()].sort((a,b)=>b[1]-a[1]).forEach(([e,n])=>{h+=`<tr><td>${esc(e||'(vacío)')}</td><td>${n}</td></tr>`});
+    h+='</tbody></table></div>';
+  }
+  holder.innerHTML=h;
+  if(msg)msg.textContent=`${o.pleCruce.filter(x=>x.obligacionMatch).length.toLocaleString('es-PE')} filas PLE tienen Voucher/CUO localizado en Obligaciones.`;
+}
+
+function renderDetalleObligaciones(r){
+  const tbl=document.getElementById('detailObligacionesC');
+  if(!tbl)return;
+  const o=r.obligacionesResultado;
+  if(!o?.disponible){tbl.innerHTML='';return;}
+  const rows=o.pleCruce.slice(0,250);
+  const body=rows.map(x=>`<tr>
+    <td>${esc(x.obligacionResultado)}</td>
+    <td>${esc(x.cuo)}</td>
+    <td>${esc(x.rucProveedor)}</td>
+    <td>${esc(x.razonSocial)}</td>
+    <td>${esc(x.tipoCP)}</td>
+    <td>${esc(x.serie)}</td>
+    <td>${esc(padNum(x.nroCP))}</td>
+    <td>${Number(x.totalCP||0).toFixed(2)}</td>
+    <td>${x.obligacionTieneSIRE?'Sí':'No'}</td>
+    <td>${esc(x.obligacionDocumentos)}</td>
+    <td>${esc(x.obligacionTipos)}</td>
+    <td>${esc(x.obligacionEstados)}</td>
+    <td>${Number(x.obligacionMonto||0).toFixed(2)}</td>
+    <td>${esc(x.obligacionVencimientos)}</td>
+    <td>${esc(x.obligacionFechasPago)}</td>
+    <td>${esc(x.obligacionVoucherPago)}</td>
+    <td>${esc(x.obligacionComentarios)}</td>
+  </tr>`).join('');
+  tbl.innerHTML='<thead><tr><th>Resultado cruce</th><th>CUO/Voucher PLE</th><th>RUC</th><th>Proveedor PLE</th><th>Tipo PLE</th><th>Serie</th><th>Correlativo</th><th>Total PLE</th><th>SIRE exacto/corregido</th><th>Documento Obligaciones</th><th>TipoDocumento</th><th>EstadoDocumento</th><th>Monto Obligaciones</th><th>Vencimiento</th><th>Fecha pago</th><th>Voucher pago</th><th>Comentarios</th></tr></thead><tbody>'+body+'</tbody>';
+}
+
 function procesar(){
   const ple=state.rce.rows,sire=state.sire.rows;
   const map=(rows,key='key')=>{const m=new Map();rows.forEach(r=>{const a=m.get(r[key])||[];a.push(r);m.set(r[key],a)});return m};
@@ -3404,7 +3561,8 @@ function procesar(){
     }
     return {...r,duplicado,estado,motivo,candidatoPLE};
   });
-  return {pleResultado,sireResultado,periodoActual};
+  const obligacionesResultado=analizarObligaciones(pleResultado);
+  return {pleResultado,sireResultado,periodoActual,obligacionesResultado};
 }
 function modoPeriodo(a){const c=new Map();a.forEach(x=>c.set(x,(c.get(x)||0)+1));return [...c.entries()].sort((x,y)=>y[1]-x[1])[0]?.[0]||''}
 function contar(arr,campo){const m=new Map();arr.forEach(x=>m.set(x[campo],(m.get(x[campo])||0)+1));return m}
@@ -3428,10 +3586,21 @@ function renderResultados(r){
   document.getElementById('resumenRCEHolder').innerHTML=h;
   const sr=r.sireResultado.filter(x=>x.estado!=='HISTÓRICO'),cs=contar(sr,'estado'),ts=sr.length||1;let hs='<table class="report"><thead><tr><th>Resultado</th><th>Cantidad</th><th>%</th></tr></thead><tbody>';['REGISTRADO EN PLE','REGISTRADO EN PLE — CORREGIDO POR OBLIGACIONES','REGISTRADO EN PLE HISTÓRICO','POSIBLE COINCIDENCIA EN PLE','NO ENCONTRADO EN PLE — PENDIENTE DE VALIDAR'].forEach(e=>{const n=cs.get(e)||0;const cls=e.startsWith('REGISTRADO EN PLE')?'ok':e.startsWith('NO ENCONTRADO')?'bad':'warn';hs+=`<tr><td>${e}</td><td class="${cls}">${n}</td><td>${(n/ts*100).toFixed(1)}%</td></tr>`});hs+=`<tr><td>Periodo analizado</td><td>${r.periodoActual||'—'}</td><td>—</td></tr></tbody></table>`;document.getElementById('resumenSIREHolder').innerHTML=hs;
   let ht='<table class="report"><thead><tr><th>Tipo</th><th>Total</th><th>OK</th><th>Con diferencias</th><th>Posible</th><th>Especial</th><th>No ubicado</th></tr></thead><tbody>';for(const [cod,info] of state.tipos){const f=r.pleResultado.filter(x=>x.tipoCP===cod),ok=f.filter(x=>x.estado==='CONCILIADO').length,dif=f.filter(x=>x.estado==='CONCILIADO CON DIFERENCIAS').length,pos=f.filter(x=>x.estado==='POSIBLE COINCIDENCIA'||x.estado==='BANCO CONFIRMADO POR OBLIGACIONES'||x.estado==='BANCO EN OBLIGACIONES — NO EN SIRE').length,esp=f.filter(x=>x.estado==='TRATAMIENTO ESPECIAL'||x.estado==='REVISIÓN POR TIPO').length,no=f.filter(x=>x.estado==='NO UBICADO EN SIRE').length;ht+=`<tr><td>${esc(info.label)}</td><td>${f.length}</td><td class="ok">${ok}</td><td>${dif}</td><td>${pos}</td><td>${esp}</td><td class="${no?'bad':''}">${no}</td></tr>`}ht+='</tbody></table>';document.getElementById('resumenTipoHolder').innerHTML=ht;
+  renderResumenObligaciones(r);
+  renderDetalleObligaciones(r);
   const rows=r.pleResultado.slice(0,250);let body=rows.map(x=>{const t=x.tcValidado||datosTCValidadoCompras(x);return `<tr><td>${esc(x.rucProveedor)}</td><td>${esc(x.tipoCP)}</td><td>${esc(x.serie)}</td><td>${esc(padNum(x.nroCP))}</td><td>${esc(x.fechaEmision)}</td><td>${x.totalCP.toFixed(2)}</td><td>${esc(t.es0708?x.documentoOrigen:'')}</td><td>${esc(t.es0708?fechaDDMMYYYY(x.fechaOrigenNorm):'')}</td><td>${t.difGeneral??''}</td><td>${t.es0708?(t.difEspecifico??''):''}</td><td>${esc(t.estadoTC)}</td><td>${x.duplicadoPLE?'Sí':'No'}</td><td>${x.duplicadoSIRE?'Sí':'No'}</td><td><span class="flag ${x.estado==='CONCILIADO'?'ok':(x.estado==='NO UBICADO EN SIRE'||x.estado==='BANCO EN OBLIGACIONES — NO EN SIRE')?'bad':x.estado==='BANCO CONFIRMADO POR OBLIGACIONES'?'ok':'warn'}">${esc(x.estado)}</span></td><td>${esc(x.motivo)}</td><td>${esc(x.sugerenciaBanco?.keySugerida||'')}</td></tr>`}).join('');document.getElementById('detailTableC').innerHTML='<thead><tr><th>RUC</th><th>Tipo</th><th>Serie</th><th>Correlativo</th><th>Fecha</th><th>Total</th><th>Documento modificado</th><th>Fecha doc. modificado</th><th>DIF TC general</th><th>DIF TC 07/08</th><th>Estado TC</th><th>Duplicado PLE</th><th>Duplicado SIRE</th><th>Estado</th><th>Motivo</th><th>Sugerencia banco</th></tr></thead><tbody>'+body+'</tbody>';
 }
 
 document.getElementById('btnProcesarC').addEventListener('click',()=>{const b=document.getElementById('btnProcesarC');b.disabled=true;b.textContent='Conciliando…';setTimeout(()=>{lastResult=procesar();renderResultados(lastResult);document.getElementById('resultsC').classList.add('is-visible');b.disabled=false;b.textContent='Conciliar nuevamente'},10)});
+
+document.getElementById('btnToggleObligaciones')?.addEventListener('click',()=>{
+  const box=document.getElementById('detalleObligacionesBox');
+  const btn=document.getElementById('btnToggleObligaciones');
+  if(!box||!btn)return;
+  const abrir=box.style.display==='none';
+  box.style.display=abrir?'block':'none';
+  btn.textContent=abrir?'Ocultar detalle de Obligaciones':'Ver detalle de Obligaciones';
+});
 document.getElementById('btnActualizarHistoricosC').addEventListener('click',()=>actualizarSIRERemoto({silencioso:false,manual:true}));
 
 document.getElementById('btnDescargarC').addEventListener('click',()=>{
@@ -3483,7 +3652,16 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
       ['RESUMEN SIRE → PLE DEL PERIODO'],
       ['Resultado', 'Cantidad'],
       ['No encontrado en PLE — pendiente de validar', pend.length],
-      ['SIRE histórico total', r.sireResultado.length]
+      ['SIRE histórico total', r.sireResultado.length],
+      [],
+      ['RESUMEN PLE / SIRE / LISTA DE OBLIGACIONES'],
+      ['Resultado', 'Cantidad'],
+      ['En PLE + SIRE + Obligaciones', r.obligacionesResultado?.pleCruce?.filter(x=>x.obligacionResultado==='EN PLE + SIRE + OBLIGACIONES').length || 0],
+      ['En PLE + SIRE — no en Obligaciones', r.obligacionesResultado?.pleCruce?.filter(x=>x.obligacionResultado==='EN PLE + SIRE — NO EN OBLIGACIONES').length || 0],
+      ['En PLE + Obligaciones — no confirmado en SIRE', r.obligacionesResultado?.pleCruce?.filter(x=>x.obligacionResultado==='EN PLE + OBLIGACIONES — NO CONFIRMADO EN SIRE').length || 0],
+      ['En PLE — no en Obligaciones ni SIRE exacto', r.obligacionesResultado?.pleCruce?.filter(x=>x.obligacionResultado==='EN PLE — NO EN OBLIGACIONES NI SIRE EXACTO').length || 0],
+      ['Vouchers Obligaciones sin localizar en PLE cargado', r.obligacionesResultado?.noPLEVouchers || 0],
+      ['Filas Lista de Obligaciones', r.obligacionesResultado?.totalFilas || 0]
     ];
     addSheet(wb, '01 Resumen', res, [42, 24], false, {kind:'summary'});
 
@@ -3547,6 +3725,21 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
     const sh = [['Periodo','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Fecha doc. modificado','Tipo CP modificado','Serie CP modificado','Nro CP modificado','Documento modificado','Base','IGV','Total','Estado vs PLE','Motivo']];
     r.sireResultado.forEach(x=>sh.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,fechaDDMMYYYY(x.fechaOrigenNorm)||x.fechaOrigen||'',x.tipoCPOrigen||'',x.serieOrigen||'',x.nroCPOrigen?padNum(x.nroCPOrigen):'',x.documentoOrigen||'',x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));
     addSheet(wb, state.pleHistorico?.rows?.length ? '07 SIRE histórico' : '06 SIRE histórico', sh, [12,14,35,10,13,16,14,10,10,18,16,16,18,26,14,14,14,24,34], true, {kind:'detail', statusCol:17});
+
+    // NUEVO FLAVIO: hoja adicional. Las hojas anteriores no se modifican ni se renombran.
+    if(r.obligacionesResultado?.disponible){
+      const oh=[['Resultado cruce','CUO/Voucher PLE','RUC PLE','Proveedor PLE','Tipo PLE','Serie PLE','Correlativo PLE','Total PLE','SIRE exacto/corregido','Documento Obligaciones','TipoDocumento Obligaciones','EstadoDocumento Obligaciones','Monto Obligaciones','Vencimiento','Fecha pago','Voucher pago','Comentarios']];
+      r.obligacionesResultado.pleCruce.forEach(x=>oh.push([
+        x.obligacionResultado,x.cuo,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.totalCP,
+        x.obligacionTieneSIRE?'Sí':'No',x.obligacionDocumentos,x.obligacionTipos,x.obligacionEstados,x.obligacionMonto,
+        x.obligacionVencimientos,x.obligacionFechasPago,x.obligacionVoucherPago,x.obligacionComentarios
+      ]));
+      addSheet(wb,'08 Cruce Obligaciones',oh,[38,22,14,34,10,12,16,14,18,28,18,20,16,20,20,22,48],true,{kind:'detail',statusCol:0});
+
+      const noPle=[['Voucher Obligaciones','Documento','Proveedor','TipoDocumento','EstadoDocumento','Monto','Fecha documento','Vencimiento','Fecha pago','Voucher pago','Comentarios']];
+      r.obligacionesResultado.noPLE.forEach(x=>noPle.push([x.voucher,x.documento,x.proveedor,x.tipoDocumento,x.estadoDocumento,x.monto,fechaDDMMYYYY(x.fecha)||x.fecha,fechaDDMMYYYY(x.fechaVencimiento)||x.fechaVencimiento,fechaDDMMYYYY(x.fechaPago)||x.fechaPago,x.voucherPago,x.comentarios]));
+      addSheet(wb,'09 Obligaciones no PLE',noPle,[22,25,34,16,18,16,18,18,18,22,48],true,{kind:'detail'});
+    }
 
     const fn = `Papel_de_Trabajo_Compras_${new Date().toISOString().slice(0,10)}.xlsx`;
     exportarWorkbookComprasConLogo(wb, fn, msg);
