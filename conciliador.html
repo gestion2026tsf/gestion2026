@@ -809,6 +809,127 @@ table.report th,table.detail th{
 .toolbar-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin:20px 0 22px;padding:16px 18px;border:1px solid #E7DCE8;border-radius:20px;background:linear-gradient(180deg,#FFFDFE 0%,#FBF8FC 100%);box-shadow:0 8px 24px rgba(31,41,55,.05)}
 .toolbar-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.mini-action{min-height:34px;padding:7px 13px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.02em}.mini-action.warm{border:1px solid #E9C981;background:#FFF7E8;color:#9A6700}.source-head-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.source-inline-tools{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 8px}.manual-highlight{border:2px solid #F0D39C!important;box-shadow:0 12px 30px rgba(240,180,70,.12)}.manual-banner{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 18px;padding:12px 14px;border:1px solid #F2D7A7;border-radius:16px;background:linear-gradient(90deg,#FFF7E6 0%,#FFFDF8 100%)}.manual-banner strong{color:#8F5E00;font-size:14px}.download-toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 22px;padding:16px 18px;border:1px solid #E9DEE8;border-radius:18px;background:linear-gradient(180deg,#FFFDFE 0%,#FAF7FB 100%)}.download-toolbar-title{font-size:18px;font-weight:800;color:#1F2937;margin-bottom:4px}.download-toolbar-sub{color:#6B7280;font-size:14px}.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:24px}.dashboard-card{border:1px solid #E6EAF0;border-radius:18px;padding:16px 18px;background:linear-gradient(180deg,#FFFFFF 0%,#FAFBFD 100%);box-shadow:0 8px 20px rgba(15,23,42,.05)}.dashboard-card .dash-label{font-size:11px;letter-spacing:.10em;text-transform:uppercase;color:#7C8798;margin-bottom:8px;font-weight:800}.dashboard-card .dash-value{font-size:30px;line-height:1;font-weight:900;color:#111827;margin-bottom:8px}.dashboard-card .dash-note{font-size:13px;color:#6B7280;line-height:1.45}.dashboard-card.success{border-color:#BFE3C8;background:linear-gradient(180deg,#F8FFFA 0%,#F1FBF4 100%)}.dashboard-card.warn{border-color:#F0D39C;background:linear-gradient(180deg,#FFFDF7 0%,#FFF7EA 100%)}.dashboard-card.info{border-color:#D6E2FF;background:linear-gradient(180deg,#F8FBFF 0%,#EFF5FF 100%)}.results-section .section-title{margin-top:20px}.top-download{background:#111827!important;color:#fff!important;border-color:#111827!important}.top-download:disabled{opacity:.45;cursor:not-allowed}
 
+
+
+/* ===== COMPRAS · TARJETAS TIPO DASHBOARD ===== */
+#viewCompras .sources-dashboard{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:18px;
+  margin:18px 0 24px;
+  align-items:stretch;
+}
+#viewCompras .base-dash-card{
+  position:relative;
+  min-width:0;
+  min-height:320px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  border:1px solid #E6EAF3;
+  border-radius:24px;
+  padding:22px;
+  background:linear-gradient(180deg,#FFFFFF 0%,#FAFBFF 100%);
+  box-shadow:0 12px 32px rgba(31,41,55,.065);
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+#viewCompras .base-dash-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 38px rgba(31,41,55,.09);
+}
+#viewCompras .base-dash-card::after{
+  content:"";
+  position:absolute;
+  width:170px;
+  height:170px;
+  right:-70px;
+  top:-70px;
+  border-radius:50%;
+  pointer-events:none;
+  opacity:.58;
+}
+#viewCompras .base-ple{
+  border-color:#E8D9E5;
+  background:linear-gradient(180deg,#FFFDFE 0%,#FBF7FC 100%);
+}
+#viewCompras .base-ple::after{background:radial-gradient(circle,rgba(223,188,224,.75) 0%,rgba(223,188,224,0) 70%);}
+#viewCompras .base-sire{
+  border-color:#D2E2FF;
+  background:linear-gradient(180deg,#F8FBFF 0%,#EFF5FF 100%);
+}
+#viewCompras .base-sire::after{background:radial-gradient(circle,rgba(158,198,255,.82) 0%,rgba(158,198,255,0) 70%);}
+#viewCompras .base-obl{
+  border-color:#E4D8F5;
+  background:linear-gradient(180deg,#FEFCFF 0%,#F8F4FD 100%);
+}
+#viewCompras .base-obl::after{background:radial-gradient(circle,rgba(195,167,244,.75) 0%,rgba(195,167,244,0) 70%);}
+#viewCompras .base-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:16px;
+  position:relative;
+  z-index:1;
+}
+#viewCompras .base-title-wrap{display:flex;gap:13px;align-items:flex-start;min-width:0;}
+#viewCompras .base-step{
+  width:52px;height:52px;flex:0 0 52px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:21px;font-weight:800;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.36),0 7px 17px rgba(60,72,110,.14);
+}
+#viewCompras .base-ple .base-step{background:linear-gradient(180deg,#A97AF1,#8155D8);}
+#viewCompras .base-sire .base-step{background:linear-gradient(180deg,#6CA8FF,#4D7FE8);}
+#viewCompras .base-obl .base-step{background:linear-gradient(180deg,#B986F6,#8C5CE0);}
+#viewCompras .base-kicker{
+  margin-bottom:6px;color:#778299;font-family:var(--mono);font-size:10px;font-weight:700;
+  letter-spacing:.13em;text-transform:uppercase;
+}
+#viewCompras .base-name{margin:0 0 5px;font-size:17px;line-height:1.25;font-weight:800;color:#141820;}
+#viewCompras .base-desc{margin:0;color:#6F7687;font-size:13px;line-height:1.48;}
+#viewCompras .base-pill{
+  position:relative;z-index:1;white-space:nowrap;padding:7px 11px;border-radius:999px;
+  background:rgba(255,255,255,.82);font-family:var(--mono);font-size:9px;font-weight:800;
+  letter-spacing:.09em;text-transform:uppercase;
+}
+#viewCompras .base-ple .base-pill{border:1px solid #E5D5E7;color:#8B5A9D;}
+#viewCompras .base-sire .base-pill{border:1px solid #CFE0FF;color:#4165BD;}
+#viewCompras .base-obl .base-pill{border:1px solid #E2D4F4;color:#7951B5;}
+#viewCompras .base-mini-row{display:flex;flex-wrap:wrap;gap:7px;margin:1px 0 14px;position:relative;z-index:1;}
+#viewCompras .base-mini-chip{
+  padding:6px 9px;border:1px solid #E7E8EF;border-radius:999px;background:rgba(255,255,255,.78);
+  color:#777D8A;font-size:11px;
+}
+#viewCompras .base-upload{margin-top:auto;position:relative;z-index:1;}
+#viewCompras .base-upload .drop{
+  min-height:105px;border-radius:17px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:5px;text-align:center;font-weight:700;background:rgba(255,255,255,.69);
+}
+#viewCompras .base-upload .drop small{display:block;color:#8A8F9D;font-size:11px;font-weight:500;}
+#viewCompras .base-foot{margin-top:12px;color:#777D8A;font-size:12px;position:relative;z-index:1;}
+#viewCompras .base-action-row{display:flex;justify-content:flex-end;margin:0 0 10px;position:relative;z-index:1;}
+#viewCompras .btn-mini-inline{
+  min-height:34px;padding:7px 12px;border-radius:10px;border:1px solid #D8DFEA;background:#fff;
+  color:#344054;font-size:12px;font-weight:800;cursor:pointer;
+}
+#viewCompras .btn-mini-inline:hover{background:#F7F9FD;}
+#viewCompras .base-obl-note{
+  margin:11px 0 0;padding:10px 12px;border:1px solid #E6DBF4;border-radius:13px;background:rgba(255,255,255,.68);
+  color:#6C5B7F;font-size:11px;line-height:1.42;position:relative;z-index:1;
+}
+#viewCompras .base-status-box.sire-live-status{
+  margin:0 0 12px;border-radius:16px;min-height:85px;position:relative;z-index:1;
+}
+#viewCompras .base-sire .sire-update-meta{position:relative;z-index:1;margin-top:0;}
+#viewCompras #cardTCC{
+  border-radius:22px !important;
+  box-shadow:0 10px 28px rgba(47,117,181,.08);
+}
+#viewCompras #cardSIREManualC .source-step{font-size:19px;}
+@media(max-width:1100px){#viewCompras .sources-dashboard{grid-template-columns:1fr 1fr;}#viewCompras .base-obl{grid-column:1/-1;}}
+@media(max-width:760px){#viewCompras .sources-dashboard{grid-template-columns:1fr;}#viewCompras .base-obl{grid-column:auto;}#viewCompras .base-dash-card{min-height:unset;}}
+
 </style>
 </head>
 <body>
@@ -897,30 +1018,11 @@ table.report th,table.detail th{
       <div class="eyebrow">Conciliación de compras · PLE + SIRE + Obligaciones</div>
       <h1>Conciliador de Compras</h1>
       <div style="display:inline-block;margin:6px 0 10px;padding:6px 10px;border:1px solid #e7a6be;border-radius:999px;background:#fff1f6;color:#9d2d59;font-family:var(--mono);font-size:11px;font-weight:700;">VERSIÓN COMPRAS · PEDIDO FLAVIO VALIDADO · V13</div>
-      <p>Valida el PLE 8.1 del periodo contra el histórico SIRE de SUNAT y utiliza la Lista de Obligaciones de Sprint únicamente como apoyo para documentos bancarios. Revisa si el comprobante está registrado y, si lo está, compara RUC, proveedor, tipo, serie, correlativo, fecha de emisión, moneda, tipo de cambio, base imponible, IGV y total. También realiza el cruce SIRE → PLE para identificar comprobantes del periodo que aún no aparecen en contabilidad.</p>
+      <p>Valida el PLE 8.1 del periodo contra el histórico SIRE de SUNAT y incorpora la Lista de Obligaciones de Sprint como cruce complementario por Voucher/CUO y como apoyo para documentos bancarios. Revisa si el comprobante está registrado y, si lo está, compara RUC, proveedor, tipo, serie, correlativo, fecha de emisión, moneda, tipo de cambio, base imponible, IGV y total. También realiza el cruce SIRE → PLE para identificar comprobantes del periodo que aún no aparecen en contabilidad.</p>
     </div>
   </header>
 
   <div class="grid3" id="cardsPrincipalesC"></div>
-
-  <div class="grid2">
-    <div class="card" id="cardBancosC">
-      <div class="card-label">Base 3 · apoyo bancos</div>
-      <div class="card-title">Lista de Obligaciones Sprint</div>
-      <p class="card-hint">Se utiliza para sugerir el correlativo correcto en documentos bancarios cuando el dato de Sprint no coincide con SIRE. No modifica ningún registro automáticamente.</p>
-      <label class="drop" id="dropBancosC">Haz clic o arrastra el Excel aquí
-        <input type="file" id="fileBancosC" accept=".xlsx,.xls,.xlsb" />
-      </label>
-      <div class="footnote" id="estadoBancosC">Sin cargar.</div>
-    </div>
-
-    <div class="card ready" id="cardAlcanceC">
-      <div class="card-label">Alcance definido por Flavio</div>
-      <div class="card-title">Primera validación</div>
-      <p class="card-hint">1) ¿Está el comprobante en SIRE? 2) Si está, ¿fue registrado correctamente? Se validan los campos principales y se reportan las diferencias para revisión manual.</p>
-      <div class="footnote">Detracciones y otros controles tributarios quedan para una segunda etapa.</div>
-    </div>
-  </div>
 
   <div class="card" id="cardTCC" style="margin-bottom:24px;border-color:#9CC2E5;background:#F4F9FF;">
     <div class="card-label" style="color:#2F75B5;">Base 4 · obligatoria para validar TC</div>
@@ -940,7 +1042,7 @@ table.report th,table.detail th{
   <div class="card source-card manual manual-highlight" id="cardSIREManualC" style="margin-bottom:24px;border-color:#F1D8AA;background:linear-gradient(180deg,#FFFDF7 0%,#FFF9ED 100%);">
     <div class="source-head">
       <div class="source-title-wrap">
-        <div class="source-step">3</div>
+        <div class="source-step">R</div>
         <div><div class="source-kicker">Respaldo manual · usar solo si falla la automática</div><h3 class="source-name">SIRE CONTA manual</h3><p class="source-desc">Este campo es un <strong>plan B</strong>. Solo se usa cuando la base automática no cargó, está desactualizada o necesitas reemplazarla temporalmente por una versión más reciente.</p></div>
       </div>
       <div class="source-chip">Uso excepcional</div>
@@ -2937,24 +3039,75 @@ function parseHistoricoDesdeObjetos(rows){
 
 function buildCardsPrincipales(){
   document.getElementById('cardsPrincipalesC').innerHTML=`
-    <div class="card" id="cardRCEC">
-      <div class="card-label">Base 1 · obligatoria</div>
-      <div class="card-title">PLE 8.1 Sprint del periodo</div>
-      <p class="card-hint">Registro contable que se validará contra SUNAT.</p>
-      <label class="drop" id="dropRCEC">Haz clic o arrastra el TXT aquí<input type="file" id="fileRCEC" accept=".txt" /></label>
-      <div class="footnote" id="estadoRCEC">Sin cargar.</div>
-    </div>
-    <div class="card source-card auto" id="cardSIREC" style="border-color:#D3E1FF;background:linear-gradient(180deg,#F8FBFF 0%,#EEF5FF 100%);">
-      <div class="source-head">
-        <div class="source-title-wrap">
-          <div class="source-step">2</div>
-          <div><div class="source-kicker">Base principal · automática</div><h3 class="source-name">SIRE histórica</h3><p class="source-desc">Se actualiza desde OneDrive y conserva la última copia válida.</p></div>
+    <div class="sources-dashboard">
+      <div class="base-dash-card base-ple" id="cardRCEC">
+        <div class="base-top">
+          <div class="base-title-wrap">
+            <div class="base-step">1</div>
+            <div>
+              <div class="base-kicker">Base 1 · obligatoria</div>
+              <h3 class="base-name">PLE 8.1 Sprint del periodo</h3>
+              <p class="base-desc">Registro contable del periodo que se validará contra SUNAT y contra la base histórica del SIRE.</p>
+            </div>
+          </div>
+          <div class="base-pill">Obligatoria</div>
         </div>
-        <div class="source-head-actions"><div class="source-chip">Automática</div><button class="ghost mini-action" type="button" id="btnActualizarSIREMini">Actualizar</button></div>
+        <div class="base-mini-row">
+          <span class="base-mini-chip">TXT del periodo</span>
+          <span class="base-mini-chip">Cruce principal</span>
+          <span class="base-mini-chip">Fuente contable</span>
+        </div>
+        <div class="base-upload">
+          <label class="drop" id="dropRCEC">Haz clic o arrastra el TXT aquí<small>Archivo con formato PLE 8.1</small><input type="file" id="fileRCEC" accept=".txt" /></label>
+        </div>
+        <div class="base-foot" id="estadoRCEC">Sin cargar.</div>
       </div>
-      <div class="sire-live-status loading" id="estadoSIREVisualC"><span class="sire-dot"></span><div class="sire-main"><div class="sire-title">Conectando con SIRE…</div><div class="sire-detail" id="estadoSIREDetalleC">Buscando la versión más reciente.</div></div><div class="sire-count" id="estadoSIRECantidadC">—</div></div>
-      <div class="sire-update-meta" id="estadoSIREMetaC"><span>Actualización automática</span><span>No cargues el manual si queda en verde</span></div>
-      <div class="source-status footnote" id="estadoSIREC" style="display:none;">Pendiente de conexión.</div>
+
+      <div class="base-dash-card base-sire source-card auto" id="cardSIREC">
+        <div class="base-top">
+          <div class="base-title-wrap">
+            <div class="base-step">2</div>
+            <div>
+              <div class="base-kicker">Base principal · automática</div>
+              <h3 class="base-name">SIRE histórica</h3>
+              <p class="base-desc">Se actualiza desde OneDrive y conserva la última copia válida para el cruce completo.</p>
+            </div>
+          </div>
+          <div class="base-pill">Automática</div>
+        </div>
+        <div class="base-action-row"><button class="btn-mini-inline" type="button" id="btnActualizarSIREMini">↻ Actualizar</button></div>
+        <div class="base-status-box sire-live-status loading" id="estadoSIREVisualC">
+          <span class="sire-dot"></span>
+          <div class="sire-main"><div class="sire-title">Conectando con SIRE…</div><div class="sire-detail" id="estadoSIREDetalleC">Buscando la versión más reciente.</div></div>
+          <div class="sire-count" id="estadoSIRECantidadC">—</div>
+        </div>
+        <div class="sire-update-meta" id="estadoSIREMetaC"><span>Actualización automática</span><span>No cargues el manual si queda en verde</span></div>
+        <div class="source-status base-foot" id="estadoSIREC" style="display:none;">Pendiente de conexión.</div>
+      </div>
+
+      <div class="base-dash-card base-obl" id="cardBancosC">
+        <div class="base-top">
+          <div class="base-title-wrap">
+            <div class="base-step">3</div>
+            <div>
+              <div class="base-kicker">Base 3 · Obligaciones</div>
+              <h3 class="base-name">Lista de Obligaciones Sprint</h3>
+              <p class="base-desc">Localiza Voucher/CUO, apoya documentos bancarios y alimenta el nuevo cruce visible PLE · SIRE · Obligaciones.</p>
+            </div>
+          </div>
+          <div class="base-pill">Complementaria</div>
+        </div>
+        <div class="base-mini-row">
+          <span class="base-mini-chip">Voucher / CUO</span>
+          <span class="base-mini-chip">Apoyo bancario</span>
+          <span class="base-mini-chip">Cruce Obligaciones</span>
+        </div>
+        <div class="base-upload">
+          <label class="drop" id="dropBancosC">Haz clic o arrastra el Excel aquí<small>Formatos .xlsx, .xls, .xlsb</small><input type="file" id="fileBancosC" accept=".xlsx,.xls,.xlsb" /></label>
+        </div>
+        <div class="base-obl-note">No modifica automáticamente la contabilidad. Se usa para validar y explicar coincidencias mediante Voucher/CUO.</div>
+        <div class="base-foot" id="estadoBancosC">Sin cargar.</div>
+      </div>
     </div>`;
   wireDrop('dropRCEC','fileRCEC',cargarPLEActual);
   setTimeout(()=>{document.getElementById('btnActualizarSIREMini')?.addEventListener('click',()=>actualizarSIRERemoto({silencioso:false,manual:true}));},0);
@@ -3701,8 +3854,9 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
     const obligacionesNoPLE=r.obligacionesResultado?.noPLEVouchers||0;
     const sirePeriodo=r.sireResultado.filter(x=>x.estado!=='HISTÓRICO').length;
     addDashboardSheet(wb,{periodo:r.periodoActual||'',generado:new Date().toLocaleString('es-PE'),totalPLE,conciliado,conDiferencias,noUbicado,alertasBanco,obligacionesMatch,obligacionesNoPLE,sirePeriodo,totalSIRE:r.sireResultado.length,estados:r.obligacionesResultado?.estados||new Map()});
+    addVistaGerencialSheet(wb,{periodo:r.periodoActual||'',generado:new Date().toLocaleString('es-PE'),totalPLE,conciliado,conDiferencias,noUbicado,alertasBanco,obligacionesMatch,obligacionesNoPLE,sirePeriodo,totalSIRE:r.sireResultado.length,pendientes:pend.length,duplicadosPLE:[...new Set(r.pleResultado.filter(x=>x.duplicadoPLE).map(x=>x.key))].length,duplicadosSIRE:[...new Set(r.sireResultado.filter(x=>x.duplicado).map(x=>x.key))].length,registradosAntes:r.pleResultado.filter(x=>x.estado==='REGISTRADO EN PERIODO ANTERIOR').length,estados:r.obligacionesResultado?.estados||new Map()});
 
-    addSheet(wb, '01 Resumen', res, [42, 24], false, {kind:'summary'});
+    addSheet(wb, '02 Resumen técnico', res, [42, 24], false, {kind:'summary'});
 
     const head = ['Estado','Acción sugerida','Duplicado PLE','Duplicado SIRE','Registrado en periodo anterior','Periodo histórico','Periodo registro','RUC PLE','Proveedor PLE','Tipo PLE','Serie PLE','Correlativo PLE','Fecha PLE','Moneda PLE','TC PLE',
       'Fecha doc. modificado PLE','Tipo CP modificado PLE','Serie CP modificado PLE','Nro CP modificado PLE','Documento modificado PLE',
@@ -3734,11 +3888,11 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
         x.comparacion?.diferencias?.join(', ') || '', x.sugerenciaBanco?.keySugerida || '', x.motivo
       ]);
     });
-    addSheet(wb, '02 PLE vs SIRE', a, [22,24,14,14,18,14,14,14,34,10,12,15,13,10,10,16,14,14,17,25,22,14,14,14,18,18,18,13,13,13,14,34,10,12,15,13,10,10,16,14,14,17,25,13,13,13,12,16,12,12,16,12,12,12,12,12,12,16,16,16,20,30,24,44], true, {kind:'detail', statusCol:0, highlightCols:[15,16,17,18,19,20,21,22,23,24,25,26], highlightColor:'DDEBF7', highlightHeaderColor:'4472C4'});
+    addSheet(wb, '03 PLE vs SIRE', a, [22,24,14,14,18,14,14,14,34,10,12,15,13,10,10,16,14,14,17,25,22,14,14,14,18,18,18,13,13,13,14,34,10,12,15,13,10,10,16,14,14,17,25,13,13,13,12,16,12,12,16,12,12,12,12,12,12,16,16,16,20,30,24,44], true, {kind:'detail', statusCol:0, highlightCols:[15,16,17,18,19,20,21,22,23,24,25,26], highlightColor:'DDEBF7', highlightHeaderColor:'4472C4'});
 
     const p = [['Periodo SIRE','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Base','IGV','Total','Estado','Motivo']];
     pend.forEach(x=>p.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));
-    addSheet(wb, '03 SIRE no PLE periodo', p, [13,14,34,10,12,14,14,10,10,14,14,14,28,36], true, {kind:'detail', statusCol:12});
+    addSheet(wb, '04 SIRE no PLE periodo', p, [13,14,34,10,12,14,14,10,10,14,14,14,28,36], true, {kind:'detail', statusCol:12});
 
     const bh = [['Estado','CUO/Voucher PLE','Voucher Obligaciones','Documento PLE','Documento Obligaciones','RUC PLE','Proveedor','Total PLE','Encontrado en SIRE','Llave corregida','Motivo']];
     bancos.forEach(x=>bh.push([
@@ -3746,24 +3900,24 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
       x.sugerenciaBanco?.documentoObligacion || '', x.rucProveedor, x.razonSocial, x.totalCP,
       x.sugerenciaBanco?.encontradaEnSIRE ? 'Sí' : 'No', x.sugerenciaBanco?.keySugerida || '', x.motivo
     ]));
-    addSheet(wb, '04 Bancos Obligaciones', bh, [28,20,22,20,24,14,34,14,17,38,48], true, {kind:'detail', statusCol:0});
+    addSheet(wb, '05 Bancos Obligaciones', bh, [28,20,22,20,24,14,34,14,17,38,48], true, {kind:'detail', statusCol:0});
 
     const dh = [['Base','Llave','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha','Total','Cantidad con misma llave']];
     const pleDupMap=new Map(); r.pleResultado.filter(x=>x.duplicadoPLE).forEach(x=>{if(!pleDupMap.has(x.key))pleDupMap.set(x.key,[]);pleDupMap.get(x.key).push(x)});
     for(const [k,arr] of pleDupMap){for(const x of arr)dh.push(['PLE',k,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.totalCP,arr.length]);}
     const sireDupMap=new Map(); r.sireResultado.filter(x=>x.duplicado).forEach(x=>{if(!sireDupMap.has(x.key))sireDupMap.set(x.key,[]);sireDupMap.get(x.key).push(x)});
     for(const [k,arr] of sireDupMap){for(const x of arr)dh.push(['SIRE',k,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.totalCP,arr.length]);}
-    addSheet(wb, '05 Duplicados', dh, [10,38,14,34,10,12,15,14,14,18], true, {kind:'detail'});
+    addSheet(wb, '06 Duplicados', dh, [10,38,14,34,10,12,15,14,14,18], true, {kind:'detail'});
 
     if(state.pleHistorico?.rows?.length){
       const ph=[['Periodo registro','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Fecha doc. modificado','Tipo CP modificado','Serie CP modificado','Nro CP modificado','Documento modificado','Llave']];
       state.pleHistorico.rows.forEach(x=>ph.push([x.periodoRegistro||x.periodo||'',x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision||'',fechaDDMMYYYY(x.fechaOrigenNorm)||x.fechaOrigen||'',x.tipoCPOrigen||'',x.serieOrigen||'',x.nroCPOrigen?padNum(x.nroCPOrigen):'',x.documentoOrigen||'',x.key]));
-      addSheet(wb, '06 PLE histórico', ph, [16,14,34,10,12,15,14,18,16,16,18,26,38], true, {kind:'detail'});
+      addSheet(wb, '07 PLE histórico', ph, [16,14,34,10,12,15,14,18,16,16,18,26,38], true, {kind:'detail'});
     }
 
     const sh = [['Periodo','RUC','Proveedor','Tipo','Serie','Correlativo','Fecha emisión','Moneda','TC','Fecha doc. modificado','Tipo CP modificado','Serie CP modificado','Nro CP modificado','Documento modificado','Base','IGV','Total','Estado vs PLE','Motivo']];
     r.sireResultado.forEach(x=>sh.push([x.periodoSIRE,x.rucProveedor,x.razonSocial,x.tipoCP,x.serie,padNum(x.nroCP),x.fechaEmision,x.moneda,x.tipoCambio,fechaDDMMYYYY(x.fechaOrigenNorm)||x.fechaOrigen||'',x.tipoCPOrigen||'',x.serieOrigen||'',x.nroCPOrigen?padNum(x.nroCPOrigen):'',x.documentoOrigen||'',x.baseImponible,x.igvTotal,x.totalCP,x.estado,x.motivo]));
-    addSheet(wb, state.pleHistorico?.rows?.length ? '07 SIRE histórico' : '06 SIRE histórico', sh, [12,14,35,10,13,16,14,10,10,18,16,16,18,26,14,14,14,24,34], true, {kind:'detail', statusCol:17});
+    addSheet(wb, state.pleHistorico?.rows?.length ? '08 SIRE histórico' : '07 SIRE histórico', sh, [12,14,35,10,13,16,14,10,10,18,16,16,18,26,14,14,14,24,34], true, {kind:'detail', statusCol:17});
 
     // NUEVO FLAVIO: hoja adicional. Las hojas anteriores no se modifican ni se renombran.
     if(r.obligacionesResultado?.disponible){
@@ -3773,11 +3927,11 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
         x.obligacionTieneSIRE?'Sí':'No',x.obligacionDocumentos,x.obligacionTipos,x.obligacionEstados,x.obligacionMonto,
         x.obligacionVencimientos,x.obligacionFechasPago,x.obligacionVoucherPago,x.obligacionComentarios
       ]));
-      addSheet(wb,'08 Cruce Obligaciones',oh,[38,22,14,34,10,12,16,14,18,28,18,20,16,20,20,22,48],true,{kind:'detail',statusCol:0});
+      addSheet(wb,'09 Cruce Obligaciones',oh,[38,22,14,34,10,12,16,14,18,28,18,20,16,20,20,22,48],true,{kind:'detail',statusCol:0});
 
       const noPle=[['Voucher Obligaciones','Documento','Proveedor','TipoDocumento','EstadoDocumento','Monto','Fecha documento','Vencimiento','Fecha pago','Voucher pago','Comentarios']];
       r.obligacionesResultado.noPLE.forEach(x=>noPle.push([x.voucher,x.documento,x.proveedor,x.tipoDocumento,x.estadoDocumento,x.monto,fechaDDMMYYYY(x.fecha)||x.fecha,fechaDDMMYYYY(x.fechaVencimiento)||x.fechaVencimiento,fechaDDMMYYYY(x.fechaPago)||x.fechaPago,x.voucherPago,x.comentarios]));
-      addSheet(wb,'09 Obligaciones no PLE',noPle,[22,25,34,16,18,16,18,18,18,22,48],true,{kind:'detail'});
+      addSheet(wb,'10 Obligaciones no PLE',noPle,[22,25,34,16,18,16,18,18,18,22,48],true,{kind:'detail'});
     }
 
     const fn = `Reporte_Conciliacion_Compras_${new Date().toISOString().slice(0,10)}.xlsx`;
@@ -3786,30 +3940,144 @@ document.getElementById('btnDescargarC').addEventListener('click',()=>{
 });
 
 function addDashboardSheet(wb,d){
-  const estados=[...((d.estados&&d.estados.entries)?d.estados.entries():[])].sort((a,b)=>b[1]-a[1]);
-  const aoa=[
-    ['DASHBOARD — CONCILIACIÓN DE COMPRAS','','',''],
-    ['Periodo',d.periodo,'Generado',d.generado],
-    [],
-    ['INDICADORES CLAVE','','',''],
-    ['Total PLE',d.totalPLE,'Conciliado',d.conciliado],
-    ['Con diferencias',d.conDiferencias,'No ubicado en SIRE',d.noUbicado],
-    ['Alertas banco / posibles',d.alertasBanco,'Voucher/CUO en Obligaciones',d.obligacionesMatch],
-    ['Obligaciones sin PLE',d.obligacionesNoPLE,'SIRE del periodo',d.sirePeriodo],
-    ['SIRE histórico total',d.totalSIRE,'',''],
-    [],
-    ['ESTADODOCUMENTO EN OBLIGACIONES','','',''],
-    ['EstadoDocumento','Filas','',''],
-    ...estados.map(([e,n])=>[e||'(vacío)',n,'',''])
+  const totalPendientes = Math.max(0,(d.totalPLE||0)-(d.conciliado||0));
+  const pct = (n,t)=>t?((n/t)*100):0;
+  const ws = XLSX.utils.aoa_to_sheet([]);
+  ws['!cols'] = [{wch:24},{wch:18},{wch:18},{wch:18},{wch:18},{wch:18},{wch:18}];
+  ws['!rows'] = Array.from({length:26},(_,i)=>({hpt: i===0?30 : i===1?24 : i>=4&&i<=7?30 : 22}));
+  ws['!merges'] = [
+    {s:{r:0,c:0},e:{r:0,c:6}},
+    {s:{r:1,c:0},e:{r:1,c:3}},
+    {s:{r:1,c:4},e:{r:1,c:6}},
+    {s:{r:3,c:0},e:{r:3,c:6}},
+    {s:{r:9,c:0},e:{r:9,c:6}},
+    {s:{r:16,c:0},e:{r:16,c:3}},
+    {s:{r:16,c:4},e:{r:16,c:6}}
   ];
-  const ws=XLSX.utils.aoa_to_sheet(aoa);
-  ws['!cols']=[{wch:32},{wch:18},{wch:34},{wch:22}];
-  ws['!rows']=aoa.map((_,i)=>({hpt:i===0?30:(i===3||i===10?24:22)}));
-  ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:3}},{s:{r:3,c:0},e:{r:3,c:3}},{s:{r:10,c:0},e:{r:10,c:3}}];
-  ws['!freeze']={xSplit:0,ySplit:4,topLeftCell:'A5',activePane:'bottomLeft',state:'frozen'};
-  const border={bottom:{style:'thin',color:{rgb:'E5E7EB'}}};
-  for(let r=0;r<aoa.length;r++){for(let c=0;c<4;c++){const ref=XLSX.utils.encode_cell({r,c});if(!ws[ref])ws[ref]={t:'s',v:''};const cell=ws[ref];if(r===0){cell.s={font:{bold:true,color:{rgb:'FFFFFF'},sz:15},fill:{fgColor:{rgb:'111827'}},alignment:{horizontal:'left',vertical:'center'}};}else if(r===3||r===10){cell.s={font:{bold:true,color:{rgb:'FFFFFF'},sz:11},fill:{fgColor:{rgb:'E6005C'}},alignment:{horizontal:'left',vertical:'center'}};}else if(r>=4&&r<=8){const isValue=c===1||c===3;cell.s={font:{bold:isValue,color:{rgb:isValue?'111827':'6B7280'},sz:isValue?16:10},fill:{fgColor:{rgb:(r%2===0)?'F8FAFC':'FFFFFF'}},alignment:{horizontal:isValue?'right':'left',vertical:'center',wrapText:true},border};if(isValue&&typeof cell.v==='number')cell.z='#,##0';}else{cell.s={font:{bold:(r===1||r===11),color:{rgb:'374151'}},fill:{fgColor:{rgb:r===11?'FFF1F6':'FFFFFF'}},alignment:{horizontal:(c===1||c===3)?'right':'left',vertical:'center',wrapText:true},border};if(typeof cell.v==='number')cell.z='#,##0';}}}
+  ws['!freeze'] = {xSplit:0,ySplit:4,topLeftCell:'A5',activePane:'bottomLeft',state:'frozen'};
+
+  const put=(addr,v,s)=>{ ws[addr]={t:typeof v==='number'?'n':'s',v}; if(s) ws[addr].s=s; };
+  const border={top:{style:'thin',color:{rgb:'E5E7EB'}},bottom:{style:'thin',color:{rgb:'E5E7EB'}},left:{style:'thin',color:{rgb:'E5E7EB'}},right:{style:'thin',color:{rgb:'E5E7EB'}}};
+  const title={font:{bold:true,color:{rgb:'FFFFFF'},sz:16},fill:{fgColor:{rgb:'0F172A'}},alignment:{horizontal:'left',vertical:'center'},border};
+  const meta={font:{bold:true,color:{rgb:'334155'},sz:10},fill:{fgColor:{rgb:'F8FAFC'}},alignment:{horizontal:'left',vertical:'center'},border};
+  const section={font:{bold:true,color:{rgb:'FFFFFF'},sz:11},fill:{fgColor:{rgb:'4F46E5'}},alignment:{horizontal:'left',vertical:'center'},border};
+  const section2={font:{bold:true,color:{rgb:'FFFFFF'},sz:11},fill:{fgColor:{rgb:'7C3AED'}},alignment:{horizontal:'left',vertical:'center'},border};
+  const label={font:{bold:true,color:{rgb:'64748B'},sz:9},alignment:{horizontal:'left',vertical:'center'},border};
+  const value={font:{bold:true,color:{rgb:'0F172A'},sz:16},alignment:{horizontal:'center',vertical:'center'},border};
+  const note={font:{italic:true,color:{rgb:'64748B'},sz:9},alignment:{horizontal:'left',vertical:'center'},border};
+  const th={font:{bold:true,color:{rgb:'FFFFFF'},sz:10},fill:{fgColor:{rgb:'111827'}},alignment:{horizontal:'center',vertical:'center'},border};
+  const tdL={font:{color:{rgb:'334155'},sz:10},alignment:{horizontal:'left',vertical:'center'},border};
+  const tdR={font:{color:{rgb:'0F172A'},sz:10,bold:true},alignment:{horizontal:'right',vertical:'center'},border};
+
+  put('A1','DASHBOARD GERENCIAL — CONCILIACIÓN DE COMPRAS',title);
+  put('A2',`Periodo analizado: ${d.periodo || '-'}`,meta);
+  put('E2',`Generado: ${d.generado || '-'}`,meta);
+  put('A4','KPIs PRINCIPALES',section);
+
+  const cards = [
+    ['A5','Total PLE', d.totalPLE, pct(d.totalPLE,d.totalPLE), 'EEF2FF'],
+    ['C5','Conciliado', d.conciliado, pct(d.conciliado,d.totalPLE), 'ECFDF3'],
+    ['E5','Con diferencias', d.conDiferencias, pct(d.conDiferencias,d.totalPLE), 'FFF7ED'],
+    ['G5','No ubicado en SIRE', d.noUbicado, pct(d.noUbicado,d.totalPLE), 'FEF2F2'],
+    ['A7','Alertas banco / posibles', d.alertasBanco, pct(d.alertasBanco,d.totalPLE), 'F5F3FF'],
+    ['C7','Voucher/CUO en Obligaciones', d.obligacionesMatch, pct(d.obligacionesMatch,d.totalPLE), 'EFF6FF'],
+    ['E7','Obligaciones sin PLE', d.obligacionesNoPLE, 0, 'FFF7ED'],
+    ['G7','Pendientes de revisión', totalPendientes, pct(totalPendientes,d.totalPLE), 'F8FAFC']
+  ];
+  cards.forEach(([cell,labelTxt,num,pctVal,fill])=>{
+    const col = XLSX.utils.decode_cell(cell).c;
+    const row = XLSX.utils.decode_cell(cell).r;
+    const labelCell = XLSX.utils.encode_cell({r:row,c:col});
+    const valCell = XLSX.utils.encode_cell({r:row+1,c:col});
+    ws[labelCell]={t:'s',v:labelTxt,s:{...label,fill:{fgColor:{rgb:fill}}}};
+    ws[valCell]={t:'n',v:Number(num||0),s:{...value,fill:{fgColor:{rgb:fill}}},z:'#,##0'};
+    const extra = XLSX.utils.encode_cell({r:row+1,c:Math.min(col+1,6)});
+    ws[extra]={t:'s',v:(pctVal?pctVal.toFixed(1):'0.0')+'%',s:{font:{bold:true,color:{rgb:'475569'},sz:11},fill:{fgColor:{rgb:fill}},alignment:{horizontal:'center',vertical:'center'},border}};
+  });
+
+  put('A10','MENSAJE EJECUTIVO',section2);
+  const mensaje = `De ${Number(d.totalPLE||0).toLocaleString('es-PE')} registros evaluados, ${Number(d.conciliado||0).toLocaleString('es-PE')} quedaron conciliados (${pct(d.conciliado,d.totalPLE).toFixed(1)}%). Quedan ${Number(totalPendientes||0).toLocaleString('es-PE')} registros que requieren revisión o validaciones adicionales.`;
+  put('A11',mensaje,{font:{color:{rgb:'334155'},sz:11},alignment:{horizontal:'left',vertical:'center',wrapText:true},fill:{fgColor:{rgb:'FFFFFF'}},border});
+  ws['!merges'].push({s:{r:10,c:0},e:{r:10,c:6}});
+  put('A12','Detalle complementario de gestión:',{font:{bold:true,color:{rgb:'475569'},sz:10},alignment:{horizontal:'left',vertical:'center'},fill:{fgColor:{rgb:'FFFFFF'}},border});
+  put('A13',`• Duplicados PLE: ${Number(d.duplicadosPLE||0).toLocaleString('es-PE')}` ,tdL);
+  put('C13',`• Duplicados SIRE: ${Number(d.duplicadosSIRE||0).toLocaleString('es-PE')}` ,tdL);
+  put('E13',`• Registrados en periodo anterior: ${Number(d.registradosAntes||0).toLocaleString('es-PE')}` ,tdL);
+  put('A17','ESTADOS DE OBLIGACIONES',section2);
+  put('E17','COBERTURA DE FUENTES',section2);
+  put('A18','EstadoDocumento',th); put('B18','Filas',th);
+  const estados=[...((d.estados&&d.estados.entries)?d.estados.entries():[])].sort((a,b)=>b[1]-a[1]).slice(0,8);
+  let r0=18;
+  estados.forEach(([e,n],i)=>{
+    put(`A${r0+1+i}`, e||'(vacío)', {...tdL, fill:{fgColor:{rgb:i%2===0?'FFFFFF':'F8FAFC'}}});
+    put(`B${r0+1+i}`, Number(n||0), {...tdR, fill:{fgColor:{rgb:i%2===0?'FFFFFF':'F8FAFC'}}}); ws[`B${r0+1+i}`].z='#,##0';
+  });
+  put('E18','Fuente',th); put('F18','Estado',th); put('G18','Detalle',th);
+  const fuentes = [
+    ['PLE periodo','Cargado','Base obligatoria del periodo'],
+    ['SIRE histórico','Automático', `${Number(d.totalSIRE||0).toLocaleString('es-PE')} registros disponibles`],
+    ['Lista de Obligaciones','Disponible', `${Number(d.obligacionesMatch||0).toLocaleString('es-PE')} vouchers/CUO localizados`],
+    ['SIRE del periodo','Control', `${Number(d.sirePeriodo||0).toLocaleString('es-PE')} registros del periodo`]
+  ];
+  fuentes.forEach((row,i)=>{
+    ['E','F','G'].forEach((col,j)=> put(`${col}${19+i}`, row[j], {font:{color:{rgb:j===1?'0F766E':'334155'},bold:j===1,sz:10},alignment:{horizontal:j===2?'left':'center',vertical:'center',wrapText:true},fill:{fgColor:{rgb:i%2===0?'FFFFFF':'F8FAFC'}},border}));
+  });
   XLSX.utils.book_append_sheet(wb,ws,'00 Dashboard');
+}
+
+function addVistaGerencialSheet(wb,d){
+  const pct=(n,t)=>t?((n/t)*100):0;
+  const conciliadosPct = pct(d.conciliado,d.totalPLE);
+  const pendientes = Math.max(0,(d.totalPLE||0)-(d.conciliado||0));
+  const aoa = [
+    ['VISTA GERENCIAL — RESUMEN EJECUTIVO'],
+    ['Periodo', d.periodo || '', 'Fecha de generación', d.generado || ''],
+    [],
+    ['INDICADOR','VALOR','LECTURA GERENCIAL','SEMÁFORO'],
+    ['Total de registros PLE', d.totalPLE, 'Universo analizado del periodo','INFO'],
+    ['Registros conciliados', d.conciliado, `${conciliadosPct.toFixed(1)}% del total conciliado`, conciliadosPct>=95?'OK':conciliadosPct>=85?'ALERTA':'REVISAR'],
+    ['Registros con diferencias', d.conDiferencias, 'Requieren validación de campos principales', d.conDiferencias>0?'ALERTA':'OK'],
+    ['No ubicados en SIRE', d.noUbicado, 'No aparecen de forma exacta en SIRE', d.noUbicado>0?'REVISAR':'OK'],
+    ['Alertas banco / posibles coincidencias', d.alertasBanco, 'Casos sugeridos por lógica bancaria u homólogos', d.alertasBanco>0?'ALERTA':'OK'],
+    ['Voucher/CUO localizados en Obligaciones', d.obligacionesMatch, 'Cruces de apoyo con Lista de Obligaciones', 'INFO'],
+    ['Vouchers de Obligaciones sin PLE', d.obligacionesNoPLE, 'Revisar cobertura contable de obligaciones', d.obligacionesNoPLE>0?'REVISAR':'OK'],
+    ['Pendientes de revisión', pendientes, 'Pendientes distintos a conciliados', pendientes>0?'REVISAR':'OK'],
+    [],
+    ['CONCLUSIÓN EJECUTIVA'],
+    [`Se procesó el periodo ${d.periodo || '-'} con ${Number(d.totalPLE||0).toLocaleString('es-PE')} registros. El avance de conciliación fue de ${conciliadosPct.toFixed(1)}%, mientras que ${Number(pendientes||0).toLocaleString('es-PE')} registros quedaron con observaciones, diferencias o pendientes. Esta hoja está diseñada para revisión gerencial y toma de decisiones rápida.`],
+    [],
+    ['TOP ESTADOS DE OBLIGACIONES','FILAS']
+  ];
+  const estados=[...((d.estados&&d.estados.entries)?d.estados.entries():[])].sort((a,b)=>b[1]-a[1]).slice(0,10);
+  estados.forEach(([e,n])=>aoa.push([e||'(vacío)',n]));
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols']=[{wch:34},{wch:14},{wch:56},{wch:14}];
+  ws['!rows']=aoa.map((_,i)=>({hpt:i===0?30:i===14?42:22}));
+  ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:3}},{s:{r:13,c:0},e:{r:13,c:3}},{s:{r:14,c:0},e:{r:14,c:3}}];
+  ws['!freeze']={xSplit:0,ySplit:4,topLeftCell:'A5',activePane:'bottomLeft',state:'frozen'};
+  const border={top:{style:'thin',color:{rgb:'E5E7EB'}},bottom:{style:'thin',color:{rgb:'E5E7EB'}},left:{style:'thin',color:{rgb:'E5E7EB'}},right:{style:'thin',color:{rgb:'E5E7EB'}}};
+  const semColor=s=>s==='OK'?'ECFDF3':s==='ALERTA'?'FFF7ED':s==='REVISAR'?'FEF2F2':'EFF6FF';
+  for(let r=0;r<aoa.length;r++){
+    for(let c=0;c<4;c++){
+      const ref=XLSX.utils.encode_cell({r,c});
+      if(!ws[ref]) continue;
+      const cell=ws[ref];
+      if(r===0){cell.s={font:{bold:true,color:{rgb:'FFFFFF'},sz:15},fill:{fgColor:{rgb:'1E293B'}},alignment:{horizontal:'left',vertical:'center'},border};}
+      else if(r===3 || r===13 || r===16){cell.s={font:{bold:true,color:{rgb:'FFFFFF'},sz:11},fill:{fgColor:{rgb:'4338CA'}},alignment:{horizontal:'center',vertical:'center',wrapText:true},border};}
+      else if(r===14){cell.s={font:{italic:true,color:{rgb:'334155'},sz:11},fill:{fgColor:{rgb:'FFFFFF'}},alignment:{horizontal:'left',vertical:'center',wrapText:true},border};}
+      else if(r>3 && r<12){
+        cell.s={font:{bold:c===1||c===3,color:{rgb:c===3?'0F172A':'334155'},sz:10},fill:{fgColor:{rgb:c===3?semColor(String(cell.v||'')):(r%2===0?'F8FAFC':'FFFFFF')}},alignment:{horizontal:(c===1||c===3)?'center':'left',vertical:'center',wrapText:true},border};
+        if(c===1 && typeof cell.v==='number') cell.z='#,##0';
+      } else if(r>=17){
+        cell.s={font:{bold:c===1,color:{rgb:'334155'},sz:10},fill:{fgColor:{rgb:(r%2===0)?'FFFFFF':'F8FAFC'}},alignment:{horizontal:c===1?'right':'left',vertical:'center'},border};
+        if(c===1 && typeof cell.v==='number') cell.z='#,##0';
+      } else {
+        cell.s={font:{bold:r===1,color:{rgb:'334155'},sz:10},fill:{fgColor:{rgb:(r%2===0)?'F8FAFC':'FFFFFF'}},alignment:{horizontal:c===1||c===3?'right':'left',vertical:'center',wrapText:true},border};
+        if((c===1||c===3) && typeof cell.v==='number') cell.z='#,##0';
+      }
+    }
+  }
+  XLSX.utils.book_append_sheet(wb,ws,'01 Vista gerencial');
 }
 
 function addSheet(wb, name, aoa, widths, filter=false, opts={}){
@@ -3834,19 +4102,19 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
   }
 
   const palette = {
-    primary: 'E6005C',
-    primaryDark: '111111',
-    primarySoft: 'FDE7F0',
-    soft: 'FFF4F8',
-    soft2: 'FAFAFA',
-    gold: 'F5A800',
-    goldSoft: 'FFF1CC',
+    primary: '4F46E5',
+    primaryDark: '0F172A',
+    primarySoft: 'EEF2FF',
+    soft: 'F5F3FF',
+    soft2: 'F8FAFC',
+    gold: 'F59E0B',
+    goldSoft: 'FFFBEB',
     line: 'E5E7EB',
     green: 'E8F5EE',
     greenText: '198754',
     amber: 'FFF4D6',
     amberText: 'B26A00',
-    orange: 'FFF1CC',
+    orange: 'FEF3C7',
     red: 'FDE8E8',
     redText: 'C62828',
     text: '333333',
@@ -3856,7 +4124,7 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
   function normalizeText(v){ return String(v ?? '').trim().toLowerCase(); }
   function isNumericHeader(h){
     const t = normalizeText(h);
-    return /tc|tipo de cambio|base|igv|total|importe|monto|cantidad/.test(t);
+    return /(^|\s)tc($|\s)|tipo de cambio|(^|\s)base($|\s)|igv|total|importe|monto|cantidad/.test(t);
   }
   function isDateHeader(h){ return /fecha/.test(normalizeText(h)); }
   function statusFill(status){
@@ -3914,7 +4182,7 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
         continue;
       }
 
-      const isMiniHeader = first === 'resultado' || first === 'generado' || first === 'periodo ple' || first === 'archivo';
+      const isMiniHeader = first === 'resultado' || first === 'generado' || first === 'periodo ple' || first === 'archivo' || first === 'estadodocumento' || first === 'estado';
       for(let c=0; c<totalCols; c++){
         const ref = XLSX.utils.encode_cell({r,c});
         if(!ws[ref]) continue;
@@ -3968,7 +4236,7 @@ function addSheet(wb, name, aoa, widths, filter=false, opts={}){
           border:baseBorder
         };
         if(isDate) cell.z = 'dd/mm/yyyy';
-        else if(isNumericHeader(header)) cell.z = /tc|tipo de cambio/.test(normalizeText(header)) ? '#,##0.000' : '#,##0.00';
+        else if(isNumericHeader(header)) cell.z = /(^|\s)tc($|\s)|tipo de cambio/.test(normalizeText(header)) ? '#,##0.000' : '#,##0.00';
       }
     }
   }
@@ -3994,7 +4262,7 @@ async function exportarWorkbookComprasConLogo(wb, fname, msg){
     await wbExcel.xlsx.load(bufferXlsx);
     corregirFormatosComprasExcelJS(wbExcel);
 
-    const wsResumen = wbExcel.getWorksheet('00 Dashboard') || wbExcel.getWorksheet('01 Resumen') || wbExcel.worksheets?.[0];
+    const wsResumen = wbExcel.getWorksheet('00 Dashboard') || wbExcel.getWorksheet('01 Vista gerencial') || wbExcel.getWorksheet('02 Resumen técnico') || wbExcel.worksheets?.[0];
     if(wsResumen){
       // Espacio reservado para el logo a la derecha, sin tapar el contenido.
       for(let c=3;c<=6;c++){
@@ -4012,7 +4280,7 @@ async function exportarWorkbookComprasConLogo(wb, fname, msg){
         editAs:'oneCell'
       });
       const sello=wsResumen.getCell('D6');
-      sello.value='TOTAL · CONCILIACIÓN DE COMPRAS';
+      sello.value='TOTAL · REPORTE GERENCIAL DE CONCILIACIÓN';
       sello.font={bold:true,color:{argb:'FFE6005C'},size:10};
       sello.alignment={horizontal:'center',vertical:'middle'};
     }
@@ -4043,7 +4311,7 @@ function corregirFormatosComprasExcelJS(wbExcel){
   const isAmountHeader=h=>/base|igv|total|importe|monto|cantidad/.test(norm(h));
 
   wbExcel.worksheets.forEach(ws=>{
-    if(ws.name==='01 Resumen' || ws.name==='00 Dashboard') return;
+    if(/^0[0-2] /.test(ws.name) || ws.name==='00 Dashboard') return;
     const headers=[];
     for(let c=1;c<=ws.columnCount;c++) headers[c]=String(ws.getCell(1,c).value??'');
     for(let c=1;c<=ws.columnCount;c++){
