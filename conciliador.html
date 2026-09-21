@@ -4295,6 +4295,10 @@ function addDashboardSheet(wb,d){
   ];
   fuentes.forEach((row,i)=>{const rr=39+i,bg=i%2===0?'FFFFFF':'F8FAFC';put(`E${rr}`,row[0],{...td,fill:fill(bg)});put(`F${rr}`,row[1],{font:{bold:true,color:{rgb:'0F766E'},sz:9},alignment:{horizontal:'center',vertical:'center'},fill:fill(bg),border});put(`G${rr}`,row[2],{...td,fill:fill(bg)});});
 
+  // IMPORTANTE: al crear celdas manualmente, SheetJS necesita un rango usado.
+  // Sin !ref Excel abre la hoja como si estuviera vacía.
+  ws['!ref']='A1:H48';
+
   XLSX.utils.book_append_sheet(wb,ws,'00 Dashboard');
 }
 
@@ -4584,7 +4588,13 @@ function corregirFormatosComprasExcelJS(wbExcel){
   const isAmountHeader=h=>/base|igv|total|importe|monto|cantidad/.test(norm(h));
 
   wbExcel.worksheets.forEach(ws=>{
-    if(/^0[0-2] /.test(ws.name) || ws.name==='00 Dashboard') return;
+    if(ws.name==='00 Dashboard'){
+      ws.views=[{showGridLines:false,state:'frozen',ySplit:4,activeCell:'A5'}];
+      ws.properties.tabColor={argb:'FFE6005C'};
+      ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0,margins:{left:0.3,right:0.3,top:0.5,bottom:0.5,header:0.2,footer:0.2}};
+      return;
+    }
+    if(/^0[0-2] /.test(ws.name)) return;
     const headers=[];
     for(let c=1;c<=ws.columnCount;c++) headers[c]=String(ws.getCell(1,c).value??'');
     for(let c=1;c<=ws.columnCount;c++){
