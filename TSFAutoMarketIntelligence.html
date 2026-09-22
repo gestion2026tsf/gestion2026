@@ -3842,6 +3842,98 @@ function vm20Agg(rows,dimIndex,dict,monthOverride){const m=new Map();rows.forEac
 function vm20PopulateSelect(sel,values,allLabel){if(!sel)return;const cur=sel.value;sel.innerHTML='<option value="ALL">'+allLabel+'</option>'+values.map(v=>'<option value="'+String(v).replace(/"/g,'&quot;')+'">'+v+'</option>').join('');sel.value=values.includes(cur)?cur:'ALL'}
 function vm20RefreshOptions(){if(!vm20HasData())return;vm20PopulateSelect(vm20Els.type,[...new Set(vm20Filtered('type').map(r=>VM20.cls[r[0]]))].sort(),'Todos');vm20PopulateSelect(vm20Els.brand,[...new Set(vm20Filtered('brand').map(r=>VM20.brand[r[4]]))].sort(),'Todas');vm20PopulateSelect(vm20Els.model,[...new Set(vm20Filtered('model').map(r=>VM20.model[r[5]]))].sort(),'Todos');vm20PopulateSelect(vm20Els.fuel,[...new Set(vm20Filtered('fuel').map(r=>VM20.fuel[r[7]]))].sort(),'Todos');vm20PopulateSelect(vm20Els.zone,[...new Set(vm20Filtered('zone').map(r=>VM20.zone[r[1]]))].sort(),'Todas')}
 function vm20Line(canvas,series){if(!canvas||!VM20_MONTHS.length)return;const rect=canvas.getBoundingClientRect(),w=Math.max(320,Math.round(rect.width)),h=Math.max(185,Math.round(rect.height||230)),dpr=Math.min(devicePixelRatio||1,2);canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);const p={l:46,r:14,t:16,b:27},cw=w-p.l-p.r,ch=h-p.t-p.b,vals=series.flatMap(s=>s.data),max=Math.max(...vals,1)*1.12;c.font='9px Segoe UI';c.textBaseline='middle';for(let i=0;i<4;i++){const y=p.t+ch*i/3;c.strokeStyle='#eceef2';c.beginPath();c.moveTo(p.l,y);c.lineTo(w-p.r,y);c.stroke();c.fillStyle='#9aa0aa';c.textAlign='right';c.fillText(Math.round(max*(1-i/3)).toLocaleString('es-PE'),p.l-7,y)}const den=Math.max(1,VM20_MSHORT.length-1);VM20_MSHORT.forEach((lab,i)=>{const x=p.l+cw*i/den;c.fillStyle='#9aa0aa';c.textAlign='center';c.fillText(lab,x,h-9)});series.forEach((s,si)=>{const pts=s.data.map((v,i)=>({x:p.l+cw*i/den,y:p.t+ch-(v/max)*ch}));if(!pts.length)return;const grad=c.createLinearGradient(0,p.t,0,p.t+ch);grad.addColorStop(0,si===0?'rgba(245,174,0,.15)':'rgba(31,37,48,.08)');grad.addColorStop(1,'rgba(255,255,255,0)');c.beginPath();c.moveTo(pts[0].x,p.t+ch);pts.forEach(pt=>c.lineTo(pt.x,pt.y));c.lineTo(pts.at(-1).x,p.t+ch);c.closePath();c.fillStyle=grad;c.fill();c.beginPath();pts.forEach((pt,i)=>i?c.lineTo(pt.x,pt.y):c.moveTo(pt.x,pt.y));c.strokeStyle=s.color;c.lineWidth=2.5;c.stroke();pts.forEach(pt=>{c.beginPath();c.arc(pt.x,pt.y,3,0,Math.PI*2);c.fillStyle='#fff';c.fill();c.lineWidth=2;c.strokeStyle=s.color;c.stroke()})})}
+function vm20Update(refreshOptions=true){
+ if(!vm20HasData()){vm20ResetDisplay();return}
+ if(refreshOptions)vm20RefreshOptions();
+ const rows=vm20Filtered();
+ const selectedMonth=vm20Els.month?.value||'ALL';
+ const isAll=selectedMonth==='ALL';
+ const monthIdx=isAll?VM20_MONTHS.length-1:Number(selectedMonth);
+ const total=rows.reduce((s,r)=>s+vm20Val(r),0);
+ const monthTotal=rows.reduce((s,r)=>s+(Number(r[8+monthIdx])||0),0);
+ const prevMonthTotal=monthIdx>0?rows.reduce((s,r)=>s+(Number(r[8+monthIdx-1])||0),0):null;
+ const mom=prevMonthTotal&&prevMonthTotal!==0?((monthTotal-prevMonthTotal)/prevMonthTotal)*100:null;
+
+ let moto=0,tri=0;
+ rows.forEach(r=>{const v=vm20Val(r);const c=VM20.cls[r[0]];if(c==='MOTOCICLETAS')moto+=v;else if(c==='TRIMOTOS')tri+=v});
+
+ const monthlyTotals=VM20_MONTHS.map((_,mi)=>rows.reduce((s,r)=>s+(Number(r[8+mi])||0),0));
+ let peakIdx=0; for(let i=1;i<monthlyTotals.length;i++)if(monthlyTotals[i]>monthlyTotals[peakIdx])peakIdx=i;
+ const peakVal=monthlyTotals[peakIdx]||0;
+
+ const brands=vm20Agg(rows,4,VM20.brand);
+ const models=vm20Agg(rows,5,VM20.model);
+ const offices=vm20Agg(rows,2,VM20.office);
+ const zones=vm20Agg(rows,1,VM20.zone);
+ const fuels=vm20Agg(rows,7,VM20.fuel);
+ const docs=vm20Agg(rows,3,VM20.doc);
+ const cylMap=new Map();
+ rows.forEach(r=>{const v=vm20Val(r);if(!v)return;const k=vm20CylLabel(vm20CylBucket(r[6]));cylMap.set(k,(cylMap.get(k)||0)+v)});
+ const cyls=[...cylMap.entries()].sort((a,b)=>b[1]-a[1]);
+
+ const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val};
+ const setClass=(id,val,cls)=>{const e=document.getElementById(id);if(e){e.textContent=val;e.classList.remove('positive','negative');if(cls)e.classList.add(cls)}};
+
+ set('vm2Total',vm20Fmt(total));
+ set('vm2HeroTotal',vm20Fmt(total));
+ set('vm2TotalSub',isAll?vm20MonthRange()+' '+VM20_YEAR:VM20_MONTHS[monthIdx]+' '+VM20_YEAR);
+ set('vm2MonthLabel',VM20_MONTHS[monthIdx]||'Último mes');
+ set('vm2MonthTotal',vm20Fmt(monthTotal));
+ setClass('vm2Mom',mom===null?'—':((mom>=0?'+':'')+mom.toFixed(1)+'%'),mom===null?'':(mom>=0?'positive':'negative'));
+ set('vm2MomSub',monthIdx>0?'vs '+VM20_MONTHS[monthIdx-1]:'sin mes anterior');
+ set('vm2Peak',vm20Fmt(peakVal));
+ set('vm2PeakSub',(VM20_MONTHS[peakIdx]||'—')+' '+VM20_YEAR);
+ set('vm2Moto',vm20Fmt(moto)); set('vm2MotoShare',vm20Pct(moto,total)+' del total');
+ set('vm2Tri',vm20Fmt(tri)); set('vm2TriShare',vm20Pct(tri,total)+' del total');
+ set('vm2DonutTotal',vm20Fmt(total));
+ set('vm2DonutMoto',vm20Fmt(moto)+' · '+vm20Pct(moto,total));
+ set('vm2DonutTri',vm20Fmt(tri)+' · '+vm20Pct(tri,total));
+
+ const top3=brands.slice(0,3).reduce((s,x)=>s+x[1],0);
+ set('vm2Top3Share',vm20Pct(top3,total));
+ set('vm2Top3Names',brands.slice(0,3).map(x=>x[0]).join(' · ')||'—');
+ const top5off=offices.slice(0,5).reduce((s,x)=>s+x[1],0);
+ set('vm2Top5OfficeShare',vm20Pct(top5off,total));
+ set('vm2TopOfficeName',offices[0]?offices[0][0]+' lidera con '+vm20Fmt(offices[0][1]):'—');
+ set('vm2MainDoc',docs[0]?.[0]||'—'); set('vm2MainDocShare',docs[0]?vm20Fmt(docs[0][1])+' · '+vm20Pct(docs[0][1],total):'—');
+ set('vm2MainFuel',fuels[0]?.[0]||'—'); set('vm2MainFuelShare',fuels[0]?vm20Fmt(fuels[0][1])+' · '+vm20Pct(fuels[0][1],total):'—');
+ set('vm22ZoneCount',String(zones.filter(x=>x[1]>0).length));
+ set('vm22OfficeCount',String(offices.filter(x=>x[1]>0).length));
+
+ // Comparativos 2025 solo son válidos para el total general del archivo.
+ const noDimFilters=['type','brand','model','cyl','fuel','zone'].every(k=>(vm20Els[k]?.value||'ALL')==='ALL');
+ const latestIdx=VM20_MONTHS.length-1;
+ if(noDimFilters && monthIdx===latestIdx && Number.isFinite(VM20_META.prevMonthYear) && VM20_META.prevMonthYear){
+   const yoy=((monthTotal-VM20_META.prevMonthYear)/VM20_META.prevMonthYear)*100;
+   setClass('vm2Yoy',(yoy>=0?'+':'')+yoy.toFixed(1)+'%',yoy>=0?'positive':'negative');
+   set('vm2YoySub','vs '+vm20Fmt(VM20_META.prevMonthYear)+' en '+VM20_MONTHS[monthIdx]+' 2025');
+ }else{set('vm2Yoy','—');set('vm2YoySub','disponible para el total general del último mes')}
+ if(noDimFilters && isAll && Number.isFinite(VM20_META.prevYtd) && VM20_META.prevYtd){
+   const yy=((total-VM20_META.prevYtd)/VM20_META.prevYtd)*100;
+   setClass('vm2YtdYoy',(yy>=0?'+':'')+yy.toFixed(1)+'%',yy>=0?'positive':'negative');
+   set('vm2YtdYoySub','vs '+vm20Fmt(VM20_META.prevYtd)+' acumulado 2025');
+ }else{set('vm2YtdYoy','—');set('vm2YtdYoySub','disponible para el acumulado total')}
+
+ vm20RenderRank('vm2Brands',brands,total,10);
+ vm20RenderRank('vm2Models',models,total,10);
+ vm20RenderMap(offices,total);
+ vm20RenderBars('vm2Zones',zones,total,8);
+ vm20RenderBars('vm2CylBars',cyls,total,8,(label)=>{const map={'≤ 110 cc':'LE110','111–150 cc':'111_150','151–200 cc':'151_200','> 200 cc':'GT200','Sin dato':'NA'};if(map[label]){vm20Els.cyl.value=map[label];vm20Update(true)}});
+ vm20RenderBars('vm2Fuels',fuels,total,8);
+ vm20RenderBars('vm2Docs',docs,total,8);
+ vm20DrawDonut(moto,tri);
+ drawVMLines();
+
+ const note=document.getElementById('vm2FilterNote');
+ if(note){const active=[];if(!isAll)active.push(VM20_MONTHS[monthIdx]);for(const [k,label] of [['type','Tipo'],['brand','Marca'],['model','Modelo'],['cyl','Cilindrada'],['fuel','Combustible'],['zone','Zona']]){const v=vm20Els[k]?.value;if(v&&v!=='ALL')active.push(label+': '+(k==='cyl'?vm20CylLabel(v):v))}note.textContent=active.length?'Filtros activos · '+active.join(' · '):'Vista acumulada · '+vm20MonthRange()+' '+VM20_YEAR+' · '+rows.length.toLocaleString('es-PE')+' registros útiles'}
+ set('vm2Coverage',vm20Fmt(total)+' unidades · '+rows.length.toLocaleString('es-PE')+' filas útiles');
+ const missingFuel=fuels.find(x=>x[0]==='SIN DATO')?.[1]||0;
+ const missingCyl=cyls.find(x=>x[0]==='Sin dato')?.[1]||0;
+ set('vm2Quality','Combustible sin dato '+vm20Pct(missingFuel,total)+' · Cilindrada sin dato '+vm20Pct(missingCyl,total));
+ const trend=document.getElementById('vm2TrendInsight');
+ if(trend){const last=monthlyTotals.at(-1)||0,prev=monthlyTotals.at(-2)||0;const ch=prev?((last-prev)/prev*100):0;trend.textContent=(VM20_MONTHS.at(-1)||'Último mes')+': '+vm20Fmt(last)+' · '+(ch>=0?'+':'')+ch.toFixed(1)+'% vs '+(VM20_MONTHS.at(-2)||'mes anterior')+'. Pico: '+(VM20_MONTHS[peakIdx]||'—')+' con '+vm20Fmt(peakVal)+'.'}
+}
+
 function drawVMLines(){if(!vm20HasData())return;const rows=vm20Filtered(),moto=[],tri=[];for(let mi=0;mi<VM20_MONTHS.length;mi++){let a=0,b=0;rows.forEach(r=>{const v=Number(r[8+mi])||0;if(VM20.cls[r[0]]==='MOTOCICLETAS')a+=v;else if(VM20.cls[r[0]]==='TRIMOTOS')b+=v});moto.push(a);tri.push(b)}vm20Line(document.getElementById('vm2Trend'),[{color:'#f5ae00',data:moto},{color:'#252a34',data:tri}])}
 function vm20DrawDonut(moto,tri){const canvas=document.getElementById('vm2Donut');if(!canvas)return;const css=Math.min(canvas.parentElement.clientWidth,210),dpr=Math.min(devicePixelRatio||1,2);canvas.width=css*dpr;canvas.height=css*dpr;canvas.style.width=css+'px';canvas.style.height=css+'px';const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,css,css);const total=moto+tri,cx=css/2,cy=css/2,R=css*.43,r=css*.28;let start=-Math.PI/2;const parts=[{name:'Motocicletas',value:moto,color:'#f5ae00',filter:'MOTOCICLETAS'},{name:'Trimotos',value:tri,color:'#252a34',filter:'TRIMOTOS'}];canvas._vmParts=[];parts.forEach(p=>{const ang=total?2*Math.PI*p.value/total:0;c.beginPath();c.arc(cx,cy,R,start,start+ang);c.arc(cx,cy,r,start+ang,start,true);c.closePath();c.fillStyle=p.color;c.fill();canvas._vmParts.push({...p,start,end:start+ang,cx,cy,R,r,total});start+=ang});if(!total){c.beginPath();c.arc(cx,cy,R,0,Math.PI*2);c.arc(cx,cy,r,0,Math.PI*2,true);c.fillStyle='#eceef2';c.fill()}const tip=document.getElementById('vm2DonutTip');canvas.onmousemove=e=>{if(!total)return;const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-cx,dy=y-cy,rr=Math.hypot(dx,dy);let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;const part=canvas._vmParts.find(p=>rr>=r&&rr<=R&&ang>=p.start&&ang<=p.end);if(part){tip.style.display='block';tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+12)+'px';tip.innerHTML='<b>'+part.name+'</b><br>'+vm20Fmt(part.value)+' · '+vm20Pct(part.value,total)}else tip.style.display='none'};canvas.onmouseleave=()=>tip.style.display='none';canvas.onclick=e=>{if(!total)return;const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-cx,dy=y-cy,rr=Math.hypot(dx,dy);let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;const part=canvas._vmParts.find(p=>rr>=r&&rr<=R&&ang>=p.start&&ang<=p.end);if(part){vm20Els.type.value=part.filter;vm20Update(true)}}}
 function vm20RenderRank(id,arr,total,limit=10){const el=document.getElementById(id);if(!el)return;const top=arr.slice(0,limit),mx=top[0]?.[1]||1;el.innerHTML=top.map(([n,v],i)=>'<div class="vm2-rank-row" title="'+n+' · '+vm20Fmt(v)+'"><span class="name">'+(i+1)+'. '+n+'</span><div class="vm2-track"><div class="vm2-fill" style="width:'+((v/mx)*100).toFixed(1)+'%"></div></div><b>'+vm20Fmt(v)+'</b></div>').join('')||'<div class="vm2-empty">Sin datos para los filtros seleccionados.</div>'}
