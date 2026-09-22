@@ -2701,6 +2701,113 @@ table tbody tr:hover{
   #menores .vm2-card{padding:11px!important}
 }
 
+
+
+/* ==========================================================
+   V27 - PULIDO 100%: FILTROS + MICROINTERACCIONES + GRAFICOS
+   ========================================================== */
+#menores .vm2-filterbar{
+  position:relative;
+  background:linear-gradient(180deg,#ffffff 0%,#fbfbfd 100%)!important;
+  border:1px solid #e7e9ef!important;
+  box-shadow:0 10px 28px rgba(17,19,24,.045)!important;
+  border-radius:16px!important;
+  padding:12px!important;
+}
+#menores .vm2-filter{min-width:0;position:relative}
+#menores .vm2-filter label{
+  font-size:9.5px!important;font-weight:700!important;letter-spacing:.035em!important;
+  color:#7f8794!important;margin:0 0 5px 3px!important;
+}
+#menores .vm2-filter select{
+  appearance:none!important;-webkit-appearance:none!important;
+  width:100%!important;height:39px!important;
+  padding:0 32px 0 11px!important;
+  border:1px solid #e1e4ea!important;border-radius:10px!important;
+  background-color:#fff!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236f7785' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;background-position:right 10px center!important;
+  color:#22262d!important;font-size:11px!important;font-weight:600!important;
+  transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease,transform .18s ease!important;
+  cursor:pointer!important;
+}
+#menores .vm2-filter select:hover{border-color:#cfd4dd!important;background-color:#fff!important}
+#menores .vm2-filter select:focus{outline:none!important;border-color:#ee0b70!important;box-shadow:0 0 0 3px rgba(238,11,112,.10)!important}
+#menores .vm2-filter select.is-active{border-color:rgba(238,11,112,.38)!important;background-color:#fff7fb!important;color:#b80759!important}
+#menores .vm2-filter::after{
+  content:"";position:absolute;left:3px;right:3px;bottom:-5px;height:2px;border-radius:999px;
+  background:linear-gradient(90deg,#ee0b70,#f5a900);transform:scaleX(0);transform-origin:left;transition:transform .2s ease;
+}
+#menores .vm2-filter:has(select.is-active)::after{transform:scaleX(1)}
+#menores .vm2-reset{
+  height:39px!important;border-radius:10px!important;padding:0 12px!important;
+  background:linear-gradient(135deg,#f5a900,#ffc530)!important;
+  box-shadow:0 7px 18px rgba(245,169,0,.16)!important;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease!important;
+}
+#menores .vm2-reset:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(245,169,0,.22)!important;filter:saturate(1.04)}
+#menores .vm2-reset:active{transform:translateY(0)}
+#menores .vm2-filter-note{
+  display:flex;align-items:center;gap:7px;min-height:28px;padding:6px 10px!important;margin:0 0 12px!important;
+  border-radius:9px;background:#f7f8fa;color:#7e8693!important;font-size:9.8px!important;
+  transition:background .2s ease,color .2s ease;
+}
+#menores .vm2-filter-note.has-filters{background:#fff1f7;color:#a80753!important}
+#menores .vm2-filter-note::before{content:"•";font-size:15px;line-height:1;color:#f5a900}
+#menores .vm2-filter-note.has-filters::before{color:#ee0b70}
+
+/* Tarjetas: microinteracción sobria */
+#menores .vm22-kpi,#menores .vm22-insight,#menores .vm2-card,#menores .vm22-mini{
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important;
+}
+#menores .vm22-kpi:hover,#menores .vm22-insight:hover,#menores .vm2-card:hover,#menores .vm22-mini:hover{
+  transform:translateY(-1px);box-shadow:0 12px 28px rgba(17,19,24,.065)!important;border-color:#dce0e7!important;
+}
+#menores .vm2-card.is-refreshing{opacity:.82;transform:translateY(1px)}
+
+/* Rankings / barras con transición real */
+#menores .vm2-fill,#menores .vm2-bar-fill,#menores .vm2-office-row .bar i{
+  transition:width .42s cubic-bezier(.22,.61,.36,1),filter .18s ease!important;
+}
+#menores .vm2-rank-row,#menores .vm2-bar-row,#menores .vm2-office-row{
+  transition:background-color .16s ease,transform .16s ease!important;border-radius:8px;
+}
+#menores .vm2-rank-row:hover,#menores .vm2-bar-row:hover,#menores .vm2-office-row:hover{
+  background:#fafbfc;transform:translateX(2px);
+}
+#menores .vm2-mini-tabs button{transition:background .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease!important}
+#menores .vm2-mini-tabs button:hover{transform:translateY(-1px)}
+
+/* Canvas suaves */
+#menores #vm2Trend,#menores #vm2Donut{transition:opacity .18s ease,transform .18s ease;will-change:opacity,transform}
+#menores canvas.vm2-animating{opacity:.96}
+
+/* Tooltip más premium */
+#menores .vm2-tooltip{
+  border:1px solid rgba(255,255,255,.08)!important;
+  background:rgba(20,23,29,.96)!important;
+  backdrop-filter:blur(8px);
+  box-shadow:0 12px 32px rgba(0,0,0,.24)!important;
+  padding:8px 10px!important;border-radius:9px!important;line-height:1.45!important;
+}
+
+/* Scroll horizontal elegante si los filtros no caben */
+@media (min-width:821px) and (max-width:1180px){
+  #menores .vm2-filterbar{grid-template-columns:repeat(4,minmax(145px,1fr))!important}
+}
+@media (max-width:820px){
+  #menores .vm2-filterbar{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:10px!important}
+}
+@media (max-width:540px){
+  #menores .vm2-filterbar{grid-template-columns:1fr!important}
+  #menores .vm2-filter select,#menores .vm2-reset{height:42px!important}
+}
+
+/* Accesibilidad: reduce motion si el sistema lo solicita */
+@media (prefers-reduced-motion:reduce){
+  #menores *,#menores *::before,#menores *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+
 </style>
 </head>
 <body>
@@ -4029,7 +4136,29 @@ function vm20Filtered(exclude){return VM20.rows.filter(r=>vm20RowMatches(r,exclu
 function vm20Agg(rows,dimIndex,dict,monthOverride){const m=new Map();rows.forEach(r=>{const v=vm20Val(r,monthOverride);if(!v)return;const k=dict[r[dimIndex]]??'SIN DATO';m.set(k,(m.get(k)||0)+v)});return [...m.entries()].sort((a,b)=>b[1]-a[1])}
 function vm20PopulateSelect(sel,values,allLabel){if(!sel)return;const cur=sel.value;sel.innerHTML='<option value="ALL">'+allLabel+'</option>'+values.map(v=>'<option value="'+String(v).replace(/"/g,'&quot;')+'">'+v+'</option>').join('');sel.value=values.includes(cur)?cur:'ALL'}
 function vm20RefreshOptions(){if(!vm20HasData())return;vm20PopulateSelect(vm20Els.type,[...new Set(vm20Filtered('type').map(r=>VM20.cls[r[0]]))].sort(),'Todos');vm20PopulateSelect(vm20Els.brand,[...new Set(vm20Filtered('brand').map(r=>VM20.brand[r[4]]))].sort(),'Todas');vm20PopulateSelect(vm20Els.model,[...new Set(vm20Filtered('model').map(r=>VM20.model[r[5]]))].sort(),'Todos');vm20PopulateSelect(vm20Els.fuel,[...new Set(vm20Filtered('fuel').map(r=>VM20.fuel[r[7]]))].sort(),'Todos');vm20PopulateSelect(vm20Els.zone,[...new Set(vm20Filtered('zone').map(r=>VM20.zone[r[1]]))].sort(),'Todas')}
-function vm20Line(canvas,series){if(!canvas||!VM20_MONTHS.length)return;const rect=canvas.getBoundingClientRect(),w=Math.max(320,Math.round(rect.width)),h=Math.max(185,Math.round(rect.height||230)),dpr=Math.min(devicePixelRatio||1,2);canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);const p={l:46,r:14,t:16,b:27},cw=w-p.l-p.r,ch=h-p.t-p.b,vals=series.flatMap(s=>s.data),max=Math.max(...vals,1)*1.12;c.font='9px Segoe UI';c.textBaseline='middle';for(let i=0;i<4;i++){const y=p.t+ch*i/3;c.strokeStyle='#eceef2';c.beginPath();c.moveTo(p.l,y);c.lineTo(w-p.r,y);c.stroke();c.fillStyle='#9aa0aa';c.textAlign='right';c.fillText(Math.round(max*(1-i/3)).toLocaleString('es-PE'),p.l-7,y)}const den=Math.max(1,VM20_MSHORT.length-1);VM20_MSHORT.forEach((lab,i)=>{const x=p.l+cw*i/den;c.fillStyle='#9aa0aa';c.textAlign='center';c.fillText(lab,x,h-9)});series.forEach((s,si)=>{const pts=s.data.map((v,i)=>({x:p.l+cw*i/den,y:p.t+ch-(v/max)*ch}));if(!pts.length)return;const grad=c.createLinearGradient(0,p.t,0,p.t+ch);grad.addColorStop(0,si===0?'rgba(245,174,0,.15)':'rgba(31,37,48,.08)');grad.addColorStop(1,'rgba(255,255,255,0)');c.beginPath();c.moveTo(pts[0].x,p.t+ch);pts.forEach(pt=>c.lineTo(pt.x,pt.y));c.lineTo(pts.at(-1).x,p.t+ch);c.closePath();c.fillStyle=grad;c.fill();c.beginPath();pts.forEach((pt,i)=>i?c.lineTo(pt.x,pt.y):c.moveTo(pt.x,pt.y));c.strokeStyle=s.color;c.lineWidth=2.5;c.stroke();pts.forEach(pt=>{c.beginPath();c.arc(pt.x,pt.y,3,0,Math.PI*2);c.fillStyle='#fff';c.fill();c.lineWidth=2;c.strokeStyle=s.color;c.stroke()})})}
+function vm20Line(canvas,series){
+ if(!canvas||!VM20_MONTHS.length)return;
+ const rect=canvas.getBoundingClientRect(),w=Math.max(320,Math.round(rect.width)),h=Math.max(185,Math.round(rect.height||230)),dpr=Math.min(devicePixelRatio||1,2);
+ const prev=canvas._vmSeriesPrev||series.map(s=>s.data.map(()=>0));
+ const target=series.map(s=>s.data.slice());
+ canvas._vmSeriesPrev=target.map(a=>a.slice());
+ const duration=360,startTime=performance.now();
+ canvas.classList.add('vm2-animating');
+ function frame(now){
+   const raw=Math.min(1,(now-startTime)/duration),t=1-Math.pow(1-raw,3);
+   const cur=target.map((arr,si)=>arr.map((v,i)=>{const p=prev?.[si]?.[i]??0;return p+(v-p)*t}));
+   canvas.width=w*dpr;canvas.height=h*dpr;
+   const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);
+   const p={l:46,r:14,t:16,b:27},cw=w-p.l-p.r,ch=h-p.t-p.b,vals=target.flat(),max=Math.max(...vals,1)*1.12;
+   c.font='9px Segoe UI';c.textBaseline='middle';
+   for(let i=0;i<4;i++){const y=p.t+ch*i/3;c.strokeStyle='#eceef2';c.lineWidth=1;c.beginPath();c.moveTo(p.l,y);c.lineTo(w-p.r,y);c.stroke();c.fillStyle='#9aa0aa';c.textAlign='right';c.fillText(Math.round(max*(1-i/3)).toLocaleString('es-PE'),p.l-7,y)}
+   const den=Math.max(1,VM20_MSHORT.length-1);
+   VM20_MSHORT.forEach((lab,i)=>{const x=p.l+cw*i/den;c.fillStyle='#9aa0aa';c.textAlign='center';c.fillText(lab,x,h-9)});
+   series.forEach((s,si)=>{const pts=cur[si].map((v,i)=>({x:p.l+cw*i/den,y:p.t+ch-(v/max)*ch}));if(!pts.length)return;const grad=c.createLinearGradient(0,p.t,0,p.t+ch);grad.addColorStop(0,si===0?'rgba(245,174,0,.16)':'rgba(31,37,48,.09)');grad.addColorStop(1,'rgba(255,255,255,0)');c.beginPath();c.moveTo(pts[0].x,p.t+ch);pts.forEach(pt=>c.lineTo(pt.x,pt.y));c.lineTo(pts.at(-1).x,p.t+ch);c.closePath();c.fillStyle=grad;c.fill();c.beginPath();pts.forEach((pt,i)=>i?c.lineTo(pt.x,pt.y):c.moveTo(pt.x,pt.y));c.strokeStyle=s.color;c.lineWidth=2.5;c.lineJoin='round';c.lineCap='round';c.stroke();pts.forEach(pt=>{c.beginPath();c.arc(pt.x,pt.y,3,0,Math.PI*2);c.fillStyle='#fff';c.fill();c.lineWidth=2;c.strokeStyle=s.color;c.stroke()})});
+   if(raw<1)requestAnimationFrame(frame);else canvas.classList.remove('vm2-animating');
+ }
+ cancelAnimationFrame(canvas._vmRaf||0);canvas._vmRaf=requestAnimationFrame(frame);
+}
 function vm20Update(refreshOptions=true){
  if(!vm20HasData()){vm20ResetDisplay();return}
  if(refreshOptions)vm20RefreshOptions();
@@ -4114,6 +4243,7 @@ function vm20Update(refreshOptions=true){
 
  const note=document.getElementById('vm2FilterNote');
  if(note){const active=[];if(!isAll)active.push(VM20_MONTHS[monthIdx]);for(const [k,label] of [['type','Tipo'],['brand','Marca'],['model','Modelo'],['cyl','Cilindrada'],['fuel','Combustible'],['zone','Zona']]){const v=vm20Els[k]?.value;if(v&&v!=='ALL')active.push(label+': '+(k==='cyl'?vm20CylLabel(v):v))}note.textContent=active.length?'Filtros activos · '+active.join(' · '):'Vista acumulada · '+vm20MonthRange()+' '+VM20_YEAR+' · '+rows.length.toLocaleString('es-PE')+' registros útiles'}
+ if(note)note.classList.toggle('has-filters',note.textContent.startsWith('Filtros activos')); Object.values(vm20Els).forEach(el=>{if(el&&el.tagName==='SELECT')el.classList.toggle('is-active',(el.value||'ALL')!=='ALL'&&el!==vm20Els.year)});
  set('vm2Coverage',vm20Fmt(total)+' unidades · '+rows.length.toLocaleString('es-PE')+' filas útiles');
  const missingFuel=fuels.find(x=>x[0]==='SIN DATO')?.[1]||0;
  const missingCyl=cyls.find(x=>x[0]==='Sin dato')?.[1]||0;
@@ -4125,19 +4255,24 @@ function vm20Update(refreshOptions=true){
 function drawVMLines(){if(!vm20HasData())return;const rows=vm20Filtered(),moto=[],tri=[];for(let mi=0;mi<VM20_MONTHS.length;mi++){let a=0,b=0;rows.forEach(r=>{const v=Number(r[8+mi])||0;if(VM20.cls[r[0]]==='MOTOCICLETAS')a+=v;else if(VM20.cls[r[0]]==='TRIMOTOS')b+=v});moto.push(a);tri.push(b)}vm20Line(document.getElementById('vm2Trend'),[{color:'#f5ae00',data:moto},{color:'#252a34',data:tri}])}
 function vm20DrawDonut(moto,tri){
  const canvas=document.getElementById('vm2Donut');if(!canvas)return;
- const wrap=canvas.parentElement;const box=Math.max(150,Math.min((wrap?.clientWidth||200),220));const dpr=Math.min(devicePixelRatio||1,2);
- canvas.width=box*dpr;canvas.height=box*dpr;canvas.style.width=box+'px';canvas.style.height=box+'px';
- const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,box,box);
- const total=moto+tri,cx=box/2,cy=box/2,R=box*.43,r=box*.29;let start=-Math.PI/2;
- const parts=[{name:'Motocicletas',value:moto,color:'#F5A900',filter:'MOTOCICLETAS'},{name:'Trimotos',value:tri,color:'#252A34',filter:'TRIMOTOS'}];
- canvas._vmParts=[];
- parts.forEach(p=>{const ang=total?2*Math.PI*p.value/total:0;c.beginPath();c.arc(cx,cy,R,start,start+ang);c.arc(cx,cy,r,start+ang,start,true);c.closePath();c.fillStyle=p.color;c.fill();canvas._vmParts.push({...p,start,end:start+ang,cx,cy,R,r,total});start+=ang});
- if(!total){c.beginPath();c.arc(cx,cy,R,0,Math.PI*2);c.arc(cx,cy,r,0,Math.PI*2,true);c.fillStyle='#ECEEF2';c.fill()}
+ const wrap=canvas.parentElement,box=Math.max(150,Math.min((wrap?.clientWidth||200),220)),dpr=Math.min(devicePixelRatio||1,2);
+ const target=[moto,tri],prev=canvas._vmDonutPrev||[0,0];canvas._vmDonutPrev=target.slice();
+ const duration=340,startTime=performance.now();canvas.classList.add('vm2-animating');
+ function paint(vals,hoverIndex=-1){
+   canvas.width=box*dpr;canvas.height=box*dpr;canvas.style.width=box+'px';canvas.style.height=box+'px';
+   const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,box,box);
+   const total=vals[0]+vals[1],cx=box/2,cy=box/2,R=box*.43,r=box*.29;let start=-Math.PI/2;
+   const parts=[{name:'Motocicletas',value:vals[0],color:'#F5A900',filter:'MOTOCICLETAS'},{name:'Trimotos',value:vals[1],color:'#252A34',filter:'TRIMOTOS'}];canvas._vmParts=[];
+   parts.forEach((p,idx)=>{const ang=total?2*Math.PI*p.value/total:0,rr=R+(hoverIndex===idx?4:0);c.beginPath();c.arc(cx,cy,rr,start,start+ang);c.arc(cx,cy,r,start+ang,start,true);c.closePath();c.fillStyle=p.color;c.fill();canvas._vmParts.push({...p,start,end:start+ang,cx,cy,R:rr,r,total,index:idx});start+=ang});
+   if(!total){c.beginPath();c.arc(cx,cy,R,0,Math.PI*2);c.arc(cx,cy,r,0,Math.PI*2,true);c.fillStyle='#ECEEF2';c.fill()}
+ }
+ function anim(now){const raw=Math.min(1,(now-startTime)/duration),t=1-Math.pow(1-raw,3),vals=target.map((v,i)=>prev[i]+(v-prev[i])*t);paint(vals);if(raw<1)requestAnimationFrame(anim);else{paint(target);canvas.classList.remove('vm2-animating')}}
+ cancelAnimationFrame(canvas._vmDonutRaf||0);canvas._vmDonutRaf=requestAnimationFrame(anim);
  const tip=document.getElementById('vm2DonutTip');
- function hit(e){const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-cx,dy=y-cy,rr=Math.hypot(dx,dy);let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;return canvas._vmParts.find(p=>rr>=r&&rr<=R&&ang>=p.start&&ang<=p.end)}
- canvas.onmousemove=e=>{if(!total)return;const part=hit(e);if(part){tip.style.display='block';tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+12)+'px';tip.innerHTML='<b>'+part.name+'</b><br>'+vm20Fmt(part.value)+' · '+vm20Pct(part.value,total)}else tip.style.display='none'};
- canvas.onmouseleave=()=>{if(tip)tip.style.display='none'};
- canvas.onclick=e=>{if(!total)return;const part=hit(e);if(part){vm20Els.type.value=part.filter;vm20Update(true)}};
+ function hit(e){const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-box/2,dy=y-box/2,rr=Math.hypot(dx,dy);let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;return canvas._vmParts?.find(p=>rr>=p.r&&rr<=p.R+5&&ang>=p.start&&ang<=p.end)}
+ canvas.onmousemove=e=>{const part=hit(e);if(part){paint(target,part.index);tip.style.display='block';tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+12)+'px';tip.innerHTML='<b>'+part.name+'</b><br>'+vm20Fmt(part.value)+' · '+vm20Pct(part.value,moto+tri)}else{paint(target);tip.style.display='none'}};
+ canvas.onmouseleave=()=>{paint(target);if(tip)tip.style.display='none'};
+ canvas.onclick=e=>{const part=hit(e);if(part){vm20Els.type.value=part.filter;vm20Update(true)}};
 }
 function vm20RenderRank(id,arr,total,limit=10){const el=document.getElementById(id);if(!el)return;const top=arr.slice(0,limit),mx=top[0]?.[1]||1;el.innerHTML=top.map(([n,v],i)=>'<div class="vm2-rank-row" title="'+n+' · '+vm20Fmt(v)+'"><span class="name">'+(i+1)+'. '+n+'</span><div class="vm2-track"><div class="vm2-fill" style="width:'+((v/mx)*100).toFixed(1)+'%"></div></div><b>'+vm20Fmt(v)+'</b></div>').join('')||'<div class="vm2-empty">Sin datos para los filtros seleccionados.</div>'}
 function vm20RenderBars(id,arr,total,limit=8,clicker){const el=document.getElementById(id);if(!el)return;const top=arr.slice(0,limit),mx=top[0]?.[1]||1;el.innerHTML=top.map(([n,v])=>'<div class="vm2-bar-row" data-key="'+n+'"><div class="vm2-bar-head"><span>'+n+'</span><b>'+vm20Fmt(v)+' · '+vm20Pct(v,total)+'</b></div><div class="vm2-bar-track"><div class="vm2-bar-fill" style="width:'+((v/mx)*100).toFixed(1)+'%"></div></div></div>').join('')||'<div class="vm2-empty">Sin datos</div>';if(clicker)el.querySelectorAll('.vm2-bar-row').forEach(x=>x.onclick=()=>clicker(x.dataset.key))}
@@ -4165,7 +4300,7 @@ async function vm22AutoLoad(){
   vm22Connection('Excel no encontrado en la carpeta del sistema','Sube el archivo como “vehiculos_menores.xlsx” junto al HTML o selecciónalo manualmente.');vm20SetStatus('Selecciona el Excel para activar el dashboard',false);
 }
 function vm20Init(){
- Object.values(vm20Els).forEach(el=>el?.addEventListener('change',()=>vm20Update(true)));
+ let vm20FilterTimer; Object.values(vm20Els).forEach(el=>el?.addEventListener('change',()=>{clearTimeout(vm20FilterTimer);document.querySelectorAll('#menores .vm2-card').forEach(c=>c.classList.add('is-refreshing'));vm20FilterTimer=setTimeout(()=>{vm20Update(true);requestAnimationFrame(()=>document.querySelectorAll('#menores .vm2-card').forEach(c=>c.classList.remove('is-refreshing')))},70)}));
  document.getElementById('vm2Reset')?.addEventListener('click',()=>{Object.values(vm20Els).forEach(el=>{if(el)el.value='ALL'});vm20Update(true)});
  document.querySelectorAll('[data-vmtype]').forEach(b=>b.addEventListener('click',()=>{if(!vm20HasData())return;vm20Els.type.value=b.dataset.vmtype;vm20Update(true)}));
  document.querySelectorAll('[data-vmquick]').forEach(b=>b.addEventListener('click',()=>{if(!vm20HasData())return;vm20Els.type.value=b.dataset.vmquick;vm20Update(true)}));
@@ -4177,7 +4312,9 @@ function vm20Init(){
 
 vm20Init();
 let vm20ResizeTimer;
-window.addEventListener('resize',()=>{clearTimeout(vm20ResizeTimer);vm20ResizeTimer=setTimeout(()=>{if(vm20HasData()){vm20Update(false)}},120)});
+function vm20ResizeRedraw(){clearTimeout(vm20ResizeTimer);vm20ResizeTimer=setTimeout(()=>{if(vm20HasData()){drawVMLines();const rows=vm20Filtered();let m=0,t=0;rows.forEach(r=>{const v=vm20Val(r),c=VM20.cls[r[0]];if(c==='MOTOCICLETAS')m+=v;else if(c==='TRIMOTOS')t+=v});vm20DrawDonut(m,t)}},140)}
+window.addEventListener('resize',vm20ResizeRedraw);
+if('ResizeObserver' in window){const ro=new ResizeObserver(vm20ResizeRedraw);['vm2Trend','vm2Donut'].forEach(id=>{const e=document.getElementById(id)?.parentElement;if(e)ro.observe(e)})}
 
 
 // REMOLQUES Y SEMIRREMOLQUES
