@@ -1043,6 +1043,385 @@ table tbody tr:hover{
   }
 }
 
+
+/* ==========================================================
+   FIX V14 - LAYOUT ESTABLE + SOLO LOGO FIJO
+   ========================================================== */
+
+/* Restaurar layout base estable */
+.app{
+  display:grid !important;
+  grid-template-columns:224px minmax(0,1fr) !important;
+  min-height:100vh !important;
+  width:100% !important;
+}
+
+/* Sidebar fijo completo, pero solo el brand queda sticky dentro */
+.sidebar{
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  width:224px !important;
+  height:100vh !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  z-index:1000 !important;
+  box-sizing:border-box !important;
+}
+
+/* SOLO logo/cabecera queda pegado arriba al hacer scroll dentro del menú */
+.brand{
+  position:sticky !important;
+  top:0 !important;
+  z-index:1200 !important;
+  background:
+    radial-gradient(circle at 0 0, rgba(238,11,112,.13), transparent 34%),
+    linear-gradient(180deg,#101116 0%,#121319 100%) !important;
+  padding:10px 8px 14px !important;
+  margin:0 !important;
+  border-bottom:1px solid rgba(255,255,255,.08) !important;
+  box-shadow:0 10px 20px rgba(8,9,12,.16) !important;
+}
+
+/* Main ocupa TODO el resto */
+.main{
+  grid-column:2 !important;
+  margin-left:224px !important;
+  width:calc(100vw - 224px) !important;
+  min-width:0 !important;
+  max-width:none !important;
+  box-sizing:border-box !important;
+  overflow-x:hidden !important;
+}
+
+/* Header superior correcto */
+.topbar{
+  position:sticky !important;
+  top:0 !important;
+  z-index:900 !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+}
+
+/* Contenido nunca debe quedar angosto */
+.content{
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  padding:16px 18px 28px !important;
+}
+
+/* Todas las páginas deben ocupar el ancho disponible */
+.page{
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
+.page.active{
+  display:block !important;
+  width:100% !important;
+}
+
+/* Evitar que grids hereden anchos absurdos */
+.grid,
+.vm-kpis,.vl-kpis,.vp-kpis,.rm-kpis,.rt-kpis,.ra-kpis,.ob-kpis,.cr-kpis,.dc-kpis,
+.vm-grid-top,.vl-grid-top,.vp-grid-top,.rm-grid-top,.rt-grid-top,.ra-grid-1,.ob-grid-top,.cr-grid-top,.dc-grid-top,
+.vm-grid-bottom,.vl-grid-bottom,.vp-grid-bottom,.rm-grid-bottom,.rt-grid-bottom,.ra-grid-2,.ob-grid-bottom,.cr-grid-bottom,.dc-grid-bottom,
+.filters,.vm-filters,.vl-filters,.vp-filters,.rm-filters,.rt-filters,.ob-filters,.cr-filters,.dc-filters{
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
+
+/* Cards jamás fuerzan la página */
+.card,.kpi,
+.vm-box,.vl-box,.vp-box,.rm-box,.rt-box,.ra-box,.ob-box,.cr-box,.dc-box,
+.vm-kpi,.vl-kpi,.vp-kpi,.rm-kpi,.rt-kpi,.ra-kpi,.ob-kpi,.cr-kpi,.dc-kpi{
+  min-width:0 !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+}
+
+/* Acciones del header en línea, no columna */
+.topbar{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:16px !important;
+}
+.topbar-left{
+  min-width:0 !important;
+}
+.actions{
+  display:flex !important;
+  align-items:center !important;
+  flex-wrap:nowrap !important;
+  width:auto !important;
+  max-width:none !important;
+  gap:8px !important;
+}
+.actions .btn{
+  width:auto !important;
+  min-width:auto !important;
+  white-space:nowrap !important;
+}
+
+/* Hero normal, nunca comprimido */
+.vm-hero,.vl-hero,.vp-hero,.rm-hero,.rt-hero,.ra-hero,.ob-hero,.cr-hero,.dc-hero{
+  width:100% !important;
+  max-width:none !important;
+  box-sizing:border-box !important;
+}
+
+/* Corrección escritorio medio */
+@media (max-width:1250px) and (min-width:901px){
+  .app{
+    grid-template-columns:205px minmax(0,1fr) !important;
+  }
+  .sidebar{
+    width:205px !important;
+  }
+  .main{
+    margin-left:205px !important;
+    width:calc(100vw - 205px) !important;
+  }
+}
+
+/* Tablet / móvil: vuelve a flujo normal */
+@media(max-width:900px){
+  .app{
+    display:block !important;
+    width:100% !important;
+  }
+  .sidebar{
+    position:relative !important;
+    width:100% !important;
+    height:auto !important;
+    overflow:visible !important;
+  }
+  .brand{
+    position:relative !important;
+    top:auto !important;
+  }
+  .main{
+    margin-left:0 !important;
+    width:100% !important;
+    grid-column:auto !important;
+  }
+  .topbar{
+    position:relative !important;
+    flex-direction:column !important;
+    align-items:flex-start !important;
+  }
+  .actions{
+    width:100% !important;
+    flex-wrap:wrap !important;
+  }
+  .content{
+    padding:12px !important;
+  }
+}
+
+
+/* ==========================================================
+   V15 - LAYOUT FINAL CORREGIDO
+   Sidebar fijo + logo sticky + contenido sin doble desplazamiento
+   ========================================================== */
+
+:root{
+  --sidebar-w:240px;
+}
+
+/* IMPORTANTE: quitar por completo el grid anterior */
+.app{
+  display:block !important;
+  width:100% !important;
+  min-height:100vh !important;
+  overflow:visible !important;
+}
+
+/* SIDEBAR FIJO */
+.sidebar{
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  width:var(--sidebar-w) !important;
+  height:100vh !important;
+  box-sizing:border-box !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  z-index:1000 !important;
+}
+
+/* SOLO EL LOGO / MARCA QUEDA PEGADO ARRIBA */
+.brand{
+  position:sticky !important;
+  top:0 !important;
+  z-index:1200 !important;
+  margin:0 !important;
+  padding:12px 10px 15px !important;
+  background:
+    radial-gradient(circle at 0 0, rgba(238,11,112,.12), transparent 34%),
+    linear-gradient(180deg,#101116 0%,#121319 100%) !important;
+  border-bottom:1px solid rgba(255,255,255,.08) !important;
+  box-shadow:0 10px 18px rgba(8,9,12,.16) !important;
+}
+
+/* EL MAIN EMPIEZA EXACTAMENTE AL COSTADO DEL SIDEBAR */
+.main{
+  display:block !important;
+  margin:0 0 0 var(--sidebar-w) !important;
+  padding:0 !important;
+  width:auto !important;
+  max-width:none !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  overflow-x:hidden !important;
+}
+
+/* HEADER SUPERIOR */
+.topbar{
+  position:sticky !important;
+  top:0 !important;
+  z-index:900 !important;
+  width:100% !important;
+  max-width:none !important;
+  box-sizing:border-box !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:14px !important;
+  padding:10px 16px !important;
+}
+
+.topbar-left{
+  flex:1 1 auto !important;
+  min-width:180px !important;
+}
+
+.actions{
+  flex:0 0 auto !important;
+  width:auto !important;
+  max-width:none !important;
+  min-width:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  flex-wrap:wrap !important;
+  gap:7px !important;
+}
+
+.actions .btn,
+.actions .tsf-live{
+  flex:0 0 auto !important;
+  width:auto !important;
+  max-width:none !important;
+  white-space:nowrap !important;
+}
+
+/* CONTENIDO: TODO EL ANCHO DISPONIBLE */
+.content{
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  padding:14px 16px 28px !important;
+  margin:0 !important;
+}
+
+.page{
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+}
+
+.page.active{
+  display:block !important;
+}
+
+/* Evitar recortes en todos los módulos */
+.hero,
+.vm-hero,.vl-hero,.vp-hero,.rm-hero,.rt-hero,.ra-hero,.ob-hero,.cr-hero,.dc-hero,
+.grid,.kpis,
+.vm-kpis,.vl-kpis,.vp-kpis,.rm-kpis,.rt-kpis,.ra-kpis,.ob-kpis,.cr-kpis,.dc-kpis,
+.vm-grid-top,.vl-grid-top,.vp-grid-top,.rm-grid-top,.rt-grid-top,.ra-grid-1,.ob-grid-top,.cr-grid-top,.dc-grid-top,
+.vm-grid-bottom,.vl-grid-bottom,.vp-grid-bottom,.rm-grid-bottom,.rt-grid-bottom,.ra-grid-2,.ob-grid-bottom,.cr-grid-bottom,.dc-grid-bottom,
+.filters,.vm-filters,.vl-filters,.vp-filters,.rm-filters,.rt-filters,.ob-filters,.cr-filters,.dc-filters{
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
+
+/* Cards no deben provocar overflow */
+.card,.kpi,
+.vm-box,.vl-box,.vp-box,.rm-box,.rt-box,.ra-box,.ob-box,.cr-box,.dc-box,
+.vm-kpi,.vl-kpi,.vp-kpi,.rm-kpi,.rt-kpi,.ra-kpi,.ob-kpi,.cr-kpi,.dc-kpi{
+  min-width:0 !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+}
+
+/* Ajustes para escritorio mediano */
+@media(max-width:1350px){
+  :root{--sidebar-w:220px;}
+  .content{padding:12px 14px 26px !important;}
+  .topbar{padding:9px 14px !important;}
+  .actions .btn{padding:7px 9px !important;font-size:11px !important;}
+  .tsf-live{display:none !important;}
+}
+
+/* Cuando la pantalla ya es realmente pequeña */
+@media(max-width:980px){
+  :root{--sidebar-w:205px;}
+  .actions{
+    max-width:460px !important;
+  }
+}
+
+/* MÓVIL / TABLET */
+@media(max-width:820px){
+  .sidebar{
+    position:relative !important;
+    width:100% !important;
+    height:auto !important;
+    overflow:visible !important;
+  }
+
+  .brand{
+    position:relative !important;
+    top:auto !important;
+  }
+
+  .main{
+    margin-left:0 !important;
+    width:100% !important;
+  }
+
+  .topbar{
+    position:relative !important;
+    flex-direction:column !important;
+    align-items:flex-start !important;
+  }
+
+  .actions{
+    width:100% !important;
+    justify-content:flex-start !important;
+    max-width:none !important;
+  }
+
+  .content{
+    padding:10px !important;
+  }
+}
+
 </style>
 </head>
 <body>
