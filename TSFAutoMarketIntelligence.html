@@ -1422,6 +1422,1059 @@ table tbody tr:hover{
   }
 }
 
+
+/* ==========================================================
+   V16 - RESPONSIVE REAL PARA TODOS LOS TAMAÑOS
+   ========================================================== */
+
+:root{
+  --sidebar-w:240px;
+}
+
+/* ---------- ESCRITORIO GRANDE ---------- */
+@media (min-width:1401px){
+  .sidebar{
+    width:240px !important;
+  }
+  .main{
+    margin-left:240px !important;
+  }
+}
+
+/* ---------- LAPTOP / ESCRITORIO MEDIANO ---------- */
+@media (min-width:1101px) and (max-width:1400px){
+  :root{ --sidebar-w:210px; }
+
+  .sidebar{
+    width:210px !important;
+  }
+
+  .main{
+    margin-left:210px !important;
+  }
+
+  .brand-copy strong{
+    font-size:13px !important;
+  }
+
+  .brand-product{
+    font-size:9px !important;
+  }
+
+  .nav button{
+    font-size:11.5px !important;
+    padding:7px 8px !important;
+  }
+
+  .nav .nav-ico{
+    width:22px !important;
+    height:22px !important;
+  }
+
+  .content{
+    padding:12px !important;
+  }
+
+  .topbar{
+    padding:9px 12px !important;
+  }
+
+  .kpi,
+  .vm-kpi,.vl-kpi,.vp-kpi,.rm-kpi,.rt-kpi,.ra-kpi,.ob-kpi,.cr-kpi,.dc-kpi{
+    min-height:82px !important;
+  }
+
+  .kpi .value,
+  .vm-kpi .num,.vl-kpi .num,.vp-kpi .num,.rm-kpi .num,.rt-kpi .num,
+  .ra-kpi .num,.ob-kpi .num,.cr-kpi .num,.dc-kpi .num{
+    font-size:22px !important;
+  }
+}
+
+/* ---------- TABLET HORIZONTAL / LAPTOP PEQUEÑA ---------- */
+@media (min-width:821px) and (max-width:1100px){
+  :root{ --sidebar-w:185px; }
+
+  .sidebar{
+    width:185px !important;
+  }
+
+  .main{
+    margin-left:185px !important;
+  }
+
+  .brand{
+    padding:10px 7px 12px !important;
+  }
+
+  .brand-mark{
+    width:38px !important;
+    height:38px !important;
+  }
+
+  .brand-copy strong{
+    font-size:12px !important;
+  }
+
+  .brand-copy small{
+    font-size:8.5px !important;
+  }
+
+  .brand-product{
+    font-size:8px !important;
+  }
+
+  .nav button{
+    font-size:10.5px !important;
+    padding:6px 7px !important;
+    line-height:1.2 !important;
+  }
+
+  .nav .nav-ico{
+    width:21px !important;
+    height:21px !important;
+  }
+
+  .topbar{
+    gap:8px !important;
+  }
+
+  .topbar-left h2{
+    font-size:17px !important;
+  }
+
+  .actions{
+    gap:5px !important;
+  }
+
+  .actions .btn{
+    font-size:10.5px !important;
+    padding:7px 8px !important;
+  }
+
+  .tsf-live{
+    display:none !important;
+  }
+
+  .content{
+    padding:10px !important;
+  }
+
+  .vm-kpis,.vl-kpis,.vp-kpis,.rm-kpis,.rt-kpis,.ra-kpis,.ob-kpis,.cr-kpis,.dc-kpis{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+
+  .vm-grid-top,.vl-grid-top,.vp-grid-top,.rm-grid-top,.rt-grid-top,
+  .ob-grid-top,.cr-grid-top,.dc-grid-top,
+  .vm-grid-bottom,.vl-grid-bottom,.vp-grid-bottom,.rm-grid-bottom,.rt-grid-bottom,
+  .ob-grid-bottom,.cr-grid-bottom,.dc-grid-bottom,
+  .ra-grid-1,.ra-grid-2{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+
+  .filters,
+  .vm-filters,.vl-filters,.vp-filters,.rm-filters,.rt-filters,.ob-filters,.cr-filters,.dc-filters{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+
+  .hero h3,
+  .vm-hero h3,.vl-hero h3,.vp-hero h3,.rm-hero h3,.rt-hero h3,
+  .ra-hero h3,.ob-hero h3,.cr-hero h3,.dc-hero h3{
+    font-size:21px !important;
+  }
+}
+
+/* ---------- TABLET / CELULAR GRANDE ---------- */
+@media (max-width:820px){
+
+  body{
+    overflow-x:hidden !important;
+  }
+
+  .app{
+    display:block !important;
+  }
+
+  /* Sidebar deja de ser lateral */
+  .sidebar{
+    position:relative !important;
+    width:100% !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    padding:10px !important;
+  }
+
+  /* Logo arriba, compacto */
+  .brand{
+    position:relative !important;
+    top:auto !important;
+    padding:8px 8px 10px !important;
+    box-shadow:none !important;
+  }
+
+  .brand-shell{
+    gap:8px !important;
+  }
+
+  .brand-mark{
+    width:36px !important;
+    height:36px !important;
+    border-width:4px !important;
+  }
+
+  .brand-mark:before{
+    width:16px !important;
+    height:4px !important;
+    top:7px !important;
+  }
+
+  .brand-mark:after{
+    width:6px !important;
+    height:17px !important;
+    top:11px !important;
+  }
+
+  .brand-copy strong{
+    font-size:13px !important;
+  }
+
+  .brand-copy small{
+    font-size:8.5px !important;
+  }
+
+  .brand-product{
+    font-size:8px !important;
+    margin-top:6px !important;
+  }
+
+  .nav-title{
+    display:none !important;
+  }
+
+  /* Menú horizontal compacto con scroll */
+  .nav{
+    display:flex !important;
+    gap:6px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding:8px 0 2px !important;
+    scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .nav button{
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:max-content !important;
+    min-height:36px !important;
+    padding:7px 10px !important;
+    font-size:10.5px !important;
+    margin:0 !important;
+    scroll-snap-align:start;
+    white-space:nowrap !important;
+  }
+
+  .nav .nav-ico{
+    width:20px !important;
+    height:20px !important;
+    font-size:11px !important;
+  }
+
+  /* Quitar scrollbar fea del menú */
+  .nav::-webkit-scrollbar{
+    height:4px;
+  }
+
+  /* Main ocupa todo */
+  .main{
+    margin-left:0 !important;
+    width:100% !important;
+  }
+
+  .topbar{
+    position:sticky !important;
+    top:0 !important;
+    z-index:800 !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:8px !important;
+    padding:9px 10px !important;
+  }
+
+  .topbar-left{
+    width:100% !important;
+  }
+
+  .topbar-left h2{
+    font-size:17px !important;
+  }
+
+  .actions{
+    width:100% !important;
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:6px !important;
+  }
+
+  .actions .btn{
+    width:100% !important;
+    min-width:0 !important;
+    padding:7px 6px !important;
+    font-size:10px !important;
+    white-space:normal !important;
+    line-height:1.15 !important;
+  }
+
+  .tsf-live{
+    display:none !important;
+  }
+
+  .content{
+    padding:10px !important;
+  }
+
+  /* KPIs */
+  .grid.kpis,
+  .vm-kpis,.vl-kpis,.vp-kpis,.rm-kpis,.rt-kpis,.ra-kpis,.ob-kpis,.cr-kpis,.dc-kpis{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px !important;
+  }
+
+  /* Grids principales */
+  .vm-grid-top,.vl-grid-top,.vp-grid-top,.rm-grid-top,.rt-grid-top,
+  .ob-grid-top,.cr-grid-top,.dc-grid-top,
+  .vm-grid-bottom,.vl-grid-bottom,.vp-grid-bottom,.rm-grid-bottom,.rt-grid-bottom,
+  .ob-grid-bottom,.cr-grid-bottom,.dc-grid-bottom,
+  .ra-grid-1,.ra-grid-2{
+    grid-template-columns:1fr !important;
+  }
+
+  /* Filtros */
+  .filters,
+  .vm-filters,.vl-filters,.vp-filters,.rm-filters,.rt-filters,.ob-filters,.cr-filters,.dc-filters{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+
+  /* Hero */
+  .vm-hero,.vl-hero,.vp-hero,.rm-hero,.rt-hero,.ra-hero,.ob-hero,.cr-hero,.dc-hero{
+    min-height:100px !important;
+    padding:15px !important;
+  }
+
+  .vm-hero h3,.vl-hero h3,.vp-hero h3,.rm-hero h3,.rt-hero h3,
+  .ra-hero h3,.ob-hero h3,.cr-hero h3,.dc-hero h3{
+    font-size:20px !important;
+  }
+
+  .vm-hero .sub,.vl-hero .sub,.vp-hero .sub,.rm-hero .sub,.rt-hero .sub,
+  .ra-hero .sub,.ob-hero .sub,.cr-hero .sub,.dc-hero .sub{
+    font-size:12px !important;
+  }
+
+  .vm-hero p,.vl-hero p,.vp-hero p,.rm-hero p,.rt-hero p,
+  .ra-hero p,.ob-hero p,.cr-hero p,.dc-hero p{
+    font-size:11px !important;
+  }
+
+  /* Charts */
+  .chart,.vm-line,.vl-line,.vp-line,.rm-line,.rt-line{
+    height:190px !important;
+    min-height:190px !important;
+    max-height:190px !important;
+  }
+
+  /* Tablas con scroll horizontal */
+  .table-wrap{
+    overflow-x:auto !important;
+    max-width:100% !important;
+  }
+
+  table{
+    min-width:600px;
+  }
+
+  .tsf-fab{
+    width:42px !important;
+    height:42px !important;
+    right:12px !important;
+    bottom:12px !important;
+  }
+}
+
+/* ---------- CELULAR ---------- */
+@media (max-width:520px){
+
+  .sidebar{
+    padding:8px !important;
+  }
+
+  .brand-copy strong{
+    font-size:12px !important;
+  }
+
+  .brand-product{
+    font-size:7.5px !important;
+  }
+
+  .nav button{
+    font-size:9.5px !important;
+    padding:6px 8px !important;
+  }
+
+  .topbar{
+    padding:8px !important;
+  }
+
+  .topbar-left h2{
+    font-size:16px !important;
+  }
+
+  .topbar-left small{
+    font-size:9.5px !important;
+  }
+
+  .actions{
+    grid-template-columns:1fr 1fr !important;
+  }
+
+  .actions .btn:last-child{
+    grid-column:1 / -1;
+  }
+
+  .content{
+    padding:8px !important;
+  }
+
+  .grid.kpis,
+  .vm-kpis,.vl-kpis,.vp-kpis,.rm-kpis,.rt-kpis,.ra-kpis,.ob-kpis,.cr-kpis,.dc-kpis{
+    grid-template-columns:1fr !important;
+  }
+
+  .filters,
+  .vm-filters,.vl-filters,.vp-filters,.rm-filters,.rt-filters,.ob-filters,.cr-filters,.dc-filters{
+    grid-template-columns:1fr !important;
+  }
+
+  .kpi,
+  .vm-kpi,.vl-kpi,.vp-kpi,.rm-kpi,.rt-kpi,.ra-kpi,.ob-kpi,.cr-kpi,.dc-kpi{
+    min-height:74px !important;
+    padding:10px !important;
+  }
+
+  .kpi .value,
+  .vm-kpi .num,.vl-kpi .num,.vp-kpi .num,.rm-kpi .num,.rt-kpi .num,
+  .ra-kpi .num,.ob-kpi .num,.cr-kpi .num,.dc-kpi .num{
+    font-size:21px !important;
+  }
+
+  .vm-hero,.vl-hero,.vp-hero,.rm-hero,.rt-hero,.ra-hero,.ob-hero,.cr-hero,.dc-hero{
+    padding:13px !important;
+  }
+
+  .vm-hero h3,.vl-hero h3,.vp-hero h3,.rm-hero h3,.rt-hero h3,
+  .ra-hero h3,.ob-hero h3,.cr-hero h3,.dc-hero h3{
+    font-size:18px !important;
+  }
+
+  .chart,.vm-line,.vl-line,.vp-line,.rm-line,.rt-line{
+    height:175px !important;
+    min-height:175px !important;
+    max-height:175px !important;
+  }
+
+  .card,.vm-box,.vl-box,.vp-box,.rm-box,.rt-box,.ra-box,.ob-box,.cr-box,.dc-box{
+    padding:10px !important;
+  }
+
+  .vm-box h4,.vl-box h4,.vp-box h4,.rm-box h4,.rt-box h4,.ra-box h4,
+  .ob-box h4,.cr-box h4,.dc-box h4,.card h4{
+    font-size:12px !important;
+  }
+}
+
+
+/* ==========================================================
+   V17 - SIDEBAR NORMAL A LA IZQUIERDA
+   ========================================================== */
+
+/* Escritorio: menú normal a la izquierda, sin efectos raros */
+@media (min-width:821px){
+  .app{
+    display:grid !important;
+    grid-template-columns:230px minmax(0,1fr) !important;
+    min-height:100vh !important;
+    width:100% !important;
+  }
+
+  .sidebar{
+    position:sticky !important;
+    top:0 !important;
+    left:auto !important;
+    width:230px !important;
+    height:100vh !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    z-index:20 !important;
+    box-sizing:border-box !important;
+  }
+
+  /* La cabecera del logo ya no flota ni hace cosas extrañas */
+  .brand{
+    position:relative !important;
+    top:auto !important;
+    z-index:auto !important;
+    margin:0 !important;
+    box-shadow:none !important;
+  }
+
+  .main{
+    grid-column:2 !important;
+    margin-left:0 !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:none !important;
+    box-sizing:border-box !important;
+  }
+
+  .topbar{
+    position:sticky !important;
+    top:0 !important;
+    z-index:15 !important;
+  }
+}
+
+/* Laptop mediana */
+@media (min-width:821px) and (max-width:1200px){
+  .app{
+    grid-template-columns:205px minmax(0,1fr) !important;
+  }
+
+  .sidebar{
+    width:205px !important;
+  }
+
+  .nav button{
+    font-size:11px !important;
+  }
+}
+
+/* Tablet / móvil: menú arriba, compacto */
+@media (max-width:820px){
+  .app{
+    display:block !important;
+  }
+
+  .sidebar{
+    position:relative !important;
+    width:100% !important;
+    height:auto !important;
+    overflow:visible !important;
+  }
+
+  .brand{
+    position:relative !important;
+  }
+
+  .main{
+    margin-left:0 !important;
+    width:100% !important;
+  }
+
+  .nav{
+    display:flex !important;
+    overflow-x:auto !important;
+    gap:6px !important;
+  }
+
+  .nav button{
+    flex:0 0 auto !important;
+    width:auto !important;
+    white-space:nowrap !important;
+  }
+}
+
+
+/* ==========================================================
+   V18 - SIDEBAR SIEMPRE A LA IZQUIERDA EN CUALQUIER TAMAÑO
+   ========================================================== */
+
+:root{
+  --sidebar-w:230px;
+}
+
+/* Siempre layout de 2 columnas */
+.app{
+  display:grid !important;
+  grid-template-columns:var(--sidebar-w) minmax(0,1fr) !important;
+  width:100% !important;
+  min-height:100vh !important;
+}
+
+/* Sidebar siempre a la izquierda */
+.sidebar{
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  width:var(--sidebar-w) !important;
+  height:100vh !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  z-index:1000 !important;
+  box-sizing:border-box !important;
+}
+
+/* Logo normal dentro del sidebar */
+.brand{
+  position:relative !important;
+  top:auto !important;
+  z-index:auto !important;
+}
+
+/* Contenido siempre al costado */
+.main{
+  grid-column:2 !important;
+  margin-left:var(--sidebar-w) !important;
+  width:calc(100vw - var(--sidebar-w)) !important;
+  min-width:0 !important;
+  max-width:none !important;
+  box-sizing:border-box !important;
+}
+
+/* Header superior se adapta al espacio restante */
+.topbar{
+  width:100% !important;
+  box-sizing:border-box !important;
+}
+
+/* Contenido flexible */
+.content,
+.page,
+.page.active{
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  box-sizing:border-box !important;
+}
+
+/* Escritorio grande */
+@media(min-width:1400px){
+  :root{ --sidebar-w:240px; }
+}
+
+/* Laptop */
+@media(max-width:1399px) and (min-width:1000px){
+  :root{ --sidebar-w:215px; }
+}
+
+/* Pantalla mediana */
+@media(max-width:999px) and (min-width:700px){
+  :root{ --sidebar-w:195px; }
+
+  .brand-copy strong{font-size:12px !important;}
+  .brand-copy small{font-size:8px !important;}
+  .brand-product{font-size:8px !important;}
+  .nav button{font-size:10.5px !important;padding:6px 7px !important;}
+  .nav .nav-ico{width:20px !important;height:20px !important;}
+}
+
+/* Pantalla pequeña: SIGUE A LA IZQUIERDA */
+@media(max-width:699px){
+  :root{ --sidebar-w:170px; }
+
+  .sidebar{
+    position:fixed !important;
+    width:170px !important;
+    height:100vh !important;
+    overflow-y:auto !important;
+  }
+
+  .main{
+    margin-left:170px !important;
+    width:calc(100vw - 170px) !important;
+  }
+
+  .brand{
+    padding:8px 6px 10px !important;
+  }
+
+  .brand-mark{
+    width:34px !important;
+    height:34px !important;
+  }
+
+  .brand-copy strong{
+    font-size:11px !important;
+  }
+
+  .brand-copy small{
+    font-size:7.5px !important;
+  }
+
+  .brand-product{
+    font-size:7px !important;
+  }
+
+  .nav-title{
+    font-size:8px !important;
+  }
+
+  .nav{
+    display:block !important;
+    overflow:visible !important;
+  }
+
+  .nav button{
+    width:100% !important;
+    min-width:0 !important;
+    white-space:normal !important;
+    font-size:9.5px !important;
+    padding:6px !important;
+  }
+
+  .nav .nav-ico{
+    width:19px !important;
+    height:19px !important;
+    font-size:10px !important;
+  }
+
+  .topbar{
+    flex-direction:column !important;
+    align-items:flex-start !important;
+    gap:6px !important;
+  }
+
+  .actions{
+    width:100% !important;
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:5px !important;
+  }
+
+  .actions .btn{
+    width:100% !important;
+    font-size:9px !important;
+    padding:6px !important;
+  }
+
+  .content{
+    padding:8px !important;
+  }
+
+  .grid.kpis,
+  .vm-kpis,.vl-kpis,.vp-kpis,.rm-kpis,.rt-kpis,.ra-kpis,.ob-kpis,.cr-kpis,.dc-kpis{
+    grid-template-columns:1fr !important;
+  }
+
+  .filters,
+  .vm-filters,.vl-filters,.vp-filters,.rm-filters,.rt-filters,.ob-filters,.cr-filters,.dc-filters{
+    grid-template-columns:1fr !important;
+  }
+
+  .vm-grid-top,.vl-grid-top,.vp-grid-top,.rm-grid-top,.rt-grid-top,
+  .ob-grid-top,.cr-grid-top,.dc-grid-top,
+  .vm-grid-bottom,.vl-grid-bottom,.vp-grid-bottom,.rm-grid-bottom,.rt-grid-bottom,
+  .ob-grid-bottom,.cr-grid-bottom,.dc-grid-bottom,
+  .ra-grid-1,.ra-grid-2{
+    grid-template-columns:1fr !important;
+  }
+}
+
+
+/* ==========================================================
+   V19 - SIDEBAR COMO LA CAPTURA / RESTO NORMAL
+   ========================================================== */
+
+:root{
+  --sidebar-w:300px;
+}
+
+/* Layout estable */
+.app{
+  display:block !important;
+  width:100% !important;
+  min-height:100vh !important;
+}
+
+/* SIDEBAR EXACTO: oscuro, fijo, alto completo */
+.sidebar{
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  width:var(--sidebar-w) !important;
+  height:100vh !important;
+  box-sizing:border-box !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  z-index:1000 !important;
+
+  padding:18px 12px 16px !important;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(238,11,112,.08), transparent 28%),
+    linear-gradient(180deg,#121319 0%,#111217 100%) !important;
+
+  border-right:2px solid #E7E9EF !important;
+  box-shadow:8px 0 24px rgba(17,19,24,.08) !important;
+}
+
+/* Línea corporativa fina pegada al borde derecho */
+.sidebar::after{
+  content:"";
+  position:fixed;
+  top:18px;
+  left:calc(var(--sidebar-w) - 9px);
+  width:5px;
+  height:calc(100vh - 36px);
+  border-radius:999px;
+  background:linear-gradient(180deg,#EE0B70 0%,#FF4B78 48%,#F5A900 100%);
+  z-index:1300;
+  pointer-events:none;
+}
+
+/* Logo / cabecera tal como la captura */
+.brand{
+  position:relative !important;
+  top:auto !important;
+  margin:0 8px 12px 6px !important;
+  padding:12px 8px 18px !important;
+  border-bottom:1px solid rgba(255,255,255,.08) !important;
+  box-shadow:none !important;
+  background:transparent !important;
+}
+
+.brand-shell{
+  display:flex !important;
+  align-items:center !important;
+  gap:12px !important;
+}
+
+.brand-mark{
+  width:52px !important;
+  height:52px !important;
+  border:5px solid #F5A900 !important;
+  box-shadow:none !important;
+}
+
+.brand-copy strong{
+  font-size:18px !important;
+  font-weight:800 !important;
+  color:#fff !important;
+}
+
+.brand-copy small{
+  font-size:11px !important;
+  color:#F5A900 !important;
+}
+
+.brand-product{
+  margin-top:14px !important;
+  font-size:11px !important;
+  line-height:1.4 !important;
+  color:#969CA8 !important;
+  text-transform:uppercase;
+  max-width:215px;
+}
+
+/* Título dashboard */
+.nav-title{
+  padding:8px 11px 7px !important;
+  font-size:10px !important;
+  letter-spacing:.18em !important;
+  color:#7B818D !important;
+}
+
+/* Menú vertical */
+.nav{
+  display:block !important;
+  padding:0 5px 24px !important;
+  overflow:visible !important;
+}
+
+.nav button{
+  display:flex !important;
+  align-items:center !important;
+  gap:12px !important;
+  width:100% !important;
+  min-width:0 !important;
+  min-height:46px !important;
+  margin:4px 0 !important;
+  padding:9px 12px !important;
+  border-radius:13px !important;
+  white-space:normal !important;
+  text-align:left !important;
+  font-size:14px !important;
+  line-height:1.25 !important;
+  color:#D4D7DE !important;
+}
+
+.nav .nav-ico{
+  flex:0 0 30px !important;
+  width:30px !important;
+  height:30px !important;
+  border-radius:10px !important;
+  display:grid !important;
+  place-items:center !important;
+  background:#20232A !important;
+  color:#D9DCE3 !important;
+  font-size:13px !important;
+}
+
+.nav button:hover{
+  background:#1C1F25 !important;
+  color:#fff !important;
+  transform:none !important;
+}
+
+.nav button.active{
+  background:linear-gradient(135deg,#EE0B70,#FF2B86) !important;
+  color:#fff !important;
+  box-shadow:0 10px 26px rgba(238,11,112,.24) !important;
+}
+
+.nav button.active .nav-ico{
+  background:rgba(255,255,255,.14) !important;
+  color:#fff !important;
+}
+
+/* Scrollbar interno discreto */
+.sidebar{
+  scrollbar-width:thin;
+  scrollbar-color:#F5A900 transparent;
+}
+.sidebar::-webkit-scrollbar{
+  width:5px !important;
+}
+.sidebar::-webkit-scrollbar-track{
+  background:transparent !important;
+}
+.sidebar::-webkit-scrollbar-thumb{
+  background:#F5A900 !important;
+  border-radius:999px !important;
+}
+
+/* RESTO DEL DASHBOARD NORMAL, AL COSTADO */
+.main{
+  display:block !important;
+  margin-left:var(--sidebar-w) !important;
+  width:calc(100% - var(--sidebar-w)) !important;
+  min-width:0 !important;
+  max-width:none !important;
+  box-sizing:border-box !important;
+}
+
+.topbar{
+  width:100% !important;
+  max-width:none !important;
+  box-sizing:border-box !important;
+}
+
+.content,
+.page,
+.page.active{
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
+
+/* Mediano: mismo estilo, solo un poco más angosto */
+@media(max-width:1200px){
+  :root{ --sidebar-w:270px; }
+
+  .brand-mark{
+    width:48px !important;
+    height:48px !important;
+  }
+
+  .brand-copy strong{
+    font-size:16px !important;
+  }
+
+  .nav button{
+    font-size:13px !important;
+  }
+}
+
+/* Angosto: SIGUE A LA IZQUIERDA. No sube, no se vuelve horizontal */
+@media(max-width:850px){
+  :root{ --sidebar-w:230px; }
+
+  .sidebar{
+    position:fixed !important;
+    width:230px !important;
+    height:100vh !important;
+    overflow-y:auto !important;
+  }
+
+  .sidebar::after{
+    left:221px !important;
+  }
+
+  .main{
+    margin-left:230px !important;
+    width:calc(100% - 230px) !important;
+  }
+
+  .brand{
+    padding:8px 5px 14px !important;
+  }
+
+  .brand-mark{
+    width:42px !important;
+    height:42px !important;
+  }
+
+  .brand-copy strong{
+    font-size:14px !important;
+  }
+
+  .brand-copy small{
+    font-size:9px !important;
+  }
+
+  .brand-product{
+    font-size:9px !important;
+    max-width:175px !important;
+  }
+
+  .nav{
+    display:block !important;
+  }
+
+  .nav button{
+    width:100% !important;
+    min-width:0 !important;
+    font-size:11.5px !important;
+    min-height:42px !important;
+    padding:8px !important;
+  }
+
+  .nav .nav-ico{
+    width:26px !important;
+    height:26px !important;
+    flex-basis:26px !important;
+  }
+
+  /* El contenido interno sí se apila cuando falta espacio */
+  .grid.kpis,
+  .vm-kpis,.vl-kpis,.vp-kpis,.rm-kpis,.rt-kpis,.ra-kpis,.ob-kpis,.cr-kpis,.dc-kpis{
+    grid-template-columns:1fr !important;
+  }
+
+  .vm-grid-top,.vl-grid-top,.vp-grid-top,.rm-grid-top,.rt-grid-top,
+  .ob-grid-top,.cr-grid-top,.dc-grid-top,
+  .vm-grid-bottom,.vl-grid-bottom,.vp-grid-bottom,.rm-grid-bottom,.rt-grid-bottom,
+  .ob-grid-bottom,.cr-grid-bottom,.dc-grid-bottom,
+  .ra-grid-1,.ra-grid-2{
+    grid-template-columns:1fr !important;
+  }
+
+  .filters,
+  .vm-filters,.vl-filters,.vp-filters,.rm-filters,.rt-filters,.ob-filters,.cr-filters,.dc-filters{
+    grid-template-columns:1fr !important;
+  }
+}
+
 </style>
 </head>
 <body>
