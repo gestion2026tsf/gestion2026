@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TSF | Inteligencia de Mercado Automotor</title>
+<title>TSF AutoMarket Intelligence | Total Servicios Financieros</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root{
@@ -82,6 +82,437 @@ svg text{font-family:Inter,Segoe UI,Arial,sans-serif}
 @media(max-width:1200px){.map-card{grid-template-columns:1fr}.peru-map{height:460px}}
 @media(max-width:1100px){.grid.kpis{grid-template-columns:repeat(2,1fr)}.two,.three{grid-template-columns:1fr}}
 @media(max-width:800px){.app{grid-template-columns:1fr}.sidebar{height:auto;position:relative}.nav{display:flex;overflow:auto}.nav-title{display:none}.nav button{white-space:nowrap;width:auto}.topbar{position:relative}.hero{align-items:flex-start;flex-direction:column}.grid.kpis{grid-template-columns:1fr}.check-list{grid-template-columns:1fr}}
+
+/* ===== VEHICULOS MENORES V2 ===== */
+.vm-hero{
+  position:relative;overflow:hidden;border-radius:18px;
+  background:linear-gradient(110deg,#171b23 0%,#343a4a 52%,#e7e4f7 100%);
+  color:#fff;padding:24px;min-height:150px;margin-bottom:12px
+}
+.vm-hero:after{
+  content:"🏍️   🛺";position:absolute;right:5%;bottom:-18px;
+  font-size:96px;opacity:.8;filter:grayscale(1) contrast(1.2)
+}
+.vm-hero h3{font-size:30px;margin:0 0 4px}.vm-hero .sub{font-size:19px;font-weight:700}
+.vm-hero p{max-width:560px;margin:10px 0 0;color:#eef0f4}
+.vm-kpis{display:grid;grid-template-columns:1.5fr 1.35fr 1.35fr .9fr .9fr .9fr;gap:10px}
+.vm-kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+.vm-kpi .label{font-size:12px;color:var(--muted)}.vm-kpi .num{font-size:26px;font-weight:850;margin-top:5px}
+.vm-kpi .tiny{font-size:11px;color:var(--muted);margin-top:3px}
+.vm-ring{display:flex;align-items:center;gap:12px}.vm-ring svg{width:58px;height:58px;transform:rotate(-90deg)}
+.vm-filters{display:grid;grid-template-columns:repeat(8,minmax(110px,1fr)) 135px;gap:8px;margin:12px 0}
+.vm-filter label{display:block;font-size:11px;color:var(--muted);margin:0 0 4px 3px}
+.vm-filter select{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 10px}
+.vm-reset{align-self:end;border:0;border-radius:10px;background:var(--yellow);font-weight:800;padding:10px 12px;cursor:pointer}
+.vm-grid-top{display:grid;grid-template-columns:1.6fr .85fr 1.2fr 1.2fr;gap:12px}
+.vm-grid-bottom{display:grid;grid-template-columns:1.25fr 1.1fr 1.05fr .95fr;gap:12px;margin-top:12px}
+.vm-box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px;min-width:0}
+.vm-box h4{margin:0 0 10px;font-size:15px}
+.vm-line{width:100%;height:250px}
+.vm-donut-wrap{display:flex;justify-content:center;align-items:center;min-height:245px}
+.vm-donut{width:170px;height:170px;border-radius:50%;background:conic-gradient(var(--yellow) 0 71.8%,#222936 71.8% 100%);display:grid;place-items:center;position:relative}
+.vm-donut:after{content:"";position:absolute;width:102px;height:102px;border-radius:50%;background:#fff}
+.vm-donut .center{position:relative;z-index:2;text-align:center}.vm-donut .center b{display:block;font-size:22px}.vm-donut .center span{font-size:11px;color:var(--muted)}
+.vm-rank{display:flex;flex-direction:column;gap:8px}
+.vm-rank-row{display:grid;grid-template-columns:108px 1fr 62px;gap:8px;align-items:center;font-size:12px}
+.vm-rank-row .track{height:9px;background:#f0f1f3;border-radius:999px;overflow:hidden}.vm-rank-row .fill{height:100%;background:linear-gradient(90deg,#f2c230,#ffd85e)}
+.vm-mini-map{display:grid;grid-template-columns:200px 1fr;gap:10px;align-items:center}
+.vm-map-svg{width:190px;height:250px}.vm-map-shape{fill:#f9df79;stroke:#caa323;stroke-width:2}
+.vm-map-dot{fill:#111827;stroke:#fff;stroke-width:2}
+.vm-office-table{font-size:11px}.vm-office-table th,.vm-office-table td{padding:6px 7px}
+.vm-zone-row{margin:8px 0}.vm-zone-row .head{display:flex;justify-content:space-between;font-size:11px}.vm-zone-row .track{height:8px;background:#f0f1f3;border-radius:99px;overflow:hidden;margin-top:4px}.vm-zone-row .fill{height:100%;background:#f2c230}
+.vm-fuel{display:flex;align-items:center;gap:12px}.vm-fuel-pie{width:110px;height:110px;border-radius:50%;background:conic-gradient(#f2c230 0 86.8%,#d1d5db 86.8% 96.2%,#8b6b00 96.2% 99.3%,#111827 99.3% 100%);position:relative;flex:none}.vm-fuel-pie:after{content:"";position:absolute;inset:25px;background:#fff;border-radius:50%}
+.vm-stat-bars .row{margin:9px 0}.vm-stat-bars .head{display:flex;justify-content:space-between;font-size:11px}.vm-stat-bars .track{height:8px;background:#f0f1f3;border-radius:999px;margin-top:4px;overflow:hidden}.vm-stat-bars .fill{height:100%;background:#f2c230}
+.vm-source{display:flex;justify-content:space-between;gap:15px;color:var(--muted);font-size:11px;margin-top:10px;padding:4px 3px}
+@media(max-width:1400px){.vm-kpis{grid-template-columns:repeat(3,1fr)}.vm-grid-top{grid-template-columns:1fr 1fr}.vm-grid-bottom{grid-template-columns:1fr 1fr}.vm-filters{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:800px){.vm-kpis,.vm-grid-top,.vm-grid-bottom,.vm-filters{grid-template-columns:1fr}.vm-mini-map{grid-template-columns:1fr}.vm-hero:after{font-size:60px;opacity:.45}}
+
+
+/* ===== VEHICULOS LIVIANOS V3 ===== */
+.vl-hero{position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(115deg,#111827 0%,#353b49 55%,#f5e6a4 100%);color:#fff;padding:24px;min-height:148px;margin-bottom:12px}
+.vl-hero:after{content:"🚙   🚘";position:absolute;right:5%;bottom:-18px;font-size:92px;opacity:.82;filter:grayscale(.7)}
+.vl-hero h3{font-size:30px;margin:0 0 4px}.vl-hero .sub{font-size:19px;font-weight:700}.vl-hero p{max-width:620px;margin:10px 0 0;color:#eef0f4}
+.vl-kpis{display:grid;grid-template-columns:1.35fr repeat(5,1fr);gap:10px}.vl-kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.vl-kpi .label{font-size:12px;color:var(--muted)}.vl-kpi .num{font-size:25px;font-weight:850;margin-top:5px}.vl-kpi .tiny{font-size:11px;color:var(--muted);margin-top:3px}
+.vl-filters{display:grid;grid-template-columns:repeat(8,minmax(110px,1fr)) 135px;gap:8px;margin:12px 0}.vl-filter label{display:block;font-size:11px;color:var(--muted);margin:0 0 4px 3px}.vl-filter select{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 10px}.vl-reset{align-self:end;border:0;border-radius:10px;background:var(--yellow);font-weight:800;padding:10px 12px;cursor:pointer}
+.vl-grid-1{display:grid;grid-template-columns:1.55fr .9fr 1.15fr 1.15fr;gap:12px}.vl-grid-2{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;gap:12px;margin-top:12px}.vl-grid-3{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:12px;margin-top:12px}
+.vl-box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px;min-width:0}.vl-box h4{margin:0 0 10px;font-size:15px}.vl-line{width:100%;height:250px}
+.vl-donut-wrap{display:flex;justify-content:center;align-items:center;min-height:245px}.vl-donut{width:170px;height:170px;border-radius:50%;background:conic-gradient(#f2c230 0 55.62%,#6b7280 55.62% 74.10%,#b7bdc8 74.10% 87.99%,#111827 87.99% 99.99%,#e5e7eb 99.99% 100%);display:grid;place-items:center;position:relative}.vl-donut:after{content:"";position:absolute;width:102px;height:102px;border-radius:50%;background:#fff}.vl-donut .center{position:relative;z-index:2;text-align:center}.vl-donut .center b{display:block;font-size:22px}.vl-donut .center span{font-size:11px;color:var(--muted)}
+.vl-rank{display:flex;flex-direction:column;gap:8px}.vl-rank-row{display:grid;grid-template-columns:100px 1fr 60px;gap:8px;align-items:center;font-size:12px}.vl-rank-row .track{height:9px;background:#f0f1f3;border-radius:999px;overflow:hidden}.vl-rank-row .fill{height:100%;background:linear-gradient(90deg,#f2c230,#ffd85e)}
+.vl-map{display:grid;grid-template-columns:210px 1fr;gap:10px;align-items:center}.vl-map svg{width:200px;height:260px}.vl-map-shape{fill:#fde68a;stroke:#c79f13;stroke-width:2}.vl-dot{fill:#111827;stroke:#fff;stroke-width:2}
+.vl-bars .row{margin:8px 0}.vl-bars .head{display:flex;justify-content:space-between;font-size:11px}.vl-bars .track{height:8px;background:#f0f1f3;border-radius:999px;margin-top:4px;overflow:hidden}.vl-bars .fill{height:100%;background:#f2c230}
+.vl-pie{width:112px;height:112px;border-radius:50%;position:relative;flex:none}.vl-pie:after{content:"";position:absolute;inset:25px;background:#fff;border-radius:50%}.vl-flex{display:flex;align-items:center;gap:13px}.vl-alert{padding:12px;border-radius:12px;border:1px solid #fedf89;background:#fffaeb;color:#7a2e0e;font-size:12px}.vl-source{display:flex;justify-content:space-between;gap:15px;color:var(--muted);font-size:11px;margin-top:10px;padding:4px 3px}
+@media(max-width:1450px){.vl-kpis{grid-template-columns:repeat(3,1fr)}.vl-grid-1,.vl-grid-2,.vl-grid-3{grid-template-columns:1fr 1fr}.vl-filters{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:800px){.vl-kpis,.vl-grid-1,.vl-grid-2,.vl-grid-3,.vl-filters{grid-template-columns:1fr}.vl-map{grid-template-columns:1fr}.vl-hero:after{font-size:58px;opacity:.4}}
+
+
+/* ===== VEHICULOS PESADOS V4 ===== */
+.vp-hero{position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(110deg,#171b23 0%,#353b49 55%,#ece8d0 100%);color:#fff;padding:24px;min-height:150px;margin-bottom:12px}
+.vp-hero:after{content:"🚚  🚛  🚌";position:absolute;right:4%;bottom:-10px;font-size:86px;opacity:.78;filter:grayscale(1) contrast(1.15)}
+.vp-hero h3{font-size:30px;margin:0 0 4px}.vp-hero .sub{font-size:19px;font-weight:700}.vp-hero p{max-width:650px;margin:10px 0 0;color:#eef0f4}
+.vp-kpis{display:grid;grid-template-columns:1.45fr 1.15fr 1.15fr 1.15fr .8fr .8fr .8fr;gap:10px}
+.vp-kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.vp-kpi .label{font-size:12px;color:var(--muted)}.vp-kpi .num{font-size:25px;font-weight:850;margin-top:5px}.vp-kpi .tiny{font-size:11px;color:var(--muted);margin-top:3px}
+.vp-filters{display:grid;grid-template-columns:repeat(8,minmax(110px,1fr)) 135px;gap:8px;margin:12px 0}.vp-filter label{display:block;font-size:11px;color:var(--muted);margin:0 0 4px 3px}.vp-filter select{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 10px}.vp-reset{align-self:end;border:0;border-radius:10px;background:var(--yellow);font-weight:800;padding:10px 12px;cursor:pointer}
+.vp-grid-top{display:grid;grid-template-columns:1.55fr .9fr 1.15fr 1.15fr;gap:12px}.vp-grid-bottom{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:12px;margin-top:12px}.vp-grid-last{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px}
+.vp-box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px;min-width:0}.vp-box h4{margin:0 0 10px;font-size:15px}.vp-line{width:100%;height:250px}
+.vp-donut-wrap{display:flex;justify-content:center;align-items:center;min-height:245px}.vp-donut{width:170px;height:170px;border-radius:50%;background:conic-gradient(#f2c230 0 68.1%,#222936 68.1% 85.7%,#9ca3af 85.7% 100%);display:grid;place-items:center;position:relative}.vp-donut:after{content:"";position:absolute;width:102px;height:102px;border-radius:50%;background:#fff}.vp-donut .center{position:relative;z-index:2;text-align:center}.vp-donut .center b{display:block;font-size:22px}.vp-donut .center span{font-size:11px;color:var(--muted)}
+.vp-rank{display:flex;flex-direction:column;gap:8px}.vp-rank-row{display:grid;grid-template-columns:108px 1fr 62px;gap:8px;align-items:center;font-size:12px}.vp-rank-row .track{height:9px;background:#f0f1f3;border-radius:999px;overflow:hidden}.vp-rank-row .fill{height:100%;background:linear-gradient(90deg,#f2c230,#ffd85e)}
+.vp-bars .row{margin:9px 0}.vp-bars .head{display:flex;justify-content:space-between;font-size:11px}.vp-bars .track{height:8px;background:#f0f1f3;border-radius:999px;margin-top:4px;overflow:hidden}.vp-bars .fill{height:100%;background:#f2c230}
+.vp-flex{display:flex;align-items:center;gap:12px}.vp-pie{width:112px;height:112px;border-radius:50%;position:relative;flex:none}.vp-pie:after{content:"";position:absolute;inset:25px;background:#fff;border-radius:50%}
+.vp-mini-map{display:grid;grid-template-columns:210px 1fr;gap:10px;align-items:center}.vp-map-svg{width:200px;height:260px}.vp-map-shape{fill:#f9df79;stroke:#caa323;stroke-width:2}.vp-map-dot{fill:#111827;stroke:#fff;stroke-width:2}
+.vp-table{font-size:11px}.vp-table th,.vp-table td{padding:6px 7px}.vp-alert{padding:12px 14px;border-left:4px solid #067647;background:#ecfdf3;border-radius:10px;font-size:12px}.vp-source{display:flex;justify-content:space-between;gap:15px;color:var(--muted);font-size:11px;margin-top:10px;padding:4px 3px}
+@media(max-width:1450px){.vp-kpis{grid-template-columns:repeat(4,1fr)}.vp-grid-top{grid-template-columns:1fr 1fr}.vp-grid-bottom,.vp-grid-last{grid-template-columns:1fr 1fr}.vp-filters{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:800px){.vp-kpis,.vp-grid-top,.vp-grid-bottom,.vp-grid-last,.vp-filters{grid-template-columns:1fr}.vp-mini-map{grid-template-columns:1fr}.vp-hero:after{font-size:52px;opacity:.42}}
+
+
+/* ===== REMOLQUES Y SEMIRREMOLQUES V5 ===== */
+.rm-hero{position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(110deg,#171b23 0%,#3b404c 54%,#efe8c8 100%);color:#fff;padding:24px;min-height:145px;margin-bottom:12px}
+.rm-hero:after{content:"🚛";position:absolute;right:7%;bottom:-26px;font-size:120px;opacity:.72;filter:grayscale(1)}
+.rm-hero h3{font-size:30px;margin:0 0 4px}.rm-hero .sub{font-size:19px;font-weight:700}.rm-hero p{max-width:630px;margin:10px 0 0;color:#eef0f4}
+.rm-kpis{display:grid;grid-template-columns:1.4fr repeat(5,1fr);gap:10px}.rm-kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}.rm-kpi .label{font-size:12px;color:var(--muted)}.rm-kpi .num{font-size:26px;font-weight:850;margin-top:5px}.rm-kpi .tiny{font-size:11px;color:var(--muted);margin-top:3px}
+.rm-filters{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr)) 135px;gap:8px;margin:12px 0}.rm-filter label{display:block;font-size:11px;color:var(--muted);margin:0 0 4px 3px}.rm-filter select{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 10px}.rm-reset{align-self:end;border:0;border-radius:10px;background:var(--yellow);font-weight:800;padding:10px 12px;cursor:pointer}
+.rm-grid-top{display:grid;grid-template-columns:1.45fr 1fr 1fr;gap:12px}.rm-grid-mid{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:12px;margin-top:12px}.rm-grid-bottom{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px;margin-top:12px}.rm-box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px;min-width:0}.rm-box h4{margin:0 0 10px;font-size:15px}.rm-line{width:100%;height:250px}
+.rm-rank{display:flex;flex-direction:column;gap:8px}.rm-rank-row{display:grid;grid-template-columns:120px 1fr 58px;gap:8px;align-items:center;font-size:12px}.rm-rank-row .track{height:9px;background:#f0f1f3;border-radius:999px;overflow:hidden}.rm-rank-row .fill{height:100%;background:linear-gradient(90deg,#f2c230,#ffd85e)}
+.rm-cat{display:flex;align-items:center;gap:14px}.rm-donut{width:150px;height:150px;border-radius:50%;background:conic-gradient(#f2c230 0 99.04%,#6b7280 99.04% 99.89%,#111827 99.89% 100%);position:relative;flex:none}.rm-donut:after{content:"";position:absolute;inset:34px;background:#fff;border-radius:50%}.rm-donut-label{position:absolute;inset:0;display:grid;place-items:center;z-index:2;font-weight:800;font-size:20px}
+.rm-map-wrap{display:grid;grid-template-columns:210px 1fr;gap:12px;align-items:center}.rm-map{width:205px;height:250px}.rm-map-shape{fill:#f7df80;stroke:#caa323;stroke-width:2}.rm-dot{fill:#111827;stroke:#fff;stroke-width:2}.rm-table{font-size:11px}.rm-table th,.rm-table td{padding:6px 7px}.rm-quality{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.rm-q{border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12px;background:#fafafa}.rm-positive{color:#067647;font-weight:800}.rm-negative{color:#b42318;font-weight:800}
+@media(max-width:1400px){.rm-kpis{grid-template-columns:repeat(3,1fr)}.rm-grid-top,.rm-grid-mid,.rm-grid-bottom{grid-template-columns:1fr 1fr}.rm-filters{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.rm-kpis,.rm-grid-top,.rm-grid-mid,.rm-grid-bottom,.rm-filters,.rm-quality{grid-template-columns:1fr}.rm-map-wrap{grid-template-columns:1fr}.rm-hero:after{font-size:70px;opacity:.4}}
+
+
+/* ===== RETAIL MES V6 ===== */
+.rt-hero{position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(110deg,#151922 0%,#2f3543 52%,#f5d85b 140%);color:#fff;padding:24px;min-height:145px;margin-bottom:12px}
+.rt-hero:after{content:"🚗  🚚  🚌";position:absolute;right:4%;bottom:-18px;font-size:78px;opacity:.72;filter:grayscale(1)}
+.rt-hero h3{font-size:30px;margin:0}.rt-hero .sub{font-size:18px;font-weight:750;margin-top:3px}.rt-hero p{max-width:620px;color:#e8ebf0;margin:10px 0 0}
+.rt-kpis{display:grid;grid-template-columns:1.5fr repeat(5,1fr);gap:10px}.rt-kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.rt-kpi .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.rt-kpi .num{font-size:27px;font-weight:850;margin-top:5px}.rt-kpi .tiny{font-size:11px;color:var(--muted);margin-top:3px}
+.rt-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.rt-tabs button{border:1px solid var(--line);background:#fff;padding:9px 12px;border-radius:10px;cursor:pointer;font-weight:700;font-size:12px}.rt-tabs button.active{background:#111827;color:#fff;border-color:#111827}
+.rt-grid-a{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:12px}.rt-grid-b{display:grid;grid-template-columns:1.15fr 1.1fr .9fr;gap:12px;margin-top:12px}.rt-box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px;min-width:0}.rt-box h4{margin:0 0 10px;font-size:15px}
+.rt-donut-wrap{display:flex;align-items:center;gap:18px;min-height:255px}.rt-donut{width:168px;height:168px;border-radius:50%;background:conic-gradient(#f2c230 0 72.8836%,#656b76 72.8836% 94.2828%,#aeb4bd 94.2828% 94.647%,#111827 94.647% 100%);position:relative;flex:none}.rt-donut:after{content:"";position:absolute;inset:42px;background:#fff;border-radius:50%}.rt-donut-center{position:absolute;inset:0;z-index:2;display:grid;place-items:center;text-align:center}.rt-donut-center b{font-size:23px}.rt-donut-center span{display:block;font-size:10px;color:var(--muted)}
+.rt-legend{font-size:12px}.rt-legend div{display:flex;align-items:center;gap:7px;margin:8px 0}.rt-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}.rt-seg-row{margin:10px 0}.rt-seg-head{display:flex;justify-content:space-between;gap:10px;font-size:12px}.rt-track{height:9px;border-radius:999px;background:#eef0f2;margin-top:5px;overflow:hidden}.rt-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#f2c230,#ffd963)}
+.rt-rank{display:flex;flex-direction:column;gap:8px}.rt-rank-row{display:grid;grid-template-columns:110px 1fr 58px;gap:8px;align-items:center;font-size:12px}.rt-rank-row .track{height:8px;background:#eef0f2;border-radius:999px;overflow:hidden}.rt-rank-row .fill{height:100%;background:#f2c230}
+.rt-segment-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.rt-seg-card{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fafafa}.rt-seg-card .code{font-weight:850;font-size:16px}.rt-seg-card .val{font-size:20px;font-weight:850;margin-top:2px}.rt-seg-card .desc{font-size:10px;color:var(--muted)}
+.rt-quality{display:grid;gap:9px}.rt-q{padding:10px;border-radius:11px;border:1px solid var(--line);font-size:12px;background:#fafafa}.rt-q strong{display:block;margin-bottom:3px}.rt-ok{border-left:4px solid #067647}.rt-warn{border-left:4px solid #f2c230}.rt-bad{border-left:4px solid #b42318}
+.rt-foot{display:flex;justify-content:space-between;gap:15px;color:var(--muted);font-size:11px;margin-top:10px}
+@media(max-width:1400px){.rt-kpis{grid-template-columns:repeat(3,1fr)}.rt-grid-a,.rt-grid-b{grid-template-columns:1fr 1fr}.rt-segment-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.rt-kpis,.rt-grid-a,.rt-grid-b,.rt-segment-grid{grid-template-columns:1fr}.rt-hero:after{font-size:54px;opacity:.35}.rt-donut-wrap{flex-direction:column}.rt-foot{flex-direction:column}}
+
+
+/* ===== RETAIL ACUMULADO V7 ===== */
+.ra-hero{position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(115deg,#151922 0%,#313746 55%,#eee7cf 100%);color:#fff;padding:24px;min-height:148px;margin-bottom:12px}
+.ra-hero:after{content:"📊";position:absolute;right:5%;bottom:-12px;font-size:104px;opacity:.18}
+.ra-hero h3{font-size:30px;margin:0 0 4px}.ra-hero .sub{font-size:18px;font-weight:750}.ra-hero p{max-width:700px;color:#e6e8ed;margin:10px 0 0}
+.ra-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.ra-kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+.ra-kpi .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.ra-kpi .num{font-size:28px;font-weight:850;margin-top:5px}.ra-kpi .tiny{font-size:11px;color:var(--muted);margin-top:3px}
+.ra-grid-1{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:12px;margin-top:12px}
+.ra-grid-2{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:12px;margin-top:12px}
+.ra-box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px;min-width:0}
+.ra-box h4{margin:0 0 10px;font-size:15px}
+.ra-yoy{display:grid;grid-template-columns:1fr 72px 72px 72px;gap:6px;align-items:center;font-size:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+.ra-yoy:last-child{border-bottom:0}.ra-up{color:#067647;font-weight:800}.ra-down{color:#b42318;font-weight:800}
+.ra-share{display:flex;align-items:center;gap:16px;min-height:230px}.ra-donut{width:175px;height:175px;border-radius:50%;background:conic-gradient(#f2c230 0 71.56%,#6b7280 71.56% 94.02%,#111827 94.02% 99.59%,#d1d5db 99.59% 100%);position:relative;flex:none}.ra-donut:after{content:"";position:absolute;inset:34px;border-radius:50%;background:#fff}.ra-donut-center{position:absolute;inset:0;display:grid;place-items:center;z-index:2;text-align:center}.ra-donut-center b{font-size:24px}.ra-donut-center span{display:block;font-size:11px;color:var(--muted)}
+.ra-rank{display:flex;flex-direction:column;gap:8px}.ra-rank-row{display:grid;grid-template-columns:100px 1fr 70px;gap:8px;align-items:center;font-size:12px}.ra-rank-row .track{height:9px;background:#f0f1f3;border-radius:999px;overflow:hidden}.ra-rank-row .fill{height:100%;background:linear-gradient(90deg,#f2c230,#ffd85e)}
+.ra-seg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.ra-seg{padding:10px;border:1px solid var(--line);border-radius:11px;background:#fafafa}.ra-seg b{display:block;font-size:18px}.ra-seg span{font-size:11px;color:var(--muted)}
+.ra-control{display:flex;flex-direction:column;gap:8px}.ra-control .item{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:12px}
+.ra-foot{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:11px;margin-top:10px;flex-wrap:wrap}
+@media(max-width:1200px){.ra-kpis{grid-template-columns:repeat(2,1fr)}.ra-grid-1,.ra-grid-2{grid-template-columns:1fr}.ra-seg-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.ra-kpis,.ra-seg-grid{grid-template-columns:1fr}.ra-yoy{grid-template-columns:1fr 60px 60px 60px}.ra-share{flex-direction:column}}
+
+
+/* ===== RETAIL OMNIBUS V8 ===== */
+.ob-hero{position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(110deg,#171b23 0%,#3d4351 58%,#ece7d0 100%);color:#fff;padding:24px;min-height:145px;margin-bottom:12px}
+.ob-hero:after{content:"🚌";position:absolute;right:5%;bottom:-18px;font-size:110px;opacity:.22}
+.ob-hero h3{font-size:30px;margin:0 0 4px}.ob-hero .sub{font-size:18px;font-weight:750}.ob-hero p{max-width:680px;color:#e8eaee;margin:10px 0 0}
+.ob-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.ob-kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.ob-kpi .label{font-size:11px;color:var(--muted);text-transform:uppercase}.ob-kpi .num{font-size:28px;font-weight:850;margin-top:5px}.ob-kpi .tiny{font-size:11px;color:var(--muted);margin-top:3px}
+.ob-grid1{display:grid;grid-template-columns:1.35fr .85fr 1fr;gap:12px;margin-top:12px}.ob-grid2{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:12px;margin-top:12px}.ob-box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px;min-width:0}.ob-box h4{margin:0 0 10px;font-size:15px}
+.ob-rank{display:flex;flex-direction:column;gap:8px}.ob-rank-row{display:grid;grid-template-columns:110px 1fr 55px;gap:8px;align-items:center;font-size:12px}.ob-rank-row .track{height:9px;background:#f0f1f3;border-radius:999px;overflow:hidden}.ob-rank-row .fill{height:100%;background:linear-gradient(90deg,#f2c230,#ffd85e)}
+.ob-donut{width:165px;height:165px;border-radius:50%;background:conic-gradient(#f2c230 0 58.2%,#222936 58.2% 100%);position:relative;margin:auto}.ob-donut:after{content:"";position:absolute;inset:35px;background:#fff;border-radius:50%}.ob-donut-center{position:absolute;inset:0;display:grid;place-items:center;z-index:2;text-align:center}.ob-donut-center b{font-size:24px}.ob-donut-center span{font-size:11px;color:var(--muted)}
+.ob-stat{display:flex;flex-direction:column;gap:8px}.ob-stat .item{display:flex;justify-content:space-between;gap:10px;font-size:12px;border-bottom:1px solid var(--line);padding-bottom:7px}.ob-stat .item:last-child{border-bottom:0}
+.ob-control{display:flex;flex-direction:column;gap:8px}.ob-control .item{display:flex;justify-content:space-between;gap:10px;padding:9px;border:1px solid var(--line);border-radius:10px;font-size:12px}
+@media(max-width:1150px){.ob-kpis{grid-template-columns:repeat(2,1fr)}.ob-grid1,.ob-grid2{grid-template-columns:1fr}}@media(max-width:700px){.ob-kpis{grid-template-columns:1fr}}
+
+
+/* ===== RETAIL CAMIONES Y REMOLCADORES V9 ===== */
+.cr-hero{position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(115deg,#161a22 0%,#323845 58%,#eee5c7 100%);color:#fff;padding:24px;min-height:148px;margin-bottom:12px}
+.cr-hero:after{content:"🚚";position:absolute;right:5%;bottom:-18px;font-size:108px;opacity:.18}.cr-hero h3{font-size:30px;margin:0 0 4px}.cr-hero .sub{font-size:18px;font-weight:750}.cr-hero p{max-width:760px;color:#e7e9ed;margin:10px 0 0}
+.cr-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.cr-kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.cr-kpi .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.cr-kpi .num{font-size:27px;font-weight:850;margin-top:5px}.cr-kpi .tiny{font-size:11px;color:var(--muted);margin-top:3px}
+.cr-grid1{display:grid;grid-template-columns:1.35fr .9fr 1.15fr;gap:12px;margin-top:12px}.cr-grid2{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:12px;margin-top:12px}.cr-box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px;min-width:0}.cr-box h4{margin:0 0 10px;font-size:15px}
+.cr-donut{width:170px;height:170px;border-radius:50%;background:conic-gradient(#f2c230 0 44.78%,#8b95a5 44.78% 67.23%,#303746 67.23% 87.31%,#d8dbe1 87.31% 100%);position:relative;margin:auto}.cr-donut:after{content:"";position:absolute;inset:34px;border-radius:50%;background:#fff}.cr-donut-center{position:absolute;inset:0;display:grid;place-items:center;z-index:2;text-align:center}.cr-donut-center b{font-size:23px}.cr-donut-center span{display:block;font-size:11px;color:var(--muted)}
+.cr-rank{display:flex;flex-direction:column;gap:8px}.cr-rank-row{display:grid;grid-template-columns:98px 1fr 64px;gap:8px;align-items:center;font-size:12px}.cr-rank-row .track{height:9px;background:#f0f1f3;border-radius:999px;overflow:hidden}.cr-rank-row .fill{height:100%;background:linear-gradient(90deg,#f2c230,#ffd85e)}
+.cr-stat{display:flex;flex-direction:column;gap:8px}.cr-stat .item{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px}.cr-up{color:#067647}.cr-down{color:#b42318}
+@media(max-width:1200px){.cr-kpis{grid-template-columns:repeat(3,1fr)}.cr-grid1,.cr-grid2{grid-template-columns:1fr}}@media(max-width:700px){.cr-kpis{grid-template-columns:1fr}}
+
+
+/* ===== DEPARTAMENTO Y CONCESIONARIOS RETAIL V10 ===== */
+.dc-hero{position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(115deg,#151922 0%,#303746 58%,#efe6c7 100%);color:#fff;padding:24px;min-height:150px;margin-bottom:12px}
+.dc-hero:after{content:"PERÚ";position:absolute;right:5%;bottom:8px;font-size:72px;font-weight:900;opacity:.10;letter-spacing:.12em}.dc-hero h3{font-size:30px;margin:0 0 4px}.dc-hero p{max-width:760px;color:#e6e8ed;margin:10px 0 0}
+.dc-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.dc-kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.dc-kpi .label{font-size:11px;color:var(--muted);text-transform:uppercase}.dc-kpi .num{font-size:25px;font-weight:850;margin-top:5px}.dc-kpi .tiny{font-size:11px;color:var(--muted);margin-top:3px}
+.dc-grid1{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:12px;margin-top:12px}.dc-grid2{display:grid;grid-template-columns:1.1fr 1.1fr .9fr;gap:12px;margin-top:12px}.dc-box{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px;min-width:0}.dc-box h4{margin:0 0 10px;font-size:15px}
+.dc-rank{display:flex;flex-direction:column;gap:8px}.dc-rank-row{display:grid;grid-template-columns:118px 1fr 70px;gap:8px;align-items:center;font-size:12px}.dc-rank-row .track{height:9px;background:#f0f1f3;border-radius:99px;overflow:hidden}.dc-rank-row .fill{height:100%;background:linear-gradient(90deg,#f2c230,#ffd85e)}
+.dc-dept-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.dc-dept{border:1px solid var(--line);border-radius:10px;padding:9px;background:#fafafa;display:flex;justify-content:space-between;gap:10px;font-size:12px}.dc-dept b{font-size:13px}
+.dc-months{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}.dc-month{padding:8px 4px;text-align:center;border:1px solid var(--line);border-radius:10px;background:#fafafa}.dc-month b{display:block;font-size:15px}.dc-month span{font-size:10px;color:var(--muted)}
+.dc-control{display:flex;flex-direction:column;gap:8px}.dc-control .item{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;border:1px solid var(--line);border-radius:10px;font-size:12px}
+.dc-note{background:#fffaf0;border:1px solid #f1d48d;border-radius:11px;padding:10px;font-size:12px;line-height:1.45}.dc-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:10px}
+@media(max-width:1250px){.dc-kpis{grid-template-columns:repeat(3,1fr)}.dc-grid1,.dc-grid2{grid-template-columns:1fr}.dc-months{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:700px){.dc-kpis,.dc-dept-grid{grid-template-columns:1fr}.dc-months{grid-template-columns:repeat(2,1fr)}}
+
+
+/* ===== TSF CORPORATE THEME V11 ===== */
+:root{
+  --tsf-primary:#EC0A6D;
+  --tsf-primary-dark:#C90059;
+  --tsf-primary-soft:#FDE7F1;
+  --tsf-secondary:#F2A900;
+  --tsf-secondary-soft:#FFF3CC;
+
+  --tsf-bg:#F5F5F7;
+  --tsf-card:#FFFFFF;
+  --tsf-border:#E7E7EA;
+  --tsf-text:#111111;
+  --tsf-text-soft:#4B4B55;
+  --tsf-muted:#8D8D96;
+  --tsf-sidebar:#111111;
+  --tsf-sidebar-soft:#1B1B1F;
+
+  --tsf-success:#0F9D58;
+  --tsf-warning:#F2A900;
+  --tsf-danger:#D92D20;
+
+  --yellow:#F2A900;
+  --dark:#111111;
+  --ink:#111111;
+  --muted:#8D8D96;
+  --line:#E7E7EA;
+  --panel:#FFFFFF;
+  --bg:#F5F5F7;
+}
+
+/* App shell */
+body{
+  background:
+    radial-gradient(circle at 85% 0%, rgba(236,10,109,.055), transparent 25%),
+    radial-gradient(circle at 15% 100%, rgba(242,169,0,.055), transparent 25%),
+    var(--tsf-bg) !important;
+  color:var(--tsf-text);
+}
+
+/* Sidebar */
+.sidebar{
+  background:
+    linear-gradient(180deg,#0E0E10 0%,#151518 55%,#0B0B0D 100%) !important;
+  box-shadow:10px 0 30px rgba(17,17,17,.08);
+}
+.brand{
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.brand strong{
+  color:#fff !important;
+}
+.brand .dot,
+.brand-accent{
+  background:linear-gradient(135deg,var(--tsf-secondary),var(--tsf-primary)) !important;
+}
+.nav button{
+  color:rgba(255,255,255,.78) !important;
+  border:1px solid transparent !important;
+  transition:.2s ease;
+}
+.nav button:hover{
+  background:rgba(236,10,109,.10) !important;
+  color:#fff !important;
+  border-color:rgba(236,10,109,.16) !important;
+  transform:translateX(2px);
+}
+.nav button.active{
+  background:linear-gradient(135deg,var(--tsf-primary),#FF2E86) !important;
+  color:#fff !important;
+  box-shadow:0 8px 22px rgba(236,10,109,.25);
+  border-color:rgba(255,255,255,.08) !important;
+}
+.nav button.active:before{
+  background:var(--tsf-secondary) !important;
+}
+
+/* Header */
+.topbar{
+  background:rgba(255,255,255,.94) !important;
+  border-bottom:1px solid var(--tsf-border) !important;
+  box-shadow:0 6px 18px rgba(17,17,17,.035);
+  backdrop-filter:blur(12px);
+}
+.topbar h1,
+.topbar h2,
+.page h2,
+.page h3{
+  color:var(--tsf-text) !important;
+}
+
+/* Generic cards / panels */
+.card,.box,.panel,.kpi,.metric,.ra-box,.ra-kpi,.vm-box,.vm-kpi{
+  background:var(--tsf-card) !important;
+  border-color:var(--tsf-border) !important;
+  box-shadow:0 8px 26px rgba(17,17,17,.045);
+}
+.card:hover,.kpi:hover,.ra-kpi:hover,.vm-kpi:hover{
+  box-shadow:0 12px 30px rgba(17,17,17,.075);
+}
+
+/* Buttons */
+button,.btn{
+  font-family:inherit;
+}
+.btn-primary,.primary,.upload-btn,#btnUpload,.cta{
+  background:linear-gradient(135deg,var(--tsf-primary),#FF2E86) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+  box-shadow:0 8px 18px rgba(236,10,109,.20);
+}
+.btn-primary:hover,.primary:hover,.upload-btn:hover,#btnUpload:hover,.cta:hover{
+  background:linear-gradient(135deg,var(--tsf-primary-dark),var(--tsf-primary)) !important;
+}
+.btn-secondary,.secondary,.vm-reset{
+  background:linear-gradient(135deg,#F2A900,#FFBE24) !important;
+  color:#111 !important;
+  border-color:transparent !important;
+}
+
+/* Filters */
+select,input[type="text"],input[type="search"],input[type="number"]{
+  border-color:var(--tsf-border) !important;
+  background:#fff !important;
+  color:var(--tsf-text) !important;
+}
+select:focus,input:focus{
+  outline:none;
+  border-color:var(--tsf-primary) !important;
+  box-shadow:0 0 0 3px rgba(236,10,109,.10) !important;
+}
+
+/* Tables */
+table thead th{
+  background:#161618 !important;
+  color:#fff !important;
+}
+table tbody tr:hover{
+  background:#FFF8E6 !important;
+}
+table td,table th{
+  border-color:var(--tsf-border) !important;
+}
+
+/* Pills and states */
+.pill.ok{
+  background:#EAF7EF !important;
+  color:#087A43 !important;
+}
+.pill.warn{
+  background:var(--tsf-secondary-soft) !important;
+  color:#7A5500 !important;
+}
+.pill.bad{
+  background:#FDECEC !important;
+  color:var(--tsf-danger) !important;
+}
+
+/* TSF accent helpers */
+.tsf-accent,.accent{
+  color:var(--tsf-primary) !important;
+}
+.tsf-gold{
+  color:var(--tsf-secondary) !important;
+}
+.progress .bar,.fill{
+  background:linear-gradient(90deg,var(--tsf-primary),var(--tsf-secondary)) !important;
+}
+
+/* Dashboard hero sections */
+.vm-hero,.ra-hero{
+  background:
+    linear-gradient(112deg,#151518 0%,#2A2A30 44%,rgba(236,10,109,.92) 100%) !important;
+  box-shadow:0 12px 32px rgba(17,17,17,.12);
+}
+.vm-hero:before,.ra-hero:before{
+  content:"";
+  position:absolute;
+  width:230px;height:230px;
+  border:32px solid rgba(242,169,0,.72);
+  border-radius:50%;
+  right:-72px;top:-92px;
+  pointer-events:none;
+}
+.vm-hero h3,.ra-hero h3,
+.vm-hero .sub,.ra-hero .sub{
+  color:#fff !important;
+}
+.vm-hero p,.ra-hero p{
+  color:rgba(255,255,255,.84) !important;
+}
+
+/* Brand stripe */
+.page:before{
+  content:"";
+  display:block;
+  width:54px;
+  height:4px;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--tsf-primary),var(--tsf-secondary));
+  margin-bottom:12px;
+}
+
+/* KPI emphasis */
+.kpi .value,.metric .value,.ra-kpi .num,.vm-kpi .num{
+  color:var(--tsf-text) !important;
+}
+.kpi.primary-kpi,.ra-kpi:first-child,.vm-kpi:first-child{
+  border-top:4px solid var(--tsf-primary) !important;
+}
+.ra-kpi:nth-child(3),.vm-kpi:nth-child(2){
+  border-top:4px solid var(--tsf-secondary) !important;
+}
+
+/* Charts / rank bars */
+.ra-rank-row .fill,
+.vm-rank-row .fill,
+.vm-zone-row .fill,
+.vm-stat-bars .fill{
+  background:linear-gradient(90deg,var(--tsf-primary),var(--tsf-secondary)) !important;
+}
+.ra-donut{
+  background:conic-gradient(
+    var(--tsf-primary) 0 71.56%,
+    var(--tsf-secondary) 71.56% 94.02%,
+    #303038 94.02% 99.59%,
+    #D8D8DE 99.59% 100%
+  ) !important;
+}
+.vm-donut{
+  background:conic-gradient(var(--tsf-primary) 0 71.8%,var(--tsf-secondary) 71.8% 100%) !important;
+}
+.vm-fuel-pie{
+  background:conic-gradient(var(--tsf-primary) 0 86.8%,#D8D8DE 86.8% 96.2%,var(--tsf-secondary) 96.2% 99.3%,#111 99.3% 100%) !important;
+}
+
+/* Notes */
+.note{
+  background:linear-gradient(135deg,#FFF9E8,#FFF2F8) !important;
+  border-left:4px solid var(--tsf-secondary) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#F1F1F3}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(var(--tsf-primary),var(--tsf-secondary));
+  border-radius:999px;
+  border:2px solid #F1F1F3;
+}
+
+/* Responsive polish */
+@media(max-width:900px){
+  .sidebar{
+    box-shadow:none;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -91,16 +522,19 @@ svg text{font-family:Inter,Segoe UI,Arial,sans-serif}
   <div class="nav-title">Dashboard</div>
   <div class="nav" id="nav">
     <button class="active" data-page="resumen">Resumen Ejecutivo</button>
-    <button data-page="retail">Mercado Retail</button>
+    <button data-page="retailmes">Retail Mes (Archivo 5)</button>
+    <button data-page="retail">Retail Acumulado (Archivo 6)</button>
+    <button data-page="retailOmnibus">Retail Ómnibus</button>
+    <button data-page="retailCamiones">Retail Camiones y Remolcadores</button>
     <button data-page="inmat">Inmatriculaciones</button>
     <button data-page="brechas">Retail vs Inmat.</button>
-    <button data-page="ligeros">Ligeros</button>
+    <button data-page="ligeros">Vehículos Livianos</button>
     <button data-page="comerciales">Comerciales</button>
-    <button data-page="pesados">Pesados</button>
-    <button data-page="menores">Motos y Trimotos</button>
-    <button data-page="remolques">Remolques</button>
+    <button data-page="pesados">Vehículos Pesados</button>
+    <button data-page="menores">Vehículos Menores</button>
+    <button data-page="remolques">Remolques / Semirremolques</button>
     <button data-page="geografia">Mapas del Perú</button>
-    <button data-page="concesionarios">Concesionarios</button>
+    <button data-page="concesionarios">Departamento y Concesionarios</button>
     <button data-page="calidad">Calidad de Datos</button>
     <button data-page="carga">Cargar Mes</button>
   </div>
@@ -140,25 +574,205 @@ svg text{font-family:Inter,Segoe UI,Arial,sans-serif}
   </div>
 </section>
 
-<section class="page" id="retail">
-  <div class="hero"><div><h3>Mercado Retail</h3><p>Venta comercial reportada. Fuente de detalle: archivos 7, 8, 9, 10 y geografía del 11.</p></div></div>
-  <div class="grid kpis">
-    <div class="card kpi accent"><div class="label">Total Retail</div><div class="value">176,170</div><div class="sub">Ene–Ago 2026</div></div>
-    <div class="card kpi"><div class="label">Agosto</div><div class="value">23,613</div><div class="sub">13.4% del acumulado</div></div>
-    <div class="card kpi"><div class="label">Códigos de vehículo</div><div class="value">1,514</div><div class="sub">Validados contra archivo 11</div></div>
-    <div class="card kpi"><div class="label">Departamentos</div><div class="value">22</div><div class="sub">Cobertura geográfica</div></div>
+
+<section class="page" id="retailmes">
+  <div class="rt-hero">
+    <h3>Venta Retail – Agosto 2026</h3>
+    <div class="sub">Mercado mensual por marca y segmento</div>
+    <p>Vista ejecutiva construida a partir de las cinco hojas del Archivo 5: resumen general, ligeros, comerciales, ómnibus y camiones/remolcadores.</p>
   </div>
-  <div class="section-title"><h4>Segmentación Retail</h4><span>13 segmentos</span></div>
-  <div class="card table-wrap"><table><thead><tr><th>Segmento</th><th>Unidades</th><th>Descripción</th></tr></thead><tbody>
-    <tr><td>L3</td><td>91,860</td><td>SUV</td></tr><tr><td>L1</td><td>32,681</td><td>Autos/SW ≤ 1500 cc</td></tr>
-    <tr><td>C3</td><td>28,852</td><td>Pick Up</td></tr><tr><td>C1</td><td>6,854</td><td>Microbús</td></tr>
-    <tr><td>P2</td><td>4,386</td><td>Camión >3.5 y ≤8 Tn</td></tr><tr><td>C4</td><td>2,348</td><td>Panel/Furgón</td></tr>
-    <tr><td>P3</td><td>2,199</td><td>Camión >8 y ≤16 Tn</td></tr><tr><td>P4</td><td>1,967</td><td>Camión >16 Tn</td></tr>
-    <tr><td>L2</td><td>1,529</td><td>Autos/SW >1500 cc</td></tr><tr><td>C2</td><td>1,521</td><td>Minibús</td></tr>
-    <tr><td>P5</td><td>1,243</td><td>Remolcador</td></tr><tr><td>O1</td><td>425</td><td>Ómnibus >7 y ≤16 Tn</td></tr>
-    <tr><td>O2</td><td>305</td><td>Ómnibus >16 Tn</td></tr>
-  </tbody></table></div>
+
+  <div class="rt-kpis">
+    <div class="rt-kpi"><div class="label">Venta Retail Agosto</div><div class="num">23,613</div><div class="tiny">Total general validado</div></div>
+    <div class="rt-kpi"><div class="label">Ligeros</div><div class="num">17,210</div><div class="tiny">72.9% del total</div></div>
+    <div class="rt-kpi"><div class="label">Comerciales</div><div class="num">5,053</div><div class="tiny">21.4% del total</div></div>
+    <div class="rt-kpi"><div class="label">Ómnibus</div><div class="num">86</div><div class="tiny">0.4% del total</div></div>
+    <div class="rt-kpi"><div class="label">Camión / Remolc.</div><div class="num">1,264</div><div class="tiny">5.4% del total</div></div>
+    <div class="rt-kpi"><div class="label">Marcas en resumen</div><div class="num">59</div><div class="tiny">Todas con venta > 0</div></div>
+  </div>
+
+  <div class="rt-tabs" id="rtTabs">
+    <button class="active" data-rt="TOTAL">Total mercado</button>
+    <button data-rt="LIGEROS">Ligeros</button>
+    <button data-rt="COMERCIALES">Comerciales</button>
+    <button data-rt="OMNIBUS">Ómnibus</button>
+    <button data-rt="CAMION">Camión / Remolcador</button>
+  </div>
+
+  <div class="rt-grid-a">
+    <div class="rt-box"><h4>Composición del mercado mensual</h4>
+      <div class="rt-donut-wrap"><div class="rt-donut"><div class="rt-donut-center"><div><b>23,613</b><span>ventas en agosto</span></div></div></div>
+      <div class="rt-legend"><div><i style="background:#f2c230"></i><span>Ligeros — <b>17,210</b> · 72.9%</span></div><div><i style="background:#656b76"></i><span>Comerciales — <b>5,053</b> · 21.4%</span></div><div><i style="background:#aeb4bd"></i><span>Ómnibus — <b>86</b> · 0.4%</span></div><div><i style="background:#111827"></i><span>Camión/Remolc. — <b>1,264</b> · 5.4%</span></div></div></div>
+    </div>
+
+    <div class="rt-box"><h4 id="rtRankTitle">Top marcas – Total mercado</h4><div class="rt-rank" id="rtRank"></div></div>
+
+    <div class="rt-box"><h4>Participación por subsegmento</h4>
+      <div class="rt-seg-row"><div class="rt-seg-head"><span>L3 · SUV</span><b>12,686</b></div><div class="rt-track"><div class="rt-fill" style="width:53.7%"></div></div></div>
+      <div class="rt-seg-row"><div class="rt-seg-head"><span>L1 · Autos/SW</span><b>4,330</b></div><div class="rt-track"><div class="rt-fill" style="width:18.3%"></div></div></div>
+      <div class="rt-seg-row"><div class="rt-seg-head"><span>C3 · Pick Up</span><b>3,915</b></div><div class="rt-track"><div class="rt-fill" style="width:16.6%"></div></div></div>
+      <div class="rt-seg-row"><div class="rt-seg-head"><span>P2 · Camión liviano</span><b>590</b></div><div class="rt-track"><div class="rt-fill" style="width:2.5%"></div></div></div>
+      <div class="rt-seg-row"><div class="rt-seg-head"><span>C1 · Microbús</span><b>640</b></div><div class="rt-track"><div class="rt-fill" style="width:2.7%"></div></div></div>
+      <div class="rt-seg-row"><div class="rt-seg-head"><span>Otros segmentos</span><b>1,452</b></div><div class="rt-track"><div class="rt-fill" style="width:6.2%"></div></div></div>
+    </div>
+  </div>
+
+  <div class="rt-grid-b">
+    <div class="rt-box"><h4>Ligeros · L1 / L2 / L3</h4><div class="rt-segment-grid">
+      <div class="rt-seg-card"><div class="code">L1</div><div class="val">4,330</div><div class="desc">25.2% de ligeros</div></div>
+      <div class="rt-seg-card"><div class="code">L2</div><div class="val">194</div><div class="desc">1.1% de ligeros</div></div>
+      <div class="rt-seg-card"><div class="code">L3</div><div class="val">12,686</div><div class="desc">73.7% de ligeros</div></div>
+      <div class="rt-seg-card"><div class="code">TOTAL</div><div class="val">17,210</div><div class="desc">72.9% del mercado</div></div>
+    </div>
+    <h4 style="margin-top:14px">Comerciales · C1 / C2 / C3 / C4</h4><div class="rt-segment-grid">
+      <div class="rt-seg-card"><div class="code">C1</div><div class="val">640</div><div class="desc">12.7%</div></div>
+      <div class="rt-seg-card"><div class="code">C2</div><div class="val">215</div><div class="desc">4.3%</div></div>
+      <div class="rt-seg-card"><div class="code">C3</div><div class="val">3,915</div><div class="desc">77.5%</div></div>
+      <div class="rt-seg-card"><div class="code">C4</div><div class="val">283</div><div class="desc">5.6%</div></div>
+    </div></div>
+
+    <div class="rt-box"><h4>Pesados del mes</h4>
+      <div class="rt-segment-grid">
+        <div class="rt-seg-card"><div class="code">O1</div><div class="val">55</div><div class="desc">63.95% ómnibus</div></div>
+        <div class="rt-seg-card"><div class="code">O2</div><div class="val">31</div><div class="desc">36.05% ómnibus</div></div>
+        <div class="rt-seg-card"><div class="code">P2</div><div class="val">590</div><div class="desc">46.7% cam/rem</div></div>
+        <div class="rt-seg-card"><div class="code">P3</div><div class="val">289</div><div class="desc">22.9% cam/rem</div></div>
+        <div class="rt-seg-card"><div class="code">P4</div><div class="val">228</div><div class="desc">18.0% cam/rem</div></div>
+        <div class="rt-seg-card"><div class="code">P5</div><div class="val">157</div><div class="desc">12.4% cam/rem</div></div>
+      </div>
+      <div class="note" style="margin-top:12px"><b>Lectura:</b> los ligeros dominan agosto; dentro de comerciales, C3 representa 77.5%.</div>
+    </div>
+
+    <div class="rt-box"><h4>Calidad y controles del archivo</h4><div class="rt-quality">
+      <div class="rt-q rt-ok"><strong>✓ Reconciliación perfecta</strong>VENTA MES = Ligeros + Comerciales + Ómnibus + Camión/Remolcador. Diferencia: 0.</div>
+      <div class="rt-q rt-warn"><strong>⚠ Homologación de marca</strong>La marca aparece como <b>FOTON 1</b>. Debe normalizarse a <b>FOTON</b>.</div>
+      <div class="rt-q rt-bad"><strong>⚠ Fórmula incorrecta en OMNIBUS</strong>El % de la fila TOTALES usa <code>=SUM(E10:E18)</code> y omite filas 6–9. El total correcto de participación debe ser 100%.</div>
+      <div class="rt-q rt-warn"><strong>⚠ Nota residual</strong>En LIGEROS figura “Cifra acumulada Jul-Ago-Set”, aunque el archivo corresponde a agosto 2026. Conviene revisar esa nota al recibir el archivo mensual.</div>
+    </div></div>
+  </div>
+
+  <div class="rt-foot"><span><b>TSF AutoMarket Intelligence</b> · Retail mensual</span><span>Fuente: Archivo 5 – Venta Retail Mes Agosto 2026</span><span>5 hojas auditadas</span></div>
 </section>
+
+
+<section class="page" id="retail">
+  <div class="ra-hero">
+    <h3>Retail Acumulado</h3>
+    <div class="sub">Enero – Agosto 2026 · Comparativo 2025</div>
+    <p>Resumen acumulado de ventas Retail por familia, segmento y marca. Este archivo funciona como fuente de control para reconciliar el detalle de los archivos 7–10.</p>
+  </div>
+
+  <div class="ra-kpis">
+    <div class="ra-kpi"><div class="label">Retail acumulado 2026</div><div class="num">176,170</div><div class="tiny">Enero – Agosto</div></div>
+    <div class="ra-kpi"><div class="label">Retail acumulado 2025</div><div class="num">123,374</div><div class="tiny">Mismo periodo</div></div>
+    <div class="ra-kpi"><div class="label">Crecimiento total</div><div class="num" style="color:#067647">+42.8%</div><div class="tiny">+52,796 unidades</div></div>
+    <div class="ra-kpi"><div class="label">Marcas con venta</div><div class="num">63</div><div class="tiny">Resumen general</div></div>
+    <div class="ra-kpi"><div class="label">Segmentos</div><div class="num">13</div><div class="tiny">L1–L3 · C1–C4 · O1–O2 · P2–P5</div></div>
+  </div>
+
+  <div class="ra-grid-1">
+    <div class="ra-box">
+      <h4>Crecimiento por familia · 2026 vs 2025</h4>
+      <div class="ra-yoy"><b>Familia</b><b>2026</b><b>2025</b><b>Var.</b></div>
+      <div class="ra-yoy"><span>Ligeros</span><span>126,070</span><span>83,964</span><span class="ra-up">+50.1%</span></div>
+      <div class="ra-yoy"><span>Comerciales</span><span>39,575</span><span>31,827</span><span class="ra-up">+24.3%</span></div>
+      <div class="ra-yoy"><span>Ómnibus</span><span>730</span><span>675</span><span class="ra-up">+8.1%</span></div>
+      <div class="ra-yoy"><span>Camión / Remolcador</span><span>9,795</span><span>6,908</span><span class="ra-up">+41.8%</span></div>
+      <div class="note" style="margin-top:12px"><b>Lectura ejecutiva:</b> Ligeros aporta el mayor crecimiento absoluto (+42,106 unidades), mientras Camión/Remolcador crece 41.8%.</div>
+    </div>
+
+    <div class="ra-box">
+      <h4>Composición Retail 2026</h4>
+      <div class="ra-share">
+        <div style="position:relative"><div class="ra-donut"></div><div class="ra-donut-center"><div><b>176,170</b><span>Total</span></div></div></div>
+        <div class="small">
+          <p><b style="color:#a57d00">Ligeros</b> 126,070 · 71.6%</p>
+          <p><b>Comerciales</b> 39,575 · 22.5%</p>
+          <p><b>Camión/Remolc.</b> 9,795 · 5.6%</p>
+          <p><b>Ómnibus</b> 730 · 0.4%</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ra-box">
+      <h4>Top marcas · Total Retail</h4>
+      <div class="ra-rank">
+        <div class="ra-rank-row"><span>TOYOTA</span><div class="track"><div class="fill" style="width:100%"></div></div><b>31,645</b></div>
+        <div class="ra-rank-row"><span>KIA</span><div class="track"><div class="fill" style="width:53.6%"></div></div><b>16,955</b></div>
+        <div class="ra-rank-row"><span>HYUNDAI</span><div class="track"><div class="fill" style="width:48.6%"></div></div><b>15,382</b></div>
+        <div class="ra-rank-row"><span>CHANGAN</span><div class="track"><div class="fill" style="width:33.7%"></div></div><b>10,678</b></div>
+        <div class="ra-rank-row"><span>JETOUR</span><div class="track"><div class="fill" style="width:32.2%"></div></div><b>10,182</b></div>
+        <div class="ra-rank-row"><span>GEELY</span><div class="track"><div class="fill" style="width:24.6%"></div></div><b>7,798</b></div>
+        <div class="ra-rank-row"><span>CHEVROLET</span><div class="track"><div class="fill" style="width:24.1%"></div></div><b>7,624</b></div>
+        <div class="ra-rank-row"><span>FORD</span><div class="track"><div class="fill" style="width:22.5%"></div></div><b>7,112</b></div>
+        <div class="ra-rank-row"><span>CHERY</span><div class="track"><div class="fill" style="width:20.0%"></div></div><b>6,340</b></div>
+        <div class="ra-rank-row"><span>JAC</span><div class="track"><div class="fill" style="width:18.8%"></div></div><b>5,960</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ra-grid-2">
+    <div class="ra-box">
+      <h4>Detalle de los 13 segmentos</h4>
+      <div class="ra-seg-grid">
+        <div class="ra-seg"><b>91,860</b><span>L3 · SUV</span></div>
+        <div class="ra-seg"><b>32,681</b><span>L1 · Autos/SW ≤1500cc</span></div>
+        <div class="ra-seg"><b>28,852</b><span>C3 · Pick Up</span></div>
+        <div class="ra-seg"><b>6,854</b><span>C1 · Microbús</span></div>
+        <div class="ra-seg"><b>4,386</b><span>P2 · Camión liviano</span></div>
+        <div class="ra-seg"><b>2,348</b><span>C4 · Panel/Furgón</span></div>
+        <div class="ra-seg"><b>2,199</b><span>P3 · Camión mediano</span></div>
+        <div class="ra-seg"><b>1,967</b><span>P4 · Camión pesado</span></div>
+        <div class="ra-seg"><b>1,529</b><span>L2 · Autos/SW >1500cc</span></div>
+        <div class="ra-seg"><b>1,521</b><span>C2 · Minibús</span></div>
+        <div class="ra-seg"><b>1,243</b><span>P5 · Remolcador</span></div>
+        <div class="ra-seg"><b>425</b><span>O1 · Ómnibus ≤16Tn</span></div>
+        <div class="ra-seg"><b>305</b><span>O2 · Ómnibus >16Tn</span></div>
+      </div>
+    </div>
+
+    <div class="ra-box">
+      <h4>Marcas con mayor incremento absoluto</h4>
+      <div class="small">
+        <p><b>Ligeros:</b> Toyota +6,747 · Jetour +6,188 · Kia +5,737</p>
+        <p><b>Comerciales:</b> GWM +1,219 · JAC +1,098 · JMC +1,004</p>
+        <p><b>Ómnibus:</b> Hino +24 · Foton +23 · Golden Dragon +21</p>
+        <p><b>Camión/Remolc.:</b> Isuzu +1,142 · Foton +468 · Hino +310</p>
+      </div>
+      <hr style="border:0;border-top:1px solid var(--line)">
+      <h4>Caídas a vigilar</h4>
+      <div class="small">
+        <p>Ligeros: DFSK -1,503 · MG -1,251 · Nissan -612</p>
+        <p>Comerciales: Nissan -903 · DFSK -413</p>
+        <p>Ómnibus: Volkswagen -28</p>
+      </div>
+    </div>
+
+    <div class="ra-box">
+      <h4>Control y calidad del archivo</h4>
+      <div class="ra-control">
+        <div class="item"><span>Total general 2026</span><b class="pill ok">176,170 ✓</b></div>
+        <div class="item"><span>Suma 4 familias</span><b class="pill ok">176,170 ✓</b></div>
+        <div class="item"><span>VTA ACUM vs hojas detalle</span><b class="pill ok">0 diferencia ✓</b></div>
+        <div class="item"><span>Marca “FOTON 1”</span><b class="pill warn">Homologar a FOTON</b></div>
+        <div class="item"><span>LIGEROS fila TOTALES B:D</span><b class="pill bad">Valores incorrectos</b></div>
+      </div>
+      <div class="note" style="margin-top:12px"><b>Hallazgo importante:</b> en la hoja <b>LIGEROS</b>, la fila TOTALES muestra B=0, C=0 y D=20, aunque la suma real es <b>32,681 / 1,529 / 91,860</b>. El total 126,070 sí está correcto. Para el dashboard se usan las sumas reales, no esos tres valores erróneos.</div>
+    </div>
+  </div>
+
+  <div class="ra-box" style="margin-top:12px">
+    <h4>Metodología de origen de ventas</h4>
+    <div class="small">
+      <p><b>1.</b> Venta reportada directamente por marcas acreditadas ante AAP cuando existe más de un importador.</p>
+      <p><b>2.</b> Venta de marcas representativas estimada a partir de nacionalizaciones.</p>
+      <p><b>3.</b> Venta basada en nacionalizaciones para otras marcas.</p>
+    </div>
+  </div>
+
+  <div class="ra-foot"><span><b>TSF AutoMarket Intelligence</b> · Retail acumulado</span><span>Fuente: Archivo 6 – Venta Retail Acumulada Agosto 2026</span><span>5 hojas auditadas</span></div>
+</section>
+
 
 <section class="page" id="inmat">
   <div class="hero"><div><h3>Inmatriculaciones</h3><p>Registro efectivo de vehículos. Fuente: archivos 1–4.</p></div></div>
@@ -189,25 +803,67 @@ svg text{font-family:Inter,Segoe UI,Arial,sans-serif}
   </tbody></table></div>
 </section>
 
+
 <section class="page" id="ligeros">
-  <div class="hero"><div><h3>Ligeros</h3><p>Detalle Retail e Inmatriculación de autos, SUV, pick ups y furgonetas.</p></div></div>
-  <div class="grid kpis">
-    <div class="card kpi accent"><div class="label">Retail</div><div class="value">126,070</div></div>
-    <div class="card kpi"><div class="label">Retail agosto</div><div class="value">17,210</div></div>
-    <div class="card kpi"><div class="label">Inmatriculación livianos</div><div class="value">167,244</div></div>
-    <div class="card kpi"><div class="label">SUV inmat.</div><div class="value">93,026</div><div class="sub">55.6%</div></div>
+  <div class="vl-hero">
+    <h3>Vehículos Livianos</h3>
+    <div class="sub">Autos, SUV, Camionetas, Pick Up y Furgonetas</div>
+    <p>Análisis integral de inmatriculaciones del Archivo 2, utilizando las 16 hojas como fuente de detalle y control. Periodo enero–agosto 2026.</p>
   </div>
-  <div class="grid two" style="margin-top:14px">
-    <div class="card"><h4 style="margin-top:0">Top modelos Retail</h4>
-      <div class="bar-row"><div class="bar-head"><span>Jetour X70FL</span><b>6,553</b></div><div class="bar-bg"><div class="bar-fill yellow" style="width:100%"></div></div></div>
-      <div class="bar-row"><div class="bar-head"><span>Kia Soluto</span><b>4,416</b></div><div class="bar-bg"><div class="bar-fill" style="width:67%"></div></div></div>
-      <div class="bar-row"><div class="bar-head"><span>Toyota Rush</span><b>4,321</b></div><div class="bar-bg"><div class="bar-fill" style="width:66%"></div></div></div>
-      <div class="bar-row"><div class="bar-head"><span>Ford Territory</span><b>3,878</b></div><div class="bar-bg"><div class="bar-fill" style="width:59%"></div></div></div>
-      <div class="bar-row"><div class="bar-head"><span>Toyota Avanza</span><b>3,776</b></div><div class="bar-bg"><div class="bar-fill" style="width:58%"></div></div></div>
-    </div>
-    <div class="card"><h4 style="margin-top:0">Calidad</h4><p>12 copias adicionales detectadas en la base de Inmatriculación Livianos.</p><p><b>Impacto:</b> 14 unidades acumuladas, 9 de agosto.</p><div class="note">El sistema debe deduplicar antes de recalcular los indicadores.</div></div>
+
+  <div class="vl-kpis">
+    <div class="vl-kpi"><div class="label">Total inmatriculaciones</div><div class="num" id="vlTotal">167,244</div><div class="tiny">Enero – Agosto 2026</div></div>
+    <div class="vl-kpi"><div class="label">SUV / Todoterrenos</div><div class="num" id="vlSUV">93,026</div><div class="tiny">55.6% del total</div></div>
+    <div class="vl-kpi"><div class="label">Pick Up / Furgonetas</div><div class="num" id="vlPick">30,905</div><div class="tiny">18.5%</div></div>
+    <div class="vl-kpi"><div class="label">Marcas</div><div class="num">138</div><div class="tiny">878 modelos</div></div>
+    <div class="vl-kpi"><div class="label">Versiones</div><div class="num">1,520</div><div class="tiny">14 carrocerías</div></div>
+    <div class="vl-kpi"><div class="label">Oficinas registrales</div><div class="num">34</div><div class="tiny">Lima concentra 58.5%</div></div>
   </div>
+
+  <div class="vl-filters">
+    <div class="vl-filter"><label>Año</label><select><option>2026</option></select></div>
+    <div class="vl-filter"><label>Mes</label><select id="vlMonth"><option value="ALL">Ene–Ago</option><option>ENERO</option><option>FEBRERO</option><option>MARZO</option><option>ABRIL</option><option>MAYO</option><option>JUNIO</option><option>JULIO</option><option>AGOSTO</option></select></div>
+    <div class="vl-filter"><label>Clase</label><select id="vlClass"><option value="ALL">Todas</option><option value="SUV,TODOTERRENOS">SUV / Todoterrenos</option><option value="PICK UP Y FURGONETAS">Pick Up y Furgonetas</option><option value="AUTOMOVIL">Automóvil</option><option value="CAMIONETAS">Camionetas</option></select></div>
+    <div class="vl-filter"><label>Marca</label><select><option>Todas</option><option>TOYOTA</option><option>KIA</option><option>HYUNDAI</option><option>CHANGAN</option><option>JETOUR</option></select></div>
+    <div class="vl-filter"><label>Modelo</label><select><option>Todos</option><option>HILUX</option><option>X70FL</option><option>RUSH</option><option>SOLUTO</option><option>TERRITORY</option></select></div>
+    <div class="vl-filter"><label>Carrocería</label><select><option>Todas</option><option>SUV</option><option>PICK UP</option><option>SEDAN</option><option>MULTIPROPOSITO</option></select></div>
+    <div class="vl-filter"><label>Combustible</label><select><option>Todos</option><option>GASOLINA</option><option>DIESEL</option><option>HIBRIDO</option><option>ELECTRICO</option></select></div>
+    <div class="vl-filter"><label>Oficina</label><select><option>Todas</option><option>LIMA</option><option>AREQUIPA</option><option>TRUJILLO</option><option>CUSCO</option></select></div>
+    <button class="vl-reset" id="vlReset" type="button">Limpiar filtros</button>
+  </div>
+
+  <div class="vl-grid-1">
+    <div class="vl-box"><h4>Evolución mensual por clase</h4><canvas id="vlTrend" class="vl-line"></canvas><div class="legend"><span><i style="background:#f2c230"></i>SUV</span><span><i style="background:#111827"></i>Pick Up/Furgonetas</span><span><i style="background:#6b7280"></i>Automóvil</span><span><i style="background:#b7bdc8"></i>Camionetas</span></div></div>
+    <div class="vl-box"><h4>Composición por clase</h4><div class="vl-donut-wrap"><div class="vl-donut"><div class="center"><b>167,244</b><span>unidades</span></div></div></div><div class="small">SUV 55.6% · Pick Up/Furg. 18.5% · Automóvil 13.9% · Camionetas 12.0%</div></div>
+    <div class="vl-box"><h4>Top 10 marcas</h4><div class="vl-rank">
+      <div class="vl-rank-row"><span>TOYOTA</span><div class="track"><div class="fill" style="width:100%"></div></div><b>30,658</b></div><div class="vl-rank-row"><span>KIA</span><div class="track"><div class="fill" style="width:52.3%"></div></div><b>16,037</b></div><div class="vl-rank-row"><span>HYUNDAI</span><div class="track"><div class="fill" style="width:48%"></div></div><b>14,718</b></div><div class="vl-rank-row"><span>CHANGAN</span><div class="track"><div class="fill" style="width:35.6%"></div></div><b>10,900</b></div><div class="vl-rank-row"><span>JETOUR</span><div class="track"><div class="fill" style="width:33.7%"></div></div><b>10,326</b></div><div class="vl-rank-row"><span>CHEVROLET</span><div class="track"><div class="fill" style="width:24.8%"></div></div><b>7,593</b></div><div class="vl-rank-row"><span>GEELY</span><div class="track"><div class="fill" style="width:24.5%"></div></div><b>7,516</b></div><div class="vl-rank-row"><span>FORD</span><div class="track"><div class="fill" style="width:23.2%"></div></div><b>7,128</b></div><div class="vl-rank-row"><span>JAC</span><div class="track"><div class="fill" style="width:20.5%"></div></div><b>6,284</b></div><div class="vl-rank-row"><span>CHERY</span><div class="track"><div class="fill" style="width:19.9%"></div></div><b>6,100</b></div>
+    </div></div>
+    <div class="vl-box"><h4>Top 10 modelos</h4><div class="vl-rank">
+      <div class="vl-rank-row"><span>HILUX</span><div class="track"><div class="fill" style="width:100%"></div></div><b>8,659</b></div><div class="vl-rank-row"><span>X70FL</span><div class="track"><div class="fill" style="width:59.8%"></div></div><b>5,174</b></div><div class="vl-rank-row"><span>RUSH</span><div class="track"><div class="fill" style="width:46.8%"></div></div><b>4,049</b></div><div class="vl-rank-row"><span>SOLUTO</span><div class="track"><div class="fill" style="width:46.2%"></div></div><b>4,003</b></div><div class="vl-rank-row"><span>TERRITORY</span><div class="track"><div class="fill" style="width:44.6%"></div></div><b>3,862</b></div><div class="vl-rank-row"><span>AVANZA</span><div class="track"><div class="fill" style="width:40.7%"></div></div><b>3,528</b></div><div class="vl-rank-row"><span>SELTOS</span><div class="track"><div class="fill" style="width:37.7%"></div></div><b>3,265</b></div><div class="vl-rank-row"><span>GRAND I10</span><div class="track"><div class="fill" style="width:37.3%"></div></div><b>3,226</b></div><div class="vl-rank-row"><span>RAIZE</span><div class="track"><div class="fill" style="width:35.3%"></div></div><b>3,061</b></div><div class="vl-rank-row"><span>N400</span><div class="track"><div class="fill" style="width:34.5%"></div></div><b>2,988</b></div>
+    </div></div>
+  </div>
+
+  <div class="vl-grid-2">
+    <div class="vl-box"><h4>Mapa de oficinas registrales</h4><div class="vl-map"><svg viewBox="0 0 200 270" aria-label="Mapa estilizado del Perú"><path class="vl-map-shape" d="M78 10 L100 24 L107 45 L102 63 L116 81 L118 103 L128 120 L120 139 L123 157 L113 176 L113 193 L106 211 L99 228 L98 242 L89 257 L76 264 L64 252 L65 235 L57 222 L60 205 L55 190 L45 171 L43 154 L45 136 L39 117 L46 102 L55 85 L61 67 L56 48 L64 31 Z"/><circle class="vl-dot" cx="78" cy="165" r="7"/><text x="88" y="168" font-size="9">Lima 97,863</text><circle class="vl-dot" cx="70" cy="215" r="5"/><text x="80" y="218" font-size="9">Arequipa 17,642</text><circle class="vl-dot" cx="62" cy="112" r="4"/><text x="72" y="114" font-size="9">Trujillo</text><circle class="vl-dot" cx="102" cy="195" r="4"/><text x="112" y="198" font-size="9">Cusco</text></svg><div class="vl-bars">
+      <div class="row"><div class="head"><span>Lima</span><b>97,863 · 58.5%</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div><div class="row"><div class="head"><span>Arequipa</span><b>17,642</b></div><div class="track"><div class="fill" style="width:18%"></div></div></div><div class="row"><div class="head"><span>Trujillo</span><b>11,230</b></div><div class="track"><div class="fill" style="width:11.5%"></div></div></div><div class="row"><div class="head"><span>Cusco</span><b>7,104</b></div><div class="track"><div class="fill" style="width:7.3%"></div></div></div><div class="row"><div class="head"><span>Huancayo</span><b>4,944</b></div><div class="track"><div class="fill" style="width:5.1%"></div></div></div>
+    </div></div></div>
+
+    <div class="vl-box"><h4>Origen del vehículo</h4><div class="vl-flex"><div class="vl-pie" style="background:conic-gradient(#f2c230 0 52.6%,#6b7280 52.6% 63.25%,#9ca3af 63.25% 72.48%,#111827 72.48% 79.6%,#d1d5db 79.6% 100%)"></div><div class="small"><p><b>China</b> 87,970 · 52.6%</p><p>Indonesia 17,807 · 10.7%</p><p>India 15,437 · 9.2%</p><p>Argentina 11,915 · 7.1%</p><p>Otros 34,115 · 20.4%</p></div></div></div>
+
+    <div class="vl-box"><h4>Combustible</h4><div class="vl-flex"><div class="vl-pie" style="background:conic-gradient(#f2c230 0 74.71%,#111827 74.71% 92.99%,#6b7280 92.99% 99.39%,#cbd5e1 99.39% 100%)"></div><div class="small"><p><b>Gasolina</b> 124,949 · 74.7%</p><p>Diesel 30,572 · 18.3%</p><p>Híbrido 10,697 · 6.4%</p><p>Eléctrico 630 · 0.4%</p><p>Otros 396</p></div></div></div>
+
+    <div class="vl-box"><h4>Transmisión / Tracción</h4><div class="vl-bars"><div class="row"><div class="head"><span>Mecánica</span><b>63.1%</b></div><div class="track"><div class="fill" style="width:63.1%"></div></div></div><div class="row"><div class="head"><span>Automática</span><b>25.1%</b></div><div class="track"><div class="fill" style="width:25.1%"></div></div></div><div class="row"><div class="head"><span>CVT</span><b>11.8%</b></div><div class="track"><div class="fill" style="width:11.8%"></div></div></div><hr style="border:0;border-top:1px solid var(--line);margin:14px 0"><div class="row"><div class="head"><span>4x2</span><b>81.6%</b></div><div class="track"><div class="fill" style="width:81.6%"></div></div></div><div class="row"><div class="head"><span>4x4</span><b>18.4%</b></div><div class="track"><div class="fill" style="width:18.4%"></div></div></div></div></div>
+  </div>
+
+  <div class="vl-grid-3">
+    <div class="vl-box"><h4>Carrocerías principales</h4><div class="vl-bars"><div class="row"><div class="head"><span>SUV</span><b>93,026 · 55.6%</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div><div class="row"><div class="head"><span>Pick Up</span><b>24,374 · 14.6%</b></div><div class="track"><div class="fill" style="width:26.2%"></div></div></div><div class="row"><div class="head"><span>Sedan</span><b>14,271 · 8.5%</b></div><div class="track"><div class="fill" style="width:15.3%"></div></div></div><div class="row"><div class="head"><span>Multipropósito</span><b>9,822</b></div><div class="track"><div class="fill" style="width:10.6%"></div></div></div><div class="row"><div class="head"><span>Microbús</span><b>8,802</b></div><div class="track"><div class="fill" style="width:9.5%"></div></div></div><div class="row"><div class="head"><span>Hatchback</span><b>8,791</b></div><div class="track"><div class="fill" style="width:9.4%"></div></div></div></div></div>
+    <div class="vl-box"><h4>Año modelo</h4><div class="vl-bars"><div class="row"><div class="head"><span>2027</span><b>89,649 · 53.6%</b></div><div class="track"><div class="fill" style="width:53.6%"></div></div></div><div class="row"><div class="head"><span>2026</span><b>73,243 · 43.8%</b></div><div class="track"><div class="fill" style="width:43.8%"></div></div></div><div class="row"><div class="head"><span>2025 y anteriores</span><b>4,352 · 2.6%</b></div><div class="track"><div class="fill" style="width:2.6%"></div></div></div></div><div class="note" style="margin-top:12px">Más de la mitad de las unidades corresponden a año modelo 2027.</div></div>
+    <div class="vl-box"><h4>Movimiento julio → agosto</h4><div class="small"><p><b>Total:</b> 18,864 → 23,412 · <b>+24.1%</b></p><p><b>SUV:</b> +3,122 · +29.9%</p><p><b>Automóvil:</b> +749 · +29.7%</p><p><b>Pick Up/Furg.:</b> +433 · +12.1%</p><p><b>Camionetas:</b> +242 · +10.3%</p></div><div class="vl-alert"><b>Calidad:</b> 12 duplicados exactos adicionales detectados en la base técnica, con impacto de 14 unidades acumuladas (9 en agosto). Deben deduplicarse en el sistema antes de publicar cifras recalculadas.</div></div>
+  </div>
+
+  <div class="vl-source"><span><b>TSF AutoMarket Intelligence</b> · Vehículos Livianos</span><span>Fuente: Archivo 2 · 16 hojas auditadas</span><span>Última data: Agosto 2026</span></div>
 </section>
+
 
 <section class="page" id="comerciales">
   <div class="hero"><div><h3>Comerciales</h3><p>Microbuses, minibuses, pick ups, paneles y furgones.</p></div></div>
@@ -222,35 +878,339 @@ svg text{font-family:Inter,Segoe UI,Arial,sans-serif}
   </div><div class="card"><h4 style="margin-top:0">Combustible</h4><p>Diesel: <b>29,586</b></p><p>Gasolina: <b>8,264</b></p><p>GLP: 786</p><p>GNV: 181</p><p>Híbrido gasolina: 145 · Eléctrico: 9</p></div></div>
 </section>
 
+
 <section class="page" id="pesados">
-  <div class="hero"><div><h3>Pesados</h3><p>Camiones, tractocamiones y ómnibus.</p></div></div>
-  <div class="grid kpis">
-    <div class="card kpi accent"><div class="label">Inmatriculaciones pesadas</div><div class="value">21,572</div></div>
-    <div class="card kpi"><div class="label">Retail camiones/remolc.</div><div class="value">9,795</div></div>
-    <div class="card kpi"><div class="label">Retail ómnibus</div><div class="value">730</div></div>
-    <div class="card kpi"><div class="label">Brecha aparente</div><div class="value">11,047</div><div class="sub">Requiere homologación</div></div>
+  <div class="vp-hero">
+    <h3>Vehículos Pesados</h3>
+    <div class="sub">Camiones · Tractocamiones · Buses y Chasises</div>
+    <p>Análisis integral de inmatriculaciones del Archivo 3. Se auditaron las 12 hojas del Excel y se cruzaron los cuadros resumen con la base de especificaciones técnicas.</p>
   </div>
-  <div class="grid two" style="margin-top:14px"><div class="card table-wrap"><h4 style="margin-top:0">Top marcas inmatriculadas</h4><table><tbody>
-    <tr><td>Isuzu</td><td>2,703</td></tr><tr><td>Sinotruk</td><td>2,195</td></tr><tr><td>Volvo</td><td>1,859</td></tr><tr><td>Foton</td><td>1,853</td></tr><tr><td>Shacman</td><td>1,463</td></tr><tr><td>Mercedes-Benz</td><td>1,455</td></tr><tr><td>JAC</td><td>1,402</td></tr><tr><td>Scania</td><td>1,067</td></tr>
-  </tbody></table></div><div class="card"><h4 style="margin-top:0">Retail camiones: estructura</h4><p>P2: <b>4,386</b></p><p>P3: <b>2,199</b></p><p>P4: <b>1,967</b></p><p>P5: <b>1,243</b></p><hr style="border:0;border-top:1px solid var(--line)"><p>Diesel: <b>9,271</b> · 4x2: <b>7,220</b></p></div></div>
+
+  <div class="vp-kpis">
+    <div class="vp-kpi"><div class="label">Total acumulado</div><div class="num" id="vpTotal">21,572</div><div class="tiny">Enero – Agosto 2026 · +40.4% vs 2025</div></div>
+    <div class="vp-kpi"><div class="label">Camiones</div><div class="num" id="vpTruck">14,694</div><div class="tiny">68.1% del total</div></div>
+    <div class="vp-kpi"><div class="label">Tractocamiones</div><div class="num" id="vpTracto">3,797</div><div class="tiny">17.6%</div></div>
+    <div class="vp-kpi"><div class="label">Buses y chasises</div><div class="num" id="vpBus">3,081</div><div class="tiny">14.3%</div></div>
+    <div class="vp-kpi"><div class="label">Marcas</div><div class="num">90</div><div class="tiny">Base técnica</div></div>
+    <div class="vp-kpi"><div class="label">Modelos</div><div class="num">922</div><div class="tiny">707 versiones</div></div>
+    <div class="vp-kpi"><div class="label">Oficinas</div><div class="num">33</div><div class="tiny">Cobertura registral</div></div>
+  </div>
+
+  <div class="vp-filters">
+    <div class="vp-filter"><label>Año</label><select><option>2026</option></select></div>
+    <div class="vp-filter"><label>Mes</label><select id="vpMonth"><option value="ALL">Ene–Ago</option><option>ENE</option><option>FEB</option><option>MAR</option><option>ABR</option><option>MAYO</option><option>JUNIO</option><option>JULIO</option><option>AGOSTO</option></select></div>
+    <div class="vp-filter"><label>Subclase</label><select id="vpType"><option value="ALL">Todas</option><option value="CAMIONES">Camiones</option><option value="TRACTOCAMIONES">Tractocamiones</option><option value="BUSES Y CHASISES">Buses y Chasises</option></select></div>
+    <div class="vp-filter"><label>Marca</label><select><option>Todas</option><option>ISUZU</option><option>SINOTRUK</option><option>VOLVO</option><option>FOTON</option><option>SHACMAN</option></select></div>
+    <div class="vp-filter"><label>Modelo</label><select><option>Todos</option><option>CANTER</option><option>NPR75L-KL5VAYPEN</option><option>ZZ3257V364HE1</option><option>DUTRO</option></select></div>
+    <div class="vp-filter"><label>Combustible</label><select><option>Todos</option><option>DIESEL</option><option>GNV</option><option>GNL</option><option>ELECTRICO</option></select></div>
+    <div class="vp-filter"><label>Fórmula rodante</label><select><option>Todas</option><option>4X2</option><option>6X4</option><option>8X4</option><option>6X2</option></select></div>
+    <div class="vp-filter"><label>Oficina</label><select><option>Todas</option><option>LIMA</option><option>AREQUIPA</option><option>TRUJILLO</option><option>CUSCO</option></select></div>
+    <button class="vp-reset" id="vpReset" type="button">Limpiar filtros</button>
+  </div>
+
+  <div class="vp-grid-top">
+    <div class="vp-box"><h4>Evolución mensual por subclase</h4><canvas id="vpTrend" class="vp-line"></canvas><div class="legend"><span><i style="background:#f2c230"></i>Camiones</span><span><i style="background:#232936"></i>Tractocamiones</span><span><i style="background:#9ca3af"></i>Buses/Chasises</span></div></div>
+    <div class="vp-box"><h4>Distribución por tipo</h4><div class="vp-donut-wrap"><div class="vp-donut"><div class="center"><b>21,572</b><span>unidades</span></div></div></div><div class="small">Camiones 68.1% · Tractos 17.6% · Buses 14.3%</div></div>
+    <div class="vp-box"><h4>Top 10 marcas</h4><div class="vp-rank">
+      <div class="vp-rank-row"><span>ISUZU</span><div class="track"><div class="fill" style="width:100%"></div></div><b>2,703</b></div>
+      <div class="vp-rank-row"><span>SINOTRUK</span><div class="track"><div class="fill" style="width:81.2%"></div></div><b>2,195</b></div>
+      <div class="vp-rank-row"><span>VOLVO</span><div class="track"><div class="fill" style="width:68.8%"></div></div><b>1,859</b></div>
+      <div class="vp-rank-row"><span>FOTON</span><div class="track"><div class="fill" style="width:68.6%"></div></div><b>1,853</b></div>
+      <div class="vp-rank-row"><span>SHACMAN</span><div class="track"><div class="fill" style="width:54.1%"></div></div><b>1,463</b></div>
+      <div class="vp-rank-row"><span>MERCEDES BENZ</span><div class="track"><div class="fill" style="width:53.8%"></div></div><b>1,455</b></div>
+      <div class="vp-rank-row"><span>JAC</span><div class="track"><div class="fill" style="width:51.9%"></div></div><b>1,402</b></div>
+      <div class="vp-rank-row"><span>HINO</span><div class="track"><div class="fill" style="width:40.8%"></div></div><b>1,104</b></div>
+      <div class="vp-rank-row"><span>SCANIA</span><div class="track"><div class="fill" style="width:39.5%"></div></div><b>1,067</b></div>
+      <div class="vp-rank-row"><span>FUSO</span><div class="track"><div class="fill" style="width:34.9%"></div></div><b>943</b></div>
+    </div></div>
+    <div class="vp-box"><h4>Top 10 marca / modelo</h4><div class="vp-rank">
+      <div class="vp-rank-row"><span>FUSO CANTER</span><div class="track"><div class="fill" style="width:100%"></div></div><b>749</b></div>
+      <div class="vp-rank-row"><span>ISUZU NPR75L</span><div class="track"><div class="fill" style="width:99.9%"></div></div><b>748</b></div>
+      <div class="vp-rank-row"><span>SINOTRUK ZZ3257</span><div class="track"><div class="fill" style="width:89.3%"></div></div><b>669</b></div>
+      <div class="vp-rank-row"><span>HINO DUTRO</span><div class="track"><div class="fill" style="width:74.5%"></div></div><b>558</b></div>
+      <div class="vp-rank-row"><span>VOLVO FH 6X4 T</span><div class="track"><div class="fill" style="width:67%"></div></div><b>502</b></div>
+      <div class="vp-rank-row"><span>VOLVO FMX 6X4 R</span><div class="track"><div class="fill" style="width:58.7%"></div></div><b>440</b></div>
+      <div class="vp-rank-row"><span>SHACMAN SX3258</span><div class="track"><div class="fill" style="width:55%"></div></div><b>412</b></div>
+      <div class="vp-rank-row"><span>JAC HFC1040KN</span><div class="track"><div class="fill" style="width:54.1%"></div></div><b>405</b></div>
+      <div class="vp-rank-row"><span>ISUZU FRR90SL</span><div class="track"><div class="fill" style="width:41.5%"></div></div><b>311</b></div>
+      <div class="vp-rank-row"><span>VOLVO FMX 8X4 R</span><div class="track"><div class="fill" style="width:41.4%"></div></div><b>310</b></div>
+    </div></div>
+  </div>
+
+  <div class="vp-grid-bottom">
+    <div class="vp-box"><h4>Mapa de oficinas registrales</h4><div class="vp-mini-map">
+      <svg class="vp-map-svg" viewBox="0 0 200 270" aria-label="Mapa estilizado del Perú">
+        <path class="vp-map-shape" d="M78 10 L100 24 L107 45 L102 63 L116 81 L118 103 L128 120 L120 139 L123 157 L113 176 L113 193 L106 211 L99 228 L98 242 L89 257 L76 264 L64 252 L65 235 L57 222 L60 205 L55 190 L45 171 L43 154 L45 136 L39 117 L46 102 L55 85 L61 67 L56 48 L64 31 Z"/>
+        <circle class="vp-map-dot" cx="78" cy="165" r="7"/><text x="88" y="169" font-size="9">Lima 14,928</text>
+        <circle class="vp-map-dot" cx="72" cy="205" r="5"/><text x="82" y="207" font-size="9">Arequipa 2,278</text>
+        <circle class="vp-map-dot" cx="64" cy="120" r="4"/><text x="74" y="122" font-size="9">Trujillo 1,582</text>
+        <circle class="vp-map-dot" cx="99" cy="195" r="4"/><text x="109" y="198" font-size="9">Cusco 675</text>
+        <circle class="vp-map-dot" cx="90" cy="158" r="4"/><text x="100" y="160" font-size="9">Huancayo 425</text>
+      </svg>
+      <div class="table-wrap"><table class="vp-table"><thead><tr><th>Oficina</th><th>Cantidad</th></tr></thead><tbody>
+        <tr><td>Lima</td><td>14,928</td></tr><tr><td>Arequipa</td><td>2,278</td></tr><tr><td>Trujillo</td><td>1,582</td></tr><tr><td>Cusco</td><td>675</td></tr><tr><td>Huancayo</td><td>425</td></tr><tr><td>Chiclayo</td><td>339</td></tr><tr><td>Juliaca</td><td>245</td></tr><tr><td>Piura</td><td>241</td></tr>
+      </tbody></table></div>
+    </div></div>
+
+    <div class="vp-box"><h4>Origen del vehículo</h4><div class="vp-bars">
+      <div class="row"><div class="head"><span>China</span><b>10,593 · 49.1%</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div>
+      <div class="row"><div class="head"><span>Japón</span><b>4,537 · 21.0%</b></div><div class="track"><div class="fill" style="width:42.8%"></div></div></div>
+      <div class="row"><div class="head"><span>Brasil</span><b>3,835 · 17.8%</b></div><div class="track"><div class="fill" style="width:36.2%"></div></div></div>
+      <div class="row"><div class="head"><span>México</span><b>583</b></div><div class="track"><div class="fill" style="width:5.5%"></div></div></div>
+      <div class="row"><div class="head"><span>Corea</span><b>535</b></div><div class="track"><div class="fill" style="width:5.1%"></div></div></div>
+      <div class="row"><div class="head"><span>Alemania</span><b>453</b></div><div class="track"><div class="fill" style="width:4.3%"></div></div></div>
+    </div></div>
+
+    <div class="vp-box"><h4>Combustible</h4><div class="vp-flex"><div class="vp-pie" style="background:conic-gradient(#f2c230 0 93.71%,#111827 93.71% 97.77%,#6b7280 97.77% 99.62%,#cbd5e1 99.62% 100%)"></div><div class="small"><p><b>Diesel</b> 20,215 · 93.7%</p><p>GNV 876 · 4.1%</p><p>GNL 400 · 1.9%</p><p>Eléctrico 30</p><p>Otros 51</p></div></div></div>
+
+    <div class="vp-box"><h4>Fórmula rodante</h4><div class="vp-bars">
+      <div class="row"><div class="head"><span>4x2</span><b>11,889 · 55.1%</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div>
+      <div class="row"><div class="head"><span>6x4</span><b>7,202 · 33.4%</b></div><div class="track"><div class="fill" style="width:60.6%"></div></div></div>
+      <div class="row"><div class="head"><span>8x4</span><b>1,426 · 6.6%</b></div><div class="track"><div class="fill" style="width:12%"></div></div></div>
+      <div class="row"><div class="head"><span>6x2</span><b>774 · 3.6%</b></div><div class="track"><div class="fill" style="width:6.5%"></div></div></div>
+      <div class="row"><div class="head"><span>4x4</span><b>266 · 1.2%</b></div><div class="track"><div class="fill" style="width:2.2%"></div></div></div>
+    </div></div>
+  </div>
+
+  <div class="vp-grid-last">
+    <div class="vp-box"><h4>Carrocerías principales</h4><div class="vp-bars">
+      <div class="row"><div class="head"><span>Chasis cabinado</span><b>9,190</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div>
+      <div class="row"><div class="head"><span>Remolcador</span><b>3,797</b></div><div class="track"><div class="fill" style="width:41.3%"></div></div></div>
+      <div class="row"><div class="head"><span>Volquete</span><b>3,269</b></div><div class="track"><div class="fill" style="width:35.6%"></div></div></div>
+      <div class="row"><div class="head"><span>Minibús</span><b>1,727</b></div><div class="track"><div class="fill" style="width:18.8%"></div></div></div>
+      <div class="row"><div class="head"><span>Baranda</span><b>1,036</b></div><div class="track"><div class="fill" style="width:11.3%"></div></div></div>
+    </div></div>
+
+    <div class="vp-box"><h4>Año modelo</h4><div class="vp-bars">
+      <div class="row"><div class="head"><span>2026</span><b>10,555 · 48.9%</b></div><div class="track"><div class="fill" style="width:48.9%"></div></div></div>
+      <div class="row"><div class="head"><span>2027</span><b>9,224 · 42.8%</b></div><div class="track"><div class="fill" style="width:42.8%"></div></div></div>
+      <div class="row"><div class="head"><span>2025</span><b>1,536 · 7.1%</b></div><div class="track"><div class="fill" style="width:7.1%"></div></div></div>
+      <div class="row"><div class="head"><span>2024 y anteriores</span><b>257 · 1.2%</b></div><div class="track"><div class="fill" style="width:1.2%"></div></div></div>
+    </div></div>
+
+    <div class="vp-box"><h4>Movimiento julio → agosto</h4><div class="small"><p><b>Total:</b> 2,903 → 2,916 · <b>+0.4%</b></p><p><b>Volvo:</b> +80 unidades</p><p><b>FAW:</b> +45</p><p><b>Fuso:</b> +30</p><p><b>Mercedes-Benz:</b> -89</p><p><b>Hyundai:</b> -41</p><p><b>Shacman:</b> -38</p></div><div class="vp-alert"><b>Calidad:</b> 0 duplicados exactos en la base técnica. Los 8 meses suman exactamente 21,572 unidades y los tres subsegmentos cuadran con el resumen.</div></div>
+  </div>
+
+  <div class="vp-source"><span><b>TSF AutoMarket Intelligence</b> · Vehículos Pesados</span><span>Fuente: Archivo 3 · 12 hojas auditadas</span><span>Última data: Agosto 2026</span></div>
 </section>
+
 
 <section class="page" id="menores">
-  <div class="hero"><div><h3>Motos y Trimotos</h3><p>Mercado de vehículos menores.</p></div></div>
-  <div class="grid kpis">
-    <div class="card kpi accent"><div class="label">Total</div><div class="value">385,654</div></div>
-    <div class="card kpi"><div class="label">Motocicletas</div><div class="value">276,779</div><div class="sub">71.8%</div></div>
-    <div class="card kpi"><div class="label">Trimotos</div><div class="value">108,875</div><div class="sub">28.2%</div></div>
-    <div class="card kpi"><div class="label">Marcas</div><div class="value">533</div></div>
+  <div class="vm-hero">
+    <h3>Vehículos Menores</h3>
+    <div class="sub">Motocicletas y Trimotos</div>
+    <p>Análisis de inmatriculaciones de vehículos menores a partir de la base técnica del Archivo 1. Periodo acumulado enero–agosto 2026.</p>
   </div>
-  <div class="grid two" style="margin-top:14px"><div class="card"><h4 style="margin-top:0">Top marcas</h4><p>MOTOKAR/HONDA <b>77,483</b></p><p>WANXIN <b>51,437</b></p><p>BAJAJ <b>45,597</b></p><p>RONCO <b>30,700</b></p><p>JCH <b>10,162</b></p></div><div class="card"><h4 style="margin-top:0">Top oficinas</h4><p>Lima <b>86,146</b></p><p>Piura <b>39,058</b></p><p>Chiclayo <b>33,007</b></p><p>Tarapoto <b>22,288</b></p><p>Madre de Dios <b>18,255</b></p></div></div>
+
+  <div class="vm-kpis">
+    <div class="vm-kpi"><div class="label">Total vehículos menores</div><div class="num" id="vmTotal">385,654</div><div class="tiny">Enero – Agosto 2026</div></div>
+    <div class="vm-kpi"><div class="vm-ring"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.5" fill="none" stroke="#e5e7eb" stroke-width="4"/><circle cx="18" cy="18" r="15.5" fill="none" stroke="#f2c230" stroke-width="4" stroke-dasharray="71.8 28.2"/></svg><div><div class="label">Motocicletas</div><div class="num" id="vmMoto">276,779</div><div class="tiny">71.8% del total</div></div></div></div>
+    <div class="vm-kpi"><div class="vm-ring"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.5" fill="none" stroke="#e5e7eb" stroke-width="4"/><circle cx="18" cy="18" r="15.5" fill="none" stroke="#232936" stroke-width="4" stroke-dasharray="28.2 71.8"/></svg><div><div class="label">Trimotos</div><div class="num" id="vmTri">108,875</div><div class="tiny">28.2% del total</div></div></div></div>
+    <div class="vm-kpi"><div class="label">Marcas</div><div class="num">533</div><div class="tiny">Base técnica</div></div>
+    <div class="vm-kpi"><div class="label">Modelos</div><div class="num">4,490</div><div class="tiny">Combinaciones registradas</div></div>
+    <div class="vm-kpi"><div class="label">Oficinas registrales</div><div class="num">47</div><div class="tiny">14 zonas registrales</div></div>
+  </div>
+
+  <div class="vm-filters">
+    <div class="vm-filter"><label>Año</label><select><option>2026</option></select></div>
+    <div class="vm-filter"><label>Mes</label><select id="vmMonth"><option value="ALL">Ene–Ago</option><option>ENERO</option><option>FEBRERO</option><option>MARZO</option><option>ABRIL</option><option>MAYO</option><option>JUNIO</option><option>JULIO</option><option>AGOSTO</option></select></div>
+    <div class="vm-filter"><label>Tipo</label><select id="vmType"><option value="ALL">Todos</option><option value="MOTOCICLETAS">Motocicletas</option><option value="TRIMOTOS">Trimotos</option></select></div>
+    <div class="vm-filter"><label>Marca</label><select><option>Todas</option><option>MOTOKAR/HONDA</option><option>WANXIN</option><option>BAJAJ</option><option>RONCO</option></select></div>
+    <div class="vm-filter"><label>Modelo</label><select><option>Todos</option><option>WX150-A</option><option>WAVE110S</option><option>GL150</option><option>CCG125</option></select></div>
+    <div class="vm-filter"><label>Cilindrada</label><select><option>Todas</option><option>≤110 cc</option><option>111–150 cc</option><option>151–200 cc</option><option>>200 cc</option></select></div>
+    <div class="vm-filter"><label>Combustible</label><select><option>Todos</option><option>Gasolina</option><option>BI-GLP</option><option>Eléctrico</option></select></div>
+    <div class="vm-filter"><label>Zona registral</label><select><option>Todas</option><option>Zona IX</option><option>Zona II</option><option>Zona I</option></select></div>
+    <button class="vm-reset" id="vmReset" type="button">Limpiar filtros</button>
+  </div>
+
+  <div class="vm-grid-top">
+    <div class="vm-box"><h4>Evolución mensual de inmatriculaciones</h4><canvas id="vmTrend" class="vm-line"></canvas><div class="legend"><span><i style="background:#f2c230"></i>Motocicletas</span><span><i style="background:#232936"></i>Trimotos</span></div></div>
+    <div class="vm-box"><h4>Distribución por tipo</h4><div class="vm-donut-wrap"><div class="vm-donut"><div class="center"><b>385,654</b><span>unidades</span></div></div></div><div class="legend"><span><i style="background:#f2c230"></i>Motocicletas 71.8%</span><span><i style="background:#232936"></i>Trimotos 28.2%</span></div></div>
+    <div class="vm-box"><h4>Top 10 marcas</h4><div class="vm-rank">
+      <div class="vm-rank-row"><span>MOTOKAR/HONDA</span><div class="track"><div class="fill" style="width:100%"></div></div><b>77,483</b></div>
+      <div class="vm-rank-row"><span>WANXIN</span><div class="track"><div class="fill" style="width:66.4%"></div></div><b>51,437</b></div>
+      <div class="vm-rank-row"><span>BAJAJ</span><div class="track"><div class="fill" style="width:58.8%"></div></div><b>45,597</b></div>
+      <div class="vm-rank-row"><span>RONCO</span><div class="track"><div class="fill" style="width:39.6%"></div></div><b>30,700</b></div>
+      <div class="vm-rank-row"><span>JCH</span><div class="track"><div class="fill" style="width:13.1%"></div></div><b>10,162</b></div>
+      <div class="vm-rank-row"><span>SSENDA</span><div class="track"><div class="fill" style="width:12.3%"></div></div><b>9,543</b></div>
+      <div class="vm-rank-row"><span>NEXUS</span><div class="track"><div class="fill" style="width:12%"></div></div><b>9,328</b></div>
+      <div class="vm-rank-row"><span>LIFAN</span><div class="track"><div class="fill" style="width:12%"></div></div><b>9,295</b></div>
+      <div class="vm-rank-row"><span>ZONSEN</span><div class="track"><div class="fill" style="width:11.4%"></div></div><b>8,804</b></div>
+      <div class="vm-rank-row"><span>TVS</span><div class="track"><div class="fill" style="width:10%"></div></div><b>7,723</b></div>
+    </div></div>
+    <div class="vm-box"><h4>Top 10 modelos</h4><div class="vm-rank">
+      <div class="vm-rank-row"><span>WX150-A</span><div class="track"><div class="fill" style="width:100%"></div></div><b>23,933</b></div>
+      <div class="vm-rank-row"><span>WAVE110S</span><div class="track"><div class="fill" style="width:58%"></div></div><b>13,869</b></div>
+      <div class="vm-rank-row"><span>GL150</span><div class="track"><div class="fill" style="width:45.4%"></div></div><b>10,865</b></div>
+      <div class="vm-rank-row"><span>CCG125</span><div class="track"><div class="fill" style="width:41.6%"></div></div><b>9,959</b></div>
+      <div class="vm-rank-row"><span>CB125F TWISTER</span><div class="track"><div class="fill" style="width:32.6%"></div></div><b>7,791</b></div>
+      <div class="vm-rank-row"><span>XR190L</span><div class="track"><div class="fill" style="width:31.2%"></div></div><b>7,472</b></div>
+      <div class="vm-rank-row"><span>TORITO 4T LPG</span><div class="track"><div class="fill" style="width:30.1%"></div></div><b>7,202</b></div>
+      <div class="vm-rank-row"><span>NAVI</span><div class="track"><div class="fill" style="width:29.2%"></div></div><b>6,986</b></div>
+      <div class="vm-rank-row"><span>TORITO 4T</span><div class="track"><div class="fill" style="width:23.4%"></div></div><b>5,610</b></div>
+      <div class="vm-rank-row"><span>PULSAR 125 LS</span><div class="track"><div class="fill" style="width:23%"></div></div><b>5,506</b></div>
+    </div></div>
+  </div>
+
+  <div class="vm-grid-bottom">
+    <div class="vm-box"><h4>Mapa de oficinas registrales</h4><div class="vm-mini-map">
+      <svg class="vm-map-svg" viewBox="0 0 200 270" aria-label="Mapa estilizado del Perú">
+        <path class="vm-map-shape" d="M78 10 L100 24 L107 45 L102 63 L116 81 L118 103 L128 120 L120 139 L123 157 L113 176 L113 193 L106 211 L99 228 L98 242 L89 257 L76 264 L64 252 L65 235 L57 222 L60 205 L55 190 L45 171 L43 154 L45 136 L39 117 L46 102 L55 85 L61 67 L56 48 L64 31 Z"/>
+        <circle class="vm-map-dot" cx="78" cy="165" r="6"/><text x="88" y="169" font-size="9">Lima 86,146</text>
+        <circle class="vm-map-dot" cx="58" cy="78" r="5"/><text x="68" y="79" font-size="9">Piura 39,058</text>
+        <circle class="vm-map-dot" cx="61" cy="100" r="5"/><text x="71" y="102" font-size="9">Chiclayo 33,007</text>
+        <circle class="vm-map-dot" cx="96" cy="103" r="4"/><text x="108" y="105" font-size="9">Tarapoto</text>
+        <circle class="vm-map-dot" cx="111" cy="213" r="4"/><text x="120" y="216" font-size="9">Madre de Dios</text>
+      </svg>
+      <div class="table-wrap"><table class="vm-office-table"><thead><tr><th>Oficina</th><th>Cantidad</th></tr></thead><tbody>
+        <tr><td>Lima</td><td>86,146</td></tr><tr><td>Piura</td><td>39,058</td></tr><tr><td>Chiclayo</td><td>33,007</td></tr><tr><td>Tarapoto</td><td>22,288</td></tr><tr><td>Madre de Dios</td><td>18,255</td></tr><tr><td>Pucallpa</td><td>16,978</td></tr><tr><td>Trujillo</td><td>16,723</td></tr>
+      </tbody></table></div>
+    </div></div>
+
+    <div class="vm-box"><h4>Zona registral</h4>
+      <div class="vm-zone-row"><div class="head"><span>Zona IX</span><b>86,146</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div>
+      <div class="vm-zone-row"><div class="head"><span>Zona II</span><b>63,684</b></div><div class="track"><div class="fill" style="width:73.9%"></div></div></div>
+      <div class="vm-zone-row"><div class="head"><span>Zona I</span><b>40,146</b></div><div class="track"><div class="fill" style="width:46.6%"></div></div></div>
+      <div class="vm-zone-row"><div class="head"><span>Zona X</span><b>36,925</b></div><div class="track"><div class="fill" style="width:42.9%"></div></div></div>
+      <div class="vm-zone-row"><div class="head"><span>Zona VIII</span><b>30,805</b></div><div class="track"><div class="fill" style="width:35.8%"></div></div></div>
+      <div class="vm-zone-row"><div class="head"><span>Zona III</span><b>30,009</b></div><div class="track"><div class="fill" style="width:34.8%"></div></div></div>
+      <div class="vm-zone-row"><div class="head"><span>Zona VI</span><b>16,978</b></div><div class="track"><div class="fill" style="width:19.7%"></div></div></div>
+    </div>
+
+    <div class="vm-box"><h4>Tipo de combustible</h4><div class="vm-fuel"><div class="vm-fuel-pie"></div><div style="font-size:12px">
+      <p><b>Gasolina</b> — 334,776 · 86.8%</p><p>Sin dato — 36,424 · 9.4%</p><p>BI-GLP — 11,778 · 3.1%</p><p>Eléctrico — 2,125 · 0.6%</p><p>Otros — 551 · 0.1%</p>
+    </div></div></div>
+
+    <div class="vm-box"><h4>Rango de cilindrada</h4><div class="vm-stat-bars">
+      <div class="row"><div class="head"><span>≤ 110 cc</span><b>10.3%</b></div><div class="track"><div class="fill" style="width:10.3%"></div></div></div>
+      <div class="row"><div class="head"><span>111 – 150 cc</span><b>35.3%</b></div><div class="track"><div class="fill" style="width:35.3%"></div></div></div>
+      <div class="row"><div class="head"><span>151 – 200 cc</span><b>27.4%</b></div><div class="track"><div class="fill" style="width:27.4%"></div></div></div>
+      <div class="row"><div class="head"><span>> 200 cc</span><b>17.5%</b></div><div class="track"><div class="fill" style="width:17.5%"></div></div></div>
+      <div class="row"><div class="head"><span>Sin dato</span><b>9.5%</b></div><div class="track"><div class="fill" style="width:9.5%"></div></div></div>
+    </div></div>
+  </div>
+
+  <div class="vm-source"><span><b>TSF AutoMarket Intelligence</b> · Vehículos Menores</span><span>Fuente: Archivo 1 – Base Especificaciones Técnicas</span><span>Última data: Agosto 2026</span></div>
 </section>
 
+
+
 <section class="page" id="remolques">
-  <div class="hero"><div><h3>Remolques y Semirremolques</h3><p>Inmatriculaciones acumuladas 2026.</p></div></div>
-  <div class="grid kpis"><div class="card kpi accent"><div class="label">Total</div><div class="value">5,747</div></div><div class="card kpi"><div class="label">Marcas</div><div class="value">139</div></div><div class="card kpi"><div class="label">Modelos</div><div class="value">423</div></div><div class="card kpi"><div class="label">Carrocerías</div><div class="value">29</div></div></div>
-  <div class="grid two" style="margin-top:14px"><div class="card"><h4 style="margin-top:0">Carrocerías</h4><p>Plataforma <b>2,021</b></p><p>Volquete <b>654</b></p><p>Furgón <b>569</b></p><p>Cisterna combustibles <b>489</b></p><p>Baranda <b>428</b></p></div><div class="card"><h4 style="margin-top:0">Concentración geográfica</h4><p>Lima <b>3,579</b></p><p>La Libertad <b>1,046</b></p><p>Arequipa <b>765</b></p><p>Otros <b>357</b></p></div></div>
+  <div class="rm-hero">
+    <h3>Remolques y Semirremolques</h3>
+    <div class="sub">Inmatriculaciones · Enero–Agosto 2026</div>
+    <p>Análisis del Archivo 4: resumen, marcas, oficinas registrales y base técnica. Incluye categorías O2/O3/O4, carrocerías, departamentos, modelos y variación mensual.</p>
+  </div>
+
+  <div class="rm-kpis">
+    <div class="rm-kpi"><div class="label">Total acumulado</div><div class="num" id="rmTotal">5,747</div><div class="tiny">Enero – Agosto 2026</div></div>
+    <div class="rm-kpi"><div class="label">Agosto</div><div class="num">760</div><div class="tiny">+21.0% vs julio</div></div>
+    <div class="rm-kpi"><div class="label">Marcas</div><div class="num">139</div><div class="tiny">Base técnica</div></div>
+    <div class="rm-kpi"><div class="label">Modelos</div><div class="num">423</div><div class="tiny">2 unidades con modelo “-”</div></div>
+    <div class="rm-kpi"><div class="label">Carrocerías</div><div class="num">29</div><div class="tiny">301 unidades sin clasificación</div></div>
+    <div class="rm-kpi"><div class="label">Oficinas</div><div class="num">8</div><div class="tiny">8 departamentos</div></div>
+  </div>
+
+  <div class="rm-filters">
+    <div class="rm-filter"><label>Año</label><select><option>2026</option></select></div>
+    <div class="rm-filter"><label>Mes</label><select id="rmMonth"><option value="ALL">Ene–Ago</option><option>ENERO</option><option>FEBRERO</option><option>MARZO</option><option>ABRIL</option><option>MAYO</option><option>JUNIO</option><option>JULIO</option><option>AGOSTO</option></select></div>
+    <div class="rm-filter"><label>Marca</label><select><option>Todas</option><option>MACONSAC</option><option>OBCAS</option><option>MELCONSA</option><option>ARNOLD</option><option>ZUFFA</option></select></div>
+    <div class="rm-filter"><label>Carrocería</label><select><option>Todas</option><option>PLATAFORMA</option><option>VOLQUETE</option><option>FURGON</option><option>CISTERNA COMBUSTIBLES</option><option>BARANDA</option></select></div>
+    <div class="rm-filter"><label>Categoría</label><select><option>Todas</option><option>O4</option><option>O3</option><option>O2</option></select></div>
+    <div class="rm-filter"><label>Departamento</label><select><option>Todos</option><option>LIMA</option><option>LA LIBERTAD</option><option>AREQUIPA</option><option>LAMBAYEQUE</option><option>CUSCO</option></select></div>
+    <button class="rm-reset" id="rmReset" type="button">Limpiar filtros</button>
+  </div>
+
+  <div class="rm-grid-top">
+    <div class="rm-box"><h4>Evolución mensual</h4><canvas id="rmTrend" class="rm-line"></canvas><div class="legend"><span><i style="background:#f2c230"></i>Inmatriculaciones</span></div></div>
+    <div class="rm-box"><h4>Top 10 marcas</h4><div class="rm-rank">
+      <div class="rm-rank-row"><span>MACONSAC</span><div class="track"><div class="fill" style="width:100%"></div></div><b>929</b></div>
+      <div class="rm-rank-row"><span>OBCAS</span><div class="track"><div class="fill" style="width:68.1%"></div></div><b>633</b></div>
+      <div class="rm-rank-row"><span>MELCONSA</span><div class="track"><div class="fill" style="width:42.6%"></div></div><b>396</b></div>
+      <div class="rm-rank-row"><span>ARNOLD</span><div class="track"><div class="fill" style="width:39.3%"></div></div><b>365</b></div>
+      <div class="rm-rank-row"><span>ZUFFA</span><div class="track"><div class="fill" style="width:37.0%"></div></div><b>344</b></div>
+      <div class="rm-rank-row"><span>INMETARO</span><div class="track"><div class="fill" style="width:29.7%"></div></div><b>276</b></div>
+      <div class="rm-rank-row"><span>VOLTRAILER</span><div class="track"><div class="fill" style="width:20.6%"></div></div><b>191</b></div>
+      <div class="rm-rank-row"><span>METALTRUCK</span><div class="track"><div class="fill" style="width:17.2%"></div></div><b>160</b></div>
+      <div class="rm-rank-row"><span>RECONCISA</span><div class="track"><div class="fill" style="width:16.7%"></div></div><b>155</b></div>
+      <div class="rm-rank-row"><span>FAMECA</span><div class="track"><div class="fill" style="width:15.0%"></div></div><b>139</b></div>
+    </div></div>
+    <div class="rm-box"><h4>Top modelos</h4><div class="rm-rank">
+      <div class="rm-rank-row"><span>ESTANDAR</span><div class="track"><div class="fill" style="width:100%"></div></div><b>768</b></div>
+      <div class="rm-rank-row"><span>NACIONAL STANDART</span><div class="track"><div class="fill" style="width:57.2%"></div></div><b>439</b></div>
+      <div class="rm-rank-row"><span>NACIONAL</span><div class="track"><div class="fill" style="width:50.4%"></div></div><b>387</b></div>
+      <div class="rm-rank-row"><span>PLT04</span><div class="track"><div class="fill" style="width:27.3%"></div></div><b>210</b></div>
+      <div class="rm-rank-row"><span>PLT03</span><div class="track"><div class="fill" style="width:21.6%"></div></div><b>166</b></div>
+      <div class="rm-rank-row"><span>STANDARD</span><div class="track"><div class="fill" style="width:21.5%"></div></div><b>165</b></div>
+      <div class="rm-rank-row"><span>ESTANDARD</span><div class="track"><div class="fill" style="width:20.3%"></div></div><b>156</b></div>
+      <div class="rm-rank-row"><span>METAL-TRAILER</span><div class="track"><div class="fill" style="width:20.1%"></div></div><b>154</b></div>
+    </div></div>
+  </div>
+
+  <div class="rm-grid-mid">
+    <div class="rm-box"><h4>Carrocerías principales</h4><div class="rm-rank">
+      <div class="rm-rank-row"><span>Plataforma</span><div class="track"><div class="fill" style="width:100%"></div></div><b>2,021</b></div>
+      <div class="rm-rank-row"><span>Volquete</span><div class="track"><div class="fill" style="width:32.4%"></div></div><b>654</b></div>
+      <div class="rm-rank-row"><span>Furgón</span><div class="track"><div class="fill" style="width:28.2%"></div></div><b>569</b></div>
+      <div class="rm-rank-row"><span>Cisterna comb.</span><div class="track"><div class="fill" style="width:24.2%"></div></div><b>489</b></div>
+      <div class="rm-rank-row"><span>Baranda</span><div class="track"><div class="fill" style="width:21.2%"></div></div><b>428</b></div>
+      <div class="rm-rank-row"><span>Sin clasificar</span><div class="track"><div class="fill" style="width:14.9%"></div></div><b>301</b></div>
+      <div class="rm-rank-row"><span>Cama baja</span><div class="track"><div class="fill" style="width:14.1%"></div></div><b>284</b></div>
+      <div class="rm-rank-row"><span>Portacontenedor</span><div class="track"><div class="fill" style="width:8.3%"></div></div><b>167</b></div>
+    </div></div>
+
+    <div class="rm-box"><h4>Categoría</h4><div class="rm-cat"><div style="position:relative"><div class="rm-donut"></div><div class="rm-donut-label">5,747</div></div><div style="font-size:12px"><p><b>O4</b> — 5,692 · 99.0%</p><p><b>O3</b> — 49 · 0.9%</p><p><b>O2</b> — 6 · 0.1%</p></div></div></div>
+
+    <div class="rm-box"><h4>Variación julio → agosto</h4><div class="table-wrap"><table class="rm-table"><thead><tr><th>Marca</th><th>Jul</th><th>Ago</th><th>Δ</th></tr></thead><tbody>
+      <tr><td>OBCAS</td><td>177</td><td>242</td><td class="rm-positive">+65</td></tr>
+      <tr><td>MELCONSA</td><td>22</td><td>41</td><td class="rm-positive">+19</td></tr>
+      <tr><td>RMB SATECI</td><td>3</td><td>21</td><td class="rm-positive">+18</td></tr>
+      <tr><td>ZUFFA</td><td>29</td><td>43</td><td class="rm-positive">+14</td></tr>
+      <tr><td>METALTRUCK</td><td>10</td><td>22</td><td class="rm-positive">+12</td></tr>
+      <tr><td>MACONSAC</td><td>31</td><td>15</td><td class="rm-negative">-16</td></tr>
+      <tr><td>ACS</td><td>15</td><td>1</td><td class="rm-negative">-14</td></tr>
+      <tr><td>FAMEDI</td><td>11</td><td>0</td><td class="rm-negative">-11</td></tr>
+    </tbody></table></div></div>
+  </div>
+
+  <div class="rm-grid-bottom">
+    <div class="rm-box"><h4>Mapa de concentración por departamento</h4><div class="rm-map-wrap">
+      <svg class="rm-map" viewBox="0 0 200 270" aria-label="Mapa estilizado del Perú">
+        <path class="rm-map-shape" d="M78 10 L100 24 L107 45 L102 63 L116 81 L118 103 L128 120 L120 139 L123 157 L113 176 L113 193 L106 211 L99 228 L98 242 L89 257 L76 264 L64 252 L65 235 L57 222 L60 205 L55 190 L45 171 L43 154 L45 136 L39 117 L46 102 L55 85 L61 67 L56 48 L64 31 Z"/>
+        <circle class="rm-dot" cx="78" cy="165" r="8"/><text x="89" y="168" font-size="9">Lima 3,579</text>
+        <circle class="rm-dot" cx="65" cy="124" r="6"/><text x="76" y="126" font-size="9">La Libertad 1,046</text>
+        <circle class="rm-dot" cx="82" cy="211" r="5"/><text x="92" y="214" font-size="9">Arequipa 765</text>
+        <circle class="rm-dot" cx="61" cy="100" r="3"/><text x="70" y="102" font-size="9">Lambayeque</text>
+        <circle class="rm-dot" cx="100" cy="193" r="3"/><text x="110" y="195" font-size="9">Cusco</text>
+      </svg>
+      <div class="table-wrap"><table class="rm-table"><thead><tr><th>Departamento</th><th>Total</th><th>%</th></tr></thead><tbody>
+        <tr><td>Lima</td><td>3,579</td><td>62.3%</td></tr><tr><td>La Libertad</td><td>1,046</td><td>18.2%</td></tr><tr><td>Arequipa</td><td>765</td><td>13.3%</td></tr><tr><td>Lambayeque</td><td>164</td><td>2.9%</td></tr><tr><td>Cusco</td><td>83</td><td>1.4%</td></tr><tr><td>Junín</td><td>73</td><td>1.3%</td></tr><tr><td>Tacna</td><td>35</td><td>0.6%</td></tr><tr><td>Puno</td><td>2</td><td>0.0%</td></tr>
+      </tbody></table></div>
+    </div></div>
+
+    <div class="rm-box"><h4>Oficinas registrales</h4><div class="rm-rank">
+      <div class="rm-rank-row"><span>Lima</span><div class="track"><div class="fill" style="width:100%"></div></div><b>3,579</b></div>
+      <div class="rm-rank-row"><span>Trujillo</span><div class="track"><div class="fill" style="width:29.2%"></div></div><b>1,046</b></div>
+      <div class="rm-rank-row"><span>Arequipa</span><div class="track"><div class="fill" style="width:21.4%"></div></div><b>765</b></div>
+      <div class="rm-rank-row"><span>Chiclayo</span><div class="track"><div class="fill" style="width:4.6%"></div></div><b>164</b></div>
+      <div class="rm-rank-row"><span>Cusco</span><div class="track"><div class="fill" style="width:2.3%"></div></div><b>83</b></div>
+      <div class="rm-rank-row"><span>Huancayo</span><div class="track"><div class="fill" style="width:2.0%"></div></div><b>73</b></div>
+      <div class="rm-rank-row"><span>Tacna</span><div class="track"><div class="fill" style="width:1.0%"></div></div><b>35</b></div>
+      <div class="rm-rank-row"><span>Juliaca</span><div class="track"><div class="fill" style="width:.1%"></div></div><b>2</b></div>
+    </div></div>
+
+    <div class="rm-box"><h4>Control de calidad</h4><div class="rm-quality">
+      <div class="rm-q"><b>846</b><br><span class="small">registros BASE</span></div>
+      <div class="rm-q"><b>0</b><br><span class="small">duplicados exactos</span></div>
+      <div class="rm-q"><b>0</b><br><span class="small">filas con total 0</span></div>
+      <div class="rm-q"><b>301</b><br><span class="small">unidades carrocería “-”</span></div>
+      <div class="rm-q"><b>2</b><br><span class="small">unidades modelo “-”</span></div>
+      <div class="rm-q"><b>5/5</b><br><span class="small">hojas auditadas</span></div>
+    </div><div class="note" style="margin-top:10px">La base está estructuralmente limpia. La principal mejora pendiente es homologar/recategorizar las 301 unidades con carrocería “-”.</div></div>
+  </div>
+  <div class="vm-source"><span><b>TSF AutoMarket Intelligence</b> · Remolques y Semirremolques</span><span>Fuente: Archivo 4 · AAP / SUNARP</span><span>Última data: Agosto 2026</span></div>
 </section>
+
 
 <section class="page" id="geografia">
   <div class="hero"><div><h3>Mapas del Perú</h3><p>Ahora sí incorporé mapas estilizados del Perú dentro del HTML. Puedes alternar entre Retail e Inmatriculaciones y pasar el mouse por los puntos principales.</p></div></div>
@@ -322,32 +1282,204 @@ svg text{font-family:Inter,Segoe UI,Arial,sans-serif}
   </div>
 </section>
 
+
 <section class="page" id="concesionarios">
-  <div class="hero"><div><h3>Concesionarios</h3><p>Ranking comercial nacional y por departamento.</p></div></div>
-  <div class="grid kpis">
-    <div class="card kpi accent"><div class="label">Nombres originales</div><div class="value">270</div></div>
-    <div class="card kpi"><div class="label">Nombres normalizados aprox.</div><div class="value">259</div></div>
-    <div class="card kpi"><div class="label">Códigos concesionario</div><div class="value">895</div></div>
-    <div class="card kpi"><div class="label">Registros detalle</div><div class="value">13,680</div></div>
+  <div class="dc-hero">
+    <h3>Departamento y Concesionarios Retail</h3>
+    <div style="font-size:18px;font-weight:750">Geografía comercial · Enero–Agosto 2026</div>
+    <p>Vista nacional del Retail por departamento, ciudad, distrito, concesionario, marca, segmento y vehículo. Esta base permite conectar la venta acumulada con la ubicación real de la red comercial.</p>
   </div>
-  <div class="card table-wrap" style="margin-top:14px">
-    <table>
-      <thead><tr><th>Ranking</th><th>Concesionario</th><th>Ventas</th></tr></thead>
-      <tbody>
-        <tr><td>1</td><td>AUTOLAND</td><td>8,803</td></tr>
-        <tr><td>2</td><td>MITSUI AUTOMOTRIZ</td><td>7,121</td></tr>
-        <tr><td>3</td><td>AUTOESPAR</td><td>5,754</td></tr>
-        <tr><td>4</td><td>GRUPO PANA</td><td>5,627</td></tr>
-        <tr><td>5</td><td>AUTOMOTRIZ INCAMOTORS</td><td>5,557</td></tr>
-        <tr><td>6</td><td>PERUMOTOR</td><td>5,290</td></tr>
-        <tr><td>7</td><td>REVOSHOP</td><td>4,770</td></tr>
-        <tr><td>8</td><td>GACSA PERU</td><td>4,363</td></tr>
-        <tr><td>9</td><td>DERCOCENTER</td><td>4,147</td></tr>
-        <tr><td>10</td><td>ALESE</td><td>4,010</td></tr>
-      </tbody>
-    </table>
+
+  <div class="dc-kpis">
+    <div class="dc-kpi"><div class="label">Retail acumulado</div><div class="num">176,170</div><div class="tiny">Ene–Ago 2026</div></div>
+    <div class="dc-kpi"><div class="label">Venta agosto</div><div class="num">23,613</div><div class="tiny">-2.2% vs julio</div></div>
+    <div class="dc-kpi"><div class="label">Departamentos</div><div class="num">22</div><div class="tiny">Cobertura registrada</div></div>
+    <div class="dc-kpi"><div class="label">Concesionarios escritos</div><div class="num">270</div><div class="tiny">≈259 normalizados</div></div>
+    <div class="dc-kpi"><div class="label">Códigos concesionario</div><div class="num">895</div><div class="tiny">Identificadores de red</div></div>
+    <div class="dc-kpi"><div class="label">Códigos vehículo</div><div class="num">1,514</div><div class="tiny">63 marcas · 735 modelos</div></div>
   </div>
-  <div class="note" style="margin-top:14px">Homologaciones detectadas: SUR MOTORS / SURMOTORS, MOTOR SUR / MOTORSUR, GRUPO PANA / GRUPA PANA y variantes con espacios finales.</div>
+
+  <div class="dc-grid1">
+    <div class="dc-box">
+      <h4>Evolución mensual Retail</h4>
+      <div class="dc-months">
+        <div class="dc-month"><b>21,214</b><span>Ene</span></div><div class="dc-month"><b>19,700</b><span>Feb</span></div><div class="dc-month"><b>20,028</b><span>Mar</span></div><div class="dc-month"><b>21,793</b><span>Abr</span></div>
+        <div class="dc-month"><b>22,520</b><span>May</span></div><div class="dc-month"><b>23,156</b><span>Jun</span></div><div class="dc-month"><b>24,146</b><span>Jul</span></div><div class="dc-month"><b>23,613</b><span>Ago</span></div>
+      </div>
+      <div class="dc-note" style="margin-top:10px"><b>Lectura:</b> julio fue el mayor mes del periodo con 24,146 unidades. Agosto cerró en 23,613, una disminución aproximada de 2.2% mensual.</div>
+    </div>
+
+    <div class="dc-box">
+      <h4>Top departamentos · Acumulado</h4>
+      <div class="dc-rank">
+        <div class="dc-rank-row"><span>Lima</span><div class="track"><div class="fill" style="width:100%"></div></div><b>104,299</b></div>
+        <div class="dc-rank-row"><span>Arequipa</span><div class="track"><div class="fill" style="width:18.3%"></div></div><b>19,101</b></div>
+        <div class="dc-rank-row"><span>La Libertad</span><div class="track"><div class="fill" style="width:11.0%"></div></div><b>11,508</b></div>
+        <div class="dc-rank-row"><span>Cusco</span><div class="track"><div class="fill" style="width:7.8%"></div></div><b>8,121</b></div>
+        <div class="dc-rank-row"><span>Junín</span><div class="track"><div class="fill" style="width:5.1%"></div></div><b>5,327</b></div>
+        <div class="dc-rank-row"><span>Piura</span><div class="track"><div class="fill" style="width:4.8%"></div></div><b>4,956</b></div>
+        <div class="dc-rank-row"><span>Lambayeque</span><div class="track"><div class="fill" style="width:4.2%"></div></div><b>4,398</b></div>
+      </div>
+    </div>
+
+    <div class="dc-box">
+      <h4>Top concesionarios · Nacional</h4>
+      <div class="dc-rank">
+        <div class="dc-rank-row"><span>AUTOLAND</span><div class="track"><div class="fill" style="width:100%"></div></div><b>8,803</b></div>
+        <div class="dc-rank-row"><span>MITSUI</span><div class="track"><div class="fill" style="width:80.9%"></div></div><b>7,121</b></div>
+        <div class="dc-rank-row"><span>AUTOESPAR</span><div class="track"><div class="fill" style="width:65.4%"></div></div><b>5,754</b></div>
+        <div class="dc-rank-row"><span>GRUPO PANA</span><div class="track"><div class="fill" style="width:63.9%"></div></div><b>5,627</b></div>
+        <div class="dc-rank-row"><span>INCAMOTORS</span><div class="track"><div class="fill" style="width:63.1%"></div></div><b>5,557</b></div>
+        <div class="dc-rank-row"><span>PERUMOTOR</span><div class="track"><div class="fill" style="width:60.1%"></div></div><b>5,290</b></div>
+        <div class="dc-rank-row"><span>REVOSHOP</span><div class="track"><div class="fill" style="width:54.2%"></div></div><b>4,770</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dc-grid2">
+    <div class="dc-box">
+      <h4>Principales marcas del Retail</h4>
+      <div class="dc-rank">
+        <div class="dc-rank-row"><span>TOYOTA</span><div class="track"><div class="fill" style="width:100%"></div></div><b>31,645</b></div>
+        <div class="dc-rank-row"><span>KIA</span><div class="track"><div class="fill" style="width:53.6%"></div></div><b>16,955</b></div>
+        <div class="dc-rank-row"><span>HYUNDAI</span><div class="track"><div class="fill" style="width:48.6%"></div></div><b>15,382</b></div>
+        <div class="dc-rank-row"><span>CHANGAN</span><div class="track"><div class="fill" style="width:33.7%"></div></div><b>10,678</b></div>
+        <div class="dc-rank-row"><span>JETOUR</span><div class="track"><div class="fill" style="width:32.2%"></div></div><b>10,182</b></div>
+        <div class="dc-rank-row"><span>GEELY</span><div class="track"><div class="fill" style="width:24.6%"></div></div><b>7,798</b></div>
+        <div class="dc-rank-row"><span>CHEVROLET</span><div class="track"><div class="fill" style="width:24.1%"></div></div><b>7,624</b></div>
+      </div>
+    </div>
+
+    <div class="dc-box">
+      <h4>Composición del mercado</h4>
+      <div class="dc-dept-grid">
+        <div class="dc-dept"><span>SUV</span><b>91,860</b></div><div class="dc-dept"><span>Pick Up</span><b>23,596</b></div>
+        <div class="dc-dept"><span>Sedán</span><b>14,542</b></div><div class="dc-dept"><span>Multipropósito</span><b>10,306</b></div>
+        <div class="dc-dept"><span>Chasis</span><b>9,863</b></div><div class="dc-dept"><span>Hatchback</span><b>9,140</b></div>
+        <div class="dc-dept"><span>Microbús</span><b>6,854</b></div><div class="dc-dept"><span>Baranda</span><b>2,655</b></div>
+      </div>
+      <h4 style="margin-top:14px">Origen</h4>
+      <div class="small"><p><b>China:</b> 86,831 · 49.3%</p><p><b>Indonesia:</b> 18,501 · <b>India:</b> 18,084</p><p><b>Japón:</b> 12,893 · <b>Argentina:</b> 11,834</p></div>
+    </div>
+
+    <div class="dc-box">
+      <h4>Calidad y homologación</h4>
+      <div class="dc-control">
+        <div class="item"><span>Duplicados exactos</span><b class="pill ok">0 ✓</b></div>
+        <div class="item"><span>Total vs Retail acumulado</span><b class="pill ok">176,170 ✓</b></div>
+        <div class="item"><span>Códigos vehículo</span><b class="pill ok">1,514 ✓</b></div>
+        <div class="item"><span>Ajustes mensuales negativos</span><b class="pill warn">74 filas · -87</b></div>
+        <div class="item"><span>Filas con Total 0</span><b class="pill warn">10</b></div>
+        <div class="item"><span>Totales acumulados negativos</span><b class="pill warn">23 filas</b></div>
+        <div class="item"><span>Concesionarios normalizables</span><b class="pill warn">270 → ~259</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dc-grid2">
+    <div class="dc-box"><h4>Top concesionarios por departamento</h4><div class="small"><p><b>Lima:</b> AUTOLAND 8,803 · MITSUI 5,409 · AUTOESPAR 5,211</p><p><b>Arequipa:</b> PERUMOTOR 3,676 · INCAMOTORS 2,771 · RESERSUR 2,417</p><p><b>La Libertad:</b> INTERAMERICANA TRUJILLO 2,171 · AUTONORT 1,726 · B MOTORS 1,374</p><p><b>Cusco:</b> MOTOR MASS 1,639 · INCAMOTORS 1,533 · CORPORACIÓN AUTOMOTRIZ DEL SUR 1,511</p><p><b>Junín:</b> MULTIMARKAS 1,161 · AUTOMÓVILES SA 961 · KLM GROUP 704</p></div></div>
+    <div class="dc-box"><h4>Top agosto</h4><div class="small"><p><b>Departamentos:</b> Lima 14,027 · Arequipa 2,544 · La Libertad 1,567 · Cusco 1,074</p><p><b>Concesionarios:</b> AUTOLAND 1,014 · MITSUI 965 · AUTOESPAR 912 · INCAMOTORS 814</p><p><b>Marcas:</b> Toyota 4,455 · Hyundai 2,212 · Kia 2,097 · Jetour 1,529</p></div></div>
+    <div class="dc-box"><h4>Normalización necesaria</h4><div class="dc-note"><b>Concesionarios:</b> se detectaron variantes por espacios finales y puntuación, por ejemplo PANDERO S.A. EAFC / PANDERO SA EAFC, AUTOMOTORES MOPAL con/sin espacio final, etc.</div><div class="dc-note" style="margin-top:8px"><b>Origen:</b> conviene homologar ESTADOS UNIDOS / USA y, al cruzar con inmatriculaciones, JAPON/JAPAN, BRASIL/BRAZIL y COREA/KOREA.</div></div>
+  </div>
+
+  <div class="dc-foot"><span><b>TSF AutoMarket Intelligence</b> · Departamento y Concesionarios Retail</span><span>Fuente: Archivo 11 · REPORTE</span><span>13,680 registros auditados</span></div>
+</section>
+
+<section class="page" id="retailOmnibus">
+  <div class="ob-hero">
+    <h3>Retail Ómnibus</h3>
+    <div class="sub">Enero – Agosto 2026</div>
+    <p>Detalle técnico y comercial de ventas Retail de ómnibus por marca, modelo, segmento O1/O2, origen, combustible, transmisión y fórmula rodante.</p>
+  </div>
+
+  <div class="ob-kpis">
+    <div class="ob-kpi"><div class="label">Retail acumulado</div><div class="num">730</div><div class="tiny">Enero – Agosto 2026</div></div>
+    <div class="ob-kpi"><div class="label">Agosto</div><div class="num">86</div><div class="tiny">-29.5% vs julio</div></div>
+    <div class="ob-kpi"><div class="label">Marcas</div><div class="num">10</div><div class="tiny">30 modelos</div></div>
+    <div class="ob-kpi"><div class="label">Versiones</div><div class="num">26</div><div class="tiny">30 códigos únicos</div></div>
+    <div class="ob-kpi"><div class="label">Mes pico</div><div class="num">122</div><div class="tiny">Julio 2026</div></div>
+  </div>
+
+  <div class="ob-grid1">
+    <div class="ob-box"><h4>Evolución mensual</h4><canvas id="obTrend" class="chart"></canvas><div class="legend"><span><i style="background:#f2c230"></i>Retail Ómnibus</span></div></div>
+    <div class="ob-box"><h4>Segmentos O1 / O2</h4><div style="position:relative"><div class="ob-donut"></div><div class="ob-donut-center"><div><b>730</b><span>unidades</span></div></div></div><div class="small" style="margin-top:10px"><p><b>O1</b> · 425 · 58.2%</p><p><b>O2</b> · 305 · 41.8%</p></div></div>
+    <div class="ob-box"><h4>Top marcas</h4><div class="ob-rank">
+      <div class="ob-rank-row"><span>MERCEDES BENZ</span><div class="track"><div class="fill" style="width:100%"></div></div><b>300</b></div>
+      <div class="ob-rank-row"><span>VOLKSWAGEN</span><div class="track"><div class="fill" style="width:35.3%"></div></div><b>106</b></div>
+      <div class="ob-rank-row"><span>HINO</span><div class="track"><div class="fill" style="width:24%"></div></div><b>72</b></div>
+      <div class="ob-rank-row"><span>GOLDEN DRAGON</span><div class="track"><div class="fill" style="width:22.3%"></div></div><b>67</b></div>
+      <div class="ob-rank-row"><span>HYUNDAI</span><div class="track"><div class="fill" style="width:22%"></div></div><b>66</b></div>
+      <div class="ob-rank-row"><span>FOTON</span><div class="track"><div class="fill" style="width:14%"></div></div><b>42</b></div>
+      <div class="ob-rank-row"><span>FUSO</span><div class="track"><div class="fill" style="width:13%"></div></div><b>39</b></div>
+      <div class="ob-rank-row"><span>YUTONG</span><div class="track"><div class="fill" style="width:11.3%"></div></div><b>34</b></div>
+    </div></div>
+  </div>
+
+  <div class="ob-grid2">
+    <div class="ob-box"><h4>Top modelos</h4><div class="table-wrap"><table><thead><tr><th>Marca</th><th>Modelo</th><th>Acumulado</th></tr></thead><tbody>
+      <tr><td>Mercedes-Benz</td><td>O-500 RSD</td><td>111</td></tr><tr><td>Mercedes-Benz</td><td>LO-916</td><td>94</td></tr><tr><td>Hino</td><td>FC BUS</td><td>72</td></tr><tr><td>Volkswagen</td><td>17.230 E OD</td><td>52</td></tr><tr><td>Fuso</td><td>MF-100</td><td>39</td></tr><tr><td>Hyundai</td><td>BX11</td><td>39</td></tr><tr><td>Mercedes-Benz</td><td>OF-1730</td><td>37</td></tr><tr><td>Yutong</td><td>ZK6870N Chasis 9M GNV</td><td>34</td></tr><tr><td>Foton</td><td>BJ6730</td><td>29</td></tr>
+    </tbody></table></div></div>
+
+    <div class="ob-box"><h4>Perfil técnico</h4><div class="ob-stat">
+      <div class="item"><span>Diesel</span><b>635 · 87.0%</b></div><div class="item"><span>GNV</span><b>76 · 10.4%</b></div><div class="item"><span>Gasolina</span><b>19 · 2.6%</b></div>
+      <div class="item"><span>Transmisión MT</span><b>718 · 98.4%</b></div><div class="item"><span>Transmisión AT</span><b>12 · 1.6%</b></div>
+      <div class="item"><span>Fórmula 4x2</span><b>619 · 84.8%</b></div><div class="item"><span>Fórmula 6x2</span><b>111 · 15.2%</b></div>
+    </div></div>
+
+    <div class="ob-box"><h4>Origen y calidad</h4><div class="ob-stat">
+      <div class="item"><span>Brasil</span><b>433 · 59.3%</b></div><div class="item"><span>China</span><b>120 · 16.4%</b></div><div class="item"><span>Colombia</span><b>72 · 9.9%</b></div><div class="item"><span>Corea</span><b>66 · 9.0%</b></div><div class="item"><span>Japón</span><b>39 · 5.3%</b></div>
+    </div><div class="note" style="margin-top:12px"><b>Calidad:</b> 0 duplicados, 0 diferencias entre acumulado y suma mensual. Falta cilindrada en 1 fila (12 unidades) y “Número de Cambios” está vacío en 18 filas (253 unidades).</div></div>
+  </div>
+
+  <div class="ob-grid2">
+    <div class="ob-box"><h4>Julio → Agosto por marca</h4><div class="small"><p><b style="color:#067647">Yutong +10</b> · Foton +7 · Golden Dragon +3</p><p><b style="color:#b42318">Mercedes-Benz -23</b> · Volkswagen -17 · Fuso -7 · Hino -6</p></div></div>
+    <div class="ob-box"><h4>Carrocería / RENAV</h4><div class="ob-stat"><div class="item"><span>CHM</span><b>667</b></div><div class="item"><span>OMN</span><b>63</b></div><div class="item"><span>M3c3</span><b>401</b></div><div class="item"><span>M3</span><b>192</b></div><div class="item"><span>M3c2</span><b>137</b></div></div></div>
+    <div class="ob-box"><h4>Lectura ejecutiva</h4><div class="small"><p>Mercedes-Benz concentra <b>41.1%</b> del acumulado.</p><p>O1 concentra <b>58.2%</b> del mercado.</p><p>Julio fue el pico con <b>122</b>; agosto cerró en <b>86</b>.</p><p>El mercado es predominantemente <b>diésel + transmisión mecánica + 4x2</b>.</p></div></div>
+  </div>
+
+  <div class="ra-foot"><span><b>TSF AutoMarket Intelligence</b> · Retail Ómnibus</span><span>Fuente: Archivo 9 – Ómnibus Retail Agosto 2026</span><span>1 hoja auditada · 30 registros</span></div>
+</section>
+
+
+<section class="page" id="retailCamiones">
+  <div class="cr-hero"><h3>Retail Camiones y Remolcadores</h3><div class="sub">Enero – Agosto 2026</div><p>Detalle técnico y comercial de ventas Retail de camiones y remolcadores por marca, modelo, segmento P2–P5, origen, combustible, transmisión, categoría RENAV y fórmula rodante.</p></div>
+  <div class="cr-kpis">
+    <div class="cr-kpi"><div class="label">Retail acumulado</div><div class="num">9,795</div><div class="tiny">Enero – Agosto</div></div>
+    <div class="cr-kpi"><div class="label">Agosto</div><div class="num">1,264</div><div class="tiny">+0.6% vs julio</div></div>
+    <div class="cr-kpi"><div class="label">Marcas</div><div class="num">14</div><div class="tiny">167 modelos</div></div>
+    <div class="cr-kpi"><div class="label">Versiones</div><div class="num">158</div><div class="tiny">198 códigos únicos</div></div>
+    <div class="cr-kpi"><div class="label">Mes pico</div><div class="num">1,484</div><div class="tiny">Junio 2026</div></div>
+    <div class="cr-kpi"><div class="label">Duplicados</div><div class="num">0</div><div class="tiny">Base consistente</div></div>
+  </div>
+  <div class="cr-grid1">
+    <div class="cr-box"><h4>Evolución mensual</h4><canvas id="crTrend" class="chart"></canvas><div class="legend"><span><i style="background:#f2c230"></i>Retail Camiones/Remolcadores</span></div></div>
+    <div class="cr-box"><h4>Composición por segmento</h4><div style="position:relative"><div class="cr-donut"></div><div class="cr-donut-center"><div><b>9,795</b><span>unidades</span></div></div></div><div class="small" style="margin-top:10px"><p><b>P2</b> · 4,386 · 44.8%</p><p><b>P3</b> · 2,199 · 22.5%</p><p><b>P4</b> · 1,967 · 20.1%</p><p><b>P5</b> · 1,243 · 12.7%</p></div></div>
+    <div class="cr-box"><h4>Top marcas</h4><div class="cr-rank">
+      <div class="cr-rank-row"><span>ISUZU</span><div class="track"><div class="fill" style="width:100%"></div></div><b>2,833</b></div>
+      <div class="cr-rank-row"><span>FOTON</span><div class="track"><div class="fill" style="width:59.4%"></div></div><b>1,683</b></div>
+      <div class="cr-rank-row"><span>HINO</span><div class="track"><div class="fill" style="width:36.1%"></div></div><b>1,023</b></div>
+      <div class="cr-rank-row"><span>FUSO</span><div class="track"><div class="fill" style="width:34.5%"></div></div><b>978</b></div>
+      <div class="cr-rank-row"><span>SHACMAN</span><div class="track"><div class="fill" style="width:19.7%"></div></div><b>558</b></div>
+      <div class="cr-rank-row"><span>DONGFENG</span><div class="track"><div class="fill" style="width:17.5%"></div></div><b>495</b></div>
+      <div class="cr-rank-row"><span>HYUNDAI</span><div class="track"><div class="fill" style="width:15.2%"></div></div><b>431</b></div>
+      <div class="cr-rank-row"><span>FORLAND</span><div class="track"><div class="fill" style="width:15.1%"></div></div><b>429</b></div>
+      <div class="cr-rank-row"><span>INTERNATIONAL</span><div class="track"><div class="fill" style="width:12%"></div></div><b>340</b></div>
+      <div class="cr-rank-row"><span>VOLKSWAGEN</span><div class="track"><div class="fill" style="width:11.3%"></div></div><b>319</b></div>
+    </div></div>
+  </div>
+  <div class="cr-grid2">
+    <div class="cr-box"><h4>Top modelos</h4><div class="table-wrap"><table><thead><tr><th>Modelo</th><th>Acumulado</th></tr></thead><tbody>
+      <tr><td>Isuzu NPR 5TON</td><td>781</td></tr><tr><td>Hino DUTRO</td><td>578</td></tr><tr><td>Fuso CANTER 5T</td><td>435</td></tr><tr><td>Isuzu FRR CL</td><td>413</td></tr><tr><td>Isuzu NPR 4TON</td><td>314</td></tr><tr><td>International LT625 6X4</td><td>264</td></tr><tr><td>JMC CARRYING PLUS</td><td>240</td></tr><tr><td>Isuzu NQR 6TON</td><td>231</td></tr><tr><td>Isuzu FTR 10 TON</td><td>230</td></tr><tr><td>Foton BJ4269SNFKB-A4</td><td>229</td></tr>
+    </tbody></table></div></div>
+    <div class="cr-box"><h4>Perfil técnico</h4><div class="cr-stat"><div class="item"><span>Diesel</span><b>9,271 · 94.7%</b></div><div class="item"><span>GNV</span><b>370 · 3.8%</b></div><div class="item"><span>GNL</span><b>106 · 1.1%</b></div><div class="item"><span>Transmisión MT</span><b>9,655 · 98.6%</b></div><div class="item"><span>Fórmula 4x2</span><b>7,220 · 73.7%</b></div><div class="item"><span>Fórmula 6x4</span><b>2,023 · 20.7%</b></div></div></div>
+    <div class="cr-box"><h4>Origen / RENAV</h4><div class="cr-stat"><div class="item"><span>Japón</span><b>4,474 · 45.7%</b></div><div class="item"><span>China</span><b>4,228 · 43.2%</b></div><div class="item"><span>México</span><b>340</b></div><div class="item"><span>N2</span><b>5,888 · 60.1%</b></div><div class="item"><span>N3</span><b>3,697 · 37.7%</b></div><div class="item"><span>N1</span><b>210 · 2.1%</b></div></div></div>
+  </div>
+  <div class="cr-grid2">
+    <div class="cr-box"><h4>Carrocería</h4><div class="cr-stat"><div class="item"><span>CHC</span><b>6,661</b></div><div class="item"><span>REM</span><b>1,243</b></div><div class="item"><span>VOL</span><b>729</b></div><div class="item"><span>BAR</span><b>601</b></div><div class="item"><span>FUR</span><b>326</b></div><div class="item"><span>OTR</span><b>214</b></div></div><div class="note" style="margin-top:10px">Conviene añadir un diccionario para traducir códigos de carrocería a nombres legibles en la versión productiva.</div></div>
+    <div class="cr-box"><h4>Julio → Agosto por marca</h4><div class="small"><p><b class="cr-up">Dongfeng +41</b> · Isuzu +20 · Forland +20 · CAMC +18 · Foton +14 · Hino +12</p><p><b class="cr-down">Fuso -38</b> · International -32 · Hyundai -27 · Shacman -19</p></div><div class="note" style="margin-top:10px"><b>Mercado total:</b> julio 1,256 → agosto 1,264, equivalente a <b>+0.6%</b>.</div></div>
+    <div class="cr-box"><h4>Calidad de datos</h4><div class="cr-stat"><div class="item"><span>Duplicados exactos</span><b class="pill ok">0</b></div><div class="item"><span>Acumulado vs suma mensual</span><b class="pill ok">0 diferencias</b></div><div class="item"><span>Sin N.º de cambios</span><b class="pill warn">97 filas · 3,248 und.</b></div><div class="item"><span>Sin transmisión</span><b class="pill warn">1 fila · 37 und.</b></div><div class="item"><span>Sin combustible</span><b class="pill warn">1 fila · 30 und.</b></div><div class="item"><span>Sin potencia</span><b class="pill warn">1 fila · 48 und.</b></div></div></div>
+  </div>
+  <div class="ra-foot"><span><b>TSF AutoMarket Intelligence</b> · Retail Camiones y Remolcadores</span><span>Fuente: Archivo 10 – Camiones y Remolcadores Retail Agosto 2026</span><span>1 hoja auditada · 198 registros</span></div>
 </section>
 
 <section class="page" id="calidad">
@@ -398,9 +1530,9 @@ svg text{font-family:Inter,Segoe UI,Arial,sans-serif}
 
 <script>
 const titles={
- resumen:'Resumen Ejecutivo',retail:'Mercado Retail',inmat:'Inmatriculaciones',brechas:'Retail vs Inmatriculación',
- ligeros:'Ligeros',comerciales:'Comerciales',pesados:'Pesados',menores:'Motos y Trimotos',remolques:'Remolques',
- geografia:'Mapas del Perú',concesionarios:'Concesionarios',calidad:'Calidad de Datos',carga:'Cargar Mes'
+ resumen:'Resumen Ejecutivo',retailmes:'Retail Mes - Agosto 2026',retail:'Retail Acumulado - Ene–Ago 2026',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',inmat:'Inmatriculaciones',brechas:'Retail vs Inmatriculación',
+ ligeros:'Vehículos Livianos',comerciales:'Comerciales',pesados:'Vehículos Pesados',menores:'Vehículos Menores',remolques:'Remolques y Semirremolques',
+ geografia:'Mapas del Perú',concesionarios:'Departamento y Concesionarios Retail',calidad:'Calidad de Datos',carga:'Cargar Mes'
 };
 function go(page){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -463,6 +1595,141 @@ document.getElementById('folderInput').addEventListener('change', async e=>{
  html+=found.map(x=>`• ${x.file} — ${x.error?'ERROR':x.sheets.slice(0,4).join(', ')}`).join('<br>');
  status.innerHTML=html;
 });
+
+
+
+// VEHICULOS LIVIANOS
+const vlSeries={
+ 'SUV,TODOTERRENOS':[11117,11474,11137,11127,11628,12569,10426,13548],
+ 'PICK UP Y FURGONETAS':[3947,3770,3692,3463,3984,4470,3573,4006],
+ 'AUTOMOVIL':[3007,2890,2952,2668,2616,3294,2523,3272],
+ 'CAMIONETAS':[2557,2822,2729,2541,2327,2180,2342,2584]
+};
+function drawVLLines(){const c=document.getElementById('vlTrend');if(!c)return;drawLine(c,['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'],[
+ {color:'#f2c230',data:vlSeries['SUV,TODOTERRENOS']},{color:'#111827',data:vlSeries['PICK UP Y FURGONETAS']},{color:'#6b7280',data:vlSeries['AUTOMOVIL']},{color:'#b7bdc8',data:vlSeries['CAMIONETAS']}
+]);}
+drawVLLines();
+const vlMonth=document.getElementById('vlMonth'),vlClass=document.getElementById('vlClass'),vlReset=document.getElementById('vlReset');
+function updateVLKpis(){if(!vlMonth||!vlClass)return;const month=vlMonth.value,cl=vlClass.value;const names=Object.keys(vlSeries);let vals={};names.forEach(n=>vals[n]=vlSeries[n].reduce((a,b)=>a+b,0));if(month!=='ALL'){const i=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO'].indexOf(month);names.forEach(n=>vals[n]=vlSeries[n][i]);}let total=Object.values(vals).reduce((a,b)=>a+b,0)+(month==='ALL'?9:(month==='MAYO'?6:month==='JUNIO'?1:month==='AGOSTO'?2:0));if(cl!=='ALL')total=vals[cl]||0;document.getElementById('vlTotal').textContent=total.toLocaleString('es-PE');document.getElementById('vlSUV').textContent=(cl==='ALL'||cl==='SUV,TODOTERRENOS'?vals['SUV,TODOTERRENOS']:0).toLocaleString('es-PE');document.getElementById('vlPick').textContent=(cl==='ALL'||cl==='PICK UP Y FURGONETAS'?vals['PICK UP Y FURGONETAS']:0).toLocaleString('es-PE');}
+vlMonth?.addEventListener('change',updateVLKpis);vlClass?.addEventListener('change',updateVLKpis);vlReset?.addEventListener('click',()=>{document.querySelectorAll('#ligeros select').forEach(s=>s.selectedIndex=0);updateVLKpis();});
+
+
+
+// VEHICULOS PESADOS
+const vpSeries={
+  CAMIONES:[1535,1698,1704,1818,1807,2122,1995,2015],
+  TRACTOCAMIONES:[534,395,427,465,431,542,463,540],
+  BUSES:[372,463,356,359,338,387,445,361]
+};
+function drawVP(){
+ const c=document.getElementById('vpTrend'); if(!c)return;
+ drawLine(c,['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'],[
+  {color:'#f2c230',data:vpSeries.CAMIONES},
+  {color:'#232936',data:vpSeries.TRACTOCAMIONES},
+  {color:'#9ca3af',data:vpSeries.BUSES}
+ ]);
+}
+drawVP();
+const vpMonth=document.getElementById('vpMonth'), vpType=document.getElementById('vpType'), vpReset=document.getElementById('vpReset');
+function updateVPKpis(){
+ if(!vpMonth||!vpType)return;
+ const idx=['ENE','FEB','MAR','ABR','MAYO','JUNIO','JULIO','AGOSTO'].indexOf(vpMonth.value);
+ let tr=14694,tc=3797,bs=3081;
+ if(idx>=0){tr=vpSeries.CAMIONES[idx];tc=vpSeries.TRACTOCAMIONES[idx];bs=vpSeries.BUSES[idx];}
+ let total=tr+tc+bs;
+ if(vpType.value==='CAMIONES'){total=tr;tc=0;bs=0}
+ if(vpType.value==='TRACTOCAMIONES'){total=tc;tr=0;bs=0}
+ if(vpType.value==='BUSES Y CHASISES'){total=bs;tr=0;tc=0}
+ document.getElementById('vpTotal').textContent=total.toLocaleString('es-PE');
+ document.getElementById('vpTruck').textContent=tr.toLocaleString('es-PE');
+ document.getElementById('vpTracto').textContent=tc.toLocaleString('es-PE');
+ document.getElementById('vpBus').textContent=bs.toLocaleString('es-PE');
+}
+vpMonth?.addEventListener('change',updateVPKpis);vpType?.addEventListener('change',updateVPKpis);
+vpReset?.addEventListener('click',()=>{document.querySelectorAll('#pesados select').forEach(s=>s.selectedIndex=0);updateVPKpis();});
+
+
+// VEHICULOS MENORES
+const vmSeries={
+  MOTOCICLETAS:[29426,27890,32282,36984,37998,39112,34200,38887],
+  TRIMOTOS:[11843,12553,13446,15292,14400,15887,12834,12620]
+};
+function drawVMLines(){
+  const c=document.getElementById('vmTrend'); if(!c) return;
+  drawLine(c,['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'],[
+    {color:'#f2c230',data:vmSeries.MOTOCICLETAS},
+    {color:'#232936',data:vmSeries.TRIMOTOS}
+  ]);
+}
+drawVMLines();
+
+const vmType=document.getElementById('vmType');
+const vmMonth=document.getElementById('vmMonth');
+const vmReset=document.getElementById('vmReset');
+function updateVMKpis(){
+  if(!vmType||!vmMonth) return;
+  const type=vmType.value, month=vmMonth.value;
+  let moto=276779, tri=108875;
+  if(month!=='ALL'){
+    const i=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO'].indexOf(month);
+    moto=vmSeries.MOTOCICLETAS[i]; tri=vmSeries.TRIMOTOS[i];
+  }
+  let total=moto+tri;
+  if(type==='MOTOCICLETAS'){total=moto;tri=0}
+  if(type==='TRIMOTOS'){total=tri;moto=0}
+  document.getElementById('vmTotal').textContent=total.toLocaleString('es-PE');
+  document.getElementById('vmMoto').textContent=moto.toLocaleString('es-PE');
+  document.getElementById('vmTri').textContent=tri.toLocaleString('es-PE');
+}
+vmType?.addEventListener('change',updateVMKpis);
+vmMonth?.addEventListener('change',updateVMKpis);
+vmReset?.addEventListener('click',()=>{
+  document.querySelectorAll('#menores select').forEach(s=>s.selectedIndex=0);
+  updateVMKpis();
+});
+
+
+
+// REMOLQUES Y SEMIRREMOLQUES
+const rmMonths=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO'];
+const rmData=[683,709,750,797,729,691,628,760];
+function drawRM(){const c=document.getElementById('rmTrend');if(c)drawLine(c,['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'],[{color:'#f2c230',data:rmData}]);}
+drawRM();
+const rmMonth=document.getElementById('rmMonth');
+rmMonth?.addEventListener('change',()=>{const v=rmMonth.value;const n=v==='ALL'?5747:rmData[rmMonths.indexOf(v)];document.getElementById('rmTotal').textContent=n.toLocaleString('es-PE');});
+document.getElementById('rmReset')?.addEventListener('click',()=>{document.querySelectorAll('#remolques select').forEach(s=>s.selectedIndex=0);document.getElementById('rmTotal').textContent='5,747';});
+
+
+
+// RETAIL MES - ARCHIVO 5
+const rtRanks={
+ TOTAL:[['TOYOTA',4455],['HYUNDAI',2212],['KIA',2097],['JETOUR',1529],['CHANGAN',1126],['CHEVROLET',1089],['FORD',1006],['GEELY',994],['CHERY',855],['JAC',755]],
+ LIGEROS:[['TOYOTA',2996],['KIA',1983],['HYUNDAI',1902],['JETOUR',1529],['GEELY',994],['CHEVROLET',968],['CHANGAN',931],['CHERY',739],['SUZUKI',739],['FORD',625]],
+ COMERCIALES:[['TOYOTA',1459],['FOTON 1',394],['JAC',390],['FORD',381],['JMC',355],['GWM',336],['HYUNDAI',268],['CHANGAN',195],['MITSUBISHI',151],['CHEVROLET',121]],
+ OMNIBUS:[['MERCEDES BENZ',30],['GOLDEN DRAGON',12],['YUTONG',11],['VOLKSWAGEN',9],['FOTON 1',8],['HYUNDAI',7],['HINO',6],['FUSO',3]],
+ CAMION:[['ISUZU',376],['FOTON 1',228],['HINO',139],['FUSO',123],['DONGFENG',86],['FORLAND',65],['FAW',45],['INTERNATIONAL',40],['JMC',37],['SHACMAN',36]]
+};
+const rtNames={TOTAL:'Total mercado',LIGEROS:'Ligeros',COMERCIALES:'Comerciales',OMNIBUS:'Ómnibus',CAMION:'Camión / Remolcador'};
+function renderRtRank(key){
+ const box=document.getElementById('rtRank'); if(!box)return;
+ const arr=rtRanks[key]||rtRanks.TOTAL, max=Math.max(...arr.map(x=>x[1]));
+ document.getElementById('rtRankTitle').textContent='Top marcas – '+rtNames[key];
+ box.innerHTML=arr.map(([n,v])=>`<div class="rt-rank-row"><span>${n}</span><div class="track"><div class="fill" style="width:${(v/max*100).toFixed(1)}%"></div></div><b>${v.toLocaleString('es-PE')}</b></div>`).join('');
+}
+document.querySelectorAll('#rtTabs button').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('#rtTabs button').forEach(b=>b.classList.toggle('active',b===btn)); renderRtRank(btn.dataset.rt);
+}));
+renderRtRank('TOTAL');
+
+
+// RETAIL OMNIBUS
+const obCanvas=document.getElementById('obTrend');
+if(obCanvas){drawLine(obCanvas,['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'],[{color:'#f2c230',data:[87,90,73,98,54,120,122,86]}]);}
+
+
+// RETAIL CAMIONES Y REMOLCADORES
+const crCanvas=document.getElementById('crTrend');
+if(crCanvas){drawLine(crCanvas,['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'],[{color:'#f2c230',data:[1095,974,1198,1141,1383,1484,1256,1264]}]);}
 
 // MAPAS DEL PERÚ
 const popup=document.getElementById('popup');
