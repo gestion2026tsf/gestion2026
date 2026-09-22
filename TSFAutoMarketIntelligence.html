@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TSF AutoMarket Intelligence V12 | TOTAL Servicios Financieros</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'">
 // Re-render charts after window resize
 let __tsfResizeTimer;
 window.addEventListener('resize',()=>{
@@ -2475,6 +2475,44 @@ table tbody tr:hover{
   }
 }
 
+
+/* ==========================================================
+   V20 - MERCADO VEHICULOS MENORES / EJECUTIVO E INTERACTIVO
+   ========================================================== */
+#menores{--vm-pink:#ee0b70;--vm-gold:#f5ae00;--vm-dark:#1f2530;--vm-muted:#8d94a2;--vm-line:#e7e9ef}
+.vm2-hero{min-height:110px;border-radius:18px;padding:20px 22px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:18px;color:#fff;background:radial-gradient(circle at 88% 38%,rgba(245,174,0,.32),transparent 18%),linear-gradient(110deg,#181c25 0%,#343a47 68%,#5e4852 100%);box-shadow:0 14px 34px rgba(17,19,24,.12)}
+.vm2-eyebrow{font-size:9px;font-weight:800;letter-spacing:.16em;color:#f8c642;margin-bottom:6px}.vm2-hero h3{margin:0;color:#fff!important;font-size:26px!important}.vm2-hero p{margin:5px 0 0;color:rgba(255,255,255,.8);font-size:12.5px}.vm2-hero-badge{min-width:185px;padding:12px 15px;border-radius:15px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.13);backdrop-filter:blur(6px)}.vm2-hero-badge b{display:block;font-size:24px}.vm2-hero-badge span{font-size:10px;color:#e5e7eb}
+.vm2-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;margin-bottom:10px}.vm2-kpi{background:#fff;border:1px solid var(--vm-line);border-radius:14px;padding:12px 13px;min-height:88px;box-shadow:0 8px 22px rgba(17,19,24,.045);border-top:3px solid #d8dbe2}.vm2-kpi.main{border-top-color:var(--vm-pink)}.vm2-kpi.moto{border-top-color:var(--vm-gold)}.vm2-kpi.tri{border-top-color:var(--vm-dark)}.vm2-kpi span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--vm-muted)}.vm2-kpi b{display:block;margin:7px 0 4px;font-size:24px;line-height:1}.vm2-kpi small{font-size:9.5px;color:#959ba6}.vm2-kpi b.positive{color:#087a43}.vm2-kpi b.negative{color:#c62828}
+.vm2-filterbar{display:grid;grid-template-columns:70px 105px 125px 1fr 1fr 125px 135px 150px 125px;gap:7px;align-items:end;background:#fff;border:1px solid var(--vm-line);border-radius:14px;padding:10px;margin-bottom:5px;box-shadow:0 7px 20px rgba(17,19,24,.035)}.vm2-filter label{display:block;font-size:9px;color:var(--vm-muted);margin:0 0 4px 2px}.vm2-filter select{width:100%;height:35px;border-radius:9px!important;font-size:10.5px!important;padding:0 8px!important}.vm2-reset{height:35px;border:0;border-radius:9px;background:linear-gradient(135deg,#f5ae00,#ffc832);font-size:10.5px;font-weight:800;color:#171717;cursor:pointer}.vm2-filter-note{font-size:9.5px;color:#888f9c;margin:0 2px 9px}
+.vm2-grid{display:grid;gap:10px;margin-bottom:10px}.vm2-grid-a{grid-template-columns:minmax(0,1.7fr) minmax(280px,.72fr)}.vm2-grid-b{grid-template-columns:1fr 1fr}.vm2-grid-c{grid-template-columns:repeat(4,minmax(0,1fr))}.vm2-card{background:#fff;border:1px solid var(--vm-line);border-radius:15px;padding:12px;box-shadow:0 9px 25px rgba(17,19,24,.045);min-width:0;position:relative}.vm2-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}.vm2-card-head h4{font-size:13px!important;margin:0 0 2px!important}.vm2-card-head p{font-size:9.5px;color:#9096a2;margin:0}.vm2-legend{display:flex;gap:9px;font-size:9px;color:#858c98;white-space:nowrap}.vm2-legend i,.vm2-donut-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.vm2-legend i.moto,.vm2-donut-legend i.moto{background:var(--vm-gold)}.vm2-legend i.tri,.vm2-donut-legend i.tri{background:var(--vm-dark)}
+#vm2Trend{display:block;width:100%;height:230px}.vm2-donut-wrap{width:210px;height:210px;margin:0 auto;position:relative}.vm2-donut-wrap canvas{width:210px;height:210px;display:block}.vm2-donut-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}.vm2-donut-center b{font-size:22px}.vm2-donut-center span{font-size:9px;color:#9198a4}.vm2-donut-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px}.vm2-donut-legend button{border:1px solid var(--vm-line);background:#fafbfc;border-radius:9px;padding:7px 8px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;text-align:left;font-size:9px;color:#686f7b;cursor:pointer}.vm2-donut-legend button:hover{border-color:#cfd3db;background:#fff}.vm2-donut-legend button b{font-size:10px;color:#111}.vm2-tooltip,.vm2-map-tip{position:fixed;z-index:5000;display:none;pointer-events:none;background:#171a20;color:#fff;padding:7px 9px;border-radius:8px;font-size:10px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.vm2-mini-tabs{display:flex;background:#f3f4f6;border-radius:8px;padding:2px}.vm2-mini-tabs button{border:0;background:transparent;border-radius:7px;padding:4px 7px;font-size:9px;color:#7b8290;cursor:pointer}.vm2-mini-tabs button.active{background:#fff;color:#111;box-shadow:0 2px 7px rgba(17,19,24,.07)}.vm2-rank{display:flex;flex-direction:column;gap:6px}.vm2-rank-row{display:grid;grid-template-columns:minmax(92px,1.1fr) minmax(90px,1.4fr) 64px;gap:7px;align-items:center;font-size:10px}.vm2-rank-row .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vm2-track{height:7px;background:#eef0f3;border-radius:999px;overflow:hidden}.vm2-fill{height:100%;background:linear-gradient(90deg,var(--vm-pink),var(--vm-gold));border-radius:999px}.vm2-rank-row b{text-align:right;font-size:10px}
+.vm2-geo-card{margin-bottom:10px}.vm2-geo-grid{display:grid;grid-template-columns:minmax(320px,1.05fr) minmax(300px,.95fr);gap:14px;align-items:center}.vm2-map-wrap{height:315px;border-radius:13px;background:linear-gradient(145deg,#fbfbfc,#f5f6f8);display:grid;place-items:center;position:relative;overflow:hidden}.vm2-map-wrap svg{width:235px;height:315px}.vm2-peru{fill:url(#vm2PeruGrad);stroke:#c99512;stroke-width:2}.vm2-office-dot{fill:#252a34;stroke:#fff;stroke-width:2;cursor:pointer;transition:.15s}.vm2-office-dot:hover{fill:var(--vm-pink);stroke-width:3}.vm2-chip{font-size:9px;padding:5px 8px;border-radius:999px;background:#fff4d6;color:#745100;font-weight:700}.vm2-office-list{display:flex;flex-direction:column;gap:6px}.vm2-office-row{display:grid;grid-template-columns:20px 1fr 100px 58px;gap:7px;align-items:center;font-size:10px}.vm2-office-row .n{width:20px;height:20px;border-radius:7px;background:#f2f3f5;display:grid;place-items:center;color:#858c98}.vm2-office-row .name{font-weight:600}.vm2-office-row b{text-align:right}.vm2-office-row .pct{text-align:right;color:#8d94a2}.vm2-office-row .bar{grid-column:2/5;height:5px;background:#eef0f3;border-radius:999px;overflow:hidden}.vm2-office-row .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--vm-pink),var(--vm-gold))}
+.vm2-bars{display:flex;flex-direction:column;gap:8px}.vm2-bar-row{cursor:default}.vm2-bars.clickable .vm2-bar-row{cursor:pointer}.vm2-bar-head{display:flex;justify-content:space-between;gap:8px;font-size:9.5px;margin-bottom:3px}.vm2-bar-head span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vm2-bar-head b{white-space:nowrap}.vm2-bar-track{height:6px;background:#eef0f3;border-radius:999px;overflow:hidden}.vm2-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--vm-pink),var(--vm-gold))}.vm2-bars.docs .vm2-bar-fill{background:linear-gradient(90deg,#252a34,#6f7785)}
+.vm2-quality{display:grid;grid-template-columns:1fr 1.25fr 1.35fr;gap:7px;background:#16191f;color:#fff;border-radius:14px;padding:10px 12px}.vm2-quality div{min-width:0}.vm2-quality span{display:block;font-size:8.5px;text-transform:uppercase;letter-spacing:.07em;color:#959ca8;margin-bottom:3px}.vm2-quality b{font-size:9.5px;font-weight:600;color:#f6f7f8}
+@media(max-width:1350px){.vm2-kpis{grid-template-columns:repeat(3,1fr)}.vm2-filterbar{grid-template-columns:repeat(5,minmax(0,1fr))}.vm2-reset{grid-column:auto}.vm2-grid-c{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1050px){.vm2-grid-a,.vm2-grid-b{grid-template-columns:1fr}.vm2-geo-grid{grid-template-columns:1fr}.vm2-map-wrap{height:275px}.vm2-map-wrap svg{height:265px}.vm2-filterbar{grid-template-columns:repeat(3,minmax(0,1fr))}.vm2-quality{grid-template-columns:1fr}.vm2-hero-badge{display:none}}
+@media(max-width:760px){.vm2-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.vm2-filterbar{grid-template-columns:repeat(2,minmax(0,1fr))}.vm2-grid-c{grid-template-columns:1fr}.vm2-donut-wrap{width:180px;height:180px}.vm2-donut-wrap canvas{width:180px;height:180px}.vm2-hero{padding:15px}.vm2-hero h3{font-size:20px!important}#vm2Trend{height:195px}.vm2-office-row{grid-template-columns:20px 1fr 72px 52px}}
+@media(max-width:520px){.vm2-kpis{grid-template-columns:1fr 1fr}.vm2-kpi{min-height:74px;padding:9px}.vm2-kpi b{font-size:19px}.vm2-filterbar{grid-template-columns:1fr}.vm2-grid-c{grid-template-columns:1fr}.vm2-donut-legend{grid-template-columns:1fr}.vm2-geo-card{padding:9px}.vm2-map-wrap{height:235px}.vm2-map-wrap svg{height:225px;width:180px}.vm2-office-row{font-size:9px}}
+
+
+/* V21 - carga dinamica desde Excel */
+.vm2-hero-badge{gap:4px!important;min-width:180px}.vm2-inline-load{margin-top:7px;border:0;border-radius:10px;background:linear-gradient(135deg,#f5a900,#ffc52a);color:#111;padding:7px 10px;font-weight:800;font-size:11px;cursor:pointer}.vm2-inline-load:hover{transform:translateY(-1px)}
+.vm2-load-ok{color:#0a7a45!important}.vm2-load-err{color:#b42318!important}.vm2-empty{display:grid;place-items:center;min-height:110px;color:#9197a2;font-size:12px;text-align:center;padding:18px}
+
+
+/* ===== V22 VEHICULOS MENORES - EXCEL REAL ===== */
+.vm22-connect{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px;border:1px solid #f0d5e2;background:linear-gradient(135deg,#fff,#fff8ec);border-radius:14px;margin:10px 0;box-shadow:0 8px 24px rgba(17,19,24,.04)}
+.vm22-connect .left{display:flex;align-items:center;gap:10px;min-width:0}.vm22-connect .ico{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#fff0f6;color:#ee0b70;font-size:18px;flex:none}.vm22-connect b{display:block;font-size:12px}.vm22-connect span{display:block;font-size:10.5px;color:#8d94a0;margin-top:2px}.vm22-connect .actions{display:flex;gap:7px;flex:none}.vm22-connect button{border:0;border-radius:10px;padding:8px 11px;font-size:11px;font-weight:800;cursor:pointer}.vm22-connect .primary{background:linear-gradient(135deg,#ee0b70,#ff2b86);color:#fff}.vm22-connect .ghost{background:#fff;border:1px solid #e7e9ef;color:#222}
+.vm22-kpis{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}.vm22-kpi{background:#fff;border:1px solid #e7e9ef;border-radius:13px;padding:11px 12px;min-width:0;box-shadow:0 7px 22px rgba(17,19,24,.04)}.vm22-kpi.main{border-top:3px solid #ee0b70}.vm22-kpi.gold{border-top:3px solid #f5a900}.vm22-kpi span{display:block;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:#8d94a0}.vm22-kpi b{display:block;font-size:21px;line-height:1.05;margin-top:5px;color:#16181d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.vm22-kpi small{display:block;font-size:9.5px;color:#9aa0aa;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.vm22-kpi .positive{color:#0c8b50!important}.vm22-kpi .negative{color:#d92d20!important}
+.vm22-insights{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:9px 0}.vm22-insight{background:#fff;border:1px solid #e7e9ef;border-radius:12px;padding:10px 11px}.vm22-insight span{font-size:9.5px;color:#9399a4}.vm22-insight b{display:block;font-size:14px;margin-top:3px}.vm22-insight small{display:block;color:#9aa0aa;font-size:9.5px;margin-top:2px}
+.vm22-offices{display:grid;grid-template-columns:1.5fr .7fr;gap:12px}.vm22-office-side{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start}.vm22-mini{padding:12px;border:1px solid #e7e9ef;border-radius:12px;background:#fafbfc}.vm22-mini span{display:block;font-size:9px;color:#8d94a0;text-transform:uppercase}.vm22-mini b{display:block;font-size:19px;margin-top:5px}.vm22-mini small{font-size:9.5px;color:#9aa0aa}.vm22-data-note{padding:10px 12px;border-radius:11px;background:#fff7dd;border:1px solid #f3df9d;font-size:10.5px;color:#67510b;margin-top:8px}
+.vm2-donut-wrap{min-height:190px!important}.vm2-donut-wrap canvas{width:170px!important;height:170px!important;max-width:170px!important;max-height:170px!important}.vm2-donut-center b{font-size:18px!important}.vm2-donut-center span{font-size:9px!important}.donut-card{min-height:auto!important}
+.vm2-grid-a{grid-template-columns:minmax(0,1.55fr) minmax(260px,.65fr)!important}.vm2-grid-b{grid-template-columns:1fr 1fr!important}.vm2-grid-c{grid-template-columns:repeat(4,minmax(0,1fr))!important}.vm2-office-list{max-height:310px;overflow:auto}.vm2-card{overflow:hidden}
+@media(max-width:1450px){.vm22-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.vm2-grid-c{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:1050px){.vm22-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.vm22-insights{grid-template-columns:repeat(2,minmax(0,1fr))}.vm2-grid-a,.vm2-grid-b,.vm22-offices{grid-template-columns:1fr!important}.vm2-grid-c{grid-template-columns:repeat(2,minmax(0,1fr))!important}.vm22-connect{align-items:flex-start}.vm22-connect .actions{flex-direction:column}}
+@media(max-width:650px){.vm22-kpis,.vm22-insights,.vm2-grid-c,.vm22-office-side{grid-template-columns:1fr!important}.vm22-connect{flex-direction:column}.vm22-connect .actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.vm22-connect button{width:100%}.vm2-donut-wrap canvas{width:145px!important;height:145px!important}}
+
 </style>
 </head>
 <body>
@@ -2490,6 +2528,7 @@ table tbody tr:hover{
   <div class="nav-title">Dashboard</div>
   <div class="nav" id="nav">
     <button class="active" data-page="resumen"><span class="nav-ico">⌂</span>Resumen Ejecutivo</button>
+    <button data-page="menores"><span class="nav-ico">●</span>Mercado Vehículos Menores</button>
     <button data-page="retailmes"><span class="nav-ico">◫</span>Retail Mes (Archivo 5)</button>
     <button data-page="retail"><span class="nav-ico">▥</span>Retail Acumulado (Archivo 6)</button>
     <button data-page="retailOmnibus"><span class="nav-ico">▣</span>Retail Ómnibus</button>
@@ -2499,7 +2538,6 @@ table tbody tr:hover{
     <button data-page="ligeros"><span class="nav-ico">◆</span>Vehículos Livianos</button>
     <button data-page="comerciales"><span class="nav-ico">▱</span>Comerciales</button>
     <button data-page="pesados"><span class="nav-ico">▮</span>Vehículos Pesados</button>
-    <button data-page="menores"><span class="nav-ico">●</span>Vehículos Menores</button>
     <button data-page="remolques"><span class="nav-ico">▭</span>Remolques / Semirremolques</button>
     <button data-page="geografia"><span class="nav-ico">⌖</span>Mapas del Perú</button>
     <button data-page="concesionarios"><span class="nav-ico">▦</span>Departamento y Concesionarios</button>
@@ -2963,105 +3001,79 @@ table tbody tr:hover{
 </section>
 
 
+
+
 <section class="page" id="menores">
-  <div class="vm-hero">
-    <h3>Vehículos Menores</h3>
-    <div class="sub">Motocicletas y Trimotos</div>
-    <p>Análisis de inmatriculaciones de vehículos menores a partir de la base técnica del Archivo 1. Periodo acumulado enero–agosto 2026.</p>
-  </div>
-
-  <div class="vm-kpis">
-    <div class="vm-kpi"><div class="label">Total vehículos menores</div><div class="num" id="vmTotal">385,654</div><div class="tiny">Enero – Agosto 2026</div></div>
-    <div class="vm-kpi"><div class="vm-ring"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.5" fill="none" stroke="#e5e7eb" stroke-width="4"/><circle cx="18" cy="18" r="15.5" fill="none" stroke="#f2c230" stroke-width="4" stroke-dasharray="71.8 28.2"/></svg><div><div class="label">Motocicletas</div><div class="num" id="vmMoto">276,779</div><div class="tiny">71.8% del total</div></div></div></div>
-    <div class="vm-kpi"><div class="vm-ring"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.5" fill="none" stroke="#e5e7eb" stroke-width="4"/><circle cx="18" cy="18" r="15.5" fill="none" stroke="#232936" stroke-width="4" stroke-dasharray="28.2 71.8"/></svg><div><div class="label">Trimotos</div><div class="num" id="vmTri">108,875</div><div class="tiny">28.2% del total</div></div></div></div>
-    <div class="vm-kpi"><div class="label">Marcas</div><div class="num">533</div><div class="tiny">Base técnica</div></div>
-    <div class="vm-kpi"><div class="label">Modelos</div><div class="num">4,490</div><div class="tiny">Combinaciones registradas</div></div>
-    <div class="vm-kpi"><div class="label">Oficinas registrales</div><div class="num">47</div><div class="tiny">14 zonas registrales</div></div>
-  </div>
-
-  <div class="vm-filters">
-    <div class="vm-filter"><label>Año</label><select><option>2026</option></select></div>
-    <div class="vm-filter"><label>Mes</label><select id="vmMonth"><option value="ALL">Ene–Ago</option><option>ENERO</option><option>FEBRERO</option><option>MARZO</option><option>ABRIL</option><option>MAYO</option><option>JUNIO</option><option>JULIO</option><option>AGOSTO</option></select></div>
-    <div class="vm-filter"><label>Tipo</label><select id="vmType"><option value="ALL">Todos</option><option value="MOTOCICLETAS">Motocicletas</option><option value="TRIMOTOS">Trimotos</option></select></div>
-    <div class="vm-filter"><label>Marca</label><select><option>Todas</option><option>MOTOKAR/HONDA</option><option>WANXIN</option><option>BAJAJ</option><option>RONCO</option></select></div>
-    <div class="vm-filter"><label>Modelo</label><select><option>Todos</option><option>WX150-A</option><option>WAVE110S</option><option>GL150</option><option>CCG125</option></select></div>
-    <div class="vm-filter"><label>Cilindrada</label><select><option>Todas</option><option>≤110 cc</option><option>111–150 cc</option><option>151–200 cc</option><option>>200 cc</option></select></div>
-    <div class="vm-filter"><label>Combustible</label><select><option>Todos</option><option>Gasolina</option><option>BI-GLP</option><option>Eléctrico</option></select></div>
-    <div class="vm-filter"><label>Zona registral</label><select><option>Todas</option><option>Zona IX</option><option>Zona II</option><option>Zona I</option></select></div>
-    <button class="vm-reset" id="vmReset" type="button">Limpiar filtros</button>
-  </div>
-
-  <div class="vm-grid-top">
-    <div class="vm-box"><h4>Evolución mensual de inmatriculaciones</h4><canvas id="vmTrend" class="vm-line"></canvas><div class="legend"><span><i style="background:#f2c230"></i>Motocicletas</span><span><i style="background:#232936"></i>Trimotos</span></div></div>
-    <div class="vm-box"><h4>Distribución por tipo</h4><div class="vm-donut-wrap"><div class="vm-donut"><div class="center"><b>385,654</b><span>unidades</span></div></div></div><div class="legend"><span><i style="background:#f2c230"></i>Motocicletas 71.8%</span><span><i style="background:#232936"></i>Trimotos 28.2%</span></div></div>
-    <div class="vm-box"><h4>Top 10 marcas</h4><div class="vm-rank">
-      <div class="vm-rank-row"><span>MOTOKAR/HONDA</span><div class="track"><div class="fill" style="width:100%"></div></div><b>77,483</b></div>
-      <div class="vm-rank-row"><span>WANXIN</span><div class="track"><div class="fill" style="width:66.4%"></div></div><b>51,437</b></div>
-      <div class="vm-rank-row"><span>BAJAJ</span><div class="track"><div class="fill" style="width:58.8%"></div></div><b>45,597</b></div>
-      <div class="vm-rank-row"><span>RONCO</span><div class="track"><div class="fill" style="width:39.6%"></div></div><b>30,700</b></div>
-      <div class="vm-rank-row"><span>JCH</span><div class="track"><div class="fill" style="width:13.1%"></div></div><b>10,162</b></div>
-      <div class="vm-rank-row"><span>SSENDA</span><div class="track"><div class="fill" style="width:12.3%"></div></div><b>9,543</b></div>
-      <div class="vm-rank-row"><span>NEXUS</span><div class="track"><div class="fill" style="width:12%"></div></div><b>9,328</b></div>
-      <div class="vm-rank-row"><span>LIFAN</span><div class="track"><div class="fill" style="width:12%"></div></div><b>9,295</b></div>
-      <div class="vm-rank-row"><span>ZONSEN</span><div class="track"><div class="fill" style="width:11.4%"></div></div><b>8,804</b></div>
-      <div class="vm-rank-row"><span>TVS</span><div class="track"><div class="fill" style="width:10%"></div></div><b>7,723</b></div>
-    </div></div>
-    <div class="vm-box"><h4>Top 10 modelos</h4><div class="vm-rank">
-      <div class="vm-rank-row"><span>WX150-A</span><div class="track"><div class="fill" style="width:100%"></div></div><b>23,933</b></div>
-      <div class="vm-rank-row"><span>WAVE110S</span><div class="track"><div class="fill" style="width:58%"></div></div><b>13,869</b></div>
-      <div class="vm-rank-row"><span>GL150</span><div class="track"><div class="fill" style="width:45.4%"></div></div><b>10,865</b></div>
-      <div class="vm-rank-row"><span>CCG125</span><div class="track"><div class="fill" style="width:41.6%"></div></div><b>9,959</b></div>
-      <div class="vm-rank-row"><span>CB125F TWISTER</span><div class="track"><div class="fill" style="width:32.6%"></div></div><b>7,791</b></div>
-      <div class="vm-rank-row"><span>XR190L</span><div class="track"><div class="fill" style="width:31.2%"></div></div><b>7,472</b></div>
-      <div class="vm-rank-row"><span>TORITO 4T LPG</span><div class="track"><div class="fill" style="width:30.1%"></div></div><b>7,202</b></div>
-      <div class="vm-rank-row"><span>NAVI</span><div class="track"><div class="fill" style="width:29.2%"></div></div><b>6,986</b></div>
-      <div class="vm-rank-row"><span>TORITO 4T</span><div class="track"><div class="fill" style="width:23.4%"></div></div><b>5,610</b></div>
-      <div class="vm-rank-row"><span>PULSAR 125 LS</span><div class="track"><div class="fill" style="width:23%"></div></div><b>5,506</b></div>
-    </div></div>
-  </div>
-
-  <div class="vm-grid-bottom">
-    <div class="vm-box"><h4>Mapa de oficinas registrales</h4><div class="vm-mini-map">
-      <svg class="vm-map-svg" viewBox="0 0 200 270" aria-label="Mapa estilizado del Perú">
-        <path class="vm-map-shape" d="M78 10 L100 24 L107 45 L102 63 L116 81 L118 103 L128 120 L120 139 L123 157 L113 176 L113 193 L106 211 L99 228 L98 242 L89 257 L76 264 L64 252 L65 235 L57 222 L60 205 L55 190 L45 171 L43 154 L45 136 L39 117 L46 102 L55 85 L61 67 L56 48 L64 31 Z"/>
-        <circle class="vm-map-dot" cx="78" cy="165" r="6"/><text x="88" y="169" font-size="9">Lima 86,146</text>
-        <circle class="vm-map-dot" cx="58" cy="78" r="5"/><text x="68" y="79" font-size="9">Piura 39,058</text>
-        <circle class="vm-map-dot" cx="61" cy="100" r="5"/><text x="71" y="102" font-size="9">Chiclayo 33,007</text>
-        <circle class="vm-map-dot" cx="96" cy="103" r="4"/><text x="108" y="105" font-size="9">Tarapoto</text>
-        <circle class="vm-map-dot" cx="111" cy="213" r="4"/><text x="120" y="216" font-size="9">Madre de Dios</text>
-      </svg>
-      <div class="table-wrap"><table class="vm-office-table"><thead><tr><th>Oficina</th><th>Cantidad</th></tr></thead><tbody>
-        <tr><td>Lima</td><td>86,146</td></tr><tr><td>Piura</td><td>39,058</td></tr><tr><td>Chiclayo</td><td>33,007</td></tr><tr><td>Tarapoto</td><td>22,288</td></tr><tr><td>Madre de Dios</td><td>18,255</td></tr><tr><td>Pucallpa</td><td>16,978</td></tr><tr><td>Trujillo</td><td>16,723</td></tr>
-      </tbody></table></div>
-    </div></div>
-
-    <div class="vm-box"><h4>Zona registral</h4>
-      <div class="vm-zone-row"><div class="head"><span>Zona IX</span><b>86,146</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div>
-      <div class="vm-zone-row"><div class="head"><span>Zona II</span><b>63,684</b></div><div class="track"><div class="fill" style="width:73.9%"></div></div></div>
-      <div class="vm-zone-row"><div class="head"><span>Zona I</span><b>40,146</b></div><div class="track"><div class="fill" style="width:46.6%"></div></div></div>
-      <div class="vm-zone-row"><div class="head"><span>Zona X</span><b>36,925</b></div><div class="track"><div class="fill" style="width:42.9%"></div></div></div>
-      <div class="vm-zone-row"><div class="head"><span>Zona VIII</span><b>30,805</b></div><div class="track"><div class="fill" style="width:35.8%"></div></div></div>
-      <div class="vm-zone-row"><div class="head"><span>Zona III</span><b>30,009</b></div><div class="track"><div class="fill" style="width:34.8%"></div></div></div>
-      <div class="vm-zone-row"><div class="head"><span>Zona VI</span><b>16,978</b></div><div class="track"><div class="fill" style="width:19.7%"></div></div></div>
+  <div class="vm2-hero">
+    <div>
+      <div class="vm2-eyebrow">INMATRICULACIONES · ARCHIVO 1</div>
+      <h3>Mercado de Vehículos Menores</h3>
+      <p id="vm2HeroPeriod">El sistema buscará automáticamente el Excel de Vehículos Menores y también permite cargarlo manualmente.</p>
     </div>
-
-    <div class="vm-box"><h4>Tipo de combustible</h4><div class="vm-fuel"><div class="vm-fuel-pie"></div><div style="font-size:12px">
-      <p><b>Gasolina</b> — 334,776 · 86.8%</p><p>Sin dato — 36,424 · 9.4%</p><p>BI-GLP — 11,778 · 3.1%</p><p>Eléctrico — 2,125 · 0.6%</p><p>Otros — 551 · 0.1%</p>
-    </div></div></div>
-
-    <div class="vm-box"><h4>Rango de cilindrada</h4><div class="vm-stat-bars">
-      <div class="row"><div class="head"><span>≤ 110 cc</span><b>10.3%</b></div><div class="track"><div class="fill" style="width:10.3%"></div></div></div>
-      <div class="row"><div class="head"><span>111 – 150 cc</span><b>35.3%</b></div><div class="track"><div class="fill" style="width:35.3%"></div></div></div>
-      <div class="row"><div class="head"><span>151 – 200 cc</span><b>27.4%</b></div><div class="track"><div class="fill" style="width:27.4%"></div></div></div>
-      <div class="row"><div class="head"><span>> 200 cc</span><b>17.5%</b></div><div class="track"><div class="fill" style="width:17.5%"></div></div></div>
-      <div class="row"><div class="head"><span>Sin dato</span><b>9.5%</b></div><div class="track"><div class="fill" style="width:9.5%"></div></div></div>
-    </div></div>
+    <div class="vm2-hero-badge"><b id="vm2HeroTotal">—</b><span id="vm2HeroStatus">Buscando Excel…</span></div>
   </div>
 
-  <div class="vm-source"><span><b>TSF AutoMarket Intelligence</b> · Vehículos Menores</span><span>Fuente: Archivo 1 – Base Especificaciones Técnicas</span><span>Última data: Agosto 2026</span></div>
+  <div class="vm22-connect" id="vm22Connect">
+    <div class="left"><div class="ico">▣</div><div><b id="vm22ConnectTitle">Conectando con el Excel…</b><span id="vm22ConnectSub">Primero se busca “vehiculos_menores.xlsx” en la misma carpeta del sistema.</span></div></div>
+    <div class="actions"><button type="button" id="vm2LoadBtn" class="primary">📂 Seleccionar Excel</button><button type="button" id="vm22Retry" class="ghost">↻ Reintentar</button><input type="file" id="vm2ExcelInput" accept=".xlsx,.xls" hidden></div>
+  </div>
+
+  <div class="vm22-kpis">
+    <div class="vm22-kpi main"><span>Total acumulado</span><b id="vm2Total">—</b><small id="vm2TotalSub">Esperando archivo</small></div>
+    <div class="vm22-kpi"><span id="vm2MonthLabel">Último mes</span><b id="vm2MonthTotal">—</b><small>mes disponible</small></div>
+    <div class="vm22-kpi"><span>Vs mes anterior</span><b id="vm2Mom">—</b><small id="vm2MomSub">—</small></div>
+    <div class="vm22-kpi gold"><span>Vs mismo mes 2025</span><b id="vm2Yoy">—</b><small id="vm2YoySub">comparativo interanual</small></div>
+    <div class="vm22-kpi"><span>Acumulado vs 2025</span><b id="vm2YtdYoy">—</b><small id="vm2YtdYoySub">comparativo YTD</small></div>
+    <div class="vm22-kpi"><span>Mes pico</span><b id="vm2Peak">—</b><small id="vm2PeakSub">—</small></div>
+    <div class="vm22-kpi"><span>Motocicletas</span><b id="vm2Moto">—</b><small id="vm2MotoShare">—</small></div>
+    <div class="vm22-kpi"><span>Trimotos</span><b id="vm2Tri">—</b><small id="vm2TriShare">—</small></div>
+  </div>
+
+  <div class="vm22-insights">
+    <div class="vm22-insight"><span>Concentración Top 3 marcas</span><b id="vm2Top3Share">—</b><small id="vm2Top3Names">—</small></div>
+    <div class="vm22-insight"><span>Concentración Top 5 oficinas</span><b id="vm2Top5OfficeShare">—</b><small id="vm2TopOfficeName">—</small></div>
+    <div class="vm22-insight"><span>Perfil principal del titular</span><b id="vm2MainDoc">—</b><small id="vm2MainDocShare">—</small></div>
+    <div class="vm22-insight"><span>Combustible principal</span><b id="vm2MainFuel">—</b><small id="vm2MainFuelShare">—</small></div>
+  </div>
+
+  <div class="vm2-filterbar">
+    <div class="vm2-filter"><label>Año</label><select id="vm2Year"><option>—</option></select></div>
+    <div class="vm2-filter"><label>Mes</label><select id="vm2Month"><option value="ALL">Sin datos</option></select></div>
+    <div class="vm2-filter"><label>Tipo</label><select id="vm2Type"><option value="ALL">Todos</option></select></div>
+    <div class="vm2-filter"><label>Marca</label><select id="vm2Brand"><option value="ALL">Todas</option></select></div>
+    <div class="vm2-filter"><label>Modelo</label><select id="vm2Model"><option value="ALL">Todos</option></select></div>
+    <div class="vm2-filter"><label>Cilindrada</label><select id="vm2Cyl"><option value="ALL">Todas</option><option value="LE110">≤ 110 cc</option><option value="111_150">111–150 cc</option><option value="151_200">151–200 cc</option><option value="GT200">&gt; 200 cc</option><option value="NA">Sin dato</option></select></div>
+    <div class="vm2-filter"><label>Combustible</label><select id="vm2Fuel"><option value="ALL">Todos</option></select></div>
+    <div class="vm2-filter"><label>Zona registral</label><select id="vm2Zone"><option value="ALL">Todas</option></select></div>
+    <button class="vm2-reset" id="vm2Reset">↻ Limpiar filtros</button>
+  </div>
+  <div class="vm2-filter-note" id="vm2FilterNote">Esperando conexión con el Excel.</div>
+
+  <div class="vm2-grid vm2-grid-a">
+    <div class="vm2-card trend-card"><div class="vm2-card-head"><div><h4>Evolución mensual</h4><p id="vm2TrendInsight">La tendencia aparecerá al cargar el archivo.</p></div><div class="vm2-legend"><span><i class="moto"></i>Motocicletas</span><span><i class="tri"></i>Trimotos</span></div></div><canvas id="vm2Trend"></canvas></div>
+    <div class="vm2-card donut-card"><div class="vm2-card-head"><div><h4>Motocicletas vs Trimotos</h4><p>Pasa el cursor para ver detalle. Haz clic para filtrar.</p></div></div><div class="vm2-donut-wrap"><canvas id="vm2Donut"></canvas><div class="vm2-donut-center"><b id="vm2DonutTotal">—</b><span>unidades</span></div></div><div class="vm2-donut-legend"><button data-vmtype="MOTOCICLETAS"><i class="moto"></i><span>Motocicletas</span><b id="vm2DonutMoto">—</b></button><button data-vmtype="TRIMOTOS"><i class="tri"></i><span>Trimotos</span><b id="vm2DonutTri">—</b></button></div><div class="vm2-tooltip" id="vm2DonutTip"></div></div>
+  </div>
+
+  <div class="vm2-grid vm2-grid-b">
+    <div class="vm2-card"><div class="vm2-card-head"><div><h4>Top marcas</h4><p>Participación y volumen según los filtros.</p></div><div class="vm2-mini-tabs"><button class="active" data-vmquick="ALL">Total</button><button data-vmquick="MOTOCICLETAS">Motos</button><button data-vmquick="TRIMOTOS">Trimotos</button></div></div><div class="vm2-rank" id="vm2Brands"></div></div>
+    <div class="vm2-card"><div class="vm2-card-head"><div><h4>Top modelos</h4><p>Modelos de mayor volumen en la selección.</p></div></div><div class="vm2-rank" id="vm2Models"></div></div>
+  </div>
+
+  <div class="vm2-card">
+    <div class="vm2-card-head"><div><h4>Concentración por oficinas registrales</h4><p>Ranking registral real. Se eliminó el mapa referencial para no mostrar una geografía imprecisa.</p></div><span class="vm2-chip" id="vm2TopOfficeChip">Sin datos</span></div>
+    <div class="vm22-offices"><div class="vm2-office-list" id="vm2Offices"></div><div class="vm22-office-side"><div class="vm22-mini"><span>Oficina líder</span><b id="vm22OfficeLeader">—</b><small id="vm22OfficeLeaderShare">—</small></div><div class="vm22-mini"><span>Top 5 oficinas</span><b id="vm22OfficeTop5">—</b><small>participación acumulada</small></div><div class="vm22-mini"><span>Zonas registrales</span><b id="vm22ZoneCount">—</b><small>con volumen en la selección</small></div><div class="vm22-mini"><span>Oficinas</span><b id="vm22OfficeCount">—</b><small>con volumen en la selección</small></div></div></div>
+  </div>
+
+  <div class="vm2-grid vm2-grid-c">
+    <div class="vm2-card"><div class="vm2-card-head"><div><h4>Zonas registrales</h4><p>Concentración territorial registral.</p></div></div><div class="vm2-bars" id="vm2Zones"></div></div>
+    <div class="vm2-card"><div class="vm2-card-head"><div><h4>Rango de cilindrada</h4><p>Haz clic en una barra para filtrar.</p></div></div><div class="vm2-bars clickable" id="vm2CylBars"></div></div>
+    <div class="vm2-card"><div class="vm2-card-head"><div><h4>Combustible</h4><p>Perfil técnico del registro.</p></div></div><div class="vm2-bars" id="vm2Fuels"></div></div>
+    <div class="vm2-card"><div class="vm2-card-head"><div><h4>Perfil del titular</h4><p>Tipo de documento declarado.</p></div></div><div class="vm2-bars docs" id="vm2Docs"></div></div>
+  </div>
+
+  <div class="vm2-quality"><div><span>Cobertura filtrada</span><b id="vm2Coverage">Esperando archivo</b></div><div><span>Calidad</span><b id="vm2Quality">—</b></div><div><span>Fuente</span><b>BASE ESPECIFICACIONES TÉCNICAS + Resumen</b></div></div>
+  <div class="vm22-data-note">Para que cargue solo en GitHub Pages, sube el Excel en la misma carpeta del HTML con el nombre <b>vehiculos_menores.xlsx</b>. Si prefieres, también puedes usar “Seleccionar Excel”.</div>
 </section>
-
-
 
 <section class="page" id="remolques">
   <div class="rm-hero">
@@ -3499,7 +3511,7 @@ table tbody tr:hover{
 <script>
 const titles={
  resumen:'Resumen Ejecutivo',retailmes:'Retail Mes - Agosto 2026',retail:'Retail Acumulado - Ene–Ago 2026',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',inmat:'Inmatriculaciones',brechas:'Retail vs Inmatriculación',
- ligeros:'Vehículos Livianos',comerciales:'Comerciales',pesados:'Vehículos Pesados',menores:'Vehículos Menores',remolques:'Remolques y Semirremolques',
+ ligeros:'Vehículos Livianos',comerciales:'Comerciales',pesados:'Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Remolques y Semirremolques',
  geografia:'Mapas del Perú',concesionarios:'Departamento y Concesionarios Retail',calidad:'Calidad de Datos',carga:'Cargar Mes'
 };
 function go(page){
@@ -3639,17 +3651,19 @@ document.getElementById('folderInput').addEventListener('change', async e=>{
  if(!files.length){status.textContent='No se encontraron archivos Excel.';return}
  status.textContent=`Leyendo ${files.length} archivo(s)...`;
  if(typeof XLSX==='undefined'){status.textContent='No se pudo cargar la librería para leer Excel. Verifica tu conexión a internet.';return}
- const found=[];
+ const found=[];let loadedMenores=false;
  for(const file of files){
   try{
-   const buf=await file.arrayBuffer();
-   const wb=XLSX.read(buf,{type:'array',cellDates:true});
-   found.push({file:file.name,sheets:wb.SheetNames});
+   const buf=await file.arrayBuffer();const wb=XLSX.read(buf,{type:'array',cellDates:true});
+   let type='';
+   if(!loadedMenores){try{if(vm20LoadWorkbook(wb,file.name)){loadedMenores=true;type=' · Vehículos Menores cargado'}}catch(_){}}
+   found.push({file:file.name,sheets:wb.SheetNames,type});
   }catch(err){found.push({file:file.name,error:String(err)})}
  }
- let html=`<b>${found.length} Excel detectados.</b><br>`;
- html+=found.map(x=>`• ${x.file} — ${x.error?'ERROR':x.sheets.slice(0,4).join(', ')}`).join('<br>');
- status.innerHTML=html;
+ let out=`<b>${found.length} Excel detectados.</b>`+(loadedMenores?' <span class="pill ok">Vehículos Menores actualizado ✓</span>':'')+'<br>';
+ out+=found.map(x=>`• ${x.file}${x.type||''} — ${x.error?'ERROR':x.sheets.slice(0,4).join(', ')}`).join('<br>');
+ status.innerHTML=out;
+ if(loadedMenores)go('menores');
 });
 
 
@@ -3705,46 +3719,167 @@ vpMonth?.addEventListener('change',updateVPKpis);vpType?.addEventListener('chang
 vpReset?.addEventListener('click',()=>{document.querySelectorAll('#pesados select').forEach(s=>s.selectedIndex=0);updateVPKpis();});
 
 
-// VEHICULOS MENORES
-const vmSeries={
-  MOTOCICLETAS:[29426,27890,32282,36984,37998,39112,34200,38887],
-  TRIMOTOS:[11843,12553,13446,15292,14400,15887,12834,12620]
+
+// ==================== V21 MERCADO VEHICULOS MENORES - EXCEL DINAMICO ====================
+let VM20={cls:[],zone:[],office:[],doc:[],brand:[],model:[],fuel:[],rows:[]};
+let VM20_META={prevMonthYear:null,prevYtd:null,year:null,autoLoaded:false};
+let VM20_MONTHS=[];
+let VM20_MSHORT=[];
+let VM20_YEAR='—';
+let VM20_FILE='';
+const VM20_MONTH_DEF={
+ ENERO:['Enero','Ene'],FEBRERO:['Febrero','Feb'],MARZO:['Marzo','Mar'],ABRIL:['Abril','Abr'],MAYO:['Mayo','May'],JUNIO:['Junio','Jun'],JULIO:['Julio','Jul'],AGOSTO:['Agosto','Ago'],
+ SEPTIEMBRE:['Septiembre','Sep'],SETIEMBRE:['Septiembre','Sep'],OCTUBRE:['Octubre','Oct'],NOVIEMBRE:['Noviembre','Nov'],DICIEMBRE:['Diciembre','Dic']
 };
-function drawVMLines(){
-  const c=document.getElementById('vmTrend'); if(!c) return;
-  drawLine(c,['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'],[
-    {color:'#f2c230',data:vmSeries.MOTOCICLETAS},
-    {color:'#232936',data:vmSeries.TRIMOTOS}
-  ]);
+const vm20Els={
+ month:document.getElementById('vm2Month'),type:document.getElementById('vm2Type'),brand:document.getElementById('vm2Brand'),model:document.getElementById('vm2Model'),cyl:document.getElementById('vm2Cyl'),fuel:document.getElementById('vm2Fuel'),zone:document.getElementById('vm2Zone')
+};
+function vm20Norm(v){return String(v??'').trim().replace(/\s+/g,' ')}
+function vm20NormHeader(v){return vm20Norm(v).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9_ ]/g,'').replace(/\s+/g,' ')}
+function vm20Fmt(n){return Math.round(Number(n)||0).toLocaleString('es-PE')}
+function vm20Pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'0.0%'}
+function vm20CylBucket(c){c=Number(c);if(!Number.isFinite(c))return 'NA';if(c<=110)return 'LE110';if(c<=150)return '111_150';if(c<=200)return '151_200';return 'GT200'}
+function vm20CylLabel(k){return {LE110:'≤ 110 cc','111_150':'111–150 cc','151_200':'151–200 cc',GT200:'> 200 cc',NA:'Sin dato'}[k]||k}
+function vm20DictIndex(arr,value){let i=arr.indexOf(value);if(i<0){i=arr.length;arr.push(value)}return i}
+function vm20HasData(){return VM20.rows.length>0&&VM20_MONTHS.length>0}
+function vm20MonthRange(){if(!VM20_MONTHS.length)return 'Sin datos';return VM20_MSHORT.length===1?VM20_MSHORT[0]:VM20_MSHORT[0]+'–'+VM20_MSHORT.at(-1)}
+function vm20SetStatus(msg,ok=true){const el=document.getElementById('vm2HeroStatus');if(el){el.textContent=msg;el.className=ok?'vm2-load-ok':'vm2-load-err'}}
+function vm20ResetDisplay(){
+ ['vm2Total','vm2HeroTotal','vm2MonthTotal','vm2Peak','vm2Moto','vm2Tri','vm2DonutTotal','vm2Yoy','vm2YtdYoy','vm2Top3Share','vm2Top5OfficeShare','vm2MainDoc','vm2MainFuel','vm22OfficeLeader','vm22OfficeTop5','vm22ZoneCount','vm22OfficeCount'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='—'});
+ ['vm2Mom','vm2MotoShare','vm2TriShare','vm2DonutMoto','vm2DonutTri'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='—'});
+ ['vm2Brands','vm2Models','vm2Zones','vm2Fuels','vm2Docs','vm2CylBars','vm2Offices'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='<div class="vm2-empty">Carga el Excel para generar este indicador.</div>'});
+ const cv=document.getElementById('vm2Trend');if(cv){const c=cv.getContext('2d');c.clearRect(0,0,cv.width,cv.height)};
+ vm20DrawDonut(0,0);
 }
-drawVMLines();
-
-const vmType=document.getElementById('vmType');
-const vmMonth=document.getElementById('vmMonth');
-const vmReset=document.getElementById('vmReset');
-function updateVMKpis(){
-  if(!vmType||!vmMonth) return;
-  const type=vmType.value, month=vmMonth.value;
-  let moto=276779, tri=108875;
-  if(month!=='ALL'){
-    const i=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO'].indexOf(month);
-    moto=vmSeries.MOTOCICLETAS[i]; tri=vmSeries.TRIMOTOS[i];
-  }
-  let total=moto+tri;
-  if(type==='MOTOCICLETAS'){total=moto;tri=0}
-  if(type==='TRIMOTOS'){total=tri;moto=0}
-  document.getElementById('vmTotal').textContent=total.toLocaleString('es-PE');
-  document.getElementById('vmMoto').textContent=moto.toLocaleString('es-PE');
-  document.getElementById('vmTri').textContent=tri.toLocaleString('es-PE');
+function vm20PopulateMonthSelect(){
+ const s=vm20Els.month;if(!s)return;
+ s.innerHTML='<option value="ALL">'+vm20MonthRange()+'</option>'+VM20_MONTHS.map((m,i)=>'<option value="'+i+'">'+m+'</option>').join('');
+ s.value='ALL';
+ const y=document.getElementById('vm2Year');if(y)y.innerHTML='<option>'+VM20_YEAR+'</option>';
 }
-vmType?.addEventListener('change',updateVMKpis);
-vmMonth?.addEventListener('change',updateVMKpis);
-vmReset?.addEventListener('click',()=>{
-  document.querySelectorAll('#menores select').forEach(s=>s.selectedIndex=0);
-  updateVMKpis();
-});
-
-
+function vm20FindBaseWorkbook(wb){
+ const target=wb.SheetNames.find(n=>vm20NormHeader(n)==='BASE ESPECIFICACIONES TECNICAS');
+ if(!target)return null;
+ const ws=wb.Sheets[target];
+ const matrix=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});
+ if(!matrix.length)return null;
+ const h=matrix[0].map(vm20NormHeader);
+ const must=['CLASE','ZONA REGISTRAL','OFICINA REGISTRAL','TIPO_DOC','MARCA','MODELO','CILINDRADA','COMBUSTIBLE'];
+ if(!must.every(k=>h.includes(k)))return null;
+ return {ws,matrix,headers:h};
+}
+function vm20ReadMeta(wb,fileName){
+  const meta={prevMonthYear:null,prevYtd:null,year:null,autoLoaded:false};
+  try{
+    const sname=wb.SheetNames.find(n=>vm20NormHeader(n)==='RESUMEN');
+    if(sname){
+      const ws=wb.Sheets[sname];
+      const m=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});
+      // Cuadro 01: fila 4 encabezados / fila 7 total.
+      if(m.length>=7){
+        const hdr=m[3]||[], total=m[6]||[];
+        for(let i=1;i<=12;i++){
+          const v=hdr[i];
+          if(v instanceof Date && !meta.year)meta.year=v.getFullYear();
+          else if(typeof v==='number' && v>40000 && !meta.year){const d=XLSX.SSF.parse_date_code(v);if(d)meta.year=d.y;}
+        }
+        // Estructura actual del archivo AAP: S=ago año previo, W=acumulado año previo.
+        const prevMonth=Number(total[18]); if(Number.isFinite(prevMonth))meta.prevMonthYear=prevMonth;
+        const prevYtd=Number(total[22]); if(Number.isFinite(prevYtd))meta.prevYtd=prevYtd;
+      }
+    }
+  }catch(e){console.warn('No se pudo leer comparativo Resumen',e)}
+  if(!meta.year){const yr=String(fileName||'').match(/20\d{2}/);meta.year=yr?Number(yr[0]):new Date().getFullYear()}
+  return meta;
+}
+function vm20LoadWorkbook(wb,fileName='Excel cargado'){
+ const base=vm20FindBaseWorkbook(wb);if(!base)return false;
+ const {matrix,headers}=base;
+ const idx=(name)=>headers.indexOf(name);
+ const cols={cls:idx('CLASE'),zone:idx('ZONA REGISTRAL'),office:idx('OFICINA REGISTRAL'),doc:idx('TIPO_DOC'),brand:idx('MARCA'),model:idx('MODELO'),cyl:idx('CILINDRADA'),fuel:idx('COMBUSTIBLE')};
+ const monthCols=[];
+ headers.forEach((h,i)=>{if(VM20_MONTH_DEF[h])monthCols.push({i,key:h,name:VM20_MONTH_DEF[h][0],short:VM20_MONTH_DEF[h][1]})});
+ if(!monthCols.length)throw new Error('No se detectaron columnas mensuales (ENERO, FEBRERO, etc.).');
+ VM20={cls:[],zone:[],office:[],doc:[],brand:[],model:[],fuel:[],rows:[]};
+ VM20_MONTHS=monthCols.map(x=>x.name);VM20_MSHORT=monthCols.map(x=>x.short);
+ VM20_META=vm20ReadMeta(wb,fileName); VM20_YEAR=String(VM20_META.year||'—'); VM20_FILE=fileName;
+ for(let ri=1;ri<matrix.length;ri++){
+   const r=matrix[ri];
+   const cl=vm20Norm(r[cols.cls]).toUpperCase();
+   if(!cl)continue;
+   const zone=vm20Norm(r[cols.zone]).toUpperCase()||'SIN DATO';
+   const office=vm20Norm(r[cols.office]).toUpperCase()||'SIN DATO';
+   const doc=vm20Norm(r[cols.doc]).toUpperCase()||'SIN DATO';
+   const brand=vm20Norm(r[cols.brand]).toUpperCase()||'SIN DATO';
+   const model=vm20Norm(r[cols.model]).toUpperCase()||'SIN DATO';
+   let fuel=vm20Norm(r[cols.fuel]).toUpperCase(); if(!fuel||fuel==='-'||fuel==='N/A')fuel='SIN DATO';
+   const cylRaw=r[cols.cyl];const cyl=(cylRaw===null||cylRaw===''||!Number.isFinite(Number(cylRaw)))?null:Number(cylRaw);
+   const vals=monthCols.map(mc=>{const n=Number(r[mc.i]);return Number.isFinite(n)?n:0});
+   if(!vals.some(v=>v!==0))continue;
+   VM20.rows.push([
+     vm20DictIndex(VM20.cls,cl),vm20DictIndex(VM20.zone,zone),vm20DictIndex(VM20.office,office),vm20DictIndex(VM20.doc,doc),
+     vm20DictIndex(VM20.brand,brand),vm20DictIndex(VM20.model,model),cyl,vm20DictIndex(VM20.fuel,fuel),...vals
+   ]);
+ }
+ vm20PopulateMonthSelect();
+ const p=document.getElementById('vm2HeroPeriod');if(p)p.textContent='Motocicletas y trimotos · '+vm20MonthRange()+' '+VM20_YEAR+' · datos leídos directamente desde '+fileName+'.';
+ vm20SetStatus(fileName+' · '+VM20.rows.length.toLocaleString('es-PE')+' registros útiles',true); const cs=document.getElementById('vm22ConnectSub'); if(cs)cs.textContent=VM20.rows.length.toLocaleString('es-PE')+' registros útiles · '+vm20MonthRange()+' '+VM20_YEAR;
+ vm20Update(true);
+ return true;
+}
+async function vm20ReadFile(file){
+ if(typeof XLSX==='undefined')throw new Error('No se pudo cargar SheetJS. Revisa la conexión a internet.');
+ const buf=await file.arrayBuffer();const wb=XLSX.read(buf,{type:'array',cellDates:true});
+ if(!vm20LoadWorkbook(wb,file.name))throw new Error('El archivo no corresponde a Vehículos Menores o no contiene la hoja/base esperada.');
+}
+function vm20RowMatches(r,exclude){
+ const s={type:vm20Els.type?.value||'ALL',brand:vm20Els.brand?.value||'ALL',model:vm20Els.model?.value||'ALL',cyl:vm20Els.cyl?.value||'ALL',fuel:vm20Els.fuel?.value||'ALL',zone:vm20Els.zone?.value||'ALL'};
+ if(exclude!=='type'&&s.type!=='ALL'&&VM20.cls[r[0]]!==s.type)return false;if(exclude!=='brand'&&s.brand!=='ALL'&&VM20.brand[r[4]]!==s.brand)return false;if(exclude!=='model'&&s.model!=='ALL'&&VM20.model[r[5]]!==s.model)return false;if(exclude!=='cyl'&&s.cyl!=='ALL'&&vm20CylBucket(r[6])!==s.cyl)return false;if(exclude!=='fuel'&&s.fuel!=='ALL'&&VM20.fuel[r[7]]!==s.fuel)return false;if(exclude!=='zone'&&s.zone!=='ALL'&&VM20.zone[r[1]]!==s.zone)return false;return true;
+}
+function vm20Val(r,monthOverride){const m=monthOverride===undefined?(vm20Els.month?.value||'ALL'):monthOverride;if(m==='ALL'){let t=0;for(let i=0;i<VM20_MONTHS.length;i++)t+=Number(r[8+i])||0;return t}return Number(r[8+Number(m)])||0}
+function vm20Filtered(exclude){return VM20.rows.filter(r=>vm20RowMatches(r,exclude))}
+function vm20Agg(rows,dimIndex,dict,monthOverride){const m=new Map();rows.forEach(r=>{const v=vm20Val(r,monthOverride);if(!v)return;const k=dict[r[dimIndex]]??'SIN DATO';m.set(k,(m.get(k)||0)+v)});return [...m.entries()].sort((a,b)=>b[1]-a[1])}
+function vm20PopulateSelect(sel,values,allLabel){if(!sel)return;const cur=sel.value;sel.innerHTML='<option value="ALL">'+allLabel+'</option>'+values.map(v=>'<option value="'+String(v).replace(/"/g,'&quot;')+'">'+v+'</option>').join('');sel.value=values.includes(cur)?cur:'ALL'}
+function vm20RefreshOptions(){if(!vm20HasData())return;vm20PopulateSelect(vm20Els.type,[...new Set(vm20Filtered('type').map(r=>VM20.cls[r[0]]))].sort(),'Todos');vm20PopulateSelect(vm20Els.brand,[...new Set(vm20Filtered('brand').map(r=>VM20.brand[r[4]]))].sort(),'Todas');vm20PopulateSelect(vm20Els.model,[...new Set(vm20Filtered('model').map(r=>VM20.model[r[5]]))].sort(),'Todos');vm20PopulateSelect(vm20Els.fuel,[...new Set(vm20Filtered('fuel').map(r=>VM20.fuel[r[7]]))].sort(),'Todos');vm20PopulateSelect(vm20Els.zone,[...new Set(vm20Filtered('zone').map(r=>VM20.zone[r[1]]))].sort(),'Todas')}
+function vm20Line(canvas,series){if(!canvas||!VM20_MONTHS.length)return;const rect=canvas.getBoundingClientRect(),w=Math.max(320,Math.round(rect.width)),h=Math.max(185,Math.round(rect.height||230)),dpr=Math.min(devicePixelRatio||1,2);canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);const p={l:46,r:14,t:16,b:27},cw=w-p.l-p.r,ch=h-p.t-p.b,vals=series.flatMap(s=>s.data),max=Math.max(...vals,1)*1.12;c.font='9px Segoe UI';c.textBaseline='middle';for(let i=0;i<4;i++){const y=p.t+ch*i/3;c.strokeStyle='#eceef2';c.beginPath();c.moveTo(p.l,y);c.lineTo(w-p.r,y);c.stroke();c.fillStyle='#9aa0aa';c.textAlign='right';c.fillText(Math.round(max*(1-i/3)).toLocaleString('es-PE'),p.l-7,y)}const den=Math.max(1,VM20_MSHORT.length-1);VM20_MSHORT.forEach((lab,i)=>{const x=p.l+cw*i/den;c.fillStyle='#9aa0aa';c.textAlign='center';c.fillText(lab,x,h-9)});series.forEach((s,si)=>{const pts=s.data.map((v,i)=>({x:p.l+cw*i/den,y:p.t+ch-(v/max)*ch}));if(!pts.length)return;const grad=c.createLinearGradient(0,p.t,0,p.t+ch);grad.addColorStop(0,si===0?'rgba(245,174,0,.15)':'rgba(31,37,48,.08)');grad.addColorStop(1,'rgba(255,255,255,0)');c.beginPath();c.moveTo(pts[0].x,p.t+ch);pts.forEach(pt=>c.lineTo(pt.x,pt.y));c.lineTo(pts.at(-1).x,p.t+ch);c.closePath();c.fillStyle=grad;c.fill();c.beginPath();pts.forEach((pt,i)=>i?c.lineTo(pt.x,pt.y):c.moveTo(pt.x,pt.y));c.strokeStyle=s.color;c.lineWidth=2.5;c.stroke();pts.forEach(pt=>{c.beginPath();c.arc(pt.x,pt.y,3,0,Math.PI*2);c.fillStyle='#fff';c.fill();c.lineWidth=2;c.strokeStyle=s.color;c.stroke()})})}
+function drawVMLines(){if(!vm20HasData())return;const rows=vm20Filtered(),moto=[],tri=[];for(let mi=0;mi<VM20_MONTHS.length;mi++){let a=0,b=0;rows.forEach(r=>{const v=Number(r[8+mi])||0;if(VM20.cls[r[0]]==='MOTOCICLETAS')a+=v;else if(VM20.cls[r[0]]==='TRIMOTOS')b+=v});moto.push(a);tri.push(b)}vm20Line(document.getElementById('vm2Trend'),[{color:'#f5ae00',data:moto},{color:'#252a34',data:tri}])}
+function vm20DrawDonut(moto,tri){const canvas=document.getElementById('vm2Donut');if(!canvas)return;const css=Math.min(canvas.parentElement.clientWidth,210),dpr=Math.min(devicePixelRatio||1,2);canvas.width=css*dpr;canvas.height=css*dpr;canvas.style.width=css+'px';canvas.style.height=css+'px';const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,css,css);const total=moto+tri,cx=css/2,cy=css/2,R=css*.43,r=css*.28;let start=-Math.PI/2;const parts=[{name:'Motocicletas',value:moto,color:'#f5ae00',filter:'MOTOCICLETAS'},{name:'Trimotos',value:tri,color:'#252a34',filter:'TRIMOTOS'}];canvas._vmParts=[];parts.forEach(p=>{const ang=total?2*Math.PI*p.value/total:0;c.beginPath();c.arc(cx,cy,R,start,start+ang);c.arc(cx,cy,r,start+ang,start,true);c.closePath();c.fillStyle=p.color;c.fill();canvas._vmParts.push({...p,start,end:start+ang,cx,cy,R,r,total});start+=ang});if(!total){c.beginPath();c.arc(cx,cy,R,0,Math.PI*2);c.arc(cx,cy,r,0,Math.PI*2,true);c.fillStyle='#eceef2';c.fill()}const tip=document.getElementById('vm2DonutTip');canvas.onmousemove=e=>{if(!total)return;const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-cx,dy=y-cy,rr=Math.hypot(dx,dy);let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;const part=canvas._vmParts.find(p=>rr>=r&&rr<=R&&ang>=p.start&&ang<=p.end);if(part){tip.style.display='block';tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+12)+'px';tip.innerHTML='<b>'+part.name+'</b><br>'+vm20Fmt(part.value)+' · '+vm20Pct(part.value,total)}else tip.style.display='none'};canvas.onmouseleave=()=>tip.style.display='none';canvas.onclick=e=>{if(!total)return;const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-cx,dy=y-cy,rr=Math.hypot(dx,dy);let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;const part=canvas._vmParts.find(p=>rr>=r&&rr<=R&&ang>=p.start&&ang<=p.end);if(part){vm20Els.type.value=part.filter;vm20Update(true)}}}
+function vm20RenderRank(id,arr,total,limit=10){const el=document.getElementById(id);if(!el)return;const top=arr.slice(0,limit),mx=top[0]?.[1]||1;el.innerHTML=top.map(([n,v],i)=>'<div class="vm2-rank-row" title="'+n+' · '+vm20Fmt(v)+'"><span class="name">'+(i+1)+'. '+n+'</span><div class="vm2-track"><div class="vm2-fill" style="width:'+((v/mx)*100).toFixed(1)+'%"></div></div><b>'+vm20Fmt(v)+'</b></div>').join('')||'<div class="vm2-empty">Sin datos para los filtros seleccionados.</div>'}
+function vm20RenderBars(id,arr,total,limit=8,clicker){const el=document.getElementById(id);if(!el)return;const top=arr.slice(0,limit),mx=top[0]?.[1]||1;el.innerHTML=top.map(([n,v])=>'<div class="vm2-bar-row" data-key="'+n+'"><div class="vm2-bar-head"><span>'+n+'</span><b>'+vm20Fmt(v)+' · '+vm20Pct(v,total)+'</b></div><div class="vm2-bar-track"><div class="vm2-bar-fill" style="width:'+((v/mx)*100).toFixed(1)+'%"></div></div></div>').join('')||'<div class="vm2-empty">Sin datos</div>';if(clicker)el.querySelectorAll('.vm2-bar-row').forEach(x=>x.onclick=()=>clicker(x.dataset.key))}
+const VM20_COORD={'LIMA':[120,258],'PIURA':[82,82],'CHICLAYO':[87,120],'TARAPOTO':[131,129],'MADRE DE DIOS':[158,281],'PUCALLPA':[146,189],'TRUJILLO':[92,153],'JULIACA':[132,300],'JAEN':[102,105],'CAJAMARCA':[102,132],'CUSCO':[138,272],'HUANCAYO':[124,230],'AREQUIPA':[112,302],'MAYNAS':[169,110]};
+function vm20RenderMap(offices,total){
+  const list=document.getElementById('vm2Offices'); if(!list)return;
+  const top=offices.slice(0,10), mx=top[0]?.[1]||1;
+  list.innerHTML=top.map(([n,v],i)=>'<div class="vm2-office-row"><span class="n">'+(i+1)+'</span><span class="name">'+n+'</span><b>'+vm20Fmt(v)+'</b><span class="pct">'+vm20Pct(v,total)+'</span><div class="bar"><i style="width:'+((v/mx)*100).toFixed(1)+'%"></i></div></div>').join('')||'<div class="vm2-empty">Sin datos</div>';
+  const chip=document.getElementById('vm2TopOfficeChip'); if(chip)chip.textContent=top[0]?top[0][0]+' lidera':'Sin datos';
+  const leader=document.getElementById('vm22OfficeLeader'), share=document.getElementById('vm22OfficeLeaderShare'), top5=document.getElementById('vm22OfficeTop5');
+  if(leader)leader.textContent=top[0]?.[0]||'—'; if(share)share.textContent=top[0]?vm20Fmt(top[0][1])+' · '+vm20Pct(top[0][1],total):'—'; if(top5)top5.textContent=vm20Pct(top.slice(0,5).reduce((s,x)=>s+x[1],0),total);
+}
+function vm22Connection(title,sub,ok=false){const a=document.getElementById('vm22ConnectTitle'),b=document.getElementById('vm22ConnectSub'),box=document.getElementById('vm22Connect');if(a)a.textContent=title;if(b)b.textContent=sub;if(box){box.style.borderColor=ok?'#b9e4ce':'#f0d5e2';box.style.background=ok?'linear-gradient(135deg,#fff,#f1fbf6)':'linear-gradient(135deg,#fff,#fff8ec)'}}
+async function vm22LoadUrl(url){
+  if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel.');
+  const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);
+  const buf=await res.arrayBuffer();const wb=XLSX.read(buf,{type:'array',cellDates:true});
+  const name=decodeURIComponent(url.split('/').pop());if(!vm20LoadWorkbook(wb,name))throw new Error('El Excel no corresponde a Vehículos Menores.');
+  VM20_META.autoLoaded=true;vm22Connection('Excel conectado automáticamente',name,true);return true;
+}
+async function vm22AutoLoad(){
+  vm22Connection('Buscando Excel automáticamente…','Se intenta cargar el archivo desde la misma carpeta del HTML.');
+  const candidates=['./vehiculos_menores.xlsx','./08.1_Venta_e_Inmatriculación_de_Vehículos_Menores_Agosto_2026(2).xlsx','./08.1_Venta_e_Inmatriculación_de_Vehículos_Menores_Agosto_2026(1).xlsx','./08.1_Venta_e_Inmatriculación_de_Vehículos_Menores_Agosto_2026.xlsx'];
+  for(const u of candidates){try{await vm22LoadUrl(u);return}catch(e){}}
+  vm22Connection('Excel no encontrado en la carpeta del sistema','Sube el archivo como “vehiculos_menores.xlsx” junto al HTML o selecciónalo manualmente.');vm20SetStatus('Selecciona el Excel para activar el dashboard',false);
+}
+function vm20Init(){
+ Object.values(vm20Els).forEach(el=>el?.addEventListener('change',()=>vm20Update(true)));
+ document.getElementById('vm2Reset')?.addEventListener('click',()=>{Object.values(vm20Els).forEach(el=>{if(el)el.value='ALL'});vm20Update(true)});
+ document.querySelectorAll('[data-vmtype]').forEach(b=>b.addEventListener('click',()=>{if(!vm20HasData())return;vm20Els.type.value=b.dataset.vmtype;vm20Update(true)}));
+ document.querySelectorAll('[data-vmquick]').forEach(b=>b.addEventListener('click',()=>{if(!vm20HasData())return;vm20Els.type.value=b.dataset.vmquick;vm20Update(true)}));
+ document.getElementById('vm2LoadBtn')?.addEventListener('click',()=>document.getElementById('vm2ExcelInput')?.click());
+ document.getElementById('vm22Retry')?.addEventListener('click',()=>vm22AutoLoad());
+ document.getElementById('vm2ExcelInput')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;vm20SetStatus('Leyendo '+f.name+'…',true);vm22Connection('Procesando Excel…',f.name);try{await vm20ReadFile(f);vm22Connection('Excel conectado',f.name,true)}catch(err){vm20SetStatus(err.message||String(err),false);vm22Connection('No se pudo leer el archivo',err.message||String(err));alert(err.message||String(err))}finally{e.target.value=''}});
+ vm20ResetDisplay();setTimeout(vm22AutoLoad,250);
+}
+vm20Init();
 
 // REMOLQUES Y SEMIRREMOLQUES
 const rmMonths=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO'];
