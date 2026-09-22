@@ -1976,7 +1976,7 @@ body.dash-zoom-200 #chart-zonas-v .vbar-lbl{font-size:14px!important;max-width:1
 }
 
 
-/* AGOSTO 2026 + tasa ponderada junto a clientes */
+/* SETIEMBRE 2026 + tasa ponderada junto a clientes */
 .bar-count,.estges-count{min-width:118px!important;}
 .suc-right{min-width:92px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:2px;line-height:1.05;}
 .vbar-val{white-space:nowrap!important;}
@@ -2282,8 +2282,8 @@ body.dash-zoom-200 #chart-zonas-v .vbar-lbl{font-size:14px!important;max-width:1
                 <span class="multi-option-text">Todos ACTIVADO 2026</span>
               </label>
               <label class="multi-option active-all">
-                <input type="checkbox" value="AGOSTO_2026" class="estado-check" onchange="applyDashFilter()">
-                <span class="multi-option-text">AGOSTO 2026</span>
+                <input type="checkbox" value="SETIEMBRE_2026" class="estado-check" onchange="applyDashFilter()">
+                <span class="multi-option-text">SETIEMBRE 2026</span>
               </label>
               <div id="estadoOpciones"></div>
             </div>
@@ -2447,8 +2447,8 @@ body.dash-zoom-200 #chart-zonas-v .vbar-lbl{font-size:14px!important;max-width:1
                 <span class="multi-option-text">Todos ACTIVADO 2026</span>
               </label>
               <label class="multi-option active-all">
-                <input type="checkbox" value="AGOSTO_2026" class="estado-exp-check" onchange="filterTable()">
-                <span class="multi-option-text">AGOSTO 2026</span>
+                <input type="checkbox" value="SETIEMBRE_2026" class="estado-exp-check" onchange="filterTable()">
+                <span class="multi-option-text">SETIEMBRE 2026</span>
               </label>
               <div id="estadoExpOpciones"></div>
             </div>
@@ -2713,8 +2713,8 @@ function updateEstadoLabel(){
   }else if(seleccionados.length===1){
     if(seleccionados[0]==='ACTIVADO_2026'){
       btn.textContent='Todos ACTIVADO 2026';
-    }else if(seleccionados[0]==='AGOSTO_2026'){
-      btn.textContent='AGOSTO 2026';
+    }else if(seleccionados[0]==='SETIEMBRE_2026'){
+      btn.textContent='SETIEMBRE 2026';
     }else{
       btn.textContent=seleccionados[0];
     }
@@ -2737,8 +2737,8 @@ function updateDashFilters(){
   const activo2026=document.querySelector('.estado-check[value="ACTIVADO_2026"]');
   if(activo2026)activo2026.checked=seleccionadosPrevios.has('ACTIVADO_2026');
 
-  const agosto2026=document.querySelector('.estado-check[value="AGOSTO_2026"]');
-  if(agosto2026)agosto2026.checked=seleccionadosPrevios.has('AGOSTO_2026');
+  const setiembre2026=document.querySelector('.estado-check[value="SETIEMBRE_2026"]');
+  if(setiembre2026)setiembre2026.checked=seleccionadosPrevios.has('SETIEMBRE_2026');
 
   document.getElementById('filtroZonaDash').innerHTML =
     '<option value="">Todas</option>' +
@@ -2770,7 +2770,7 @@ function applyDashFilter(){
     const cumpleEstado =
       estGes.length===0 ||
       (estGes.includes('ACTIVADO_2026') && isActivado(r)) ||
-      (estGes.includes('AGOSTO_2026') && getMesKeyFromRow(r) === 'AGO26') ||
+      (estGes.includes('SETIEMBRE_2026') && getMesKeyFromRow(r) === 'SET26') ||
       estGes.includes(estado);
 
     return cumpleEstado &&
@@ -3420,7 +3420,7 @@ function updateEstadoExpLabel(){
     btn.textContent='Todos los estados';
   }else if(seleccionados.length===1){
     if(seleccionados[0]==='ACTIVADO_2026')btn.textContent='Todos ACTIVADO 2026';
-    else if(seleccionados[0]==='AGOSTO_2026')btn.textContent='AGOSTO 2026';
+    else if(seleccionados[0]==='SETIEMBRE_2026')btn.textContent='SETIEMBRE 2026';
     else btn.textContent=seleccionados[0];
   }else{
     btn.textContent=seleccionados.length+' seleccionados';
@@ -3443,7 +3443,7 @@ function filterTable(){
     const cumpleEstado =
       estados.length===0 ||
       (estados.includes('ACTIVADO_2026') && isActivado(r)) ||
-      (estados.includes('AGOSTO_2026') && getMesKeyFromRow(r) === 'AGO26') ||
+      (estados.includes('SETIEMBRE_2026') && getMesKeyFromRow(r) === 'SET26') ||
       estados.includes(est);
     const cumpleFuncionario = !funcQ || func.toLowerCase().includes(funcQ);
     return(!q||txt.includes(q))&&(!prod||String(r[COL_PROD]).includes(prod))&&cumpleFuncionario&&cumpleEstado;
@@ -3470,8 +3470,8 @@ function updateFiltros(){
   }).join('');
   const activo=document.querySelector('.estado-exp-check[value="ACTIVADO_2026"]');
   if(activo)activo.checked=seleccionadosPrevios.has('ACTIVADO_2026');
-  const agosto=document.querySelector('.estado-exp-check[value="AGOSTO_2026"]');
-  if(agosto)agosto.checked=seleccionadosPrevios.has('AGOSTO_2026');
+  const setiembre=document.querySelector('.estado-exp-check[value="SETIEMBRE_2026"]');
+  if(setiembre)setiembre.checked=seleccionadosPrevios.has('SETIEMBRE_2026');
   updateEstadoExpLabel();
 }
 
