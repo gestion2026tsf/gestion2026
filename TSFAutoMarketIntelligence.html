@@ -3037,6 +3037,30 @@ table tbody tr:hover{
 @media(max-width:1100px){#retailmes .rtm-grid-a,#retailmes .rtm-grid-b{grid-template-columns:1fr}#retailmes .rtm-segments{grid-template-columns:repeat(4,1fr)}#retailmes .rtm-month-pill{display:none}}
 @media(max-width:720px){#retailmes .rtm-kpis{grid-template-columns:1fr 1fr}#retailmes .rtm-source{flex-direction:column;align-items:flex-start}#retailmes .rtm-source-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}#retailmes .rtm-source-actions button{width:100%}#retailmes .rtm-donut-zone{grid-template-columns:1fr}#retailmes .rtm-segments{grid-template-columns:repeat(2,1fr)}#retailmes .rtm-quality{grid-template-columns:1fr}#retailmes .rtm-toolbar{align-items:flex-start;flex-direction:column}#retailmes .rtm-footer{flex-direction:column}#retailmes .rtm-hero h3{font-size:26px!important}}
 
+
+/* ===== V38 - TOOLTIP GLOBAL PEGADO AL CURSOR ===== */
+.vm2-tooltip,.vm2-map-tip,.lv2-tip,.lv2-chart-tip,.vp3-tooltip,.r4-tooltip,.rtm-tooltip{
+  position:fixed !important;
+  z-index:99999 !important;
+  display:none;
+  pointer-events:none !important;
+  min-width:unset;
+  max-width:260px;
+  padding:8px 10px;
+  border-radius:9px;
+  background:rgba(22,25,31,.97) !important;
+  color:#fff !important;
+  font-size:10px;
+  line-height:1.4;
+  box-shadow:0 10px 28px rgba(0,0,0,.24);
+  backdrop-filter:blur(8px);
+  transform:none !important;
+  margin:0 !important;
+}
+.lv2-chart-tip b{display:block;font-size:11px;margin-bottom:4px}
+.lv2-chart-tip .row{display:flex;justify-content:space-between;gap:12px;margin-top:2px}
+.lv2-chart-tip i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+
 </style>
 </head>
 <body>
@@ -4883,6 +4907,41 @@ function r4DrawTrend(rows){const canvas=document.getElementById('r4Trend');if(!c
 function r4Update(refresh=true){if(!r4Has()){r4ResetDisplay();return}if(refresh)r4RefreshOptions();const rows=r4Filtered(),sel=r4Els.month.value||'ALL',all=sel==='ALL',mi=all?R4.labels.length-1:Number(sel),total=rows.reduce((s,r)=>s+r4RowVal(r),0),monthTotal=rows.reduce((s,r)=>s+(r.m[mi]||0),0),prev=mi>0?rows.reduce((s,r)=>s+(r.m[mi-1]||0),0):null,mom=prev?((monthTotal-prev)/prev)*100:null,monthly=R4.labels.map((_,i)=>rows.reduce((s,r)=>s+(r.m[i]||0),0));let peak=0;for(let i=1;i<monthly.length;i++)if(monthly[i]>monthly[peak])peak=i;const brands=r4Agg(rows,'brand'),models=r4Agg(rows,'model'),offices=r4Agg(rows,'office'),depts=r4Agg(rows,'dept'),bodies=r4Agg(rows,'body'),cats=r4Agg(rows,'cat'),o4=cats.find(x=>x[0]==='O4')?.[1]||0;r4Set('r4Total',r4Fmt(total));r4Set('r4HeroTotal',r4Fmt(total));r4Set('r4TotalSub',all?(R4.labels[0]+'–'+R4.labels.at(-1)+' '+R4.year):(R4.labels[mi]+' '+R4.year));r4Set('r4MonthLabel',R4.labels[mi]||'Último mes');r4Set('r4MonthTotal',r4Fmt(monthTotal));r4SetClass('r4Mom',mom===null?'—':(mom>=0?'+':'')+mom.toFixed(1)+'%',mom===null?'':mom>=0?'positive':'negative');r4Set('r4MomSub',mi>0?'vs '+R4.labels[mi-1]:'sin mes anterior');r4Set('r4Peak',r4Fmt(monthly[peak]||0));r4Set('r4PeakSub',R4.labels[peak]+' '+R4.year);r4Set('r4O4',r4Fmt(o4));r4Set('r4O4Share',r4Pct(o4,total)+' del total');const noDims=Object.entries(r4Els).filter(([k])=>k!=='month').every(([,e])=>(e?.value||'ALL')==='ALL');if(noDims&&mi===R4.labels.length-1&&R4.meta.prevMonthYear){const y=(monthTotal-R4.meta.prevMonthYear)/R4.meta.prevMonthYear*100;r4SetClass('r4Yoy',(y>=0?'+':'')+y.toFixed(1)+'%',y>=0?'positive':'negative');r4Set('r4YoySub','vs '+r4Fmt(R4.meta.prevMonthYear)+' en '+R4.labels[mi]+' 2025')}else{r4Set('r4Yoy','—');r4Set('r4YoySub','disponible para el total del último mes')}r4Set('r4LeadBrand',brands[0]?.[0]||'—');r4Set('r4LeadBrandSub',brands[0]?r4Fmt(brands[0][1])+' · '+r4Pct(brands[0][1],total):'—');r4Set('r4LeadOffice',offices[0]?.[0]||'—');r4Set('r4LeadOfficeSub',offices[0]?r4Fmt(offices[0][1])+' · '+r4Pct(offices[0][1],total):'—');r4Set('r4Top3Brands',r4Pct(brands.slice(0,3).reduce((s,x)=>s+x[1],0),total));r4Set('r4Top3Offices',r4Pct(offices.slice(0,3).reduce((s,x)=>s+x[1],0),total));r4RenderRank('r4Brands',brands,total,'brand');r4RenderRank('r4Models',models,total,'model');r4RenderBars('r4Depts',depts,total,'dept',8);r4RenderBars('r4Offices',offices,total,'office',8);r4RenderBars('r4Bodies',bodies,total,'body',10);r4DrawDonut(cats,total);r4DrawTrend(rows);const active=[];if(!all)active.push(R4.labels[mi]);for(const [k,l] of [['brand','Marca'],['model','Modelo'],['office','Oficina'],['dept','Departamento'],['body','Carrocería'],['cat','Categoría']]){const v=r4Els[k]?.value;if(v&&v!=='ALL')active.push(l+': '+v)}r4Set('r4FilterNote',active.length?'Filtros activos · '+active.join(' · '):'Vista acumulada · '+R4.labels[0]+'–'+R4.labels.at(-1)+' '+R4.year+' · '+rows.length.toLocaleString('es-PE')+' registros útiles');const missingModel=rows.filter(r=>!r.model||r.model==='SIN DATO'||r.model==='-').reduce((s,r)=>s+r4RowVal(r),0),missingBody=rows.filter(r=>!r.body||r.body==='SIN DATO'||r.body==='-').reduce((s,r)=>s+r4RowVal(r),0);r4Set('r4Coverage',r4Fmt(total)+' unidades · '+rows.length.toLocaleString('es-PE')+' filas útiles');r4Set('r4Quality','Modelos sin dato '+r4Fmt(missingModel)+' · Carrocería sin clasificar '+r4Fmt(missingBody));const q=document.getElementById('r4QualityList');if(q)q.innerHTML='<div>✓ Base dinámica leída desde la hoja BASE.</div><div>Modelo sin información: <b>'+r4Fmt(missingModel)+'</b> unidades.</div><div>Carrocería sin clasificar: <b>'+r4Fmt(missingBody)+'</b> unidades.</div>';const top3off=offices.slice(0,3).reduce((s,x)=>s+x[1],0);document.getElementById('r4Exec').innerHTML='<b>'+((brands[0]?.[0])||'—')+'</b> lidera con '+r4Fmt(brands[0]?.[1]||0)+' unidades. <b>'+((offices[0]?.[0])||'—')+'</b> concentra '+r4Pct(offices[0]?.[1]||0,total)+' y las 3 primeras oficinas reúnen '+r4Pct(top3off,total)+'. La categoría <b>O4</b> representa '+r4Pct(o4,total)+'.';r4Set('r4TrendInsight',(R4.labels[mi]||'Último mes')+': '+r4Fmt(monthTotal)+(mom===null?'':' · '+(mom>=0?'+':'')+mom.toFixed(1)+'% vs '+R4.labels[Math.max(0,mi-1)])+'. Pico: '+R4.labels[peak]+' con '+r4Fmt(monthly[peak]||0)+'.')}
 function r4Init(){Object.values(r4Els).forEach(e=>e?.addEventListener('change',()=>{e.classList.toggle('active',e.value!=='ALL');r4Update(true)}));document.getElementById('r4Reset')?.addEventListener('click',()=>{Object.values(r4Els).forEach(e=>{if(e)e.value='ALL'});r4Update(true)});document.getElementById('r4LoadBtn')?.addEventListener('click',()=>document.getElementById('r4ExcelInput')?.click());document.getElementById('r4Retry')?.addEventListener('click',r4AutoLoad);document.getElementById('r4ExcelInput')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;r4Connection('Procesando Excel…',f.name);try{await r4ReadFile(f)}catch(err){r4Connection('No se pudo leer el Excel',err.message||String(err));alert(err.message||String(err))}finally{e.target.value=''}});r4ResetDisplay();setTimeout(r4AutoLoad,500);document.querySelectorAll('#nav button[data-page="remolques"]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{if(r4Has())r4Update(false)},80)));let t;window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(()=>{if(document.getElementById('remolques')?.classList.contains('active')&&r4Has())r4Update(false)},150)})}
 r4Init();
+
+
+/* ===== V38 - normaliza tooltips contra viewport ===== */
+(function(){
+  const TIP_SELECTOR='.vm2-tooltip,.vm2-map-tip,.lv2-tip,.lv2-chart-tip,.vp3-tooltip,.r4-tooltip,.rtm-tooltip';
+  function moveTipsToBody(){
+    document.querySelectorAll(TIP_SELECTOR).forEach(t=>{
+      if(t.parentElement!==document.body) document.body.appendChild(t);
+    });
+  }
+  function clampOne(t){
+    if(!t || t.style.display==='none') return;
+    const pad=10, gap=12;
+    let left=parseFloat(t.style.left)||0;
+    let top=parseFloat(t.style.top)||0;
+    const r=t.getBoundingClientRect();
+    if(left+r.width>window.innerWidth-pad) left=Math.max(pad,window.innerWidth-r.width-pad);
+    if(top+r.height>window.innerHeight-pad) top=Math.max(pad,window.innerHeight-r.height-pad);
+    if(left<pad) left=pad;
+    if(top<pad) top=pad;
+    t.style.left=left+'px'; t.style.top=top+'px';
+  }
+  function installObserver(){
+    const obs=new MutationObserver(ms=>{
+      ms.forEach(m=>{
+        const t=m.target;
+        if(t.matches && t.matches(TIP_SELECTOR) && t.style.display!=='none') requestAnimationFrame(()=>clampOne(t));
+      });
+    });
+    document.querySelectorAll(TIP_SELECTOR).forEach(t=>obs.observe(t,{attributes:true,attributeFilter:['style']}));
+  }
+  function init(){moveTipsToBody();installObserver();}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init,{once:true}); else init();
+  window.addEventListener('resize',()=>document.querySelectorAll(TIP_SELECTOR).forEach(clampOne));
+})();
 
 </script>
 
