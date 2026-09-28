@@ -3151,7 +3151,64 @@ table tbody tr:hover{
   #retailmes .rtm-legend{grid-template-columns:1fr!important;}
 }
 
+
+/* ===== V41 · RETAIL ACUMULADO EXECUTIVE PRO ===== */
+#retail .rac-toolbar-right{display:flex;align-items:center;gap:8px;min-width:0}
+#retail .rac-selection{height:39px;display:flex;align-items:center;padding:0 12px;border:1px solid #f0dca2;background:#fff9e8;color:#765500;border-radius:11px;font-size:9.5px;font-weight:800;white-space:nowrap}
+#retail .rac-reset{height:39px;padding:0 13px;border-radius:11px;border:1px solid #e0e4eb;background:#fff;color:#5f6772;font-size:10px;font-weight:800;cursor:pointer;transition:.16s ease}
+#retail .rac-reset:hover{background:#17191f;color:#fff;border-color:#17191f;transform:translateY(-1px)}
+#retail .rac-card{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+#retail .rac-card:hover{border-color:#dde1e8;box-shadow:0 12px 28px rgba(20,24,35,.065)}
+#retail .rac-grid-top>.rac-card{min-height:366px}
+#retail .rac-donut-zone{min-height:320px}
+#retail .rac-donut-wrap{max-width:300px}
+#retail .rac-donut-center b{font-size:25px;letter-spacing:-.7px}
+#retail .rac-donut-center span{font-size:9.5px;margin-top:2px}
+#retail .rac-leg{grid-template-columns:10px minmax(74px,1fr) auto;padding:9px 10px}
+#retail .rac-leg b{font-size:9px;white-space:nowrap}
+#retail .rac-rank-row{grid-template-columns:25px minmax(92px,1fr) minmax(130px,1.3fr) 78px;min-height:31px}
+#retail .rac-rank-metric{text-align:right;line-height:1.05}
+#retail .rac-rank-metric strong{display:block;font-size:10px}
+#retail .rac-rank-metric small{display:block;margin-top:3px;font-size:8px;font-weight:800}
+#retail .rac-rank-row:hover .rac-track{background:#e8ebf0}
+#retail .rac-family{position:relative;overflow:hidden}
+#retail .rac-family:after{content:'';position:absolute;inset:auto -28px -45px auto;width:95px;height:95px;border-radius:50%;background:radial-gradient(circle,rgba(236,10,109,.07),transparent 68%);pointer-events:none}
+#retail .rac-family .compare{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}
+#retail .rac-family .compare>div{padding:7px 8px;border-radius:9px;background:#f7f8fa}
+#retail .rac-family .compare span{display:block;font-size:7.5px;color:#9299a5;text-transform:uppercase;letter-spacing:.45px}
+#retail .rac-family .compare b{display:block;font-size:11px;margin-top:2px}
+#retail .rac-seg{position:relative;overflow:hidden}
+#retail .rac-seg:before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#e5e7ec;transition:.15s}
+#retail .rac-seg:hover:before{background:linear-gradient(#ec0a6d,#f5aa00)}
+#retail .rac-seg .seg-family{position:absolute;right:7px;top:7px;font-size:7px;font-weight:900;color:#a0a6b0}
+#retail .rac-move{border-radius:8px;padding:8px 7px;transition:.15s}
+#retail .rac-move:hover{background:#fafbfc;transform:translateX(2px)}
+#retail .rac-move small{display:block;color:#949ba7;font-size:8px;margin-top:2px}
+#retail .rac-q{transition:.15s}
+#retail .rac-q:hover{transform:translateY(-1px);background:#fff}
+#retail .rac-insight{transition:.15s}
+#retail .rac-insight:hover{transform:translateY(-2px);box-shadow:0 7px 16px rgba(20,24,35,.05)}
+@media(max-width:1180px){#retail .rac-toolbar{align-items:flex-start;flex-direction:column}#retail .rac-toolbar-right{width:100%;flex-wrap:wrap}#retail .rac-brand-filter{flex:1}#retail .rac-brand-filter select{min-width:160px;width:100%}}
+
 </style>
+
+<style>
+/* ===== V40 RETAIL ACUMULADO DINAMICO ===== */
+#retail{background:linear-gradient(180deg,#f7f8fb 0,#f4f5f8 100%);padding-bottom:26px}
+.rac-hero{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:24px 30px;border-radius:24px;background:linear-gradient(115deg,#121319 0%,#1f2027 48%,#46233b 76%,#75512d 100%);color:white;margin-bottom:14px;box-shadow:0 18px 42px rgba(14,16,22,.14);overflow:hidden;position:relative}
+.rac-hero:after{content:'ACUM';position:absolute;right:120px;bottom:-30px;font-size:88px;font-weight:900;letter-spacing:-5px;color:rgba(255,255,255,.045)}
+.rac-eyebrow{font-size:11px;font-weight:900;letter-spacing:1.8px;color:#f7c64b;margin-bottom:7px}.rac-hero h3{font-size:34px;margin:0 0 6px;letter-spacing:-1px}.rac-hero p{margin:0;color:#d7dae1;font-size:12px;max-width:720px}.rac-period{min-width:210px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);padding:14px 18px;border-radius:18px;position:relative;z-index:2}.rac-period span{display:block;font-size:9px;letter-spacing:1px;color:#e4d8bd;font-weight:800}.rac-period b{display:block;font-size:23px;margin-top:4px}
+.rac-loader{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e5e8ef;border-radius:18px;padding:12px 15px;margin-bottom:12px;box-shadow:0 7px 22px rgba(20,24,35,.05)}.rac-fileicon{width:44px;height:44px;display:grid;place-items:center;border-radius:13px;background:#fff0f6;color:#ed0b6e;font-size:19px}.rac-loadtext{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}.rac-loadtext b{font-size:12px}.rac-loadtext span{font-size:10px;color:#8a92a2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rac-btn{height:40px;padding:0 16px;border-radius:12px;border:1px solid #e1e5ec;background:#f4f5f7;font-weight:800;font-size:11px;color:#59616d;cursor:pointer}.rac-btn.primary{background:linear-gradient(135deg,#e90068,#ff2b83);color:#fff;border:0;box-shadow:0 8px 20px rgba(233,0,104,.18)}
+.rac-kpis{display:grid;grid-template-columns:1.25fr repeat(5,1fr);gap:10px;margin-bottom:12px}.rac-kpi{background:#fff;border:1px solid #e5e8ef;border-radius:17px;padding:15px 16px;min-height:94px;box-shadow:0 7px 20px rgba(20,24,35,.04);transition:.18s ease}.rac-kpi:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(20,24,35,.08)}.rac-kpi span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:#8c94a3}.rac-kpi b{display:block;font-size:25px;margin:7px 0 2px;letter-spacing:-.8px;color:#15171c}.rac-kpi small{font-size:9.5px;color:#9097a4}.rac-kpi.hero{background:linear-gradient(135deg,#ec0a6d,#ff326f 58%,#ff9e00);border:0;color:#fff;position:relative;overflow:hidden}.rac-kpi.hero:after{content:'';position:absolute;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.12);right:-24px;top:-35px}.rac-kpi.hero span,.rac-kpi.hero small,.rac-kpi.hero b{color:#fff}.rac-kpi .positive{color:#067647}.rac-kpi .negative{color:#b42318}
+.rac-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:3px 0 10px}.rac-tabs{display:flex;gap:7px;flex-wrap:wrap}.rac-tabs button{height:39px;padding:0 15px;border-radius:999px;border:1px solid #e1e5eb;background:#fff;color:#626a76;font-size:10.5px;font-weight:800;cursor:pointer;transition:.15s}.rac-tabs button:hover{transform:translateY(-1px);border-color:#cdd2db}.rac-tabs button.active{background:#17191f;color:#fff;border-color:#17191f;box-shadow:0 8px 18px rgba(17,19,25,.14)}.rac-brand-filter{display:flex;align-items:center;gap:8px;font-size:10px;color:#8b92a0}.rac-brand-filter select{height:39px;min-width:190px;border:1px solid #dde1e7;border-radius:11px;background:#fff;padding:0 34px 0 12px;font-size:10.5px}
+.rac-grid-top{display:grid;grid-template-columns:1.05fr 1.22fr .86fr;gap:10px;margin-bottom:10px}.rac-card{background:#fff;border:1px solid #e5e8ef;border-radius:18px;padding:15px 16px;box-shadow:0 8px 22px rgba(20,24,35,.045)}.rac-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}.rac-head h4{margin:0;font-size:13px}.rac-head p{margin:3px 0 0;font-size:9.5px;color:#8c94a2}.rac-chip{background:#fff4d5;color:#745100;border-radius:999px;padding:6px 9px;font-size:9px;font-weight:900;white-space:nowrap}.rac-donut-zone{display:grid;grid-template-columns:minmax(180px,1fr) minmax(155px,.8fr);align-items:center;gap:8px;min-height:300px}.rac-donut-wrap{position:relative;width:100%;max-width:285px;aspect-ratio:1;margin:auto}.rac-donut-wrap canvas{width:100%!important;height:100%!important}.rac-donut-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}.rac-donut-center b{font-size:22px}.rac-donut-center span{font-size:9px;color:#8f96a3}.rac-legend{display:flex;flex-direction:column;gap:7px}.rac-leg{display:grid;grid-template-columns:9px 1fr auto;gap:7px;align-items:center;padding:8px 9px;border:1px solid #edf0f4;border-radius:11px;background:#fafbfc;cursor:pointer;transition:.15s}.rac-leg:hover{transform:translateX(2px);background:#fff}.rac-dot{width:9px;height:9px;border-radius:50%}.rac-leg span{font-size:9px;color:#69717e}.rac-leg b{font-size:9.5px}
+.rac-rank{display:flex;flex-direction:column;gap:6px}.rac-rank-row{display:grid;grid-template-columns:24px minmax(90px,1fr) minmax(110px,1.15fr) 65px;gap:7px;align-items:center;padding:5px 6px;border-radius:10px;transition:.15s;cursor:pointer}.rac-rank-row:hover{background:#fff3f8;transform:translateX(2px)}.rac-rank-row .n{width:24px;height:24px;display:grid;place-items:center;border-radius:8px;background:#f1f3f6;font-size:9px;font-weight:900}.rac-rank-row .name{font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rac-track{height:7px;background:#edf0f3;border-radius:10px;overflow:hidden}.rac-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,#ec0a6d,#ff7a00,#f4b000)}.rac-rank-row strong{font-size:9.5px;text-align:right}.rac-insights{display:grid;grid-template-columns:1fr 1fr;gap:9px}.rac-insight{border:1px solid #e8ebf0;background:#fafbfc;border-radius:13px;padding:12px;min-height:88px}.rac-insight span{font-size:9px;color:#8a92a0}.rac-insight b{display:block;margin-top:9px;font-size:18px}.rac-insight small{display:block;margin-top:5px;font-size:9px;color:#929aa6}
+.rac-family-card{margin-bottom:10px}.rac-family-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.rac-family{border:1px solid #e7eaf0;border-radius:14px;padding:12px;cursor:pointer;transition:.15s;background:linear-gradient(180deg,#fff,#fafbfc)}.rac-family:hover{transform:translateY(-2px);box-shadow:0 9px 20px rgba(19,24,35,.07)}.rac-family .top{display:flex;justify-content:space-between;gap:8px}.rac-family h5{margin:0;font-size:10px}.rac-family .yoy{font-size:12px;font-weight:900}.rac-family .vals{display:flex;align-items:end;justify-content:space-between;margin:12px 0 8px}.rac-family .vals b{font-size:20px}.rac-family .vals span{font-size:9px;color:#89919e}.rac-family .bar{height:7px;background:#eef0f3;border-radius:8px;overflow:hidden}.rac-family .bar i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#17191f,#ec0a6d,#f4aa00)}
+.rac-grid-mid{display:grid;grid-template-columns:1.4fr .8fr .8fr;gap:10px;margin-bottom:10px}.rac-segments{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.rac-seg{border:1px solid #e8ebf0;border-radius:12px;padding:9px;background:#fbfcfd;cursor:pointer;transition:.15s;min-height:72px}.rac-seg:hover{transform:translateY(-2px);background:#fff4f8}.rac-seg b{font-size:15px}.rac-seg span{display:block;font-size:9px;font-weight:800;margin-top:3px}.rac-seg small{display:block;font-size:8.5px;color:#9299a6;margin-top:5px}.rac-movers{display:flex;flex-direction:column;gap:7px}.rac-move{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border-bottom:1px solid #f0f1f4;padding:7px 2px}.rac-move span{font-size:9.5px}.rac-move b{font-size:10px}.rac-move.up b{color:#067647}.rac-move.down b{color:#b42318}.rac-quality-card{margin-bottom:10px}.rac-quality{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.rac-q{border:1px solid #e7eaf0;border-radius:12px;padding:10px;background:#fafbfc}.rac-q span{font-size:8.5px;color:#8d95a3}.rac-q b{display:block;font-size:11px;margin-top:6px}.rac-q.ok b{color:#067647}.rac-q.warn b{color:#9b6700}.rac-q.bad b{color:#b42318}.rac-footer{display:flex;justify-content:space-between;gap:15px;color:#939aa6;font-size:8.5px;padding:6px 3px}.rac-tooltip{position:fixed;z-index:99999;display:none;pointer-events:none;background:#17191f;color:white;border-radius:10px;padding:8px 10px;font-size:10px;line-height:1.45;box-shadow:0 10px 24px rgba(0,0,0,.22);max-width:220px}
+@media(max-width:1450px){.rac-kpis{grid-template-columns:repeat(3,1fr)}.rac-grid-top{grid-template-columns:1fr 1fr}.rac-grid-top>.rac-card:last-child{grid-column:1/-1}.rac-insights{grid-template-columns:repeat(4,1fr)}.rac-grid-mid{grid-template-columns:1fr 1fr}.rac-grid-mid>.rac-card:first-child{grid-column:1/-1}.rac-quality{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:950px){.rac-hero{align-items:flex-start;flex-direction:column}.rac-period{width:100%}.rac-kpis,.rac-family-grid{grid-template-columns:repeat(2,1fr)}.rac-grid-top,.rac-grid-mid{grid-template-columns:1fr}.rac-grid-top>.rac-card:last-child,.rac-grid-mid>.rac-card:first-child{grid-column:auto}.rac-insights{grid-template-columns:repeat(2,1fr)}.rac-segments{grid-template-columns:repeat(3,1fr)}.rac-quality{grid-template-columns:repeat(2,1fr)}.rac-toolbar{align-items:flex-start;flex-direction:column}.rac-brand-filter{width:100%}.rac-brand-filter select{flex:1}.rac-donut-zone{grid-template-columns:1fr}}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -3171,7 +3228,7 @@ table tbody tr:hover{
     <button data-page="pesados"><span class="nav-ico">▮</span>Mercado Vehículos Pesados</button>
     <button data-page="remolques"><span class="nav-ico">▭</span>Mercado Remolques y Semirremolques</button>
     <button data-page="retailmes"><span class="nav-ico">◫</span>Retail del Mes</button>
-    <button data-page="retail"><span class="nav-ico">▥</span>Retail Acumulado (Archivo 6)</button>
+    <button data-page="retail"><span class="nav-ico">▥</span>Retail Acumulado</button>
     <button data-page="retailOmnibus"><span class="nav-ico">▣</span>Retail Ómnibus</button>
     <button data-page="retailCamiones"><span class="nav-ico">▰</span>Retail Camiones y Remolcadores</button>
     <button data-page="inmat"><span class="nav-ico">◎</span>Inmatriculaciones</button>
@@ -3268,123 +3325,84 @@ table tbody tr:hover{
 
 
 <section class="page" id="retail">
-  <div class="ra-hero">
-    <h3>Retail Acumulado</h3>
-    <div class="sub">Enero – Agosto 2026 · Comparativo 2025</div>
-    <p>Resumen acumulado de ventas Retail por familia, segmento y marca. Este archivo funciona como fuente de control para reconciliar el detalle de los archivos 7–10.</p>
+  <div class="rac-hero">
+    <div>
+      <div class="rac-eyebrow">TSF · VISIÓN ACUMULADA DEL RETAIL</div>
+      <h3>Retail Acumulado</h3>
+      <p id="racHeroText">Comparativo acumulado 2026 vs 2025 por familia, segmento y marca.</p>
+    </div>
+    <div class="rac-period"><span>PERIODO ANALIZADO</span><b id="racPeriod">Esperando Excel</b></div>
   </div>
 
-  <div class="ra-kpis">
-    <div class="ra-kpi"><div class="label">Retail acumulado 2026</div><div class="num">176,170</div><div class="tiny">Enero – Agosto</div></div>
-    <div class="ra-kpi"><div class="label">Retail acumulado 2025</div><div class="num">123,374</div><div class="tiny">Mismo periodo</div></div>
-    <div class="ra-kpi"><div class="label">Crecimiento total</div><div class="num" style="color:#067647">+42.8%</div><div class="tiny">+52,796 unidades</div></div>
-    <div class="ra-kpi"><div class="label">Marcas con venta</div><div class="num">63</div><div class="tiny">Resumen general</div></div>
-    <div class="ra-kpi"><div class="label">Segmentos</div><div class="num">13</div><div class="tiny">L1–L3 · C1–C4 · O1–O2 · P2–P5</div></div>
+  <div class="rac-loader">
+    <div class="rac-fileicon">▦</div>
+    <div class="rac-loadtext"><b id="racLoadTitle">Selecciona el Excel de Retail Acumulado</b><span id="racLoadSub">Archivo 6 · 5 hojas esperadas</span></div>
+    <input type="file" id="racFile" accept=".xlsx,.xls" hidden>
+    <button class="rac-btn primary" id="racSelect">Seleccionar Excel</button>
+    <button class="rac-btn" id="racRetry">Reintentar</button>
   </div>
 
-  <div class="ra-grid-1">
-    <div class="ra-box">
-      <h4>Crecimiento por familia · 2026 vs 2025</h4>
-      <div class="ra-yoy"><b>Familia</b><b>2026</b><b>2025</b><b>Var.</b></div>
-      <div class="ra-yoy"><span>Ligeros</span><span>126,070</span><span>83,964</span><span class="ra-up">+50.1%</span></div>
-      <div class="ra-yoy"><span>Comerciales</span><span>39,575</span><span>31,827</span><span class="ra-up">+24.3%</span></div>
-      <div class="ra-yoy"><span>Ómnibus</span><span>730</span><span>675</span><span class="ra-up">+8.1%</span></div>
-      <div class="ra-yoy"><span>Camión / Remolcador</span><span>9,795</span><span>6,908</span><span class="ra-up">+41.8%</span></div>
-      <div class="note" style="margin-top:12px"><b>Lectura ejecutiva:</b> Ligeros aporta el mayor crecimiento absoluto (+42,106 unidades), mientras Camión/Remolcador crece 41.8%.</div>
-    </div>
+  <div class="rac-kpis">
+    <div class="rac-kpi hero"><span>Retail acumulado</span><b id="racTotal">—</b><small id="racTotalSub">—</small></div>
+    <div class="rac-kpi"><span>Acumulado 2025</span><b id="racPrev">—</b><small>Mismo periodo</small></div>
+    <div class="rac-kpi"><span>Crecimiento YoY</span><b id="racGrowth">—</b><small id="racGrowthSub">—</small></div>
+    <div class="rac-kpi"><span>Marcas activas</span><b id="racBrands">—</b><small>con ventas en la selección</small></div>
+    <div class="rac-kpi"><span>Marca líder</span><b id="racLeader">—</b><small id="racLeaderSub">—</small></div>
+    <div class="rac-kpi"><span>Segmento líder</span><b id="racSegLead">—</b><small id="racSegLeadSub">—</small></div>
+  </div>
 
-    <div class="ra-box">
-      <h4>Composición Retail 2026</h4>
-      <div class="ra-share">
-        <div style="position:relative"><div class="ra-donut"></div><div class="ra-donut-center"><div><b>176,170</b><span>Total</span></div></div></div>
-        <div class="small">
-          <p><b style="color:#a57d00">Ligeros</b> 126,070 · 71.6%</p>
-          <p><b>Comerciales</b> 39,575 · 22.5%</p>
-          <p><b>Camión/Remolc.</b> 9,795 · 5.6%</p>
-          <p><b>Ómnibus</b> 730 · 0.4%</p>
-        </div>
-      </div>
+  <div class="rac-toolbar">
+    <div class="rac-tabs" id="racTabs">
+      <button class="active" data-family="TOTAL">Total mercado</button>
+      <button data-family="LIGEROS">Ligeros</button>
+      <button data-family="COMERCIALES">Comerciales</button>
+      <button data-family="OMNIBUS">Ómnibus</button>
+      <button data-family="CAMION">Camión / Remolcador</button>
     </div>
-
-    <div class="ra-box">
-      <h4>Top marcas · Total Retail</h4>
-      <div class="ra-rank">
-        <div class="ra-rank-row"><span>TOYOTA</span><div class="track"><div class="fill" style="width:100%"></div></div><b>31,645</b></div>
-        <div class="ra-rank-row"><span>KIA</span><div class="track"><div class="fill" style="width:53.6%"></div></div><b>16,955</b></div>
-        <div class="ra-rank-row"><span>HYUNDAI</span><div class="track"><div class="fill" style="width:48.6%"></div></div><b>15,382</b></div>
-        <div class="ra-rank-row"><span>CHANGAN</span><div class="track"><div class="fill" style="width:33.7%"></div></div><b>10,678</b></div>
-        <div class="ra-rank-row"><span>JETOUR</span><div class="track"><div class="fill" style="width:32.2%"></div></div><b>10,182</b></div>
-        <div class="ra-rank-row"><span>GEELY</span><div class="track"><div class="fill" style="width:24.6%"></div></div><b>7,798</b></div>
-        <div class="ra-rank-row"><span>CHEVROLET</span><div class="track"><div class="fill" style="width:24.1%"></div></div><b>7,624</b></div>
-        <div class="ra-rank-row"><span>FORD</span><div class="track"><div class="fill" style="width:22.5%"></div></div><b>7,112</b></div>
-        <div class="ra-rank-row"><span>CHERY</span><div class="track"><div class="fill" style="width:20.0%"></div></div><b>6,340</b></div>
-        <div class="ra-rank-row"><span>JAC</span><div class="track"><div class="fill" style="width:18.8%"></div></div><b>5,960</b></div>
-      </div>
+    <div class="rac-toolbar-right">
+      <div class="rac-selection" id="racSelection">Vista: Total mercado</div>
+      <div class="rac-brand-filter"><span>Marca</span><select id="racBrand"><option value="ALL">Todas las marcas</option></select></div>
+      <button class="rac-reset" id="racReset" title="Restablecer filtros">↻ Limpiar</button>
     </div>
   </div>
 
-  <div class="ra-grid-2">
-    <div class="ra-box">
-      <h4>Detalle de los 13 segmentos</h4>
-      <div class="ra-seg-grid">
-        <div class="ra-seg"><b>91,860</b><span>L3 · SUV</span></div>
-        <div class="ra-seg"><b>32,681</b><span>L1 · Autos/SW ≤1500cc</span></div>
-        <div class="ra-seg"><b>28,852</b><span>C3 · Pick Up</span></div>
-        <div class="ra-seg"><b>6,854</b><span>C1 · Microbús</span></div>
-        <div class="ra-seg"><b>4,386</b><span>P2 · Camión liviano</span></div>
-        <div class="ra-seg"><b>2,348</b><span>C4 · Panel/Furgón</span></div>
-        <div class="ra-seg"><b>2,199</b><span>P3 · Camión mediano</span></div>
-        <div class="ra-seg"><b>1,967</b><span>P4 · Camión pesado</span></div>
-        <div class="ra-seg"><b>1,529</b><span>L2 · Autos/SW >1500cc</span></div>
-        <div class="ra-seg"><b>1,521</b><span>C2 · Minibús</span></div>
-        <div class="ra-seg"><b>1,243</b><span>P5 · Remolcador</span></div>
-        <div class="ra-seg"><b>425</b><span>O1 · Ómnibus ≤16Tn</span></div>
-        <div class="ra-seg"><b>305</b><span>O2 · Ómnibus >16Tn</span></div>
+  <div class="rac-grid-top">
+    <div class="rac-card">
+      <div class="rac-head"><div><h4>Composición acumulada</h4><p>Participación por familia. Haz clic para filtrar.</p></div><span class="rac-chip" id="racShareChip">100% mercado</span></div>
+      <div class="rac-donut-zone">
+        <div class="rac-donut-wrap"><canvas id="racDonut" width="360" height="360"></canvas><div class="rac-donut-center"><b id="racDonutTotal">—</b><span>unidades</span></div></div>
+        <div class="rac-legend" id="racLegend"></div>
       </div>
     </div>
-
-    <div class="ra-box">
-      <h4>Marcas con mayor incremento absoluto</h4>
-      <div class="small">
-        <p><b>Ligeros:</b> Toyota +6,747 · Jetour +6,188 · Kia +5,737</p>
-        <p><b>Comerciales:</b> GWM +1,219 · JAC +1,098 · JMC +1,004</p>
-        <p><b>Ómnibus:</b> Hino +24 · Foton +23 · Golden Dragon +21</p>
-        <p><b>Camión/Remolc.:</b> Isuzu +1,142 · Foton +468 · Hino +310</p>
-      </div>
-      <hr style="border:0;border-top:1px solid var(--line)">
-      <h4>Caídas a vigilar</h4>
-      <div class="small">
-        <p>Ligeros: DFSK -1,503 · MG -1,251 · Nissan -612</p>
-        <p>Comerciales: Nissan -903 · DFSK -413</p>
-        <p>Ómnibus: Volkswagen -28</p>
-      </div>
+    <div class="rac-card">
+      <div class="rac-head"><div><h4 id="racRankTitle">Top marcas acumuladas · Total mercado</h4><p>Volumen 2026, referencia 2025 y variación.</p></div><span class="rac-chip">Top 10</span></div>
+      <div class="rac-rank" id="racRank"></div>
     </div>
-
-    <div class="ra-box">
-      <h4>Control y calidad del archivo</h4>
-      <div class="ra-control">
-        <div class="item"><span>Total general 2026</span><b class="pill ok">176,170 ✓</b></div>
-        <div class="item"><span>Suma 4 familias</span><b class="pill ok">176,170 ✓</b></div>
-        <div class="item"><span>VTA ACUM vs hojas detalle</span><b class="pill ok">0 diferencia ✓</b></div>
-        <div class="item"><span>Marca “FOTON 1”</span><b class="pill warn">Homologar a FOTON</b></div>
-        <div class="item"><span>LIGEROS fila TOTALES B:D</span><b class="pill bad">Valores incorrectos</b></div>
-      </div>
-      <div class="note" style="margin-top:12px"><b>Hallazgo importante:</b> en la hoja <b>LIGEROS</b>, la fila TOTALES muestra B=0, C=0 y D=20, aunque la suma real es <b>32,681 / 1,529 / 91,860</b>. El total 126,070 sí está correcto. Para el dashboard se usan las sumas reales, no esos tres valores erróneos.</div>
+    <div class="rac-card">
+      <div class="rac-head"><div><h4>Lectura ejecutiva</h4><p>Indicadores que cambian con la selección.</p></div></div>
+      <div class="rac-insights" id="racInsights"></div>
     </div>
   </div>
 
-  <div class="ra-box" style="margin-top:12px">
-    <h4>Metodología de origen de ventas</h4>
-    <div class="small">
-      <p><b>1.</b> Venta reportada directamente por marcas acreditadas ante AAP cuando existe más de un importador.</p>
-      <p><b>2.</b> Venta de marcas representativas estimada a partir de nacionalizaciones.</p>
-      <p><b>3.</b> Venta basada en nacionalizaciones para otras marcas.</p>
-    </div>
+  <div class="rac-card rac-family-card">
+    <div class="rac-head"><div><h4>Crecimiento por familia · 2026 vs 2025</h4><p>Compara tamaño, crecimiento absoluto y variación porcentual.</p></div><span class="rac-chip">YoY acumulado</span></div>
+    <div class="rac-family-grid" id="racFamilyGrid"></div>
   </div>
 
-  <div class="ra-foot"><span><b>TSF AutoMarket Intelligence</b> · Retail acumulado</span><span>Fuente: Archivo 6 – Venta Retail Acumulada Agosto 2026</span><span>5 hojas auditadas</span></div>
+  <div class="rac-grid-mid">
+    <div class="rac-card"><div class="rac-head"><div><h4>Mapa de segmentos acumulados</h4><p>Los 13 segmentos del mercado. Pasa el mouse y haz clic para explorar su familia.</p></div><span class="rac-chip" id="racSegChip">13 segmentos</span></div><div class="rac-segments" id="racSegments"></div></div>
+    <div class="rac-card"><div class="rac-head"><div><h4>Marcas que más impulsan el crecimiento</h4><p>Variación absoluta vs el mismo periodo de 2025.</p></div></div><div class="rac-movers" id="racWinners"></div></div>
+    <div class="rac-card"><div class="rac-head"><div><h4>Caídas a vigilar</h4><p>Marcas con mayor contracción absoluta.</p></div></div><div class="rac-movers" id="racLosers"></div></div>
+  </div>
+
+  <div class="rac-card rac-quality-card">
+    <div class="rac-head"><div><h4>Calidad y reconciliación</h4><p>Controles automáticos del archivo antes de usarlo en el BI.</p></div></div>
+    <div class="rac-quality" id="racQuality"></div>
+  </div>
+
+  <div class="rac-footer"><span><b>TSF AutoMarket Intelligence</b> · Retail acumulado</span><span id="racSource">Fuente: Archivo 6</span><span id="racAudit">5 hojas esperadas</span></div>
+  <div class="rac-tooltip" id="racTooltip"></div>
 </section>
-
 
 <section class="page" id="inmat">
   <div class="hero"><div><h3>Inmatriculaciones</h3><p>Registro efectivo de vehículos. Fuente: archivos 1–4.</p></div></div>
@@ -5074,6 +5092,65 @@ r4Init();
   window.addEventListener('resize',()=>document.querySelectorAll(TIP_SELECTOR).forEach(clampOne));
 })();
 
+</script>
+
+
+<script>
+/* ===== V41 Retail Acumulado Executive Pro ===== */
+(function(){
+const RAC={family:'TOTAL',brand:'ALL',rows:[],families:{},segments:{},period:'',fileName:'',wb:null};
+const CFG={
+ LIGEROS:{sheet:'LIGEROS',label:'Ligeros',segments:['L1','L2','L3'],prev:6},
+ COMERCIALES:{sheet:'COMERCIALES',label:'Comerciales',segments:['C1','C2','C3','C4'],prev:7},
+ OMNIBUS:{sheet:'OMNIBUS',label:'Ómnibus',segments:['O1','O2'],prev:5},
+ CAMION:{sheet:'CAMION-REMOLC',label:'Camión / Remolcador',segments:['P2','P3','P4','P5'],prev:7}
+};
+const COLORS=['#f6ab00','#ec0a6d','#20232b','#8e97a5'];
+const $=id=>document.getElementById(id); const fmt=n=>(Number(n)||0).toLocaleString('es-PE'); const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0.0%';
+function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
+function normBrand(v){let s=String(v||'').trim().toUpperCase().replace(/\s+/g,' ');if(s==='FOTON 1')s='FOTON';return s}
+function showTip(e,html){const t=$('racTooltip');if(!t)return;t.innerHTML=html;t.style.display='block';let x=e.clientX+14,y=e.clientY+14;const w=t.offsetWidth,h=t.offsetHeight;if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+h>innerHeight-8)y=e.clientY-h-14;t.style.left=x+'px';t.style.top=y+'px'}
+function hideTip(){const t=$('racTooltip');if(t)t.style.display='none'}
+function setLoad(ok,title,sub){$('racLoadTitle').textContent=title;$('racLoadSub').textContent=sub;$('racLoadTitle').style.color=ok?'#17201a':'#17191f'}
+function periodFrom(wb){for(const s of ['VTA ACUM','LIGEROS']){const ws=wb.Sheets[s];if(!ws)continue;const a=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});const txt=String(a?.[0]?.[0]||'');const m=txt.match(/A\s+([A-ZÁÉÍÓÚÑ]+)\s+(20\d{2})/i);if(m)return m[1].charAt(0).toUpperCase()+m[1].slice(1).toLowerCase()+' '+m[2]}return 'Periodo acumulado'}
+function parseWorkbook(wb,fileName){RAC.rows=[];RAC.families={};RAC.segments={};RAC.wb=wb;RAC.fileName=fileName||'Excel cargado';RAC.period=periodFrom(wb);
+ for(const [key,c] of Object.entries(CFG)){const ws=wb.Sheets[c.sheet];if(!ws)throw new Error('Falta la hoja '+c.sheet);const a=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});let famCur=0,famPrev=0;for(let r=5;r<a.length;r++){const brand=normBrand(a[r]?.[0]);if(!brand)continue;if(brand.includes('TOTAL'))break;const vals={};let cur=0;c.segments.forEach((seg,i)=>{const v=num(a[r]?.[1+i]);vals[seg]=v;cur+=v;RAC.segments[seg]=(RAC.segments[seg]||0)+v});const prev=num(a[r]?.[c.prev]);if(cur===0&&prev===0)continue;RAC.rows.push({family:key,brand,cur,prev,segments:vals});famCur+=cur;famPrev+=prev}RAC.families[key]={key,label:c.label,cur:famCur,prev:famPrev};}
+ render(true);setLoad(true,'Excel cargado correctamente',RAC.fileName+' · '+RAC.rows.length+' filas útiles · 5 hojas');$('racSource').textContent='Fuente: '+RAC.fileName;$('racAudit').textContent='5 hojas auditadas';
+}
+function filteredRows(){return RAC.rows.filter(r=>(RAC.family==='TOTAL'||r.family===RAC.family)&&(RAC.brand==='ALL'||r.brand===RAC.brand))}
+function aggBrands(rows){const m=new Map();for(const r of rows){const x=m.get(r.brand)||{cur:0,prev:0};x.cur+=r.cur;x.prev+=r.prev;m.set(r.brand,x)}return [...m].map(([brand,v])=>({brand,...v,delta:v.cur-v.prev})).sort((a,b)=>b.cur-a.cur)}
+function aggSegments(rows){const m=new Map();for(const r of rows)for(const [k,v] of Object.entries(r.segments))m.set(k,(m.get(k)||0)+v);return [...m].map(([seg,value])=>({seg,value})).sort((a,b)=>b.value-a.value)}
+function familyData(rows){const m={};for(const r of rows){if(!m[r.family])m[r.family]={cur:0,prev:0};m[r.family].cur+=r.cur;m[r.family].prev+=r.prev}return Object.entries(CFG).map(([k,c])=>({key:k,label:c.label,cur:m[k]?.cur||0,prev:m[k]?.prev||0}));}
+function refreshBrands(){const sel=$('racBrand');const old=RAC.brand;const brands=[...new Set(RAC.rows.filter(r=>RAC.family==='TOTAL'||r.family===RAC.family).map(r=>r.brand))].sort();sel.innerHTML='<option value="ALL">Todas las marcas</option>'+brands.map(b=>'<option>'+b+'</option>').join('');sel.value=brands.includes(old)?old:'ALL';RAC.brand=sel.value}
+function renderRank(brands,total){
+ const max=Math.max(brands[0]?.cur||0,1);
+ $('racRank').innerHTML=brands.slice(0,10).map((x,i)=>{const w=x.cur/max*100;const y=x.prev?((x.cur/x.prev-1)*100):null;const ytxt=y===null?'s/d':(y>=0?'+':'')+y.toFixed(1)+'%';const ycolor=y===null?'#9097a3':y>=0?'#067647':'#b42318';return `<div class="rac-rank-row" data-brand="${x.brand}"><span class="n">${i+1}</span><span class="name">${x.brand}</span><div class="rac-track"><div class="rac-fill" style="width:${w}%"></div></div><div class="rac-rank-metric"><strong>${fmt(x.cur)}</strong><small style="color:${ycolor}">${ytxt}</small></div></div>`}).join('')||'<div style="color:#999;font-size:10px">Sin datos para la selección.</div>';
+ document.querySelectorAll('#racRank .rac-rank-row').forEach(el=>{el.onclick=()=>{RAC.brand=el.dataset.brand;$('racBrand').value=RAC.brand;render(false)};el.onmousemove=e=>{const x=brands.find(b=>b.brand===el.dataset.brand);const y=x.prev?((x.cur/x.prev-1)*100):null;showTip(e,`<b>${x.brand}</b><br>2026: ${fmt(x.cur)} unidades<br>2025: ${fmt(x.prev)} unidades<br>Participación: ${pct(x.cur,total)}<br>Variación: ${y===null?'s/d':(y>=0?'+':'')+y.toFixed(1)+'%'}`)};el.onmouseleave=hideTip})
+}
+function drawDonut(fams,total){const c=$('racDonut'),ctx=c.getContext('2d');const dpr=Math.max(1,devicePixelRatio||1),cssW=c.clientWidth||280,cssH=c.clientHeight||280;c.width=cssW*dpr;c.height=cssH*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cssW,cssH);const cx=cssW/2,cy=cssH/2,r=Math.min(cssW,cssH)*.37,inner=r*.60;let a=-Math.PI/2;const arcs=[];fams.forEach((f,i)=>{const da=total?f.cur/total*Math.PI*2:0;ctx.beginPath();ctx.arc(cx,cy,r,a,a+da);ctx.arc(cx,cy,inner,a+da,a,true);ctx.closePath();ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();arcs.push({a0:a,a1:a+da,f});a+=da});ctx.beginPath();ctx.arc(cx,cy,inner-1,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();$('racDonutTotal').textContent=fmt(total);$('racLegend').innerHTML=fams.map((f,i)=>`<div class="rac-leg" data-family="${f.key}"><i class="rac-dot" style="background:${COLORS[i]}"></i><span>${f.label}</span><b>${fmt(f.cur)} · ${pct(f.cur,total)}</b></div>`).join('');document.querySelectorAll('#racLegend .rac-leg').forEach(el=>el.onclick=()=>{RAC.family=el.dataset.family;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RAC.family));refreshBrands();render(false)});c.onmousemove=e=>{const rect=c.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-cssW/2,dy=y-cssH/2,rr=Math.hypot(dx,dy);if(rr<inner||rr>r){hideTip();return}let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;const hit=arcs.find(z=>ang>=z.a0&&ang<=z.a1);if(hit)showTip(e,`<b>${hit.f.label}</b><br>${fmt(hit.f.cur)} unidades<br>${pct(hit.f.cur,total)} de la selección`)};c.onmouseleave=hideTip;c.onclick=e=>{const rect=c.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-cssW/2,dy=y-cssH/2,rr=Math.hypot(dx,dy);if(rr<inner||rr>r)return;let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;const hit=arcs.find(z=>ang>=z.a0&&ang<=z.a1);if(hit){RAC.family=hit.f.key;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RAC.family));refreshBrands();render(false)}}}
+function renderFamilies(fams){
+ const max=Math.max(...fams.map(f=>f.cur),1);
+ $('racFamilyGrid').innerHTML=fams.map((f,i)=>{const y=f.prev?((f.cur/f.prev-1)*100):null;const delta=f.cur-f.prev;return `<div class="rac-family" data-family="${f.key}"><div class="top"><h5>${f.label}</h5><span class="yoy" style="color:${y===null?'#777':y>=0?'#067647':'#b42318'}">${y===null?'s/d':(y>=0?'+':'')+y.toFixed(1)+'%'}</span></div><div class="vals"><b>${fmt(f.cur)}</b><span>${pct(f.cur,fams.reduce((s,z)=>s+z.cur,0))} del mercado</span></div><div class="bar"><i style="width:${f.cur/max*100}%"></i></div><div class="compare"><div><span>2025</span><b>${fmt(f.prev)}</b></div><div><span>Variación abs.</span><b style="color:${delta>=0?'#067647':'#b42318'}">${delta>=0?'+':''}${fmt(delta)}</b></div></div></div>`}).join('');
+ document.querySelectorAll('#racFamilyGrid .rac-family').forEach(el=>{const key=el.dataset.family;el.onclick=()=>{RAC.family=key;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RAC.family));refreshBrands();render(false)};el.onmousemove=e=>{const f=fams.find(x=>x.key===key);const y=f.prev?((f.cur/f.prev-1)*100):null;showTip(e,`<b>${f.label}</b><br>2026: ${fmt(f.cur)}<br>2025: ${fmt(f.prev)}<br>YoY: ${y===null?'s/d':(y>=0?'+':'')+y.toFixed(1)+'%'}`)};el.onmouseleave=hideTip})
+}
+function segFamily(seg){if(/^L/.test(seg))return 'LIGEROS';if(/^C/.test(seg))return 'COMERCIALES';if(/^O/.test(seg))return 'OMNIBUS';if(/^P/.test(seg))return 'CAMION';return 'TOTAL'}
+function renderSegments(segs,total){
+ $('racSegments').innerHTML=segs.map(s=>{const fk=segFamily(s.seg);return `<div class="rac-seg" data-family="${fk}" data-seg="${s.seg}"><span class="seg-family">${CFG[fk]?.label||''}</span><b>${fmt(s.value)}</b><span>${s.seg}</span><small>${pct(s.value,total)} del total</small></div>`}).join('');$('racSegChip').textContent=segs.length+' segmentos';
+ document.querySelectorAll('#racSegments .rac-seg').forEach(el=>{el.onmousemove=e=>{const s=segs.find(x=>x.seg===el.dataset.seg);showTip(e,`<b>Segmento ${s.seg}</b><br>${fmt(s.value)} unidades<br>${pct(s.value,total)} de la selección<br>Haz clic para abrir ${CFG[el.dataset.family]?.label||'familia'}.`)};el.onmouseleave=hideTip;el.onclick=()=>{RAC.family=el.dataset.family;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RAC.family));refreshBrands();render(false)}})
+}
+function renderMovers(brands){
+ const pos=brands.filter(x=>x.delta>0).sort((a,b)=>b.delta-a.delta).slice(0,6),neg=brands.filter(x=>x.delta<0).sort((a,b)=>a.delta-b.delta).slice(0,6);
+ const row=(x,cls)=>{const y=x.prev?((x.cur/x.prev-1)*100):null;return `<div class="rac-move ${cls}" data-brand="${x.brand}"><span>${x.brand}<small>${fmt(x.prev)} → ${fmt(x.cur)}</small></span><b>${x.delta>0?'+':''}${fmt(x.delta)}</b></div>`};
+ $('racWinners').innerHTML=pos.map(x=>row(x,'up')).join('')||'<span style="font-size:10px;color:#999">Sin incrementos.</span>';$('racLosers').innerHTML=neg.map(x=>row(x,'down')).join('')||'<span style="font-size:10px;color:#999">Sin caídas.</span>';
+ document.querySelectorAll('#racWinners .rac-move,#racLosers .rac-move').forEach(el=>{el.onclick=()=>{RAC.brand=el.dataset.brand;$('racBrand').value=RAC.brand;render(false)}})
+}
+function renderQuality(total){let control=null;try{const a=XLSX.utils.sheet_to_json(RAC.wb.Sheets['VTA ACUM'],{header:1,defval:null,raw:true});for(const row of a){if(String(row?.[0]||'').toUpperCase().includes('TOTALES')){control=num(row?.[30]);break}}}catch(e){}const diff=control===null?null:total-control;const ligeros=RAC.families.LIGEROS?.cur||0;const q=[['Total hojas detalle',fmt(total),'ok'],['VTA ACUM',control===null?'No leído':fmt(control),control===total?'ok':'bad'],['Diferencia',diff===null?'—':fmt(diff),diff===0?'ok':'bad'],['FOTON 1','Homologado a FOTON','warn'],['LIGEROS B:D','Se recalcula desde detalle','warn']];$('racQuality').innerHTML=q.map(x=>`<div class="rac-q ${x[2]}"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('')}
+function render(refresh=true){if(!RAC.rows.length)return;if(refresh)refreshBrands();const rows=filteredRows(),total=rows.reduce((s,r)=>s+r.cur,0),prev=rows.reduce((s,r)=>s+r.prev,0),growth=prev?(total/prev-1)*100:null,brands=aggBrands(rows),segs=aggSegments(rows),fams=familyData(rows);$('racPeriod').textContent=RAC.period;$('racHeroText').textContent='Visión acumulada a '+RAC.period+' · tamaño de mercado, crecimiento 2026 vs 2025, concentración y marcas impulsoras.';$('racTotal').textContent=fmt(total);$('racTotalSub').textContent=RAC.family==='TOTAL'?'Mercado Retail acumulado':CFG[RAC.family].label;$('racPrev').textContent=fmt(prev);$('racGrowth').textContent=growth===null?'—':(growth>=0?'+':'')+growth.toFixed(1)+'%';$('racGrowth').className=growth===null?'':growth>=0?'positive':'negative';$('racGrowthSub').textContent=growth===null?'sin base comparable':((total-prev)>=0?'+':'')+fmt(total-prev)+' unidades';$('racBrands').textContent=brands.filter(x=>x.cur>0).length;$('racLeader').textContent=brands[0]?.brand||'—';$('racLeaderSub').textContent=brands[0]?fmt(brands[0].cur)+' · '+pct(brands[0].cur,total):'—';$('racSegLead').textContent=segs[0]?.seg||'—';$('racSegLeadSub').textContent=segs[0]?fmt(segs[0].value)+' · '+pct(segs[0].value,total):'—';$('racShareChip').textContent=RAC.family==='TOTAL'?'100% mercado':CFG[RAC.family].label;$('racRankTitle').textContent='Top marcas acumuladas · '+(RAC.family==='TOTAL'?'Total mercado':CFG[RAC.family].label);$('racSelection').textContent='Vista: '+(RAC.family==='TOTAL'?'Total mercado':CFG[RAC.family].label)+(RAC.brand!=='ALL'?' · '+RAC.brand:'');drawDonut(fams,total);renderRank(brands,total);renderFamilies(fams);renderSegments(segs,total);renderMovers(brands);renderQuality(RAC.rows.reduce((s,r)=>s+r.cur,0));const top3=brands.slice(0,3).reduce((s,x)=>s+x.cur,0),topFam=fams.slice().sort((a,b)=>b.cur-a.cur)[0];$('racInsights').innerHTML=`<div class="rac-insight"><span>Familia dominante</span><b>${topFam?.label||'—'}</b><small>${pct(topFam?.cur||0,total)}</small></div><div class="rac-insight"><span>Top 3 marcas</span><b>${pct(top3,total)}</b><small>concentración</small></div><div class="rac-insight"><span>Variación absoluta</span><b>${(total-prev)>=0?'+':''}${fmt(total-prev)}</b><small>vs 2025</small></div><div class="rac-insight"><span>Segmento líder</span><b>${segs[0]?.seg||'—'}</b><small>${segs[0]?pct(segs[0].value,total):'—'}</small></div>`;}
+async function readFile(file){try{setLoad(false,'Procesando Excel…',file.name);const buf=await file.arrayBuffer();const wb=XLSX.read(buf,{type:'array'});parseWorkbook(wb,file.name)}catch(err){console.error(err);setLoad(false,'No se pudo leer el archivo',err.message||String(err));alert('No se pudo cargar Retail Acumulado: '+(err.message||err))}}
+async function autoLoad(){const candidates=['./data/venta_retail_acumulada.xlsx','./venta_retail_acumulada.xlsx','./08.6_Venta Retail Acumulada Agosto 2026.xlsx','./08.6_Venta Retail Acumulada Agosto 2026(3).xlsx','./08.6_Venta Retail Acumulada Agosto 2026(4).xlsx'];for(const u of candidates){try{const r=await fetch(u,{cache:'no-store'});if(!r.ok)continue;const b=await r.arrayBuffer();const wb=XLSX.read(b,{type:'array'});parseWorkbook(wb,u.split('/').pop());return}catch(e){}}setLoad(false,'Selecciona el Excel de Retail Acumulado','Archivo 6 · carga manual o súbelo como data/venta_retail_acumulada.xlsx')}
+$('racSelect')?.addEventListener('click',()=>$('racFile').click());$('racFile')?.addEventListener('change',e=>{if(e.target.files?.[0])readFile(e.target.files[0])});$('racRetry')?.addEventListener('click',autoLoad);$('racBrand')?.addEventListener('change',e=>{RAC.brand=e.target.value;render(false)});$('racReset')?.addEventListener('click',()=>{RAC.family='TOTAL';RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family==='TOTAL'));refreshBrands();render(false)});document.querySelectorAll('#racTabs button').forEach(b=>b.addEventListener('click',()=>{RAC.family=b.dataset.family;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(x=>x.classList.toggle('active',x===b));refreshBrands();render(false)}));
+window.addEventListener('resize',()=>{if(RAC.rows.length)render(false)});setTimeout(autoLoad,350);
+})();
 </script>
 
 </body>
