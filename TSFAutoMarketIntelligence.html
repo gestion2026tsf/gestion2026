@@ -6023,5 +6023,161 @@ window.addEventListener('resize',()=>{if(RAC.rows.length)render(false)});setTime
 </script>
 
 \n<script>\n/* ===== V44 - Crossfilter temporal al pasar el mouse ===== */\n(function(){\n  const fine=window.matchMedia && window.matchMedia('(pointer:fine)').matches;\n  if(!fine) return;\n  const note=document.createElement('div');note.className='bi-preview-note';note.textContent='Vista previa · sal del gráfico para volver';document.body.appendChild(note);\n  const states=new Map();\n  function showNote(){note.classList.add('show')} function hideNote(){if(![...states.values()].some(s=>s.active))note.classList.remove('show')}\n  function preview(key,get,set,render,value){\n    let s=states.get(key);if(!s){s={base:get(),active:false,last:null};states.set(key,s)}\n    if(!s.active){s.base=get();s.active=true}\n    if(s.last===value)return;s.last=value;set(value);showNote();requestAnimationFrame(()=>render(false));\n  }\n  function restore(key,set,render){const s=states.get(key);if(!s||!s.active)return;const v=s.base;s.active=false;s.last=null;set(v);requestAnimationFrame(()=>render(false));setTimeout(hideNote,20)}\n  function commit(key){const s=states.get(key);if(s){s.active=false;s.last=null}s&&setTimeout(hideNote,20)}\n  function hoverClass(container,selector){\n    if(!container)return;container.addEventListener('pointermove',e=>{const row=e.target.closest(selector);container.querySelectorAll('.bi-live-hover').forEach(x=>x!==row&&x.classList.remove('bi-live-hover'));if(row)row.classList.add('bi-live-hover')});container.addEventListener('pointerleave',()=>container.querySelectorAll('.bi-live-hover').forEach(x=>x.classList.remove('bi-live-hover')));\n  }\n  function delegate(container,selector,key,get,set,render,valueOf){\n    if(!container)return;let current=null;container.addEventListener('pointermove',e=>{const row=e.target.closest(selector);if(!row||!container.contains(row))return;const value=valueOf(row);if(value==null||value==='')return;if(current!==row){current=row;preview(key,get,set,render,value)}});container.addEventListener('pointerleave',()=>{current=null;restore(key,set,render)});container.addEventListener('click',()=>commit(key),true);hoverClass(container,selector);\n  }\n  function bindCanvas(canvas,key,get,set,render,hit){\n    if(!canvas)return;let last=null;canvas.addEventListener('pointermove',e=>{const v=hit(canvas,e);if(v==null){if(last!==null){last=null;restore(key,set,render)}return}if(last!==v){last=v;preview(key,get,set,render,v)}});canvas.addEventListener('pointerleave',()=>{last=null;restore(key,set,render)});canvas.addEventListener('click',()=>commit(key),true);\n  }\n  function hitDonutParts(c,e,nameField='filter'){const rect=c.getBoundingClientRect(),parts=c._parts||c._vmParts||c._slices||[];if(!parts.length)return null;const box=rect.width,x=e.clientX-rect.left,y=e.clientY-rect.top,cx=parts[0].cx??box/2,cy=parts[0].cy??box/2,dx=x-cx,dy=y-cy,rr=Math.hypot(dx,dy);let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;for(const p of parts){const rin=p.r??p.inner??box*.28, rout=p.R??box*.43;if(rr>=rin-2&&rr<=rout+7&&a>=p.start&&a<=p.end)return p[nameField]??p.name??p.f}return null}\n  function rankName(row){let t=row.querySelector('.name')?.textContent||row.dataset.key||row.dataset.brand||'';return t.replace(/^\\s*\\d+\\.\\s*/,'').trim()}\n  function barName(row){return row.dataset.key||row.querySelector('.vm2-bar-head span,.r4-bar-head span,.lv2-bar-head span,.vp3-bar-head span')?.textContent?.trim()||''}\n  setTimeout(()=>{\n    // Menores\n    if(window.vm20Update&&window.vm20Els){\n      bindCanvas(document.getElementById('vm2Donut'),'vm-type',()=>vm20Els.type.value,v=>vm20Els.type.value=v,vm20Update,(c,e)=>hitDonutParts(c,e,'filter'));\n      bindCanvas(document.getElementById('vm2Trend'),'vm-month',()=>vm20Els.month.value,v=>vm20Els.month.value=v,vm20Update,(c,e)=>{const r=c.getBoundingClientRect(),p=46,w=r.width-60,n=(window.VM20_MONTHS||[]).length;if(!n)return null;const idx=Math.max(0,Math.min(n-1,Math.round(((e.clientX-r.left)-p)/Math.max(1,w)*(n-1))));return String(idx)});\n      delegate(document.getElementById('vm2Brands'),'.vm2-rank-row','vm-brand',()=>vm20Els.brand.value,v=>vm20Els.brand.value=v,vm20Update,rankName);\n      delegate(document.getElementById('vm2Models'),'.vm2-rank-row','vm-model',()=>vm20Els.model.value,v=>vm20Els.model.value=v,vm20Update,rankName);\n      delegate(document.getElementById('vm2Zones'),'.vm2-bar-row','vm-zone',()=>vm20Els.zone.value,v=>vm20Els.zone.value=v,vm20Update,barName);\n      delegate(document.getElementById('vm2Fuels'),'.vm2-bar-row','vm-fuel',()=>vm20Els.fuel.value,v=>vm20Els.fuel.value=v,vm20Update,barName);\n    }\n    // Livianos\n    if(window.lv2Update&&window.lv2Els){\n      bindCanvas(document.getElementById('lv2Donut'),'lv-class',()=>lv2Els.cls.value,v=>lv2Els.cls.value=v,lv2Update,(c,e)=>hitDonutParts(c,e,'name'));\n      bindCanvas(document.getElementById('lv2Trend'),'lv-month',()=>lv2Els.month.value,v=>lv2Els.month.value=v,lv2Update,(c,e)=>{const m=c._lvMeta;if(!m||!m.xs?.length)return null;const r=c.getBoundingClientRect(),x=e.clientX-r.left;let idx=0,b=1e9;m.xs.forEach((xx,i)=>{const d=Math.abs(xx-x);if(d<b){b=d;idx=i}});return LV2.months[idx]});\n      delegate(document.getElementById('lv2Brands'),'.lv2-rank-row','lv-brand',()=>lv2Els.brand.value,v=>lv2Els.brand.value=v,lv2Update,rankName);\n      delegate(document.getElementById('lv2Models'),'.lv2-rank-row','lv-model',()=>lv2Els.model.value,v=>lv2Els.model.value=v,lv2Update,rankName);\n      delegate(document.getElementById('lv2Offices'),'.lv2-office-row','lv-office',()=>lv2Els.office.value,v=>lv2Els.office.value=v,lv2Update,r=>r.querySelector('.name')?.textContent.trim());\n    }\n    // Pesados\n    if(window.vp3Update&&window.vp3Els){\n      bindCanvas(document.getElementById('vp3Donut'),'vp-class',()=>vp3Els.subclass.value,v=>vp3Els.subclass.value=v,vp3Update,(c,e)=>hitDonutParts(c,e,'name'));\n      bindCanvas(document.getElementById('vp3Trend'),'vp-month',()=>vp3Els.month.value,v=>vp3Els.month.value=v,vp3Update,(c,e)=>{const q=c._plot;if(!q)return null;const r=c.getBoundingClientRect(),idx=Math.max(0,Math.min((VP3.months?.length||1)-1,Math.round(((e.clientX-r.left)-q.p.l)/q.cw*q.den)));return String(idx)});\n      delegate(document.getElementById('vp3Brands'),'.vp3-rank-row','vp-brand',()=>vp3Els.brand.value,v=>vp3Els.brand.value=v,vp3Update,rankName);\n      delegate(document.getElementById('vp3Models'),'.vp3-rank-row','vp-model',()=>vp3Els.model.value,v=>vp3Els.model.value=v,vp3Update,rankName);\n      delegate(document.getElementById('vp3Offices'),'.vp3-office-row','vp-office',()=>vp3Els.office.value,v=>vp3Els.office.value=v,vp3Update,r=>r.querySelector('.name')?.textContent.trim());\n    }\n    // Remolques\n    if(window.r4Update&&window.r4Els){\n      bindCanvas(document.getElementById('r4Donut'),'r4-cat',()=>r4Els.cat.value,v=>r4Els.cat.value=v,r4Update,(c,e)=>hitDonutParts(c,e,'name'));\n      bindCanvas(document.getElementById('r4Trend'),'r4-month',()=>r4Els.month.value,v=>r4Els.month.value=v,r4Update,(c,e)=>{const q=c._plot;if(!q)return null;const r=c.getBoundingClientRect(),idx=Math.max(0,Math.min((R4.labels?.length||1)-1,Math.round(((e.clientX-r.left)-q.p.l)/q.cw*q.den)));return String(idx)});\n      delegate(document.getElementById('r4Brands'),'.r4-rank-row','r4-brand',()=>r4Els.brand.value,v=>r4Els.brand.value=v,r4Update,r=>r.dataset.key||rankName(r));\n      delegate(document.getElementById('r4Models'),'.r4-rank-row','r4-model',()=>r4Els.model.value,v=>r4Els.model.value=v,r4Update,r=>r.dataset.key||rankName(r));\n      delegate(document.getElementById('r4Depts'),'.r4-bar-row','r4-dept',()=>r4Els.dept.value,v=>r4Els.dept.value=v,r4Update,barName);\n      delegate(document.getElementById('r4Offices'),'.r4-bar-row','r4-office',()=>r4Els.office.value,v=>r4Els.office.value=v,r4Update,barName);\n      delegate(document.getElementById('r4Bodies'),'.r4-bar-row','r4-body',()=>r4Els.body.value,v=>r4Els.body.value=v,r4Update,barName);\n    }\n    // Retail del Mes\n    if(window.rtmRender&&typeof RTM!=='undefined'){\n      bindCanvas(document.getElementById('rtmDonut'),'rtm-family',()=>RTM.family,v=>{RTM.family=v;RTM.brand='ALL'},rtmRender,(c,e)=>hitDonutParts(c,e,'f'));\n      delegate(document.getElementById('rtmLegend'),'button[data-family]','rtm-family',()=>RTM.family,v=>{RTM.family=v;RTM.brand='ALL'},rtmRender,r=>r.dataset.family);\n      delegate(document.getElementById('rtmFamilyBars'),'.rtm-rank-row[data-family]','rtm-family2',()=>RTM.family,v=>{RTM.family=v;RTM.brand='ALL'},rtmRender,r=>r.dataset.family);\n      delegate(document.getElementById('rtmRank'),'.rtm-rank-row[data-brand]','rtm-brand',()=>RTM.brand,v=>RTM.brand=v,rtmRender,r=>r.dataset.brand);\n    }\n    // Retail Acumulado\n    const A=window.__RAC_API;if(A){const {RAC,render}=A;\n      delegate(document.getElementById('racLegend'),'.rac-leg[data-family]','rac-family',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);\n      delegate(document.getElementById('racFamilyGrid'),'.rac-family[data-family]','rac-family2',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);\n      delegate(document.getElementById('racRank'),'.rac-rank-row[data-brand]','rac-brand',()=>RAC.brand,v=>RAC.brand=v,render,r=>r.dataset.brand);\n      delegate(document.getElementById('racSegments'),'.rac-seg[data-family]','rac-seg-family',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);\n    }\n  },1400);\n})();\n</script>\n
+
+<style id="v46-global-tooltip-fix">
+/* ===== V46 · TOOLTIP GLOBAL PEGADO AL PUNTERO =====
+   Unifica la posición de TODOS los tooltips del sistema.
+   Siempre aparecen al costado del cursor y cambian de lado
+   únicamente cuando no hay espacio en pantalla.
+*/
+.vm2-tooltip,
+.vm2-map-tip,
+.lv2-tip,
+.lv2-chart-tip,
+.vp3-tooltip,
+.r4-tooltip,
+#retailmes .rtm-tooltip,
+.rac-tooltip,
+.popup {
+  position: fixed !important;
+  z-index: 999999 !important;
+  pointer-events: none !important;
+  margin: 0 !important;
+  transform: none !important;
+  max-width: 250px !important;
+  min-width: 118px;
+  padding: 9px 11px !important;
+  border-radius: 10px !important;
+  background: rgba(22,25,31,.97) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.22) !important;
+  line-height: 1.38 !important;
+  white-space: normal !important;
+}
+
+/* evita que una transición anterior haga que el tooltip "viaje" */
+.vm2-tooltip,
+.vm2-map-tip,
+.lv2-tip,
+.lv2-chart-tip,
+.vp3-tooltip,
+.r4-tooltip,
+#retailmes .rtm-tooltip,
+.rac-tooltip,
+.popup {
+  transition: opacity .10s ease !important;
+}
+</style>
+
+<script id="v46-global-tooltip-engine">
+/* ===== V46 · POSICIONAMIENTO UNIVERSAL DE TOOLTIPS ===== */
+(function () {
+  const SELECTOR = [
+    '.vm2-tooltip',
+    '.vm2-map-tip',
+    '.lv2-tip',
+    '.lv2-chart-tip',
+    '.vp3-tooltip',
+    '.r4-tooltip',
+    '#retailmes .rtm-tooltip',
+    '.rac-tooltip',
+    '.popup'
+  ].join(',');
+
+  let lastX = 0;
+  let lastY = 0;
+  let raf = 0;
+
+  function isVisible(el) {
+    if (!el) return false;
+    const cs = getComputedStyle(el);
+    if (cs.display === 'none' || cs.visibility === 'hidden') return false;
+    if (parseFloat(cs.opacity || '1') === 0) return false;
+    return true;
+  }
+
+  function placeOne(el, x, y) {
+    if (!isVisible(el)) return;
+
+    /* El rect se toma después de que el contenido del tooltip ya fue actualizado. */
+    const rect = el.getBoundingClientRect();
+    const gap = 12;
+    const edge = 10;
+
+    /* Diseño solicitado: al COSTADO del puntero, centrado verticalmente. */
+    let left = x + gap;
+    let top = y - (rect.height / 2);
+
+    /* Si no entra a la derecha, va a la izquierda del puntero. */
+    if (left + rect.width > window.innerWidth - edge) {
+      left = x - rect.width - gap;
+    }
+
+    /* Nunca dejar que salga por arriba o abajo. */
+    if (top < edge) top = edge;
+    if (top + rect.height > window.innerHeight - edge) {
+      top = window.innerHeight - rect.height - edge;
+    }
+
+    /* Protección adicional en pantallas muy estrechas. */
+    if (left < edge) left = edge;
+    if (left + rect.width > window.innerWidth - edge) {
+      left = Math.max(edge, window.innerWidth - rect.width - edge);
+    }
+
+    el.style.setProperty('left', Math.round(left) + 'px', 'important');
+    el.style.setProperty('top', Math.round(top) + 'px', 'important');
+    el.style.setProperty('right', 'auto', 'important');
+    el.style.setProperty('bottom', 'auto', 'important');
+    el.style.setProperty('transform', 'none', 'important');
+  }
+
+  function reposition() {
+    raf = 0;
+    document.querySelectorAll(SELECTOR).forEach(el => placeOne(el, lastX, lastY));
+  }
+
+  function schedule(x, y) {
+    lastX = x;
+    lastY = y;
+    if (!raf) raf = requestAnimationFrame(reposition);
+  }
+
+  /*
+    Se usa mousemove en fase de burbujeo.
+    Los handlers propios de cada gráfico se ejecutan primero sobre el canvas
+    y después este listener corrige la posición final.
+  */
+  document.addEventListener('mousemove', function (e) {
+    schedule(e.clientX, e.clientY);
+  }, false);
+
+  /*
+    Algunos elementos usan pointer events para el crossfilter.
+    Mantener ambos garantiza el mismo comportamiento en todo el dashboard.
+  */
+  document.addEventListener('pointermove', function (e) {
+    schedule(e.clientX, e.clientY);
+  }, false);
+
+  /* También corrige inmediatamente si el contenido cambia estando quieto el mouse. */
+  const observer = new MutationObserver(function () {
+    if (lastX || lastY) schedule(lastX, lastY);
+  });
+
+  window.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll(SELECTOR).forEach(el => {
+      observer.observe(el, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributeFilter: ['style', 'class']
+      });
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
