@@ -3809,6 +3809,272 @@ table tbody tr:hover{
 canvas{transition:filter .14s ease,opacity .14s ease}
 .bi-preview-note{position:fixed;right:22px;bottom:76px;z-index:999999;background:#151820;color:#fff;border-radius:999px;padding:8px 12px;font:700 10px Segoe UI,sans-serif;box-shadow:0 10px 28px rgba(0,0,0,.2);display:none;pointer-events:none}
 .bi-preview-note.show{display:block}
+
+/* ===== V45 · DONAS UNIFICADAS: DONA ARRIBA + LEYENDA ABAJO ===== */
+
+/* RETAIL DEL MES */
+#retailmes .rtm-donut-zone{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:18px!important;
+  min-height:0!important;
+  padding:18px 0 2px!important;
+}
+#retailmes .rtm-donut-wrap{
+  width:220px!important;
+  height:220px!important;
+  margin:0 auto!important;
+  flex:0 0 auto!important;
+}
+#retailmes #rtmDonut{
+  width:220px!important;
+  height:220px!important;
+}
+#retailmes .rtm-legend{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  margin-top:0!important;
+}
+#retailmes .rtm-legend button{
+  width:100%!important;
+  min-height:58px!important;
+  padding:10px 12px!important;
+  border-radius:13px!important;
+  transform:none!important;
+  overflow:hidden!important;
+}
+#retailmes .rtm-legend button:hover,
+#retailmes .rtm-legend button.active{
+  transform:translateY(-2px)!important;
+}
+#retailmes .rtm-legend span{
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+/* RETAIL ACUMULADO */
+#retail .rac-donut-zone{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:18px!important;
+  min-height:0!important;
+  padding:18px 0 2px!important;
+}
+#retail .rac-donut-wrap{
+  width:220px!important;
+  max-width:220px!important;
+  height:220px!important;
+  aspect-ratio:1!important;
+  margin:0 auto!important;
+  flex:0 0 auto!important;
+}
+#retail .rac-donut-wrap canvas{
+  width:220px!important;
+  height:220px!important;
+}
+#retail .rac-legend{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+#retail .rac-leg{
+  width:100%!important;
+  min-height:58px!important;
+  padding:10px 12px!important;
+  border-radius:13px!important;
+  transform:none!important;
+  overflow:hidden!important;
+}
+#retail .rac-leg:hover{transform:translateY(-2px)!important}
+#retail .rac-leg span{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+
+/* VEHÍCULOS MENORES */
+#menores .donut-card{
+  display:flex!important;
+  flex-direction:column!important;
+}
+#menores .vm2-donut-wrap{
+  width:210px!important;
+  height:210px!important;
+  min-height:210px!important;
+  margin:18px auto 16px!important;
+}
+#menores .vm2-donut-wrap canvas{
+  width:210px!important;
+  height:210px!important;
+  max-width:210px!important;
+  max-height:210px!important;
+}
+#menores .vm2-donut-legend{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  margin-top:auto!important;
+}
+#menores .vm2-donut-legend button{
+  min-height:56px!important;
+  padding:10px 12px!important;
+  border-radius:13px!important;
+}
+
+/* VEHÍCULOS LIVIANOS */
+#ligeros .lv2-donut-wrap{
+  width:210px!important;
+  height:210px!important;
+  margin:18px auto 16px!important;
+}
+#ligeros .lv2-donut-wrap canvas{
+  width:210px!important;
+  height:210px!important;
+}
+#ligeros .lv2-class-legend{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+#ligeros .lv2-class-legend button{
+  width:100%!important;
+  min-height:56px!important;
+  padding:10px 12px!important;
+  border-radius:13px!important;
+  transform:none!important;
+  overflow:hidden!important;
+}
+#ligeros .lv2-class-legend button:hover{transform:translateY(-2px)!important}
+#ligeros .lv2-class-legend span{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+
+/* VEHÍCULOS PESADOS */
+#pesados .vp3-donut-card{
+  display:flex!important;
+  flex-direction:column!important;
+}
+#pesados .vp3-donut-wrap{
+  width:210px!important;
+  height:210px!important;
+  margin:18px auto 16px!important;
+}
+#pesados .vp3-donut-wrap canvas{
+  width:210px!important;
+  height:210px!important;
+}
+#pesados .vp3-donut-legend{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  margin-top:auto!important;
+}
+#pesados .vp3-donut-legend button{
+  width:100%!important;
+  min-height:56px!important;
+  padding:10px 12px!important;
+  border-radius:13px!important;
+  overflow:hidden!important;
+}
+#pesados .vp3-donut-legend button span{min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+
+/* REMOLQUES / SEMIRREMOLQUES */
+#remolques .r4-donut-wrap,
+#remolques_semirremolques .r4-donut-wrap,
+#remolquessemirremolques .r4-donut-wrap,
+#remolques-semirremolques .r4-donut-wrap{
+  width:210px!important;
+  height:210px!important;
+  margin:18px auto 16px!important;
+}
+#remolques .r4-donut-wrap canvas,
+#remolques_semirremolques .r4-donut-wrap canvas,
+#remolquessemirremolques .r4-donut-wrap canvas,
+#remolques-semirremolques .r4-donut-wrap canvas{
+  width:210px!important;
+  height:210px!important;
+}
+.r4-donut-legend{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+.r4-donut-legend button{
+  width:100%!important;
+  min-height:56px!important;
+  padding:10px 12px!important;
+  border-radius:13px!important;
+  overflow:hidden!important;
+}
+
+/* ESTILO COMÚN DONAS */
+#retailmes .rtm-donut-center b,
+#retail .rac-donut-center b,
+#menores .vm2-donut-center b,
+#ligeros .lv2-donut-center b,
+#pesados .vp3-donut-center b,
+.r4-donut-center b{
+  font-size:28px!important;
+  font-weight:900!important;
+  letter-spacing:-1px!important;
+}
+#retailmes .rtm-donut-center span,
+#retail .rac-donut-center span,
+#menores .vm2-donut-center span,
+#ligeros .lv2-donut-center span,
+#pesados .vp3-donut-center span,
+.r4-donut-center span{
+  font-size:10px!important;
+  color:#8d95a3!important;
+  margin-top:4px!important;
+}
+
+/* Evita cards partidas o leyendas saliendo del borde */
+#retailmes .rtm-card,
+#retail .rac-card,
+#menores .vm2-card,
+#ligeros .lv2-card,
+#pesados .vp3-card,
+.r4-card{
+  overflow:hidden!important;
+}
+
+@media(max-width:760px){
+  #retailmes .rtm-legend,
+  #retail .rac-legend,
+  #menores .vm2-donut-legend,
+  #ligeros .lv2-class-legend,
+  #pesados .vp3-donut-legend,
+  .r4-donut-legend{
+    grid-template-columns:1fr!important;
+  }
+  #retailmes .rtm-donut-wrap,
+  #retail .rac-donut-wrap,
+  #menores .vm2-donut-wrap,
+  #ligeros .lv2-donut-wrap,
+  #pesados .vp3-donut-wrap,
+  .r4-donut-wrap{
+    width:190px!important;
+    height:190px!important;
+  }
+  #retailmes #rtmDonut,
+  #retail .rac-donut-wrap canvas,
+  #menores .vm2-donut-wrap canvas,
+  #ligeros .lv2-donut-wrap canvas,
+  #pesados .vp3-donut-wrap canvas,
+  .r4-donut-wrap canvas{
+    width:190px!important;
+    height:190px!important;
+  }
+}
+
 </style>
 
 </head>
