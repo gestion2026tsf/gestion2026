@@ -3190,6 +3190,346 @@ table tbody tr:hover{
 #retail .rac-insight:hover{transform:translateY(-2px);box-shadow:0 7px 16px rgba(20,24,35,.05)}
 @media(max-width:1180px){#retail .rac-toolbar{align-items:flex-start;flex-direction:column}#retail .rac-toolbar-right{width:100%;flex-wrap:wrap}#retail .rac-brand-filter{flex:1}#retail .rac-brand-filter select{min-width:160px;width:100%}}
 
+
+/* ============================================================
+   V43 - RETAIL LAYOUT PROFESIONAL / SIN COLISIONES NI RECORTES
+   ============================================================ */
+
+/* ----- RETAIL DEL MES ----- */
+#retailmes .rtm-grid-a{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.02fr) minmax(0,1.12fr) minmax(285px,.78fr)!important;
+  gap:14px!important;
+  align-items:stretch!important;
+}
+#retailmes .rtm-grid-a>.rtm-card{
+  min-width:0!important;
+  height:430px!important;
+  min-height:430px!important;
+  max-height:430px!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+#retailmes .rtm-donut-zone{
+  flex:1!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  grid-template-rows:215px auto!important;
+  align-content:center!important;
+  gap:12px!important;
+  min-height:0!important;
+}
+#retailmes .rtm-donut-wrap{
+  width:205px!important;
+  height:205px!important;
+  margin:0 auto!important;
+}
+#retailmes #rtmDonut{
+  width:205px!important;
+  height:205px!important;
+}
+#retailmes .rtm-legend{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+  width:100%!important;
+}
+#retailmes .rtm-legend button{
+  width:100%!important;
+  min-width:0!important;
+  min-height:48px!important;
+  padding:8px 10px!important;
+  transform:none!important;
+}
+#retailmes .rtm-legend button:hover,
+#retailmes .rtm-legend button.active{
+  transform:translateY(-1px)!important;
+}
+#retailmes .rtm-rank{
+  flex:1!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+  gap:2px!important;
+}
+#retailmes .rtm-rank-row{
+  min-height:31px!important;
+  padding-top:3px!important;
+  padding-bottom:3px!important;
+}
+#retailmes .rtm-insights{
+  grid-template-columns:1fr 1fr!important;
+  grid-auto-rows:1fr!important;
+  gap:10px!important;
+  flex:1!important;
+}
+#retailmes .rtm-insight{
+  min-height:0!important;
+  height:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+}
+#retailmes .rtm-segments{
+  grid-template-columns:repeat(7,minmax(0,1fr))!important;
+  gap:8px!important;
+}
+#retailmes .rtm-seg{
+  min-width:0!important;
+  min-height:82px!important;
+  height:82px!important;
+}
+
+/* ----- RETAIL ACUMULADO ----- */
+/* Critical fix: .hero global class was turning this KPI into flex */
+#retail .rac-kpi.hero{
+  display:block!important;
+  align-items:initial!important;
+  justify-content:initial!important;
+  gap:0!important;
+  margin-bottom:0!important;
+}
+#retail .rac-kpis{
+  grid-template-columns:1.12fr repeat(5,minmax(0,1fr))!important;
+  gap:12px!important;
+}
+#retail .rac-kpi{
+  min-width:0!important;
+  min-height:104px!important;
+  padding:15px 17px!important;
+}
+#retail .rac-kpi b{
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#retail .rac-kpi small{
+  display:block!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+#retail .rac-grid-top{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.02fr) minmax(0,1.13fr) minmax(285px,.78fr)!important;
+  gap:14px!important;
+  align-items:stretch!important;
+}
+#retail .rac-grid-top>.rac-card{
+  min-width:0!important;
+  height:430px!important;
+  min-height:430px!important;
+  max-height:430px!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+#retail .rac-donut-zone{
+  flex:1!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  grid-template-rows:215px auto!important;
+  align-content:center!important;
+  gap:12px!important;
+  min-height:0!important;
+}
+#retail .rac-donut-wrap{
+  width:205px!important;
+  max-width:205px!important;
+  height:205px!important;
+  margin:0 auto!important;
+}
+#retail .rac-donut-wrap canvas{
+  width:205px!important;
+  height:205px!important;
+}
+#retail .rac-legend{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+  width:100%!important;
+}
+#retail .rac-leg{
+  width:100%!important;
+  min-width:0!important;
+  min-height:48px!important;
+  box-sizing:border-box!important;
+  padding:8px 10px!important;
+  transform:none!important;
+}
+#retail .rac-leg:hover{transform:translateY(-1px)!important}
+#retail .rac-leg span{
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#retail .rac-leg b{
+  white-space:nowrap!important;
+  font-size:9px!important;
+}
+
+#retail .rac-rank{
+  flex:1!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:space-between!important;
+  gap:2px!important;
+  padding-right:0!important;
+}
+#retail .rac-rank-row{
+  grid-template-columns:25px minmax(92px,.82fr) minmax(100px,1.18fr) 78px!important;
+  min-height:31px!important;
+  padding:3px 5px!important;
+  gap:7px!important;
+}
+#retail .rac-rank-row .name{
+  min-width:0!important;
+}
+#retail .rac-insights{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  grid-auto-rows:1fr!important;
+  gap:10px!important;
+  flex:1!important;
+}
+#retail .rac-insight{
+  min-height:0!important;
+  height:auto!important;
+  padding:13px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+}
+#retail .rac-insight b{font-size:19px!important}
+
+/* Growth family cards: same height and no oversized whitespace */
+#retail .rac-family-card{
+  margin-top:14px!important;
+  margin-bottom:14px!important;
+}
+#retail .rac-family-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+#retail .rac-family{
+  min-height:125px!important;
+  height:125px!important;
+  overflow:hidden!important;
+}
+
+/* Segments + movers */
+#retail .rac-grid-mid{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:14px!important;
+  align-items:start!important;
+}
+#retail .rac-grid-mid>.rac-card:first-child{
+  grid-column:1/-1!important;
+  height:auto!important;
+  min-height:0!important;
+}
+#retail .rac-grid-mid>.rac-card:not(:first-child){
+  min-height:230px!important;
+  height:auto!important;
+}
+#retail .rac-segments{
+  display:grid!important;
+  grid-template-columns:repeat(7,minmax(0,1fr))!important;
+  gap:8px!important;
+}
+#retail .rac-seg{
+  min-width:0!important;
+  min-height:82px!important;
+  height:82px!important;
+  padding:9px 10px!important;
+  overflow:hidden!important;
+}
+#retail .rac-seg b{font-size:16px!important}
+#retail .rac-seg span,
+#retail .rac-seg small{
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#retail .rac-movers{gap:2px!important}
+#retail .rac-move{min-height:34px!important;padding:5px 2px!important}
+
+/* Quality row */
+#retail .rac-quality{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+#retail .rac-q{min-width:0!important;min-height:76px!important}
+
+/* Visual consistency */
+#retailmes .rtm-card,
+#retail .rac-card{
+  border-radius:17px!important;
+  box-shadow:0 8px 22px rgba(17,19,24,.045)!important;
+}
+#retailmes .rtm-card:hover,
+#retail .rac-card:hover{
+  transform:none!important;
+  box-shadow:0 12px 28px rgba(17,19,24,.07)!important;
+}
+
+/* ----- Responsive without ugly clipping ----- */
+@media(max-width:1480px){
+  #retailmes .rtm-grid-a,
+  #retail .rac-grid-top{
+    grid-template-columns:1fr 1fr!important;
+  }
+  #retailmes .rtm-grid-a>.rtm-card,
+  #retail .rac-grid-top>.rac-card{
+    height:auto!important;
+    min-height:410px!important;
+    max-height:none!important;
+  }
+  #retailmes .rtm-grid-a>.rtm-card:last-child,
+  #retail .rac-grid-top>.rac-card:last-child{
+    grid-column:1/-1!important;
+    min-height:210px!important;
+  }
+  #retailmes .rtm-insights,
+  #retail .rac-insights{
+    grid-template-columns:repeat(4,1fr)!important;
+  }
+  #retail .rac-kpis{grid-template-columns:repeat(3,1fr)!important}
+  #retailmes .rtm-segments,
+  #retail .rac-segments{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+}
+@media(max-width:1050px){
+  #retailmes .rtm-grid-a,
+  #retail .rac-grid-top,
+  #retail .rac-grid-mid{grid-template-columns:1fr!important}
+  #retailmes .rtm-grid-a>.rtm-card:last-child,
+  #retail .rac-grid-top>.rac-card:last-child,
+  #retail .rac-grid-mid>.rac-card:first-child{grid-column:auto!important}
+  #retailmes .rtm-legend,
+  #retail .rac-legend{grid-template-columns:1fr 1fr!important}
+  #retail .rac-kpis{grid-template-columns:repeat(2,1fr)!important}
+  #retail .rac-family-grid{grid-template-columns:repeat(2,1fr)!important}
+  #retailmes .rtm-segments,
+  #retail .rac-segments{grid-template-columns:repeat(3,1fr)!important}
+}
+@media(max-width:620px){
+  #retailmes .rtm-legend,
+  #retail .rac-legend,
+  #retailmes .rtm-insights,
+  #retail .rac-insights,
+  #retail .rac-quality,
+  #retail .rac-family-grid{grid-template-columns:1fr!important}
+  #retailmes .rtm-segments,
+  #retail .rac-segments{grid-template-columns:repeat(2,1fr)!important}
+}
+
 </style>
 
 <style>
@@ -3453,6 +3793,22 @@ table tbody tr:hover{
   }
 }
 
+</style>
+
+
+<style>
+/* ===== V44 - Interactividad global tipo BI ===== */
+.bi-live-hover{outline:2px solid rgba(238,11,112,.18)!important;box-shadow:0 10px 28px rgba(238,11,112,.10)!important;transform:translateY(-1px);transition:.16s ease}
+.bi-live-dim{opacity:.42!important;transition:.16s ease}
+#menores .vm2-rank-row,#menores .vm2-bar-row,#menores .vm2-office-row,
+#ligeros .lv2-rank-row,#ligeros .lv2-office-row,#ligeros .lv2-bar-head,
+#pesados .vp3-rank-row,#pesados .vp3-office-row,
+#remolques .r4-rank-row,#remolques .r4-bar-row,
+#retailmes .rtm-rank-row,#retailmes .rtm-seg,#retailmes .rtm-legend button,#retailmes .rtm-rank-row,
+#retail .rac-rank-row,#retail .rac-seg,#retail .rac-leg,#retail .rac-family,#retail .rac-move{cursor:pointer}
+canvas{transition:filter .14s ease,opacity .14s ease}
+.bi-preview-note{position:fixed;right:22px;bottom:76px;z-index:999999;background:#151820;color:#fff;border-radius:999px;padding:8px 12px;font:700 10px Segoe UI,sans-serif;box-shadow:0 10px 28px rgba(0,0,0,.2);display:none;pointer-events:none}
+.bi-preview-note.show{display:block}
 </style>
 
 </head>
@@ -5391,13 +5747,15 @@ function renderMovers(brands){
  document.querySelectorAll('#racWinners .rac-move,#racLosers .rac-move').forEach(el=>{el.onclick=()=>{RAC.brand=el.dataset.brand;$('racBrand').value=RAC.brand;render(false)}})
 }
 function renderQuality(total){let control=null;try{const a=XLSX.utils.sheet_to_json(RAC.wb.Sheets['VTA ACUM'],{header:1,defval:null,raw:true});for(const row of a){if(String(row?.[0]||'').toUpperCase().includes('TOTALES')){control=num(row?.[30]);break}}}catch(e){}const diff=control===null?null:total-control;const ligeros=RAC.families.LIGEROS?.cur||0;const q=[['Total hojas detalle',fmt(total),'ok'],['VTA ACUM',control===null?'No leído':fmt(control),control===total?'ok':'bad'],['Diferencia',diff===null?'—':fmt(diff),diff===0?'ok':'bad'],['FOTON 1','Homologado a FOTON','warn'],['LIGEROS B:D','Se recalcula desde detalle','warn']];$('racQuality').innerHTML=q.map(x=>`<div class="rac-q ${x[2]}"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('')}
-function render(refresh=true){if(!RAC.rows.length)return;if(refresh)refreshBrands();const rows=filteredRows(),total=rows.reduce((s,r)=>s+r.cur,0),prev=rows.reduce((s,r)=>s+r.prev,0),growth=prev?(total/prev-1)*100:null,brands=aggBrands(rows),segs=aggSegments(rows),fams=familyData(rows);$('racPeriod').textContent=RAC.period;$('racHeroText').textContent='Visión acumulada a '+RAC.period+' · tamaño de mercado, crecimiento 2026 vs 2025, concentración y marcas impulsoras.';$('racTotal').textContent=fmt(total);$('racTotalSub').textContent=RAC.family==='TOTAL'?'Mercado Retail acumulado':CFG[RAC.family].label;$('racPrev').textContent=fmt(prev);$('racGrowth').textContent=growth===null?'—':(growth>=0?'+':'')+growth.toFixed(1)+'%';$('racGrowth').className=growth===null?'':growth>=0?'positive':'negative';$('racGrowthSub').textContent=growth===null?'sin base comparable':((total-prev)>=0?'+':'')+fmt(total-prev)+' unidades';$('racBrands').textContent=brands.filter(x=>x.cur>0).length;$('racLeader').textContent=brands[0]?.brand||'—';$('racLeaderSub').textContent=brands[0]?fmt(brands[0].cur)+' · '+pct(brands[0].cur,total):'—';$('racSegLead').textContent=segs[0]?.seg||'—';$('racSegLeadSub').textContent=segs[0]?fmt(segs[0].value)+' · '+pct(segs[0].value,total):'—';$('racShareChip').textContent=RAC.family==='TOTAL'?'100% mercado':CFG[RAC.family].label;$('racRankTitle').textContent='Top marcas acumuladas · '+(RAC.family==='TOTAL'?'Total mercado':CFG[RAC.family].label);$('racSelection').textContent='Vista: '+(RAC.family==='TOTAL'?'Total mercado':CFG[RAC.family].label)+(RAC.brand!=='ALL'?' · '+RAC.brand:'');drawDonut(fams,total);renderRank(brands,total);renderFamilies(fams);renderSegments(segs,total);renderMovers(brands);renderQuality(RAC.rows.reduce((s,r)=>s+r.cur,0));const top3=brands.slice(0,3).reduce((s,x)=>s+x.cur,0),topFam=fams.slice().sort((a,b)=>b.cur-a.cur)[0];$('racInsights').innerHTML=`<div class="rac-insight"><span>Familia dominante</span><b>${topFam?.label||'—'}</b><small>${pct(topFam?.cur||0,total)}</small></div><div class="rac-insight"><span>Top 3 marcas</span><b>${pct(top3,total)}</b><small>concentración</small></div><div class="rac-insight"><span>Variación absoluta</span><b>${(total-prev)>=0?'+':''}${fmt(total-prev)}</b><small>vs 2025</small></div><div class="rac-insight"><span>Segmento líder</span><b>${segs[0]?.seg||'—'}</b><small>${segs[0]?pct(segs[0].value,total):'—'}</small></div>`;}
+function render(refresh=true){if(!RAC.rows.length)return;if(refresh)refreshBrands();const rows=filteredRows(),total=rows.reduce((s,r)=>s+r.cur,0),prev=rows.reduce((s,r)=>s+r.prev,0),growth=prev?(total/prev-1)*100:null,brands=aggBrands(rows),segs=aggSegments(rows),fams=familyData(rows);$('racPeriod').textContent=RAC.period;$('racHeroText').textContent='Visión acumulada a '+RAC.period+' · tamaño de mercado, crecimiento 2026 vs 2025, concentración y marcas impulsoras.';$('racTotal').textContent=fmt(total);$('racTotalSub').textContent=RAC.family==='TOTAL'?'Mercado total':CFG[RAC.family].label;$('racPrev').textContent=fmt(prev);$('racGrowth').textContent=growth===null?'—':(growth>=0?'+':'')+growth.toFixed(1)+'%';$('racGrowth').className=growth===null?'':growth>=0?'positive':'negative';$('racGrowthSub').textContent=growth===null?'sin base comparable':((total-prev)>=0?'+':'')+fmt(total-prev)+' unidades';$('racBrands').textContent=brands.filter(x=>x.cur>0).length;$('racLeader').textContent=brands[0]?.brand||'—';$('racLeaderSub').textContent=brands[0]?fmt(brands[0].cur)+' · '+pct(brands[0].cur,total):'—';$('racSegLead').textContent=segs[0]?.seg||'—';$('racSegLeadSub').textContent=segs[0]?fmt(segs[0].value)+' · '+pct(segs[0].value,total):'—';$('racShareChip').textContent=RAC.family==='TOTAL'?'100% mercado':CFG[RAC.family].label;$('racRankTitle').textContent='Top marcas acumuladas · '+(RAC.family==='TOTAL'?'Total mercado':CFG[RAC.family].label);$('racSelection').textContent='Vista: '+(RAC.family==='TOTAL'?'Total mercado':CFG[RAC.family].label)+(RAC.brand!=='ALL'?' · '+RAC.brand:'');drawDonut(fams,total);renderRank(brands,total);renderFamilies(fams);renderSegments(segs,total);renderMovers(brands);renderQuality(RAC.rows.reduce((s,r)=>s+r.cur,0));const top3=brands.slice(0,3).reduce((s,x)=>s+x.cur,0),topFam=fams.slice().sort((a,b)=>b.cur-a.cur)[0];$('racInsights').innerHTML=`<div class="rac-insight"><span>Familia dominante</span><b>${topFam?.label||'—'}</b><small>${pct(topFam?.cur||0,total)}</small></div><div class="rac-insight"><span>Top 3 marcas</span><b>${pct(top3,total)}</b><small>concentración</small></div><div class="rac-insight"><span>Variación absoluta</span><b>${(total-prev)>=0?'+':''}${fmt(total-prev)}</b><small>vs 2025</small></div><div class="rac-insight"><span>Segmento líder</span><b>${segs[0]?.seg||'—'}</b><small>${segs[0]?pct(segs[0].value,total):'—'}</small></div>`;}
 async function readFile(file){try{setLoad(false,'Procesando Excel…',file.name);const buf=await file.arrayBuffer();const wb=XLSX.read(buf,{type:'array'});parseWorkbook(wb,file.name)}catch(err){console.error(err);setLoad(false,'No se pudo leer el archivo',err.message||String(err));alert('No se pudo cargar Retail Acumulado: '+(err.message||err))}}
 async function autoLoad(){const candidates=['./data/venta_retail_acumulada.xlsx','./venta_retail_acumulada.xlsx','./08.6_Venta Retail Acumulada Agosto 2026.xlsx','./08.6_Venta Retail Acumulada Agosto 2026(3).xlsx','./08.6_Venta Retail Acumulada Agosto 2026(4).xlsx'];for(const u of candidates){try{const r=await fetch(u,{cache:'no-store'});if(!r.ok)continue;const b=await r.arrayBuffer();const wb=XLSX.read(b,{type:'array'});parseWorkbook(wb,u.split('/').pop());return}catch(e){}}setLoad(false,'Selecciona el Excel de Retail Acumulado','Archivo 6 · carga manual o súbelo como data/venta_retail_acumulada.xlsx')}
 $('racSelect')?.addEventListener('click',()=>$('racFile').click());$('racFile')?.addEventListener('change',e=>{if(e.target.files?.[0])readFile(e.target.files[0])});$('racRetry')?.addEventListener('click',autoLoad);$('racBrand')?.addEventListener('change',e=>{RAC.brand=e.target.value;render(false)});$('racReset')?.addEventListener('click',()=>{RAC.family='TOTAL';RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family==='TOTAL'));refreshBrands();render(false)});document.querySelectorAll('#racTabs button').forEach(b=>b.addEventListener('click',()=>{RAC.family=b.dataset.family;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(x=>x.classList.toggle('active',x===b));refreshBrands();render(false)}));
+window.__RAC_API={RAC,CFG,render,refreshBrands,filteredRows,aggBrands,aggSegments,familyData};
 window.addEventListener('resize',()=>{if(RAC.rows.length)render(false)});setTimeout(autoLoad,350);
 })();
 </script>
 
+\n<script>\n/* ===== V44 - Crossfilter temporal al pasar el mouse ===== */\n(function(){\n  const fine=window.matchMedia && window.matchMedia('(pointer:fine)').matches;\n  if(!fine) return;\n  const note=document.createElement('div');note.className='bi-preview-note';note.textContent='Vista previa · sal del gráfico para volver';document.body.appendChild(note);\n  const states=new Map();\n  function showNote(){note.classList.add('show')} function hideNote(){if(![...states.values()].some(s=>s.active))note.classList.remove('show')}\n  function preview(key,get,set,render,value){\n    let s=states.get(key);if(!s){s={base:get(),active:false,last:null};states.set(key,s)}\n    if(!s.active){s.base=get();s.active=true}\n    if(s.last===value)return;s.last=value;set(value);showNote();requestAnimationFrame(()=>render(false));\n  }\n  function restore(key,set,render){const s=states.get(key);if(!s||!s.active)return;const v=s.base;s.active=false;s.last=null;set(v);requestAnimationFrame(()=>render(false));setTimeout(hideNote,20)}\n  function commit(key){const s=states.get(key);if(s){s.active=false;s.last=null}s&&setTimeout(hideNote,20)}\n  function hoverClass(container,selector){\n    if(!container)return;container.addEventListener('pointermove',e=>{const row=e.target.closest(selector);container.querySelectorAll('.bi-live-hover').forEach(x=>x!==row&&x.classList.remove('bi-live-hover'));if(row)row.classList.add('bi-live-hover')});container.addEventListener('pointerleave',()=>container.querySelectorAll('.bi-live-hover').forEach(x=>x.classList.remove('bi-live-hover')));\n  }\n  function delegate(container,selector,key,get,set,render,valueOf){\n    if(!container)return;let current=null;container.addEventListener('pointermove',e=>{const row=e.target.closest(selector);if(!row||!container.contains(row))return;const value=valueOf(row);if(value==null||value==='')return;if(current!==row){current=row;preview(key,get,set,render,value)}});container.addEventListener('pointerleave',()=>{current=null;restore(key,set,render)});container.addEventListener('click',()=>commit(key),true);hoverClass(container,selector);\n  }\n  function bindCanvas(canvas,key,get,set,render,hit){\n    if(!canvas)return;let last=null;canvas.addEventListener('pointermove',e=>{const v=hit(canvas,e);if(v==null){if(last!==null){last=null;restore(key,set,render)}return}if(last!==v){last=v;preview(key,get,set,render,v)}});canvas.addEventListener('pointerleave',()=>{last=null;restore(key,set,render)});canvas.addEventListener('click',()=>commit(key),true);\n  }\n  function hitDonutParts(c,e,nameField='filter'){const rect=c.getBoundingClientRect(),parts=c._parts||c._vmParts||c._slices||[];if(!parts.length)return null;const box=rect.width,x=e.clientX-rect.left,y=e.clientY-rect.top,cx=parts[0].cx??box/2,cy=parts[0].cy??box/2,dx=x-cx,dy=y-cy,rr=Math.hypot(dx,dy);let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;for(const p of parts){const rin=p.r??p.inner??box*.28, rout=p.R??box*.43;if(rr>=rin-2&&rr<=rout+7&&a>=p.start&&a<=p.end)return p[nameField]??p.name??p.f}return null}\n  function rankName(row){let t=row.querySelector('.name')?.textContent||row.dataset.key||row.dataset.brand||'';return t.replace(/^\\s*\\d+\\.\\s*/,'').trim()}\n  function barName(row){return row.dataset.key||row.querySelector('.vm2-bar-head span,.r4-bar-head span,.lv2-bar-head span,.vp3-bar-head span')?.textContent?.trim()||''}\n  setTimeout(()=>{\n    // Menores\n    if(window.vm20Update&&window.vm20Els){\n      bindCanvas(document.getElementById('vm2Donut'),'vm-type',()=>vm20Els.type.value,v=>vm20Els.type.value=v,vm20Update,(c,e)=>hitDonutParts(c,e,'filter'));\n      bindCanvas(document.getElementById('vm2Trend'),'vm-month',()=>vm20Els.month.value,v=>vm20Els.month.value=v,vm20Update,(c,e)=>{const r=c.getBoundingClientRect(),p=46,w=r.width-60,n=(window.VM20_MONTHS||[]).length;if(!n)return null;const idx=Math.max(0,Math.min(n-1,Math.round(((e.clientX-r.left)-p)/Math.max(1,w)*(n-1))));return String(idx)});\n      delegate(document.getElementById('vm2Brands'),'.vm2-rank-row','vm-brand',()=>vm20Els.brand.value,v=>vm20Els.brand.value=v,vm20Update,rankName);\n      delegate(document.getElementById('vm2Models'),'.vm2-rank-row','vm-model',()=>vm20Els.model.value,v=>vm20Els.model.value=v,vm20Update,rankName);\n      delegate(document.getElementById('vm2Zones'),'.vm2-bar-row','vm-zone',()=>vm20Els.zone.value,v=>vm20Els.zone.value=v,vm20Update,barName);\n      delegate(document.getElementById('vm2Fuels'),'.vm2-bar-row','vm-fuel',()=>vm20Els.fuel.value,v=>vm20Els.fuel.value=v,vm20Update,barName);\n    }\n    // Livianos\n    if(window.lv2Update&&window.lv2Els){\n      bindCanvas(document.getElementById('lv2Donut'),'lv-class',()=>lv2Els.cls.value,v=>lv2Els.cls.value=v,lv2Update,(c,e)=>hitDonutParts(c,e,'name'));\n      bindCanvas(document.getElementById('lv2Trend'),'lv-month',()=>lv2Els.month.value,v=>lv2Els.month.value=v,lv2Update,(c,e)=>{const m=c._lvMeta;if(!m||!m.xs?.length)return null;const r=c.getBoundingClientRect(),x=e.clientX-r.left;let idx=0,b=1e9;m.xs.forEach((xx,i)=>{const d=Math.abs(xx-x);if(d<b){b=d;idx=i}});return LV2.months[idx]});\n      delegate(document.getElementById('lv2Brands'),'.lv2-rank-row','lv-brand',()=>lv2Els.brand.value,v=>lv2Els.brand.value=v,lv2Update,rankName);\n      delegate(document.getElementById('lv2Models'),'.lv2-rank-row','lv-model',()=>lv2Els.model.value,v=>lv2Els.model.value=v,lv2Update,rankName);\n      delegate(document.getElementById('lv2Offices'),'.lv2-office-row','lv-office',()=>lv2Els.office.value,v=>lv2Els.office.value=v,lv2Update,r=>r.querySelector('.name')?.textContent.trim());\n    }\n    // Pesados\n    if(window.vp3Update&&window.vp3Els){\n      bindCanvas(document.getElementById('vp3Donut'),'vp-class',()=>vp3Els.subclass.value,v=>vp3Els.subclass.value=v,vp3Update,(c,e)=>hitDonutParts(c,e,'name'));\n      bindCanvas(document.getElementById('vp3Trend'),'vp-month',()=>vp3Els.month.value,v=>vp3Els.month.value=v,vp3Update,(c,e)=>{const q=c._plot;if(!q)return null;const r=c.getBoundingClientRect(),idx=Math.max(0,Math.min((VP3.months?.length||1)-1,Math.round(((e.clientX-r.left)-q.p.l)/q.cw*q.den)));return String(idx)});\n      delegate(document.getElementById('vp3Brands'),'.vp3-rank-row','vp-brand',()=>vp3Els.brand.value,v=>vp3Els.brand.value=v,vp3Update,rankName);\n      delegate(document.getElementById('vp3Models'),'.vp3-rank-row','vp-model',()=>vp3Els.model.value,v=>vp3Els.model.value=v,vp3Update,rankName);\n      delegate(document.getElementById('vp3Offices'),'.vp3-office-row','vp-office',()=>vp3Els.office.value,v=>vp3Els.office.value=v,vp3Update,r=>r.querySelector('.name')?.textContent.trim());\n    }\n    // Remolques\n    if(window.r4Update&&window.r4Els){\n      bindCanvas(document.getElementById('r4Donut'),'r4-cat',()=>r4Els.cat.value,v=>r4Els.cat.value=v,r4Update,(c,e)=>hitDonutParts(c,e,'name'));\n      bindCanvas(document.getElementById('r4Trend'),'r4-month',()=>r4Els.month.value,v=>r4Els.month.value=v,r4Update,(c,e)=>{const q=c._plot;if(!q)return null;const r=c.getBoundingClientRect(),idx=Math.max(0,Math.min((R4.labels?.length||1)-1,Math.round(((e.clientX-r.left)-q.p.l)/q.cw*q.den)));return String(idx)});\n      delegate(document.getElementById('r4Brands'),'.r4-rank-row','r4-brand',()=>r4Els.brand.value,v=>r4Els.brand.value=v,r4Update,r=>r.dataset.key||rankName(r));\n      delegate(document.getElementById('r4Models'),'.r4-rank-row','r4-model',()=>r4Els.model.value,v=>r4Els.model.value=v,r4Update,r=>r.dataset.key||rankName(r));\n      delegate(document.getElementById('r4Depts'),'.r4-bar-row','r4-dept',()=>r4Els.dept.value,v=>r4Els.dept.value=v,r4Update,barName);\n      delegate(document.getElementById('r4Offices'),'.r4-bar-row','r4-office',()=>r4Els.office.value,v=>r4Els.office.value=v,r4Update,barName);\n      delegate(document.getElementById('r4Bodies'),'.r4-bar-row','r4-body',()=>r4Els.body.value,v=>r4Els.body.value=v,r4Update,barName);\n    }\n    // Retail del Mes\n    if(window.rtmRender&&typeof RTM!=='undefined'){\n      bindCanvas(document.getElementById('rtmDonut'),'rtm-family',()=>RTM.family,v=>{RTM.family=v;RTM.brand='ALL'},rtmRender,(c,e)=>hitDonutParts(c,e,'f'));\n      delegate(document.getElementById('rtmLegend'),'button[data-family]','rtm-family',()=>RTM.family,v=>{RTM.family=v;RTM.brand='ALL'},rtmRender,r=>r.dataset.family);\n      delegate(document.getElementById('rtmFamilyBars'),'.rtm-rank-row[data-family]','rtm-family2',()=>RTM.family,v=>{RTM.family=v;RTM.brand='ALL'},rtmRender,r=>r.dataset.family);\n      delegate(document.getElementById('rtmRank'),'.rtm-rank-row[data-brand]','rtm-brand',()=>RTM.brand,v=>RTM.brand=v,rtmRender,r=>r.dataset.brand);\n    }\n    // Retail Acumulado\n    const A=window.__RAC_API;if(A){const {RAC,render}=A;\n      delegate(document.getElementById('racLegend'),'.rac-leg[data-family]','rac-family',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);\n      delegate(document.getElementById('racFamilyGrid'),'.rac-family[data-family]','rac-family2',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);\n      delegate(document.getElementById('racRank'),'.rac-rank-row[data-brand]','rac-brand',()=>RAC.brand,v=>RAC.brand=v,render,r=>r.dataset.brand);\n      delegate(document.getElementById('racSegments'),'.rac-seg[data-family]','rac-seg-family',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);\n    }\n  },1400);\n})();\n</script>\n
 </body>
 </html>
