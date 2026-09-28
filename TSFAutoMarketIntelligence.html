@@ -23,6 +23,80 @@ window.addEventListener('load',()=>{
   },80);
 });
 
+
+// ===== V29 - CARGA EXCEL DENTRO DE MERCADO VEHICULOS LIVIANOS =====
+(function(){
+  const input=document.getElementById('vl2ExcelInput');
+  const btn=document.getElementById('vl2LoadBtn');
+  const retry=document.getElementById('vl2Retry');
+  const title=document.getElementById('vl2ConnectTitle');
+  const sub=document.getElementById('vl2ConnectSub');
+  const box=document.getElementById('vl2Connect');
+
+  function setConnect(t,s,ok){
+    if(title) title.textContent=t;
+    if(sub) sub.textContent=s;
+    if(box){
+      box.style.borderColor=ok?'#b9e4ce':'#ead8e1';
+      box.style.background=ok?'linear-gradient(135deg,#fff,#f1fbf6)':'linear-gradient(135deg,#fff,#fff8ec)';
+    }
+  }
+
+  btn?.addEventListener('click',()=>input?.click());
+
+  input?.addEventListener('change',async e=>{
+    const f=e.target.files?.[0];
+    if(!f) return;
+    setConnect('Procesando Excel…',f.name,false);
+    try{
+      if(typeof vl20ReadFile==='function'){
+        await vl20ReadFile(f);
+      }else if(typeof vl2ReadFile==='function'){
+        await vl2ReadFile(f);
+      }else if(typeof vlReadFile==='function'){
+        await vlReadFile(f);
+      }else{
+        throw new Error('No se encontró la función de lectura del módulo de Vehículos Livianos.');
+      }
+      setConnect('Excel conectado',f.name,true);
+    }catch(err){
+      setConnect('No se pudo leer el Excel',err?.message||String(err),false);
+      alert(err?.message||String(err));
+    }finally{
+      e.target.value='';
+    }
+  });
+
+  retry?.addEventListener('click',async ()=>{
+    setConnect('Buscando Excel…','Intentando cargar el archivo de Vehículos Livianos desde el sistema.',false);
+    try{
+      if(typeof vl22AutoLoad==='function') await vl22AutoLoad();
+      else if(typeof vl20AutoLoad==='function') await vl20AutoLoad();
+      else if(typeof vl2AutoLoad==='function') await vl2AutoLoad();
+      else throw new Error('No hay función de carga automática disponible.');
+    }catch(err){
+      setConnect('Excel no encontrado','Selecciona el archivo manualmente.',false);
+    }
+  });
+
+  // Refuerzo: todos los filtros deben recalcular el módulo completo
+  const filterIds=['vl2Month','vl2Class','vl2Brand','vl2Model','vl2Office','vl2Fuel',
+                   'vl2Body','vl2Transmission','vl2Drive','vl2Origin','vl2ModelYear'];
+  const updateFn = ()=>{
+    if(typeof vl20Update==='function') vl20Update(true);
+    else if(typeof vl2Update==='function') vl2Update(true);
+    else if(typeof vlUpdate==='function') vlUpdate(true);
+  };
+  filterIds.forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('change',()=>{
+      el.classList.toggle('vl-active',el.value && el.value!=='ALL');
+      updateFn();
+    });
+  });
+})();
+
 </script>
 <style>
 :root{
@@ -2808,6 +2882,86 @@ table tbody tr:hover{
   #menores *,#menores *::before,#menores *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 
+
+/* ==========================================================
+   V28 - MERCADO VEHICULOS LIVIANOS INTELIGENTE
+   ========================================================== */
+#ligeros{--lv-pink:#ee0b70;--lv-gold:#f5ae00;--lv-dark:#252a34;--lv-muted:#8e95a2;--lv-line:#e6e9ef;overflow-x:hidden}
+.lv2-hero{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:18px;align-items:center;min-height:128px;padding:22px 24px;border-radius:18px;color:#fff;background:radial-gradient(circle at 90% 28%,rgba(245,174,0,.32),transparent 22%),linear-gradient(112deg,#171b24 0%,#343a47 70%,#66545b 100%);box-shadow:0 14px 34px rgba(17,19,24,.12);margin-bottom:10px;position:relative;overflow:hidden}
+.lv2-hero:after{content:"";position:absolute;right:-42px;top:-54px;width:190px;height:190px;border-radius:50%;border:28px solid rgba(238,11,112,.28);pointer-events:none}.lv2-eyebrow{font-size:9px;font-weight:800;letter-spacing:.17em;color:#ffd35d;margin-bottom:7px}.lv2-hero h3{margin:0;color:#fff!important;font-size:28px!important;letter-spacing:-.02em}.lv2-hero p{margin:7px 0 0;color:rgba(255,255,255,.82);font-size:12.5px;max-width:780px;line-height:1.45}.lv2-hero-stat{position:relative;z-index:2;padding:15px 16px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.09);backdrop-filter:blur(8px);border-radius:15px}.lv2-hero-stat b{display:block;font-size:28px;line-height:1}.lv2-hero-stat span{display:block;margin-top:6px;font-size:10px;color:#e5e7eb;line-height:1.4}
+.lv2-connect{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 13px;border:1px solid #f0d5e2;background:linear-gradient(135deg,#fff,#fff9ed);border-radius:14px;margin-bottom:10px;box-shadow:0 8px 24px rgba(17,19,24,.04)}.lv2-connect-left{display:flex;align-items:center;gap:10px;min-width:0}.lv2-connect-ico{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#fff0f6;color:#ee0b70;font-size:18px;flex:none}.lv2-connect b{display:block;font-size:12px}.lv2-connect span{display:block;font-size:10px;color:#8d94a0;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lv2-connect-buttons{display:flex;gap:7px;flex:none}.lv2-connect button{border:0;border-radius:10px;padding:8px 11px;font-size:10.5px;font-weight:800;cursor:pointer}.lv2-connect .primary{background:linear-gradient(135deg,#ee0b70,#ff2b86);color:#fff}.lv2-connect .ghost{background:#fff;border:1px solid #e6e9ef;color:#222}
+.lv2-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:9px}.lv2-kpi{background:#fff;border:1px solid var(--lv-line);border-radius:14px;padding:12px 13px;min-height:92px;box-shadow:0 7px 22px rgba(17,19,24,.045);border-top:3px solid #d9dde5;min-width:0}.lv2-kpi.primary{border-top-color:var(--lv-pink)}.lv2-kpi.gold{border-top-color:var(--lv-gold)}.lv2-kpi span{display:block;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--lv-muted)}.lv2-kpi b{display:block;margin:6px 0 4px;font-size:24px;line-height:1.05;color:#16181d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lv2-kpi small{display:block;font-size:9.5px;color:#989faa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lv2-kpi b.positive{color:#0b8b50}.lv2-kpi b.negative{color:#d92d20}
+.lv2-insights{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:9px}.lv2-insight{background:#fff;border:1px solid var(--lv-line);border-radius:12px;padding:10px 11px;min-width:0}.lv2-insight span{font-size:9px;color:#9299a5}.lv2-insight b{display:block;font-size:14px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lv2-insight small{display:block;color:#9aa0aa;font-size:9px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lv2-filter-shell{background:#fff;border:1px solid var(--lv-line);border-radius:14px;padding:10px;margin-bottom:8px;box-shadow:0 7px 20px rgba(17,19,24,.035)}.lv2-filters{display:grid;grid-template-columns:85px 150px 1fr 1fr 1fr 1fr 120px;gap:7px;align-items:end}.lv2-advanced{display:none;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:7px;padding-top:7px;border-top:1px solid #eff1f4}.lv2-filter-shell.show-advanced .lv2-advanced{display:grid}.lv2-filter label{display:block;font-size:9px;color:var(--lv-muted);margin:0 0 4px 2px}.lv2-filter select{width:100%;height:35px;border:1px solid #e3e6ec!important;border-radius:9px!important;background:#fff!important;font-size:10.5px!important;padding:0 8px!important;transition:.18s ease}.lv2-filter select:focus{border-color:var(--lv-pink)!important;box-shadow:0 0 0 3px rgba(238,11,112,.08)!important}.lv2-filter select.lv-active{border-color:rgba(238,11,112,.45)!important;background:#fff5f9!important}.lv2-filter-actions{display:flex;gap:6px}.lv2-filter-actions button{height:35px;border:0;border-radius:9px;font-size:10px;font-weight:800;cursor:pointer;white-space:nowrap}.lv2-more{padding:0 10px;background:#f3f4f6;color:#555c68}.lv2-reset{padding:0 11px;background:linear-gradient(135deg,#f5ae00,#ffc832);color:#171717}.lv2-filter-note{font-size:9.5px;color:#8d94a0;margin:7px 2px 0;min-height:14px}
+.lv2-grid{display:grid;gap:10px;margin-bottom:10px}.lv2-grid-a{grid-template-columns:minmax(0,1.45fr) minmax(310px,.72fr)}.lv2-grid-b{grid-template-columns:1fr 1fr}.lv2-grid-c{grid-template-columns:repeat(4,minmax(0,1fr))}.lv2-card{background:#fff;border:1px solid var(--lv-line);border-radius:15px;padding:12px;box-shadow:0 9px 25px rgba(17,19,24,.045);min-width:0;overflow:hidden}.lv2-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}.lv2-card-head h4{font-size:13px!important;margin:0 0 2px!important}.lv2-card-head p{font-size:9.5px;color:#9299a5;margin:0}.lv2-chip{font-size:9px;padding:5px 8px;border-radius:999px;background:#fff4d6;color:#745100;font-weight:800;white-space:nowrap}
+#lv2Trend{display:block;width:100%;height:245px}.lv2-legend{display:flex;flex-wrap:wrap;gap:8px;font-size:9px;color:#858c98}.lv2-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.lv2-donut-wrap{width:min(100%,225px);aspect-ratio:1;margin:8px auto 13px;position:relative}.lv2-donut-wrap canvas{width:100%;height:100%;display:block}.lv2-donut-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}.lv2-donut-center b{font-size:25px;line-height:1}.lv2-donut-center span{font-size:9px;color:#9299a5;margin-top:4px}.lv2-class-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px}.lv2-class-legend button{display:flex;align-items:center;justify-content:space-between;gap:7px;border:1px solid #e7e9ef;background:#fafbfc;border-radius:9px;padding:7px 8px;font-size:9px;cursor:pointer;text-align:left}.lv2-class-legend button:hover{background:#fff;border-color:#cfd4dc}.lv2-class-legend i{width:8px;height:8px;border-radius:50%;flex:none}.lv2-class-legend span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6d7480}.lv2-class-legend b{font-size:9px;white-space:nowrap}.lv2-tip{position:fixed;z-index:5000;display:none;pointer-events:none;background:#171a20;color:#fff;padding:7px 9px;border-radius:8px;font-size:10px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.lv2-rank{display:flex;flex-direction:column;gap:7px}.lv2-rank-row{display:grid;grid-template-columns:minmax(105px,1.2fr) minmax(90px,1.4fr) 66px;gap:7px;align-items:center;font-size:10px}.lv2-rank-row .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lv2-track{height:7px;background:#eef0f3;border-radius:999px;overflow:hidden}.lv2-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--lv-pink),var(--lv-gold));transition:width .35s ease}.lv2-rank-row b{text-align:right;font-size:10px}
+.lv2-offices{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(270px,.75fr);gap:14px;align-items:start}.lv2-office-list{display:flex;flex-direction:column;gap:8px;min-width:0}.lv2-office-row{display:grid;grid-template-columns:27px minmax(0,1fr) 88px 56px;gap:7px;align-items:center;font-size:10px}.lv2-office-row .n{width:23px;height:23px;border-radius:8px;background:#f2f3f5;display:grid;place-items:center;color:#858c98}.lv2-office-row .name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lv2-office-row b,.lv2-office-row .pct{text-align:right;white-space:nowrap}.lv2-office-row .pct{color:#8d94a2}.lv2-office-row .bar{grid-column:2/5;height:6px;background:#eef0f3;border-radius:999px;overflow:hidden}.lv2-office-row .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--lv-pink),var(--lv-gold))}.lv2-office-side{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lv2-mini{min-height:98px;padding:11px;border:1px solid #e7e9ef;border-radius:12px;background:#fafbfc;display:flex;flex-direction:column;justify-content:center}.lv2-mini span{display:block;font-size:8.5px;color:#8d94a0;text-transform:uppercase}.lv2-mini b{display:block;font-size:17px;margin-top:5px;line-height:1.05;word-break:break-word}.lv2-mini small{font-size:9px;color:#9aa0aa;margin-top:5px;line-height:1.35}
+.lv2-bars{display:flex;flex-direction:column;gap:9px}.lv2-bar-head{display:flex;justify-content:space-between;gap:8px;font-size:9.5px;margin-bottom:3px}.lv2-bar-head span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lv2-bar-head b{white-space:nowrap}.lv2-bar-track{height:7px;background:#eef0f3;border-radius:999px;overflow:hidden}.lv2-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--lv-pink),var(--lv-gold));transition:width .35s ease}.lv2-bars.dark .lv2-bar-fill{background:linear-gradient(90deg,#252a34,#747c8a)}
+.lv2-quality{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;background:#16191f;color:#fff;border-radius:14px;padding:11px 12px}.lv2-quality div{min-width:0}.lv2-quality span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.07em;color:#959ca8;margin-bottom:3px}.lv2-quality b{font-size:9.5px;font-weight:600;color:#f6f7f8}.lv2-quality .warn b{color:#ffd65f}
+.lv2-empty{display:grid;place-items:center;min-height:95px;color:#9299a5;font-size:11px;text-align:center}.lv2-loading{opacity:.58;pointer-events:none}.lv2-card,.lv2-kpi,.lv2-insight{transition:box-shadow .18s ease,transform .18s ease}.lv2-card:hover,.lv2-kpi:hover,.lv2-insight:hover{box-shadow:0 12px 30px rgba(17,19,24,.075);transform:translateY(-1px)}
+@media(max-width:1350px){.lv2-grid-c{grid-template-columns:repeat(2,minmax(0,1fr))}.lv2-filters{grid-template-columns:repeat(4,minmax(0,1fr))}.lv2-filter-actions{grid-column:span 2}.lv2-advanced{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1080px){.lv2-hero{grid-template-columns:1fr}.lv2-hero-stat{display:none}.lv2-grid-a,.lv2-grid-b,.lv2-offices{grid-template-columns:1fr}.lv2-office-side{grid-template-columns:repeat(4,minmax(0,1fr))}.lv2-insights{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.lv2-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.lv2-filters,.lv2-advanced{grid-template-columns:repeat(2,minmax(0,1fr))}.lv2-filter-actions{grid-column:1/-1}.lv2-grid-c{grid-template-columns:1fr}.lv2-office-side{grid-template-columns:repeat(2,minmax(0,1fr))}.lv2-connect{align-items:flex-start}.lv2-connect-buttons{flex-direction:column}.lv2-class-legend{grid-template-columns:1fr}.lv2-donut-wrap{width:min(100%,190px)}}
+@media(max-width:540px){.lv2-kpis,.lv2-insights,.lv2-filters,.lv2-advanced,.lv2-office-side{grid-template-columns:1fr}.lv2-hero{padding:16px}.lv2-hero h3{font-size:21px!important}.lv2-connect{flex-direction:column}.lv2-connect-buttons{width:100%;display:grid;grid-template-columns:1fr 1fr}.lv2-office-row{grid-template-columns:24px minmax(0,1fr) 72px 48px}.lv2-donut-wrap{width:min(100%,165px)}}
+
+
+/* ===== V29 - LIVIANOS MENU + CARGA EXCEL + FILTROS FUNCIONALES ===== */
+#ligeros .vl2-connect{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:12px 14px;
+  margin:10px 0;
+  border:1px solid #ead8e1;
+  background:linear-gradient(135deg,#fff,#fff8ec);
+  border-radius:14px;
+  box-shadow:0 8px 24px rgba(17,19,24,.04);
+}
+#ligeros .vl2-connect-left{display:flex;align-items:center;gap:10px;min-width:0}
+#ligeros .vl2-connect-ico{
+  width:38px;height:38px;border-radius:11px;
+  display:grid;place-items:center;flex:none;
+  background:#fff0f6;color:#ee0b70;font-size:17px
+}
+#ligeros .vl2-connect b{display:block;font-size:12px}
+#ligeros .vl2-connect span{
+  display:block;margin-top:2px;font-size:10.5px;
+  color:#8d94a0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+#ligeros .vl2-connect-actions{display:flex;gap:7px;flex:none}
+#ligeros .vl2-connect button{
+  border:0;border-radius:10px;padding:8px 11px;
+  font-size:11px;font-weight:800;cursor:pointer
+}
+#ligeros .vl2-connect .primary{
+  background:linear-gradient(135deg,#ee0b70,#ff2b86);color:#fff
+}
+#ligeros .vl2-connect .ghost{
+  background:#fff;border:1px solid #e7e9ef;color:#222
+}
+#ligeros .vl2-filterbar select{
+  transition:border-color .15s ease,box-shadow .15s ease,background .15s ease
+}
+#ligeros .vl2-filterbar select:focus{
+  border-color:#ee0b70!important;
+  box-shadow:0 0 0 3px rgba(238,11,112,.08)!important;
+}
+#ligeros .vl2-filterbar select.vl-active{
+  border-color:#ee0b70!important;
+  background:#fff3f8!important;
+}
+@media(max-width:900px){
+  #ligeros .vl2-connect{align-items:flex-start}
+  #ligeros .vl2-connect-actions{flex-direction:column}
+}
+@media(max-width:620px){
+  #ligeros .vl2-connect{flex-direction:column}
+  #ligeros .vl2-connect-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  #ligeros .vl2-connect button{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -2824,13 +2978,14 @@ table tbody tr:hover{
   <div class="nav" id="nav">
     <button class="active" data-page="resumen"><span class="nav-ico">⌂</span>Resumen Ejecutivo</button>
     <button data-page="menores"><span class="nav-ico">●</span>Mercado Vehículos Menores</button>
+<button data-page="ligeros"><span class="nav-ico">◆</span>Mercado Vehículos Livianos</button>
+    
     <button data-page="retailmes"><span class="nav-ico">◫</span>Retail Mes (Archivo 5)</button>
     <button data-page="retail"><span class="nav-ico">▥</span>Retail Acumulado (Archivo 6)</button>
     <button data-page="retailOmnibus"><span class="nav-ico">▣</span>Retail Ómnibus</button>
     <button data-page="retailCamiones"><span class="nav-ico">▰</span>Retail Camiones y Remolcadores</button>
     <button data-page="inmat"><span class="nav-ico">◎</span>Inmatriculaciones</button>
     <button data-page="brechas"><span class="nav-ico">⇄</span>Retail vs Inmat.</button>
-    <button data-page="ligeros"><span class="nav-ico">◆</span>Vehículos Livianos</button>
     <button data-page="comerciales"><span class="nav-ico">▱</span>Comerciales</button>
     <button data-page="pesados"><span class="nav-ico">▮</span>Vehículos Pesados</button>
     <button data-page="remolques"><span class="nav-ico">▭</span>Remolques / Semirremolques</button>
@@ -3105,64 +3260,110 @@ table tbody tr:hover{
 </section>
 
 
+
 <section class="page" id="ligeros">
-  <div class="vl-hero">
-    <h3>Vehículos Livianos</h3>
-    <div class="sub">Autos, SUV, Camionetas, Pick Up y Furgonetas</div>
-    <p>Análisis integral de inmatriculaciones del Archivo 2, utilizando las 16 hojas como fuente de detalle y control. Periodo enero–agosto 2026.</p>
+  <div class="lv2-hero">
+    <div>
+      <div class="lv2-eyebrow">INMATRICULACIONES · ARCHIVO 2</div>
+      <h3>Mercado de Vehículos Livianos</h3>
+      <p>Autos, SUV, camionetas, pick up y furgonetas. El módulo lee directamente la base técnica del Excel y recalcula todos los indicadores con los filtros seleccionados.</p>
+    </div>
+    <div class="lv2-hero-stat"><b id="lv2HeroTotal">—</b><span id="lv2HeroStatus">Buscando Excel de Vehículos Livianos…</span></div>
   </div>
 
-  <div class="vl-kpis">
-    <div class="vl-kpi"><div class="label">Total inmatriculaciones</div><div class="num" id="vlTotal">167,244</div><div class="tiny">Enero – Agosto 2026</div></div>
-    <div class="vl-kpi"><div class="label">SUV / Todoterrenos</div><div class="num" id="vlSUV">93,026</div><div class="tiny">55.6% del total</div></div>
-    <div class="vl-kpi"><div class="label">Pick Up / Furgonetas</div><div class="num" id="vlPick">30,905</div><div class="tiny">18.5%</div></div>
-    <div class="vl-kpi"><div class="label">Marcas</div><div class="num">138</div><div class="tiny">878 modelos</div></div>
-    <div class="vl-kpi"><div class="label">Versiones</div><div class="num">1,520</div><div class="tiny">14 carrocerías</div></div>
-    <div class="vl-kpi"><div class="label">Oficinas registrales</div><div class="num">34</div><div class="tiny">Lima concentra 58.5%</div></div>
+  <div class="vl2-connect" id="vl2Connect">
+    <div class="vl2-connect-left">
+      <div class="vl2-connect-ico">▣</div>
+      <div>
+        <b id="vl2ConnectTitle">Conectar Excel de Vehículos Livianos</b>
+        <span id="vl2ConnectSub">El sistema intentará leerlo automáticamente o puedes seleccionarlo aquí.</span>
+      </div>
+    </div>
+    <div class="vl2-connect-actions">
+      <button class="primary" id="vl2LoadBtn" type="button">📁 Seleccionar Excel</button>
+      <button class="ghost" id="vl2Retry" type="button">↻ Reintentar</button>
+    </div>
+    <input id="vl2ExcelInput" type="file" accept=".xlsx,.xls" hidden>
   </div>
 
-  <div class="vl-filters">
-    <div class="vl-filter"><label>Año</label><select><option>2026</option></select></div>
-    <div class="vl-filter"><label>Mes</label><select id="vlMonth"><option value="ALL">Ene–Ago</option><option>ENERO</option><option>FEBRERO</option><option>MARZO</option><option>ABRIL</option><option>MAYO</option><option>JUNIO</option><option>JULIO</option><option>AGOSTO</option></select></div>
-    <div class="vl-filter"><label>Clase</label><select id="vlClass"><option value="ALL">Todas</option><option value="SUV,TODOTERRENOS">SUV / Todoterrenos</option><option value="PICK UP Y FURGONETAS">Pick Up y Furgonetas</option><option value="AUTOMOVIL">Automóvil</option><option value="CAMIONETAS">Camionetas</option></select></div>
-    <div class="vl-filter"><label>Marca</label><select><option>Todas</option><option>TOYOTA</option><option>KIA</option><option>HYUNDAI</option><option>CHANGAN</option><option>JETOUR</option></select></div>
-    <div class="vl-filter"><label>Modelo</label><select><option>Todos</option><option>HILUX</option><option>X70FL</option><option>RUSH</option><option>SOLUTO</option><option>TERRITORY</option></select></div>
-    <div class="vl-filter"><label>Carrocería</label><select><option>Todas</option><option>SUV</option><option>PICK UP</option><option>SEDAN</option><option>MULTIPROPOSITO</option></select></div>
-    <div class="vl-filter"><label>Combustible</label><select><option>Todos</option><option>GASOLINA</option><option>DIESEL</option><option>HIBRIDO</option><option>ELECTRICO</option></select></div>
-    <div class="vl-filter"><label>Oficina</label><select><option>Todas</option><option>LIMA</option><option>AREQUIPA</option><option>TRUJILLO</option><option>CUSCO</option></select></div>
-    <button class="vl-reset" id="vlReset" type="button">Limpiar filtros</button>
+
+  <div class="lv2-connect" id="lv2Connect">
+    <div class="lv2-connect-left"><div class="lv2-connect-ico">▣</div><div><b id="lv2ConnectTitle">Buscando Excel automáticamente…</b><span id="lv2ConnectSub">Se intenta cargar el archivo desde la misma carpeta del HTML.</span></div></div>
+    <div class="lv2-connect-buttons"><button class="primary" id="lv2LoadBtn">📁 Seleccionar Excel</button><button class="ghost" id="lv2Retry">↻ Reintentar</button></div>
+    <input type="file" id="lv2ExcelInput" accept=".xlsx,.xls" hidden>
   </div>
 
-  <div class="vl-grid-1">
-    <div class="vl-box"><h4>Evolución mensual por clase</h4><canvas id="vlTrend" class="vl-line"></canvas><div class="legend"><span><i style="background:#f2c230"></i>SUV</span><span><i style="background:#111827"></i>Pick Up/Furgonetas</span><span><i style="background:#6b7280"></i>Automóvil</span><span><i style="background:#b7bdc8"></i>Camionetas</span></div></div>
-    <div class="vl-box"><h4>Composición por clase</h4><div class="vl-donut-wrap"><div class="vl-donut"><div class="center"><b>167,244</b><span>unidades</span></div></div></div><div class="small">SUV 55.6% · Pick Up/Furg. 18.5% · Automóvil 13.9% · Camionetas 12.0%</div></div>
-    <div class="vl-box"><h4>Top 10 marcas</h4><div class="vl-rank">
-      <div class="vl-rank-row"><span>TOYOTA</span><div class="track"><div class="fill" style="width:100%"></div></div><b>30,658</b></div><div class="vl-rank-row"><span>KIA</span><div class="track"><div class="fill" style="width:52.3%"></div></div><b>16,037</b></div><div class="vl-rank-row"><span>HYUNDAI</span><div class="track"><div class="fill" style="width:48%"></div></div><b>14,718</b></div><div class="vl-rank-row"><span>CHANGAN</span><div class="track"><div class="fill" style="width:35.6%"></div></div><b>10,900</b></div><div class="vl-rank-row"><span>JETOUR</span><div class="track"><div class="fill" style="width:33.7%"></div></div><b>10,326</b></div><div class="vl-rank-row"><span>CHEVROLET</span><div class="track"><div class="fill" style="width:24.8%"></div></div><b>7,593</b></div><div class="vl-rank-row"><span>GEELY</span><div class="track"><div class="fill" style="width:24.5%"></div></div><b>7,516</b></div><div class="vl-rank-row"><span>FORD</span><div class="track"><div class="fill" style="width:23.2%"></div></div><b>7,128</b></div><div class="vl-rank-row"><span>JAC</span><div class="track"><div class="fill" style="width:20.5%"></div></div><b>6,284</b></div><div class="vl-rank-row"><span>CHERY</span><div class="track"><div class="fill" style="width:19.9%"></div></div><b>6,100</b></div>
-    </div></div>
-    <div class="vl-box"><h4>Top 10 modelos</h4><div class="vl-rank">
-      <div class="vl-rank-row"><span>HILUX</span><div class="track"><div class="fill" style="width:100%"></div></div><b>8,659</b></div><div class="vl-rank-row"><span>X70FL</span><div class="track"><div class="fill" style="width:59.8%"></div></div><b>5,174</b></div><div class="vl-rank-row"><span>RUSH</span><div class="track"><div class="fill" style="width:46.8%"></div></div><b>4,049</b></div><div class="vl-rank-row"><span>SOLUTO</span><div class="track"><div class="fill" style="width:46.2%"></div></div><b>4,003</b></div><div class="vl-rank-row"><span>TERRITORY</span><div class="track"><div class="fill" style="width:44.6%"></div></div><b>3,862</b></div><div class="vl-rank-row"><span>AVANZA</span><div class="track"><div class="fill" style="width:40.7%"></div></div><b>3,528</b></div><div class="vl-rank-row"><span>SELTOS</span><div class="track"><div class="fill" style="width:37.7%"></div></div><b>3,265</b></div><div class="vl-rank-row"><span>GRAND I10</span><div class="track"><div class="fill" style="width:37.3%"></div></div><b>3,226</b></div><div class="vl-rank-row"><span>RAIZE</span><div class="track"><div class="fill" style="width:35.3%"></div></div><b>3,061</b></div><div class="vl-rank-row"><span>N400</span><div class="track"><div class="fill" style="width:34.5%"></div></div><b>2,988</b></div>
-    </div></div>
+  <div class="lv2-kpis">
+    <div class="lv2-kpi primary"><span>Total acumulado</span><b id="lv2Total">—</b><small id="lv2TotalSub">Esperando archivo</small></div>
+    <div class="lv2-kpi"><span id="lv2MonthLabel">Último mes</span><b id="lv2MonthTotal">—</b><small>mes disponible</small></div>
+    <div class="lv2-kpi"><span>Vs mes anterior</span><b id="lv2Mom">—</b><small id="lv2MomSub">—</small></div>
+    <div class="lv2-kpi gold"><span>Vs mismo mes 2025</span><b id="lv2Yoy">—</b><small id="lv2YoySub">comparativo interanual</small></div>
+    <div class="lv2-kpi"><span>Acumulado vs 2025</span><b id="lv2YtdYoy">—</b><small id="lv2YtdYoySub">comparativo YTD</small></div>
+    <div class="lv2-kpi"><span>Mes pico</span><b id="lv2Peak">—</b><small id="lv2PeakSub">—</small></div>
+    <div class="lv2-kpi"><span>SUV / Todoterrenos</span><b id="lv2SUV">—</b><small id="lv2SUVShare">—</small></div>
+    <div class="lv2-kpi"><span>Pick Up / Furgonetas</span><b id="lv2Pick">—</b><small id="lv2PickShare">—</small></div>
   </div>
 
-  <div class="vl-grid-2">
-    <div class="vl-box"><h4>Mapa de oficinas registrales</h4><div class="vl-map"><svg viewBox="0 0 200 270" aria-label="Mapa estilizado del Perú"><path class="vl-map-shape" d="M78 10 L100 24 L107 45 L102 63 L116 81 L118 103 L128 120 L120 139 L123 157 L113 176 L113 193 L106 211 L99 228 L98 242 L89 257 L76 264 L64 252 L65 235 L57 222 L60 205 L55 190 L45 171 L43 154 L45 136 L39 117 L46 102 L55 85 L61 67 L56 48 L64 31 Z"/><circle class="vl-dot" cx="78" cy="165" r="7"/><text x="88" y="168" font-size="9">Lima 97,863</text><circle class="vl-dot" cx="70" cy="215" r="5"/><text x="80" y="218" font-size="9">Arequipa 17,642</text><circle class="vl-dot" cx="62" cy="112" r="4"/><text x="72" y="114" font-size="9">Trujillo</text><circle class="vl-dot" cx="102" cy="195" r="4"/><text x="112" y="198" font-size="9">Cusco</text></svg><div class="vl-bars">
-      <div class="row"><div class="head"><span>Lima</span><b>97,863 · 58.5%</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div><div class="row"><div class="head"><span>Arequipa</span><b>17,642</b></div><div class="track"><div class="fill" style="width:18%"></div></div></div><div class="row"><div class="head"><span>Trujillo</span><b>11,230</b></div><div class="track"><div class="fill" style="width:11.5%"></div></div></div><div class="row"><div class="head"><span>Cusco</span><b>7,104</b></div><div class="track"><div class="fill" style="width:7.3%"></div></div></div><div class="row"><div class="head"><span>Huancayo</span><b>4,944</b></div><div class="track"><div class="fill" style="width:5.1%"></div></div></div>
-    </div></div></div>
-
-    <div class="vl-box"><h4>Origen del vehículo</h4><div class="vl-flex"><div class="vl-pie" style="background:conic-gradient(#f2c230 0 52.6%,#6b7280 52.6% 63.25%,#9ca3af 63.25% 72.48%,#111827 72.48% 79.6%,#d1d5db 79.6% 100%)"></div><div class="small"><p><b>China</b> 87,970 · 52.6%</p><p>Indonesia 17,807 · 10.7%</p><p>India 15,437 · 9.2%</p><p>Argentina 11,915 · 7.1%</p><p>Otros 34,115 · 20.4%</p></div></div></div>
-
-    <div class="vl-box"><h4>Combustible</h4><div class="vl-flex"><div class="vl-pie" style="background:conic-gradient(#f2c230 0 74.71%,#111827 74.71% 92.99%,#6b7280 92.99% 99.39%,#cbd5e1 99.39% 100%)"></div><div class="small"><p><b>Gasolina</b> 124,949 · 74.7%</p><p>Diesel 30,572 · 18.3%</p><p>Híbrido 10,697 · 6.4%</p><p>Eléctrico 630 · 0.4%</p><p>Otros 396</p></div></div></div>
-
-    <div class="vl-box"><h4>Transmisión / Tracción</h4><div class="vl-bars"><div class="row"><div class="head"><span>Mecánica</span><b>63.1%</b></div><div class="track"><div class="fill" style="width:63.1%"></div></div></div><div class="row"><div class="head"><span>Automática</span><b>25.1%</b></div><div class="track"><div class="fill" style="width:25.1%"></div></div></div><div class="row"><div class="head"><span>CVT</span><b>11.8%</b></div><div class="track"><div class="fill" style="width:11.8%"></div></div></div><hr style="border:0;border-top:1px solid var(--line);margin:14px 0"><div class="row"><div class="head"><span>4x2</span><b>81.6%</b></div><div class="track"><div class="fill" style="width:81.6%"></div></div></div><div class="row"><div class="head"><span>4x4</span><b>18.4%</b></div><div class="track"><div class="fill" style="width:18.4%"></div></div></div></div></div>
+  <div class="lv2-insights">
+    <div class="lv2-insight"><span>Marca líder</span><b id="lv2TopBrand">—</b><small id="lv2TopBrandSub">—</small></div>
+    <div class="lv2-insight"><span>Modelo líder</span><b id="lv2TopModel">—</b><small id="lv2TopModelSub">—</small></div>
+    <div class="lv2-insight"><span>Oficina líder</span><b id="lv2TopOffice">—</b><small id="lv2TopOfficeSub">—</small></div>
+    <div class="lv2-insight"><span>Electrificados</span><b id="lv2Electrified">—</b><small id="lv2ElectrifiedSub">Híbrido + eléctrico</small></div>
   </div>
 
-  <div class="vl-grid-3">
-    <div class="vl-box"><h4>Carrocerías principales</h4><div class="vl-bars"><div class="row"><div class="head"><span>SUV</span><b>93,026 · 55.6%</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div><div class="row"><div class="head"><span>Pick Up</span><b>24,374 · 14.6%</b></div><div class="track"><div class="fill" style="width:26.2%"></div></div></div><div class="row"><div class="head"><span>Sedan</span><b>14,271 · 8.5%</b></div><div class="track"><div class="fill" style="width:15.3%"></div></div></div><div class="row"><div class="head"><span>Multipropósito</span><b>9,822</b></div><div class="track"><div class="fill" style="width:10.6%"></div></div></div><div class="row"><div class="head"><span>Microbús</span><b>8,802</b></div><div class="track"><div class="fill" style="width:9.5%"></div></div></div><div class="row"><div class="head"><span>Hatchback</span><b>8,791</b></div><div class="track"><div class="fill" style="width:9.4%"></div></div></div></div></div>
-    <div class="vl-box"><h4>Año modelo</h4><div class="vl-bars"><div class="row"><div class="head"><span>2027</span><b>89,649 · 53.6%</b></div><div class="track"><div class="fill" style="width:53.6%"></div></div></div><div class="row"><div class="head"><span>2026</span><b>73,243 · 43.8%</b></div><div class="track"><div class="fill" style="width:43.8%"></div></div></div><div class="row"><div class="head"><span>2025 y anteriores</span><b>4,352 · 2.6%</b></div><div class="track"><div class="fill" style="width:2.6%"></div></div></div></div><div class="note" style="margin-top:12px">Más de la mitad de las unidades corresponden a año modelo 2027.</div></div>
-    <div class="vl-box"><h4>Movimiento julio → agosto</h4><div class="small"><p><b>Total:</b> 18,864 → 23,412 · <b>+24.1%</b></p><p><b>SUV:</b> +3,122 · +29.9%</p><p><b>Automóvil:</b> +749 · +29.7%</p><p><b>Pick Up/Furg.:</b> +433 · +12.1%</p><p><b>Camionetas:</b> +242 · +10.3%</p></div><div class="vl-alert"><b>Calidad:</b> 12 duplicados exactos adicionales detectados en la base técnica, con impacto de 14 unidades acumuladas (9 en agosto). Deben deduplicarse en el sistema antes de publicar cifras recalculadas.</div></div>
+  <div class="lv2-filter-shell" id="lv2FilterShell">
+    <div class="lv2-filters">
+      <div class="lv2-filter"><label>Mes</label><select id="lv2Month"><option value="ALL">Sin datos</option></select></div>
+      <div class="lv2-filter"><label>Clase</label><select id="lv2Class"><option value="ALL">Todas</option></select></div>
+      <div class="lv2-filter"><label>Marca</label><select id="lv2Brand"><option value="ALL">Todas</option></select></div>
+      <div class="lv2-filter"><label>Modelo</label><select id="lv2Model"><option value="ALL">Todos</option></select></div>
+      <div class="lv2-filter"><label>Oficina</label><select id="lv2Office"><option value="ALL">Todas</option></select></div>
+      <div class="lv2-filter"><label>Combustible</label><select id="lv2Fuel"><option value="ALL">Todos</option></select></div>
+      <div class="lv2-filter-actions"><button class="lv2-more" id="lv2More">Más filtros</button><button class="lv2-reset" id="lv2Reset">↻ Limpiar</button></div>
+    </div>
+    <div class="lv2-advanced">
+      <div class="lv2-filter"><label>Carrocería</label><select id="lv2Body"><option value="ALL">Todas</option></select></div>
+      <div class="lv2-filter"><label>Transmisión</label><select id="lv2Trans"><option value="ALL">Todas</option></select></div>
+      <div class="lv2-filter"><label>Tracción</label><select id="lv2Drive"><option value="ALL">Todas</option></select></div>
+      <div class="lv2-filter"><label>Origen</label><select id="lv2Origin"><option value="ALL">Todos</option></select></div>
+      <div class="lv2-filter"><label>Año modelo</label><select id="lv2ModelYear"><option value="ALL">Todos</option></select></div>
+    </div>
+    <div class="lv2-filter-note" id="lv2FilterNote">Esperando conexión con el Excel.</div>
   </div>
 
-  <div class="vl-source"><span><b>TSF AutoMarket Intelligence</b> · Vehículos Livianos</span><span>Fuente: Archivo 2 · 16 hojas auditadas</span><span>Última data: Agosto 2026</span></div>
+  <div class="lv2-grid lv2-grid-a">
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Evolución mensual por clase</h4><p id="lv2TrendInsight">La tendencia aparecerá al cargar el archivo.</p></div><div class="lv2-legend" id="lv2TrendLegend"></div></div><canvas id="lv2Trend"></canvas></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Composición por clase</h4><p>Pasa el cursor para ver detalle. Haz clic para filtrar.</p></div></div><div class="lv2-donut-wrap"><canvas id="lv2Donut"></canvas><div class="lv2-donut-center"><b id="lv2DonutTotal">—</b><span>unidades</span></div></div><div class="lv2-class-legend" id="lv2ClassLegend"></div><div class="lv2-tip" id="lv2Tip"></div></div>
+  </div>
+
+  <div class="lv2-grid lv2-grid-b">
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Top marcas</h4><p>Ranking según los filtros activos.</p></div><span class="lv2-chip" id="lv2BrandChip">Sin datos</span></div><div class="lv2-rank" id="lv2Brands"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Top modelos</h4><p>Modelos de mayor volumen en la selección.</p></div><span class="lv2-chip" id="lv2ModelChip">Sin datos</span></div><div class="lv2-rank" id="lv2Models"></div></div>
+  </div>
+
+  <div class="lv2-card" style="margin-bottom:10px">
+    <div class="lv2-card-head"><div><h4>Concentración por oficinas registrales</h4><p>Ranking registral real, sin mapa referencial.</p></div><span class="lv2-chip" id="lv2OfficeChip">Sin datos</span></div>
+    <div class="lv2-offices"><div class="lv2-office-list" id="lv2Offices"></div><div class="lv2-office-side"><div class="lv2-mini"><span>Oficina líder</span><b id="lv2OfficeLeader">—</b><small id="lv2OfficeLeaderSub">—</small></div><div class="lv2-mini"><span>Top 5 oficinas</span><b id="lv2OfficeTop5">—</b><small>participación acumulada</small></div><div class="lv2-mini"><span>Marcas</span><b id="lv2BrandCount">—</b><small>con volumen en la selección</small></div><div class="lv2-mini"><span>Modelos</span><b id="lv2ModelCount">—</b><small>con volumen en la selección</small></div></div></div>
+  </div>
+
+  <div class="lv2-grid lv2-grid-c">
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Origen</h4><p>País de procedencia.</p></div></div><div class="lv2-bars" id="lv2Origins"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Combustible</h4><p>Perfil energético.</p></div></div><div class="lv2-bars" id="lv2Fuels"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Transmisión / Tracción</h4><p>Configuración técnica.</p></div></div><div class="lv2-bars dark" id="lv2TransDrive"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Año modelo</h4><p>Composición por año.</p></div></div><div class="lv2-bars" id="lv2Years"></div></div>
+  </div>
+
+  <div class="lv2-grid lv2-grid-b">
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Carrocerías principales</h4><p>Distribución del parque liviano registrado.</p></div></div><div class="lv2-bars" id="lv2Bodies"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Lectura ejecutiva</h4><p>Indicadores que cambian con la selección.</p></div></div><div class="lv2-bars" id="lv2Executive"></div></div>
+  </div>
+
+  <div class="lv2-quality">
+    <div><span>Cobertura</span><b id="lv2Coverage">—</b></div>
+    <div><span>Base técnica</span><b id="lv2BaseInfo">12,320 filas · 24 columnas</b></div>
+    <div class="warn"><span>Duplicados exactos</span><b id="lv2DupInfo">12 filas adicionales · 14 unidades</b></div>
+    <div><span>Control</span><b id="lv2Control">La suma mensual debe reconciliar con RESUMEN</b></div>
+  </div>
 </section>
 
 
@@ -3806,7 +4007,7 @@ table tbody tr:hover{
 <script>
 const titles={
  resumen:'Resumen Ejecutivo',retailmes:'Retail Mes - Agosto 2026',retail:'Retail Acumulado - Ene–Ago 2026',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',inmat:'Inmatriculaciones',brechas:'Retail vs Inmatriculación',
- ligeros:'Vehículos Livianos',comerciales:'Comerciales',pesados:'Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Remolques y Semirremolques',
+ ligeros:'Mercado Vehículos Livianos',comerciales:'Comerciales',pesados:'Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Remolques y Semirremolques',
  geografia:'Mapas del Perú',concesionarios:'Departamento y Concesionarios Retail',calidad:'Calidad de Datos',carga:'Cargar Mes'
 };
 function go(page){
@@ -4315,6 +4516,65 @@ let vm20ResizeTimer;
 function vm20ResizeRedraw(){clearTimeout(vm20ResizeTimer);vm20ResizeTimer=setTimeout(()=>{if(vm20HasData()){drawVMLines();const rows=vm20Filtered();let m=0,t=0;rows.forEach(r=>{const v=vm20Val(r),c=VM20.cls[r[0]];if(c==='MOTOCICLETAS')m+=v;else if(c==='TRIMOTOS')t+=v});vm20DrawDonut(m,t)}},140)}
 window.addEventListener('resize',vm20ResizeRedraw);
 if('ResizeObserver' in window){const ro=new ResizeObserver(vm20ResizeRedraw);['vm2Trend','vm2Donut'].forEach(id=>{const e=document.getElementById(id)?.parentElement;if(e)ro.observe(e)})}
+
+
+
+// ==========================================================
+// V28 - VEHICULOS LIVIANOS DINAMICO DESDE EXCEL
+// ==========================================================
+const LV2_MONTH_NAMES=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+const LV2_MONTH_SHORT={ENERO:'Ene',FEBRERO:'Feb',MARZO:'Mar',ABRIL:'Abr',MAYO:'May',JUNIO:'Jun',JULIO:'Jul',AGOSTO:'Ago',SEPTIEMBRE:'Sep',OCTUBRE:'Oct',NOVIEMBRE:'Nov',DICIEMBRE:'Dic'};
+const LV2_COLORS=['#f5ae00','#252a34','#ee0b70','#87909f','#c9ced6','#5a6070'];
+const LV2={rows:[],months:[],year:2026,file:'',meta:{prevMonth:null,prevYtd:null},dup:{extraRows:12,units:14,aug:9}};
+const lv2Els={month:document.getElementById('lv2Month'),cls:document.getElementById('lv2Class'),brand:document.getElementById('lv2Brand'),model:document.getElementById('lv2Model'),office:document.getElementById('lv2Office'),fuel:document.getElementById('lv2Fuel'),body:document.getElementById('lv2Body'),trans:document.getElementById('lv2Trans'),drive:document.getElementById('lv2Drive'),origin:document.getElementById('lv2Origin'),year:document.getElementById('lv2ModelYear')};
+function lv2Norm(v){return String(v??'').trim().replace(/\s+/g,' ')}
+function lv2Head(v){return lv2Norm(v).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function lv2Fmt(n){return Math.round(Number(n)||0).toLocaleString('es-PE')}
+function lv2Pct(n,d){return d?((n/d)*100).toFixed(1)+'%':'0.0%'}
+function lv2HasData(){return LV2.rows.length>0&&LV2.months.length>0}
+function lv2Val(r,monthOverride){const m=monthOverride===undefined?(lv2Els.month?.value||'ALL'):monthOverride;if(m==='ALL')return LV2.months.reduce((s,x)=>s+(Number(r[x])||0),0);return Number(r[m])||0}
+function lv2Set(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function lv2SetClass(id,v,cls){const e=document.getElementById(id);if(e){e.textContent=v;e.classList.remove('positive','negative');if(cls)e.classList.add(cls)}}
+function lv2Connect(title,sub,ok=false){lv2Set('lv2ConnectTitle',title);lv2Set('lv2ConnectSub',sub);const box=document.getElementById('lv2Connect');if(box){box.style.borderColor=ok?'#b9e4ce':'#f0d5e2';box.style.background=ok?'linear-gradient(135deg,#fff,#f1fbf6)':'linear-gradient(135deg,#fff,#fff9ed)'}}
+function lv2ResetDisplay(){['lv2HeroTotal','lv2Total','lv2MonthTotal','lv2Mom','lv2Yoy','lv2YtdYoy','lv2Peak','lv2SUV','lv2Pick','lv2TopBrand','lv2TopModel','lv2TopOffice','lv2Electrified','lv2DonutTotal','lv2OfficeLeader','lv2OfficeTop5','lv2BrandCount','lv2ModelCount'].forEach(x=>lv2Set(x,'—'));['lv2Brands','lv2Models','lv2Offices','lv2Origins','lv2Fuels','lv2TransDrive','lv2Years','lv2Bodies','lv2Executive','lv2ClassLegend'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='<div class="lv2-empty">Carga el Excel para generar este indicador.</div>'})}
+function lv2FindSheet(wb){return wb.SheetNames.find(n=>lv2Head(n)==='BASE ESPECIFICACIONES TECNICAS')||wb.SheetNames.find(n=>lv2Head(n).includes('BASE')&&lv2Head(n).includes('ESPECIFICACIONES'))}
+function lv2ReadMeta(wb){try{const s=wb.Sheets['RESUMEN'];if(!s)return;const a=XLSX.utils.sheet_to_json(s,{header:1,defval:null});const row=a.find(r=>lv2Head(r?.[0])==='TOTAL GENERAL');if(row){LV2.meta.prevMonth=Number(row[18])||null;LV2.meta.prevYtd=Number(row[22])||null}}catch(e){console.warn('Meta 2025 no disponible',e)}}
+function lv2LoadWorkbook(wb,fileName='Excel cargado'){
+ const sn=lv2FindSheet(wb);if(!sn)throw new Error('No se encontró la hoja BASE ESPECIFICACIONES TÉCNICAS.');
+ const sheet=wb.Sheets[sn];const data=XLSX.utils.sheet_to_json(sheet,{defval:'',raw:true});if(!data.length)throw new Error('La base técnica está vacía.');
+ const keys=Object.keys(data[0]);const normalized=new Map(keys.map(k=>[lv2Head(k),k]));
+ const field=(...names)=>{for(const n of names){const k=normalized.get(lv2Head(n));if(k)return k}return null};
+ const f={office:field('Oficina Registral'),cls:field('CLASE AAP'),body:field('Carroceria'),brand:field('MARCA'),model:field('MODELO'),origin:field('ORIGEN'),fuel:field('COMBUSTIBLE'),drive:field('FORMULA RODANTE'),version:field('VERSION'),cyl:field('CILINDRADA'),trans:field('TRASMISION','TRANSMISION'),seats:field('ASIENTOS'),modelYear:field('AÑO_MOD','ANO_MOD')};
+ if(!f.office||!f.cls||!f.brand||!f.model)throw new Error('El archivo no tiene la estructura esperada de Vehículos Livianos.');
+ LV2.months=keys.filter(k=>LV2_MONTH_NAMES.includes(lv2Head(k))).map(k=>lv2Head(k));
+ if(!LV2.months.length)throw new Error('No se encontraron columnas mensuales.');
+ LV2.rows=data.map(x=>({office:lv2Norm(x[f.office])||'SIN DATO',cls:lv2Norm(x[f.cls])||'SIN DATO',body:lv2Norm(x[f.body])||'SIN DATO',brand:lv2Norm(x[f.brand])||'SIN DATO',model:lv2Norm(x[f.model])||'SIN DATO',origin:lv2Norm(x[f.origin])||'SIN DATO',fuel:lv2Norm(x[f.fuel])||'SIN DATO',drive:lv2Norm(x[f.drive])||'SIN DATO',trans:lv2Norm(x[f.trans])||'SIN DATO',modelYear:lv2Norm(x[f.modelYear])||'SIN DATO',...Object.fromEntries(LV2.months.map(m=>[m,Number(x[normalized.get(m)]||0)]))}));
+ LV2.file=fileName;lv2ReadMeta(wb);lv2PopulateMonth();lv2RefreshOptions();lv2Update(false);lv2Set('lv2HeroStatus',fileName+' · '+LV2.rows.length.toLocaleString('es-PE')+' registros útiles');lv2Connect('Excel conectado',fileName,true);return true;
+}
+async function lv2ReadFile(file){if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel.');const buf=await file.arrayBuffer();const wb=XLSX.read(buf,{type:'array',cellDates:true});return lv2LoadWorkbook(wb,file.name)}
+function lv2PopulateMonth(){const e=lv2Els.month;if(!e)return;e.innerHTML='<option value="ALL">Acumulado</option>'+LV2.months.map(m=>'<option value="'+m+'">'+m[0]+m.slice(1).toLowerCase()+'</option>').join('')}
+function lv2Populate(sel,values,label){if(!sel)return;const cur=sel.value;sel.innerHTML='<option value="ALL">'+label+'</option>'+values.map(v=>'<option value="'+String(v).replace(/"/g,'&quot;')+'">'+v+'</option>').join('');sel.value=values.includes(cur)?cur:'ALL'}
+function lv2Matches(r,exclude){for(const [k,e] of Object.entries(lv2Els)){if(k===exclude||k==='month'||!e)continue;const v=e.value;if(v&&v!=='ALL'&&String(r[k])!==String(v))return false}return true}
+function lv2Filtered(exclude){return LV2.rows.filter(r=>lv2Matches(r,exclude))}
+function lv2RefreshOptions(){if(!lv2HasData())return;for(const [k,e,label] of [['cls',lv2Els.cls,'Todas'],['brand',lv2Els.brand,'Todas'],['model',lv2Els.model,'Todos'],['office',lv2Els.office,'Todas'],['fuel',lv2Els.fuel,'Todos'],['body',lv2Els.body,'Todas'],['trans',lv2Els.trans,'Todas'],['drive',lv2Els.drive,'Todas'],['origin',lv2Els.origin,'Todos'],['year',lv2Els.year,'Todos']]){const vals=[...new Set(lv2Filtered(k).map(r=>r[k==='year'?'modelYear':k]))].filter(Boolean).sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true}));lv2Populate(e,vals,label)}}
+function lv2Agg(rows,key,monthOverride){const m=new Map();rows.forEach(r=>{const v=lv2Val(r,monthOverride);if(!v)return;const k=r[key]||'SIN DATO';m.set(k,(m.get(k)||0)+v)});return [...m.entries()].sort((a,b)=>b[1]-a[1])}
+function lv2Rank(id,arr,limit=10){const e=document.getElementById(id);if(!e)return;const top=arr.slice(0,limit),mx=top[0]?.[1]||1;e.innerHTML=top.map(([n,v],i)=>'<div class="lv2-rank-row" title="'+n+' · '+lv2Fmt(v)+'"><span class="name">'+(i+1)+'. '+n+'</span><div class="lv2-track"><div class="lv2-fill" style="width:'+((v/mx)*100).toFixed(1)+'%"></div></div><b>'+lv2Fmt(v)+'</b></div>').join('')||'<div class="lv2-empty">Sin datos</div>'}
+function lv2Bars(id,arr,total,limit=8){const e=document.getElementById(id);if(!e)return;const top=arr.slice(0,limit),mx=top[0]?.[1]||1;e.innerHTML=top.map(([n,v])=>'<div><div class="lv2-bar-head"><span>'+n+'</span><b>'+lv2Fmt(v)+' · '+lv2Pct(v,total)+'</b></div><div class="lv2-bar-track"><div class="lv2-bar-fill" style="width:'+((v/mx)*100).toFixed(1)+'%"></div></div></div>').join('')||'<div class="lv2-empty">Sin datos</div>'}
+function lv2Offices(arr,total){const e=document.getElementById('lv2Offices');if(!e)return;const top=arr.slice(0,10),mx=top[0]?.[1]||1;e.innerHTML=top.map(([n,v],i)=>'<div class="lv2-office-row"><span class="n">'+(i+1)+'</span><span class="name">'+n+'</span><b>'+lv2Fmt(v)+'</b><span class="pct">'+lv2Pct(v,total)+'</span><div class="bar"><i style="width:'+((v/mx)*100).toFixed(1)+'%"></i></div></div>').join('')||'<div class="lv2-empty">Sin datos</div>';lv2Set('lv2OfficeChip',top[0]?top[0][0]+' lidera':'Sin datos');lv2Set('lv2OfficeLeader',top[0]?.[0]||'—');lv2Set('lv2OfficeLeaderSub',top[0]?lv2Fmt(top[0][1])+' · '+lv2Pct(top[0][1],total):'—');lv2Set('lv2OfficeTop5',lv2Pct(top.slice(0,5).reduce((s,x)=>s+x[1],0),total))}
+function lv2Trend(canvas,series){if(!canvas||!LV2.months.length)return;const r=canvas.getBoundingClientRect(),w=Math.max(320,Math.round(r.width)),h=Math.max(195,Math.round(r.height||245)),dpr=Math.min(devicePixelRatio||1,2);canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);const p={l:48,r:15,t:16,b:28},cw=w-p.l-p.r,ch=h-p.t-p.b,vals=series.flatMap(s=>s.data),mx=Math.max(...vals,1)*1.12;c.font='9px Segoe UI';c.textBaseline='middle';for(let i=0;i<4;i++){const y=p.t+ch*i/3;c.strokeStyle='#eceef3';c.beginPath();c.moveTo(p.l,y);c.lineTo(w-p.r,y);c.stroke();c.fillStyle='#969da8';c.textAlign='right';c.fillText(Math.round(mx*(1-i/3)).toLocaleString('es-PE'),p.l-7,y)}const den=Math.max(1,LV2.months.length-1);LV2.months.forEach((m,i)=>{const x=p.l+cw*i/den;c.fillStyle='#969da8';c.textAlign='center';c.fillText(LV2_MONTH_SHORT[m]||m.slice(0,3),x,h-9)});series.forEach((s,si)=>{const pts=s.data.map((v,i)=>({x:p.l+cw*i/den,y:p.t+ch-(v/mx)*ch}));const grad=c.createLinearGradient(0,p.t,0,p.t+ch);grad.addColorStop(0,si===0?'rgba(245,174,0,.13)':'rgba(238,11,112,.05)');grad.addColorStop(1,'rgba(255,255,255,0)');c.beginPath();c.moveTo(pts[0].x,p.t+ch);pts.forEach(q=>c.lineTo(q.x,q.y));c.lineTo(pts.at(-1).x,p.t+ch);c.closePath();c.fillStyle=grad;c.fill();c.beginPath();pts.forEach((q,i)=>i?c.lineTo(q.x,q.y):c.moveTo(q.x,q.y));c.strokeStyle=s.color;c.lineWidth=2.3;c.stroke();pts.forEach(q=>{c.beginPath();c.arc(q.x,q.y,2.8,0,Math.PI*2);c.fillStyle='#fff';c.fill();c.lineWidth=2;c.strokeStyle=s.color;c.stroke()})})}
+function lv2DrawDonut(parts,total){const canvas=document.getElementById('lv2Donut');if(!canvas)return;const wrap=canvas.parentElement,box=Math.max(145,Math.min((wrap?.clientWidth||200)-2,225)),dpr=Math.min(devicePixelRatio||1,2);canvas.width=box*dpr;canvas.height=box*dpr;canvas.style.width=box+'px';canvas.style.height=box+'px';const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,box,box);const cx=box/2,cy=box/2,R=box*.43,r=box*.285;let start=-Math.PI/2;canvas._parts=[];parts.forEach((p,i)=>{const ang=total?2*Math.PI*p.value/total:0;c.beginPath();c.arc(cx,cy,R,start,start+ang);c.arc(cx,cy,r,start+ang,start,true);c.closePath();c.fillStyle=p.color;c.fill();canvas._parts.push({...p,start,end:start+ang,R,r,cx,cy,total});start+=ang});const tip=document.getElementById('lv2Tip');function hit(e){const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-cx,dy=y-cy,rr=Math.hypot(dx,dy);let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;return canvas._parts.find(p=>rr>=r&&rr<=R&&a>=p.start&&a<=p.end)}canvas.onmousemove=e=>{const p=hit(e);if(p){tip.style.display='block';tip.style.left=e.clientX+12+'px';tip.style.top=e.clientY+12+'px';tip.innerHTML='<b>'+p.name+'</b><br>'+lv2Fmt(p.value)+' · '+lv2Pct(p.value,total)}else tip.style.display='none'};canvas.onmouseleave=()=>tip.style.display='none';canvas.onclick=e=>{const p=hit(e);if(p&&lv2Els.cls){lv2Els.cls.value=p.name;lv2Update(true)}}}
+function lv2Update(refresh=true){if(!lv2HasData()){lv2ResetDisplay();return}if(refresh)lv2RefreshOptions();const rows=lv2Filtered(),selMonth=lv2Els.month?.value||'ALL',all=selMonth==='ALL',lastMonth=LV2.months.at(-1),m=all?lastMonth:selMonth,total=rows.reduce((s,r)=>s+lv2Val(r),0),monthTotal=rows.reduce((s,r)=>s+(Number(r[m])||0),0),mi=LV2.months.indexOf(m),prev=mi>0?rows.reduce((s,r)=>s+(Number(r[LV2.months[mi-1]])||0),0):null,mom=prev?((monthTotal-prev)/prev*100):null;const monthly=LV2.months.map(mm=>rows.reduce((s,r)=>s+(Number(r[mm])||0),0));let peak=0;monthly.forEach((v,i)=>{if(v>monthly[peak])peak=i});const classes=lv2Agg(rows,'cls'),brands=lv2Agg(rows,'brand'),models=lv2Agg(rows,'model'),offices=lv2Agg(rows,'office'),origins=lv2Agg(rows,'origin'),fuels=lv2Agg(rows,'fuel'),trans=lv2Agg(rows,'trans'),drives=lv2Agg(rows,'drive'),years=lv2Agg(rows,'modelYear'),bodies=lv2Agg(rows,'body');const classMap=new Map(classes),suv=classMap.get('SUV,TODOTERRENOS')||0,pick=classMap.get('PICK UP Y FURGONETAS')||0;lv2Set('lv2Total',lv2Fmt(total));lv2Set('lv2HeroTotal',lv2Fmt(total));lv2Set('lv2TotalSub',all?'Enero–'+(LV2_MONTH_SHORT[lastMonth]||lastMonth)+' 2026':m+' 2026');lv2Set('lv2MonthLabel',m[0]+m.slice(1).toLowerCase());lv2Set('lv2MonthTotal',lv2Fmt(monthTotal));lv2SetClass('lv2Mom',mom===null?'—':(mom>=0?'+':'')+mom.toFixed(1)+'%',mom===null?'':mom>=0?'positive':'negative');lv2Set('lv2MomSub',mi>0?'vs '+(LV2_MONTH_SHORT[LV2.months[mi-1]]||LV2.months[mi-1]):'sin mes anterior');lv2Set('lv2Peak',lv2Fmt(monthly[peak]||0));lv2Set('lv2PeakSub',(LV2_MONTH_SHORT[LV2.months[peak]]||'—')+' 2026');lv2Set('lv2SUV',lv2Fmt(suv));lv2Set('lv2SUVShare',lv2Pct(suv,total)+' del total');lv2Set('lv2Pick',lv2Fmt(pick));lv2Set('lv2PickShare',lv2Pct(pick,total)+' del total');
+ const noFilters=['cls','brand','model','office','fuel','body','trans','drive','origin','year'].every(k=>(lv2Els[k]?.value||'ALL')==='ALL');if(noFilters&&m===lastMonth&&LV2.meta.prevMonth){const y=((monthTotal-LV2.meta.prevMonth)/LV2.meta.prevMonth)*100;lv2SetClass('lv2Yoy',(y>=0?'+':'')+y.toFixed(1)+'%',y>=0?'positive':'negative');lv2Set('lv2YoySub','vs '+lv2Fmt(LV2.meta.prevMonth)+' en '+(LV2_MONTH_SHORT[m]||m)+' 2025')}else{lv2Set('lv2Yoy','—');lv2Set('lv2YoySub','disponible para total del último mes')}if(noFilters&&all&&LV2.meta.prevYtd){const y=((total-LV2.meta.prevYtd)/LV2.meta.prevYtd)*100;lv2SetClass('lv2YtdYoy',(y>=0?'+':'')+y.toFixed(1)+'%',y>=0?'positive':'negative');lv2Set('lv2YtdYoySub','vs '+lv2Fmt(LV2.meta.prevYtd)+' acumulado 2025')}else{lv2Set('lv2YtdYoy','—');lv2Set('lv2YtdYoySub','disponible para acumulado total')}
+ lv2Set('lv2TopBrand',brands[0]?.[0]||'—');lv2Set('lv2TopBrandSub',brands[0]?lv2Fmt(brands[0][1])+' · '+lv2Pct(brands[0][1],total):'—');lv2Set('lv2TopModel',models[0]?.[0]||'—');lv2Set('lv2TopModelSub',models[0]?lv2Fmt(models[0][1])+' · '+lv2Pct(models[0][1],total):'—');lv2Set('lv2TopOffice',offices[0]?.[0]||'—');lv2Set('lv2TopOfficeSub',offices[0]?lv2Fmt(offices[0][1])+' · '+lv2Pct(offices[0][1],total):'—');const electr=(new Map(fuels).get('HIBRIDO')||0)+(new Map(fuels).get('ELECTRICO')||0);lv2Set('lv2Electrified',lv2Fmt(electr));lv2Set('lv2ElectrifiedSub',lv2Pct(electr,total)+' del total');lv2Set('lv2DonutTotal',lv2Fmt(total));lv2Set('lv2BrandChip',brands[0]?brands[0][0]+' lidera':'Sin datos');lv2Set('lv2ModelChip',models[0]?models[0][0]+' lidera':'Sin datos');lv2Set('lv2BrandCount',String(brands.length));lv2Set('lv2ModelCount',String(models.length));
+ lv2Rank('lv2Brands',brands);lv2Rank('lv2Models',models);lv2Offices(offices,total);lv2Bars('lv2Origins',origins,total);lv2Bars('lv2Fuels',fuels,total);lv2Bars('lv2Years',years,total);lv2Bars('lv2Bodies',bodies,total);const tech=[...trans.map(x=>['Trans. '+x[0],x[1]]),...drives.map(x=>['Tracción '+x[0],x[1]])].sort((a,b)=>b[1]-a[1]);lv2Bars('lv2TransDrive',tech,total,8);const executive=[['SUV / Todoterrenos',suv],['Pick Up / Furgonetas',pick],['Electrificados',electr],['Top 5 oficinas',offices.slice(0,5).reduce((s,x)=>s+x[1],0)],['Año modelo 2027',new Map(years).get('2027')||0]];lv2Bars('lv2Executive',executive,total,8);
+ const classParts=classes.slice(0,6).map(([name,value],i)=>({name,value,color:LV2_COLORS[i%LV2_COLORS.length]}));lv2DrawDonut(classParts,total);const legend=document.getElementById('lv2ClassLegend');if(legend)legend.innerHTML=classParts.map(p=>'<button data-lvclass="'+p.name.replace(/"/g,'&quot;')+'"><span><i style="background:'+p.color+'"></i>'+p.name+'</span><b>'+lv2Pct(p.value,total)+'</b></button>').join('');legend?.querySelectorAll('button').forEach(b=>b.onclick=()=>{lv2Els.cls.value=b.dataset.lvclass;lv2Update(true)});
+ const series=classes.slice(0,4).map(([name],i)=>({name,color:LV2_COLORS[i%LV2_COLORS.length],data:LV2.months.map(mm=>rows.filter(r=>r.cls===name).reduce((s,r)=>s+(Number(r[mm])||0),0))}));lv2Trend(document.getElementById('lv2Trend'),series);const tleg=document.getElementById('lv2TrendLegend');if(tleg)tleg.innerHTML=series.map(s=>'<span><i style="background:'+s.color+'"></i>'+s.name+'</span>').join('');const insight=document.getElementById('lv2TrendInsight');if(insight){const ch=prev?((monthTotal-prev)/prev*100):0;insight.textContent=(LV2_MONTH_SHORT[m]||m)+': '+lv2Fmt(monthTotal)+' · '+(ch>=0?'+':'')+ch.toFixed(1)+'% vs mes anterior. Pico: '+(LV2_MONTH_SHORT[LV2.months[peak]]||'—')+' con '+lv2Fmt(monthly[peak])+'.'}
+ const active=[];for(const [k,label] of [['cls','Clase'],['brand','Marca'],['model','Modelo'],['office','Oficina'],['fuel','Combustible'],['body','Carrocería'],['trans','Transmisión'],['drive','Tracción'],['origin','Origen'],['year','Año modelo']]){const v=lv2Els[k]?.value;if(v&&v!=='ALL')active.push(label+': '+v)}if(!all)active.unshift('Mes: '+m);lv2Set('lv2FilterNote',active.length?'Filtros activos · '+active.join(' · '):'Vista acumulada · '+LV2.rows.length.toLocaleString('es-PE')+' registros útiles');document.querySelectorAll('#ligeros select').forEach(s=>s.classList.toggle('lv-active',s.value!=='ALL'&&![''].includes(s.value)));lv2Set('lv2Coverage',lv2Fmt(total)+' unidades · '+rows.length.toLocaleString('es-PE')+' filas visibles');lv2Set('lv2Control',monthly.reduce((s,x)=>s+x,0)===total||!all?'Reconciliación mensual consistente':'Revisar reconciliación');
+}
+async function lv2LoadUrl(url){if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel.');const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);const buf=await res.arrayBuffer(),wb=XLSX.read(buf,{type:'array',cellDates:true});return lv2LoadWorkbook(wb,decodeURIComponent(url.split('/').pop()))}
+async function lv2AutoLoad(){lv2Connect('Buscando Excel automáticamente…','Se intenta cargar el archivo desde la misma carpeta del HTML.');const candidates=['./vehiculos_livianos.xlsx','./data/vehiculos_livianos.xlsx','./08.2_Venta_e_Inmatriculación_de_Vehículos_Livianos_Agosto_2026(4).xlsx','./08.2_Venta_e_Inmatriculación_de_Vehículos_Livianos_Agosto_2026.xlsx'];for(const u of candidates){try{await lv2LoadUrl(u);return}catch(e){}}lv2Connect('Excel de Vehículos Livianos no encontrado','Sube “vehiculos_livianos.xlsx” junto al HTML o selecciónalo manualmente.');lv2Set('lv2HeroStatus','Selecciona el Excel para activar este módulo')}
+function lv2Init(){Object.values(lv2Els).forEach(e=>e?.addEventListener('change',()=>lv2Update(true)));document.getElementById('lv2Reset')?.addEventListener('click',()=>{Object.values(lv2Els).forEach(e=>{if(e)e.value='ALL'});lv2Update(true)});document.getElementById('lv2More')?.addEventListener('click',()=>{const sh=document.getElementById('lv2FilterShell');sh?.classList.toggle('show-advanced');document.getElementById('lv2More').textContent=sh?.classList.contains('show-advanced')?'Menos filtros':'Más filtros'});document.getElementById('lv2LoadBtn')?.addEventListener('click',()=>document.getElementById('lv2ExcelInput')?.click());document.getElementById('lv2Retry')?.addEventListener('click',lv2AutoLoad);document.getElementById('lv2ExcelInput')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{lv2Connect('Procesando Excel…',f.name);await lv2ReadFile(f)}catch(err){lv2Connect('No se pudo leer el archivo',err.message||String(err));alert(err.message||String(err))}finally{e.target.value=''}});lv2ResetDisplay();setTimeout(lv2AutoLoad,450);let timer;window.addEventListener('resize',()=>{clearTimeout(timer);timer=setTimeout(()=>{if(document.getElementById('ligeros')?.classList.contains('active')&&lv2HasData())lv2Update(false)},140)})}
+lv2Init();
 
 
 // REMOLQUES Y SEMIRREMOLQUES
