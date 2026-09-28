@@ -2975,6 +2975,42 @@ table tbody tr:hover{
 @media(max-width:760px){.vp3-kpis,.vp3-insights{grid-template-columns:repeat(2,minmax(0,1fr))}.vp3-filterbar{grid-template-columns:repeat(2,minmax(0,1fr))}.vp3-grid-c{grid-template-columns:1fr}.vp3-connect{flex-direction:column;align-items:flex-start}.vp3-connect-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.vp3-connect button{width:100%}.vp3-canvas-wrap{height:230px}}
 @media(max-width:520px){.vp3-kpis,.vp3-insights,.vp3-filterbar,.vp3-more-panel,.vp3-office-side{grid-template-columns:1fr}.vp3-donut-wrap{width:min(100%,170px)}.vp3-office-row{grid-template-columns:24px minmax(0,1fr) 75px 50px}.vp3-hero{padding:15px}.vp3-hero h3{font-size:20px!important}}
 
+
+/* ==========================================================
+   V35 - CUATRO MERCADOS / ACABADO UNIFICADO E INTERACTIVO
+   ========================================================== */
+#menores .vm2-card,#ligeros .lv2-card,#pesados .vp3-card,#remolques .r4-card,
+#menores .vm22-kpi,#ligeros .lv2-kpi,#pesados .vp3-kpi,#remolques .r4-kpi,
+#menores .vm22-insight,#ligeros .lv2-insight,#pesados .vp3-insight,#remolques .r4-insight{
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important;
+}
+#menores .vm2-card:hover,#ligeros .lv2-card:hover,#pesados .vp3-card:hover,#remolques .r4-card:hover{
+  transform:translateY(-2px);box-shadow:0 14px 34px rgba(17,19,24,.085)!important;border-color:#dcdfe6!important;
+}
+#menores .vm2-rank-row,#ligeros .lv2-rank-row,#pesados .vp3-rank-row,#remolques .r4-rank-row,
+#menores .vm2-bar-row,#ligeros .lv2-bar-row,#pesados .vp3-bar-row,#remolques .r4-bar-row{
+  transition:background .15s ease,transform .15s ease;
+}
+#menores .vm2-rank-row:hover,#ligeros .lv2-rank-row:hover,#pesados .vp3-rank-row:hover,#remolques .r4-rank-row:hover,
+#menores .vm2-bar-row:hover,#ligeros .lv2-bar-row:hover,#pesados .vp3-bar-row:hover,#remolques .r4-bar-row:hover{
+  background:#fff7fb;transform:translateX(2px);border-radius:8px;
+}
+#menores canvas,#ligeros canvas,#pesados canvas,#remolques canvas{cursor:crosshair}
+#remolques{--r4-pink:#ee0b70;--r4-gold:#f5ae00;--r4-dark:#252a34;--r4-line:#e7e9ef;overflow-x:hidden}
+.r4-hero{min-height:116px;border-radius:18px;padding:20px 22px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:18px;color:#fff;background:radial-gradient(circle at 87% 35%,rgba(245,174,0,.30),transparent 19%),linear-gradient(112deg,#171b23 0%,#363c49 68%,#614b52 100%);box-shadow:0 14px 34px rgba(17,19,24,.12)}
+.r4-eyebrow{font-size:9px;font-weight:850;letter-spacing:.16em;color:#f8c642;margin-bottom:6px}.r4-hero h3{margin:0!important;color:#fff!important;font-size:27px!important}.r4-hero p{margin:6px 0 0;color:rgba(255,255,255,.82);font-size:12.5px;max-width:760px}.r4-hero-badge{min-width:190px;padding:13px 15px;border-radius:15px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(7px)}.r4-hero-badge b{display:block;font-size:25px}.r4-hero-badge span{font-size:10px;color:#e7e9ee}
+.r4-connect{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px;margin:10px 0;border:1px solid #ead8e1;background:linear-gradient(135deg,#fff,#fff8ec);border-radius:14px;box-shadow:0 8px 24px rgba(17,19,24,.04)}.r4-connect-left{display:flex;align-items:center;gap:10px;min-width:0}.r4-connect-ico{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none;background:#fff0f6;color:var(--r4-pink);font-size:17px}.r4-connect b{display:block;font-size:12px}.r4-connect span{display:block;margin-top:2px;font-size:10.5px;color:#8d94a0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.r4-connect-actions{display:flex;gap:7px;flex:none}.r4-connect button{border:0;border-radius:10px;padding:8px 11px;font-size:11px;font-weight:800;cursor:pointer}.r4-connect .primary{background:linear-gradient(135deg,var(--r4-pink),#ff2b86);color:#fff}.r4-connect .ghost{background:#fff;border:1px solid var(--r4-line);color:#222}
+.r4-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:9px}.r4-kpi{background:#fff;border:1px solid var(--r4-line);border-radius:14px;padding:12px 13px;min-height:88px;box-shadow:0 8px 22px rgba(17,19,24,.045);border-top:3px solid #d8dbe2;min-width:0}.r4-kpi.primary{border-top-color:var(--r4-pink)}.r4-kpi.gold{border-top-color:var(--r4-gold)}.r4-kpi span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#8d94a0}.r4-kpi b{display:block;margin:7px 0 4px;font-size:23px;line-height:1;color:#171a20;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.r4-kpi small{font-size:9.5px;color:#959ba6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}.r4-kpi b.positive{color:#087a43}.r4-kpi b.negative{color:#c62828}
+.r4-insights{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:10px}.r4-insight{background:#fff;border:1px solid var(--r4-line);border-radius:13px;padding:11px 12px}.r4-insight span{font-size:9.5px;color:#9299a5}.r4-insight b{display:block;font-size:15px;margin-top:4px}.r4-insight small{display:block;color:#9aa0aa;font-size:9.5px;margin-top:2px}
+.r4-filterbar{display:grid;grid-template-columns:105px 1.1fr 1.25fr 1.05fr 1.05fr 1.15fr 100px auto;gap:8px;align-items:end;background:#fff;border:1px solid var(--r4-line);border-radius:15px;padding:11px 12px;box-shadow:0 7px 20px rgba(17,19,24,.035)}.r4-filter label{display:block;font-size:9.5px;color:#8d94a0;margin:0 0 4px 2px}.r4-filter select{width:100%;height:39px;border-radius:10px!important;border:1px solid #dde1e8!important;background:#fff!important;color:#20242c!important;font-size:10.5px!important;padding:0 34px 0 10px!important;min-width:0}.r4-filter select.active{border-color:var(--r4-pink)!important;background:#fff3f8!important;box-shadow:0 0 0 3px rgba(238,11,112,.07)!important}.r4-reset{height:39px;border:0;border-radius:10px;padding:0 13px;font-size:10.5px;font-weight:800;white-space:nowrap;cursor:pointer;background:linear-gradient(135deg,var(--r4-gold),#ffc832);color:#171717}.r4-filter-note{font-size:9.5px;color:#8b929e;margin:6px 2px 10px}
+.r4-grid{display:grid;gap:10px;margin-bottom:10px}.r4-grid-a{grid-template-columns:minmax(0,1.55fr) minmax(310px,.72fr)}.r4-grid-b{grid-template-columns:1fr 1fr}.r4-grid-c{grid-template-columns:repeat(3,minmax(0,1fr))}.r4-grid-d{grid-template-columns:1.2fr .8fr}.r4-card{background:#fff;border:1px solid var(--r4-line);border-radius:15px;padding:12px;box-shadow:0 9px 25px rgba(17,19,24,.045);min-width:0;position:relative;overflow:hidden}.r4-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}.r4-card-head h4{font-size:13px!important;margin:0 0 2px!important}.r4-card-head p{font-size:9.5px;color:#9096a2;margin:0}.r4-chip{font-size:8.5px;padding:5px 8px;border-radius:999px;background:#fff4d6;color:#745100;font-weight:700;white-space:nowrap}.r4-trend-card,.r4-cat-card{min-height:350px}.r4-canvas-wrap{position:relative;width:100%;height:285px}.r4-canvas-wrap canvas{width:100%;height:100%;display:block}
+.r4-donut-wrap{width:min(100%,220px);aspect-ratio:1/1;margin:8px auto 12px;position:relative}.r4-donut-wrap canvas{width:100%!important;height:100%!important;display:block}.r4-donut-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}.r4-donut-center b{font-size:26px;line-height:1}.r4-donut-center span{font-size:9.5px;color:#9298a4}.r4-donut-legend{display:flex;flex-direction:column;gap:6px}.r4-donut-legend button{border:1px solid var(--r4-line);background:#fafbfc;border-radius:9px;padding:7px 8px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:6px;text-align:left;font-size:9px;color:#686f7b;cursor:pointer}.r4-donut-legend i{width:8px;height:8px;border-radius:50%;display:inline-block}.r4-donut-legend button b{font-size:9.5px;color:#111}.r4-tooltip{position:fixed;z-index:5000;display:none;pointer-events:none;background:#171a20;color:#fff;padding:8px 10px;border-radius:8px;font-size:10px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.r4-rank,.r4-bars{display:flex;flex-direction:column;gap:7px}.r4-rank-row{display:grid;grid-template-columns:minmax(105px,1.1fr) minmax(90px,1.5fr) 68px;gap:7px;align-items:center;font-size:10px;padding:2px;cursor:pointer}.r4-rank-row .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.r4-track,.r4-bar-track{height:7px;background:#eef0f3;border-radius:999px;overflow:hidden}.r4-fill,.r4-bar-fill{height:100%;background:linear-gradient(90deg,var(--r4-pink),var(--r4-gold));border-radius:999px;transition:width .3s ease}.r4-rank-row b{text-align:right;font-size:10px}.r4-bar-row{cursor:pointer;padding:2px}.r4-bar-head{display:flex;justify-content:space-between;gap:8px;font-size:9.5px;margin-bottom:3px}.r4-bar-head span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.r4-bar-head b{white-space:nowrap}.r4-exec{font-size:11px;line-height:1.7;color:#525965}.r4-exec b{color:#171a20}.r4-quality-list{display:grid;gap:7px;font-size:10px;color:#5f6672}.r4-quality-list div{padding:8px 9px;border:1px solid #eceef2;border-radius:9px;background:#fafbfc}.r4-quality{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;background:#16191f;color:#fff;border-radius:14px;padding:11px 12px}.r4-quality span{display:block;font-size:8.5px;text-transform:uppercase;letter-spacing:.07em;color:#959ca8;margin-bottom:3px}.r4-quality b{font-size:9.5px;font-weight:600;color:#f6f7f8}
+@media(max-width:1350px){.r4-filterbar{grid-template-columns:repeat(4,minmax(150px,1fr))}.r4-grid-c{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1050px){.r4-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.r4-insights{grid-template-columns:repeat(2,minmax(0,1fr))}.r4-grid-a,.r4-grid-b,.r4-grid-d{grid-template-columns:1fr}.r4-grid-c{grid-template-columns:repeat(2,minmax(0,1fr))}.r4-hero-badge{display:none}}
+@media(max-width:650px){.r4-kpis,.r4-insights,.r4-grid-c,.r4-quality{grid-template-columns:1fr}.r4-filterbar{grid-template-columns:1fr 1fr}.r4-connect{flex-direction:column;align-items:flex-start}.r4-connect-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.r4-connect button{width:100%}.r4-donut-wrap{width:min(100%,180px)}.r4-hero{padding:15px}.r4-hero h3{font-size:20px!important}}
+@media(prefers-reduced-motion:reduce){#menores *,#ligeros *,#pesados *,#remolques *{transition:none!important;animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -2993,6 +3029,7 @@ table tbody tr:hover{
     <button data-page="menores"><span class="nav-ico">●</span>Mercado Vehículos Menores</button>
     <button data-page="ligeros"><span class="nav-ico">◆</span>Mercado Vehículos Livianos</button>
     <button data-page="pesados"><span class="nav-ico">▮</span>Mercado Vehículos Pesados</button>
+    <button data-page="remolques"><span class="nav-ico">▭</span>Mercado Remolques y Semirremolques</button>
     <button data-page="retailmes"><span class="nav-ico">◫</span>Retail Mes (Archivo 5)</button>
     <button data-page="retail"><span class="nav-ico">▥</span>Retail Acumulado (Archivo 6)</button>
     <button data-page="retailOmnibus"><span class="nav-ico">▣</span>Retail Ómnibus</button>
@@ -3000,8 +3037,6 @@ table tbody tr:hover{
     <button data-page="inmat"><span class="nav-ico">◎</span>Inmatriculaciones</button>
     <button data-page="brechas"><span class="nav-ico">⇄</span>Retail vs Inmat.</button>
     <button data-page="comerciales"><span class="nav-ico">▱</span>Comerciales</button>
-    
-    <button data-page="remolques"><span class="nav-ico">▭</span>Remolques / Semirremolques</button>
     <button data-page="geografia"><span class="nav-ico">⌖</span>Mapas del Perú</button>
     <button data-page="concesionarios"><span class="nav-ico">▦</span>Departamento y Concesionarios</button>
     <button data-page="calidad"><span class="nav-ico">✓</span>Calidad de Datos</button>
@@ -3540,121 +3575,82 @@ table tbody tr:hover{
   <div class="vm22-data-note">Para que cargue solo en GitHub Pages, sube el Excel en la misma carpeta del HTML con el nombre <b>vehiculos_menores.xlsx</b>. Si prefieres, también puedes usar “Seleccionar Excel”.</div>
 </section>
 
+
 <section class="page" id="remolques">
-  <div class="rm-hero">
-    <h3>Remolques y Semirremolques</h3>
-    <div class="sub">Inmatriculaciones · Enero–Agosto 2026</div>
-    <p>Análisis del Archivo 4: resumen, marcas, oficinas registrales y base técnica. Incluye categorías O2/O3/O4, carrocerías, departamentos, modelos y variación mensual.</p>
+  <div class="r4-hero">
+    <div>
+      <div class="r4-eyebrow">INMATRICULACIONES · ARCHIVO 4</div>
+      <h3>Mercado Remolques y Semirremolques</h3>
+      <p>Lectura dinámica de la hoja BASE: marcas, modelos, carrocerías, categorías, oficinas, departamentos y evolución mensual.</p>
+    </div>
+    <div class="r4-hero-badge"><b id="r4HeroTotal">—</b><span id="r4HeroStatus">Buscando Excel…</span></div>
   </div>
 
-  <div class="rm-kpis">
-    <div class="rm-kpi"><div class="label">Total acumulado</div><div class="num" id="rmTotal">5,747</div><div class="tiny">Enero – Agosto 2026</div></div>
-    <div class="rm-kpi"><div class="label">Agosto</div><div class="num">760</div><div class="tiny">+21.0% vs julio</div></div>
-    <div class="rm-kpi"><div class="label">Marcas</div><div class="num">139</div><div class="tiny">Base técnica</div></div>
-    <div class="rm-kpi"><div class="label">Modelos</div><div class="num">423</div><div class="tiny">2 unidades con modelo “-”</div></div>
-    <div class="rm-kpi"><div class="label">Carrocerías</div><div class="num">29</div><div class="tiny">301 unidades sin clasificación</div></div>
-    <div class="rm-kpi"><div class="label">Oficinas</div><div class="num">8</div><div class="tiny">8 departamentos</div></div>
+  <div class="r4-connect" id="r4Connect">
+    <div class="r4-connect-left"><div class="r4-connect-ico">▭</div><div><b id="r4ConnectTitle">Conectar Excel de Remolques</b><span id="r4ConnectSub">El sistema intentará cargarlo automáticamente o puedes seleccionarlo aquí.</span></div></div>
+    <div class="r4-connect-actions"><button class="primary" id="r4LoadBtn" type="button">📁 Seleccionar Excel</button><button class="ghost" id="r4Retry" type="button">↻ Reintentar</button></div>
+    <input id="r4ExcelInput" type="file" accept=".xlsx,.xls" hidden>
   </div>
 
-  <div class="rm-filters">
-    <div class="rm-filter"><label>Año</label><select><option>2026</option></select></div>
-    <div class="rm-filter"><label>Mes</label><select id="rmMonth"><option value="ALL">Ene–Ago</option><option>ENERO</option><option>FEBRERO</option><option>MARZO</option><option>ABRIL</option><option>MAYO</option><option>JUNIO</option><option>JULIO</option><option>AGOSTO</option></select></div>
-    <div class="rm-filter"><label>Marca</label><select><option>Todas</option><option>MACONSAC</option><option>OBCAS</option><option>MELCONSA</option><option>ARNOLD</option><option>ZUFFA</option></select></div>
-    <div class="rm-filter"><label>Carrocería</label><select><option>Todas</option><option>PLATAFORMA</option><option>VOLQUETE</option><option>FURGON</option><option>CISTERNA COMBUSTIBLES</option><option>BARANDA</option></select></div>
-    <div class="rm-filter"><label>Categoría</label><select><option>Todas</option><option>O4</option><option>O3</option><option>O2</option></select></div>
-    <div class="rm-filter"><label>Departamento</label><select><option>Todos</option><option>LIMA</option><option>LA LIBERTAD</option><option>AREQUIPA</option><option>LAMBAYEQUE</option><option>CUSCO</option></select></div>
-    <button class="rm-reset" id="rmReset" type="button">Limpiar filtros</button>
+  <div class="r4-kpis">
+    <div class="r4-kpi primary"><span>Total acumulado</span><b id="r4Total">—</b><small id="r4TotalSub">Esperando archivo</small></div>
+    <div class="r4-kpi"><span id="r4MonthLabel">Último mes</span><b id="r4MonthTotal">—</b><small>mes disponible</small></div>
+    <div class="r4-kpi"><span>Vs mes anterior</span><b id="r4Mom">—</b><small id="r4MomSub">—</small></div>
+    <div class="r4-kpi gold"><span>Vs mismo mes 2025</span><b id="r4Yoy">—</b><small id="r4YoySub">comparativo interanual</small></div>
+    <div class="r4-kpi"><span>Mes pico</span><b id="r4Peak">—</b><small id="r4PeakSub">—</small></div>
+    <div class="r4-kpi"><span>Categoría O4</span><b id="r4O4">—</b><small id="r4O4Share">—</small></div>
   </div>
 
-  <div class="rm-grid-top">
-    <div class="rm-box"><h4>Evolución mensual</h4><canvas id="rmTrend" class="rm-line"></canvas><div class="legend"><span><i style="background:#f2c230"></i>Inmatriculaciones</span></div></div>
-    <div class="rm-box"><h4>Top 10 marcas</h4><div class="rm-rank">
-      <div class="rm-rank-row"><span>MACONSAC</span><div class="track"><div class="fill" style="width:100%"></div></div><b>929</b></div>
-      <div class="rm-rank-row"><span>OBCAS</span><div class="track"><div class="fill" style="width:68.1%"></div></div><b>633</b></div>
-      <div class="rm-rank-row"><span>MELCONSA</span><div class="track"><div class="fill" style="width:42.6%"></div></div><b>396</b></div>
-      <div class="rm-rank-row"><span>ARNOLD</span><div class="track"><div class="fill" style="width:39.3%"></div></div><b>365</b></div>
-      <div class="rm-rank-row"><span>ZUFFA</span><div class="track"><div class="fill" style="width:37.0%"></div></div><b>344</b></div>
-      <div class="rm-rank-row"><span>INMETARO</span><div class="track"><div class="fill" style="width:29.7%"></div></div><b>276</b></div>
-      <div class="rm-rank-row"><span>VOLTRAILER</span><div class="track"><div class="fill" style="width:20.6%"></div></div><b>191</b></div>
-      <div class="rm-rank-row"><span>METALTRUCK</span><div class="track"><div class="fill" style="width:17.2%"></div></div><b>160</b></div>
-      <div class="rm-rank-row"><span>RECONCISA</span><div class="track"><div class="fill" style="width:16.7%"></div></div><b>155</b></div>
-      <div class="rm-rank-row"><span>FAMECA</span><div class="track"><div class="fill" style="width:15.0%"></div></div><b>139</b></div>
-    </div></div>
-    <div class="rm-box"><h4>Top modelos</h4><div class="rm-rank">
-      <div class="rm-rank-row"><span>ESTANDAR</span><div class="track"><div class="fill" style="width:100%"></div></div><b>768</b></div>
-      <div class="rm-rank-row"><span>NACIONAL STANDART</span><div class="track"><div class="fill" style="width:57.2%"></div></div><b>439</b></div>
-      <div class="rm-rank-row"><span>NACIONAL</span><div class="track"><div class="fill" style="width:50.4%"></div></div><b>387</b></div>
-      <div class="rm-rank-row"><span>PLT04</span><div class="track"><div class="fill" style="width:27.3%"></div></div><b>210</b></div>
-      <div class="rm-rank-row"><span>PLT03</span><div class="track"><div class="fill" style="width:21.6%"></div></div><b>166</b></div>
-      <div class="rm-rank-row"><span>STANDARD</span><div class="track"><div class="fill" style="width:21.5%"></div></div><b>165</b></div>
-      <div class="rm-rank-row"><span>ESTANDARD</span><div class="track"><div class="fill" style="width:20.3%"></div></div><b>156</b></div>
-      <div class="rm-rank-row"><span>METAL-TRAILER</span><div class="track"><div class="fill" style="width:20.1%"></div></div><b>154</b></div>
-    </div></div>
+  <div class="r4-insights">
+    <div class="r4-insight"><span>Marca líder</span><b id="r4LeadBrand">—</b><small id="r4LeadBrandSub">—</small></div>
+    <div class="r4-insight"><span>Oficina líder</span><b id="r4LeadOffice">—</b><small id="r4LeadOfficeSub">—</small></div>
+    <div class="r4-insight"><span>Top 3 marcas</span><b id="r4Top3Brands">—</b><small>participación acumulada</small></div>
+    <div class="r4-insight"><span>Top 3 oficinas</span><b id="r4Top3Offices">—</b><small>participación acumulada</small></div>
   </div>
 
-  <div class="rm-grid-mid">
-    <div class="rm-box"><h4>Carrocerías principales</h4><div class="rm-rank">
-      <div class="rm-rank-row"><span>Plataforma</span><div class="track"><div class="fill" style="width:100%"></div></div><b>2,021</b></div>
-      <div class="rm-rank-row"><span>Volquete</span><div class="track"><div class="fill" style="width:32.4%"></div></div><b>654</b></div>
-      <div class="rm-rank-row"><span>Furgón</span><div class="track"><div class="fill" style="width:28.2%"></div></div><b>569</b></div>
-      <div class="rm-rank-row"><span>Cisterna comb.</span><div class="track"><div class="fill" style="width:24.2%"></div></div><b>489</b></div>
-      <div class="rm-rank-row"><span>Baranda</span><div class="track"><div class="fill" style="width:21.2%"></div></div><b>428</b></div>
-      <div class="rm-rank-row"><span>Sin clasificar</span><div class="track"><div class="fill" style="width:14.9%"></div></div><b>301</b></div>
-      <div class="rm-rank-row"><span>Cama baja</span><div class="track"><div class="fill" style="width:14.1%"></div></div><b>284</b></div>
-      <div class="rm-rank-row"><span>Portacontenedor</span><div class="track"><div class="fill" style="width:8.3%"></div></div><b>167</b></div>
-    </div></div>
+  <div class="r4-filterbar">
+    <div class="r4-filter"><label>Mes</label><select id="r4Month"><option value="ALL">Sin datos</option></select></div>
+    <div class="r4-filter"><label>Marca</label><select id="r4Brand"><option value="ALL">Todas</option></select></div>
+    <div class="r4-filter"><label>Modelo</label><select id="r4Model"><option value="ALL">Todos</option></select></div>
+    <div class="r4-filter"><label>Oficina</label><select id="r4Office"><option value="ALL">Todas</option></select></div>
+    <div class="r4-filter"><label>Departamento</label><select id="r4Dept"><option value="ALL">Todos</option></select></div>
+    <div class="r4-filter"><label>Carrocería</label><select id="r4Body"><option value="ALL">Todas</option></select></div>
+    <div class="r4-filter"><label>Categoría</label><select id="r4Cat"><option value="ALL">Todas</option></select></div>
+    <button class="r4-reset" id="r4Reset" type="button">↻ Limpiar</button>
+  </div>
+  <div class="r4-filter-note" id="r4FilterNote">Esperando conexión con el Excel.</div>
 
-    <div class="rm-box"><h4>Categoría</h4><div class="rm-cat"><div style="position:relative"><div class="rm-donut"></div><div class="rm-donut-label">5,747</div></div><div style="font-size:12px"><p><b>O4</b> — 5,692 · 99.0%</p><p><b>O3</b> — 49 · 0.9%</p><p><b>O2</b> — 6 · 0.1%</p></div></div></div>
-
-    <div class="rm-box"><h4>Variación julio → agosto</h4><div class="table-wrap"><table class="rm-table"><thead><tr><th>Marca</th><th>Jul</th><th>Ago</th><th>Δ</th></tr></thead><tbody>
-      <tr><td>OBCAS</td><td>177</td><td>242</td><td class="rm-positive">+65</td></tr>
-      <tr><td>MELCONSA</td><td>22</td><td>41</td><td class="rm-positive">+19</td></tr>
-      <tr><td>RMB SATECI</td><td>3</td><td>21</td><td class="rm-positive">+18</td></tr>
-      <tr><td>ZUFFA</td><td>29</td><td>43</td><td class="rm-positive">+14</td></tr>
-      <tr><td>METALTRUCK</td><td>10</td><td>22</td><td class="rm-positive">+12</td></tr>
-      <tr><td>MACONSAC</td><td>31</td><td>15</td><td class="rm-negative">-16</td></tr>
-      <tr><td>ACS</td><td>15</td><td>1</td><td class="rm-negative">-14</td></tr>
-      <tr><td>FAMEDI</td><td>11</td><td>0</td><td class="rm-negative">-11</td></tr>
-    </tbody></table></div></div>
+  <div class="r4-grid r4-grid-a">
+    <div class="r4-card r4-trend-card">
+      <div class="r4-card-head"><div><h4>Evolución mensual</h4><p id="r4TrendInsight">La tendencia aparecerá al cargar el archivo.</p></div><span class="r4-chip">Clic en un mes para filtrar</span></div>
+      <div class="r4-canvas-wrap"><canvas id="r4Trend"></canvas><div class="r4-tooltip" id="r4TrendTip"></div></div>
+    </div>
+    <div class="r4-card r4-cat-card">
+      <div class="r4-card-head"><div><h4>Composición por categoría</h4><p>Haz clic en O4, O3 u O2 para filtrar.</p></div></div>
+      <div class="r4-donut-wrap"><canvas id="r4Donut"></canvas><div class="r4-donut-center"><b id="r4DonutTotal">—</b><span>unidades</span></div></div>
+      <div class="r4-donut-legend" id="r4DonutLegend"></div><div class="r4-tooltip" id="r4DonutTip"></div>
+    </div>
   </div>
 
-  <div class="rm-grid-bottom">
-    <div class="rm-box"><h4>Mapa de concentración por departamento</h4><div class="rm-map-wrap">
-      <svg class="rm-map" viewBox="0 0 200 270" aria-label="Mapa estilizado del Perú">
-        <path class="rm-map-shape" d="M78 10 L100 24 L107 45 L102 63 L116 81 L118 103 L128 120 L120 139 L123 157 L113 176 L113 193 L106 211 L99 228 L98 242 L89 257 L76 264 L64 252 L65 235 L57 222 L60 205 L55 190 L45 171 L43 154 L45 136 L39 117 L46 102 L55 85 L61 67 L56 48 L64 31 Z"/>
-        <circle class="rm-dot" cx="78" cy="165" r="8"/><text x="89" y="168" font-size="9">Lima 3,579</text>
-        <circle class="rm-dot" cx="65" cy="124" r="6"/><text x="76" y="126" font-size="9">La Libertad 1,046</text>
-        <circle class="rm-dot" cx="82" cy="211" r="5"/><text x="92" y="214" font-size="9">Arequipa 765</text>
-        <circle class="rm-dot" cx="61" cy="100" r="3"/><text x="70" y="102" font-size="9">Lambayeque</text>
-        <circle class="rm-dot" cx="100" cy="193" r="3"/><text x="110" y="195" font-size="9">Cusco</text>
-      </svg>
-      <div class="table-wrap"><table class="rm-table"><thead><tr><th>Departamento</th><th>Total</th><th>%</th></tr></thead><tbody>
-        <tr><td>Lima</td><td>3,579</td><td>62.3%</td></tr><tr><td>La Libertad</td><td>1,046</td><td>18.2%</td></tr><tr><td>Arequipa</td><td>765</td><td>13.3%</td></tr><tr><td>Lambayeque</td><td>164</td><td>2.9%</td></tr><tr><td>Cusco</td><td>83</td><td>1.4%</td></tr><tr><td>Junín</td><td>73</td><td>1.3%</td></tr><tr><td>Tacna</td><td>35</td><td>0.6%</td></tr><tr><td>Puno</td><td>2</td><td>0.0%</td></tr>
-      </tbody></table></div>
-    </div></div>
-
-    <div class="rm-box"><h4>Oficinas registrales</h4><div class="rm-rank">
-      <div class="rm-rank-row"><span>Lima</span><div class="track"><div class="fill" style="width:100%"></div></div><b>3,579</b></div>
-      <div class="rm-rank-row"><span>Trujillo</span><div class="track"><div class="fill" style="width:29.2%"></div></div><b>1,046</b></div>
-      <div class="rm-rank-row"><span>Arequipa</span><div class="track"><div class="fill" style="width:21.4%"></div></div><b>765</b></div>
-      <div class="rm-rank-row"><span>Chiclayo</span><div class="track"><div class="fill" style="width:4.6%"></div></div><b>164</b></div>
-      <div class="rm-rank-row"><span>Cusco</span><div class="track"><div class="fill" style="width:2.3%"></div></div><b>83</b></div>
-      <div class="rm-rank-row"><span>Huancayo</span><div class="track"><div class="fill" style="width:2.0%"></div></div><b>73</b></div>
-      <div class="rm-rank-row"><span>Tacna</span><div class="track"><div class="fill" style="width:1.0%"></div></div><b>35</b></div>
-      <div class="rm-rank-row"><span>Juliaca</span><div class="track"><div class="fill" style="width:.1%"></div></div><b>2</b></div>
-    </div></div>
-
-    <div class="rm-box"><h4>Control de calidad</h4><div class="rm-quality">
-      <div class="rm-q"><b>846</b><br><span class="small">registros BASE</span></div>
-      <div class="rm-q"><b>0</b><br><span class="small">duplicados exactos</span></div>
-      <div class="rm-q"><b>0</b><br><span class="small">filas con total 0</span></div>
-      <div class="rm-q"><b>301</b><br><span class="small">unidades carrocería “-”</span></div>
-      <div class="rm-q"><b>2</b><br><span class="small">unidades modelo “-”</span></div>
-      <div class="rm-q"><b>5/5</b><br><span class="small">hojas auditadas</span></div>
-    </div><div class="note" style="margin-top:10px">La base está estructuralmente limpia. La principal mejora pendiente es homologar/recategorizar las 301 unidades con carrocería “-”.</div></div>
+  <div class="r4-grid r4-grid-b">
+    <div class="r4-card"><div class="r4-card-head"><div><h4>Top marcas</h4><p>Clic en una marca para filtrar.</p></div></div><div class="r4-rank" id="r4Brands"></div></div>
+    <div class="r4-card"><div class="r4-card-head"><div><h4>Top modelos</h4><p>Modelos de mayor volumen.</p></div></div><div class="r4-rank" id="r4Models"></div></div>
   </div>
-  <div class="vm-source"><span><b>TSF AutoMarket Intelligence</b> · Remolques y Semirremolques</span><span>Fuente: Archivo 4 · AAP / SUNARP</span><span>Última data: Agosto 2026</span></div>
+
+  <div class="r4-grid r4-grid-c">
+    <div class="r4-card"><div class="r4-card-head"><div><h4>Departamentos</h4><p>Concentración geográfica real.</p></div></div><div class="r4-bars" id="r4Depts"></div></div>
+    <div class="r4-card"><div class="r4-card-head"><div><h4>Oficinas registrales</h4><p>Ranking por oficina.</p></div></div><div class="r4-bars" id="r4Offices"></div></div>
+    <div class="r4-card"><div class="r4-card-head"><div><h4>Carrocerías</h4><p>Principales configuraciones.</p></div></div><div class="r4-bars" id="r4Bodies"></div></div>
+  </div>
+
+  <div class="r4-grid r4-grid-d">
+    <div class="r4-card"><div class="r4-card-head"><div><h4>Lectura ejecutiva</h4><p>Hallazgos de la selección actual.</p></div></div><div class="r4-exec" id="r4Exec">Carga el Excel para generar la lectura.</div></div>
+    <div class="r4-card"><div class="r4-card-head"><div><h4>Calidad de datos</h4><p>Control rápido de la base.</p></div></div><div class="r4-quality-list" id="r4QualityList"><div>Esperando archivo.</div></div></div>
+  </div>
+
+  <div class="r4-quality"><div><span>Cobertura</span><b id="r4Coverage">—</b></div><div><span>Calidad</span><b id="r4Quality">—</b></div><div><span>Fuente</span><b>Archivo 4 · BASE</b></div></div>
 </section>
+
 
 
 <section class="page" id="geografia">
@@ -3976,7 +3972,7 @@ table tbody tr:hover{
 <script>
 const titles={
  resumen:'Resumen Ejecutivo',retailmes:'Retail Mes - Agosto 2026',retail:'Retail Acumulado - Ene–Ago 2026',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',inmat:'Inmatriculaciones',brechas:'Retail vs Inmatriculación',
- ligeros:'Mercado Vehículos Livianos',comerciales:'Comerciales',pesados:'Mercado Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Remolques y Semirremolques',
+ ligeros:'Mercado Vehículos Livianos',comerciales:'Comerciales',pesados:'Mercado Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Mercado Remolques y Semirremolques',
  geografia:'Mapas del Perú',concesionarios:'Departamento y Concesionarios Retail',calidad:'Calidad de Datos',carga:'Cargar Mes'
 };
 function go(page){
@@ -4602,14 +4598,6 @@ function lv2Init(){Object.values(lv2Els).forEach(e=>e?.addEventListener('change'
 lv2Init();
 
 
-// REMOLQUES Y SEMIRREMOLQUES
-const rmMonths=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO'];
-const rmData=[683,709,750,797,729,691,628,760];
-function drawRM(){const c=document.getElementById('rmTrend');if(c)drawLine(c,['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'],[{color:'#f2c230',data:rmData}]);}
-drawRM();
-const rmMonth=document.getElementById('rmMonth');
-rmMonth?.addEventListener('change',()=>{const v=rmMonth.value;const n=v==='ALL'?5747:rmData[rmMonths.indexOf(v)];document.getElementById('rmTotal').textContent=n.toLocaleString('es-PE');});
-document.getElementById('rmReset')?.addEventListener('click',()=>{document.querySelectorAll('#remolques select').forEach(s=>s.selectedIndex=0);document.getElementById('rmTotal').textContent='5,747';});
 
 
 
@@ -4808,6 +4796,38 @@ async function vp3LoadUrl(url){if(typeof XLSX==='undefined')throw new Error('No 
 async function vp3AutoLoad(){vp3Connection('Buscando Excel automáticamente…','Se intentará cargar el archivo desde la misma carpeta o /data.');const c=['./vehiculos_pesados.xlsx','./data/vehiculos_pesados.xlsx','./08.3_Venta_e_Inmatriculación_de_Vehículos_Pesados_Agosto_2026(4).xlsx','./08.3_Venta_e_Inmatriculación_de_Vehículos_Pesados_Agosto_2026.xlsx'];for(const u of c){try{await vp3LoadUrl(u);return}catch(e){}}vp3Connection('Excel de Vehículos Pesados no encontrado','Sube “vehiculos_pesados.xlsx” junto al HTML, en /data, o selecciónalo manualmente.');vp3Set('vp3HeroStatus','Selecciona el Excel para activar el dashboard')}
 function vp3Init(){Object.values(vp3Els).forEach(el=>el?.addEventListener('change',()=>{el.classList.toggle('active',el.value!=='ALL');vp3Update(true)}));document.getElementById('vp3Reset')?.addEventListener('click',()=>{Object.values(vp3Els).forEach(e=>{if(e)e.value='ALL'});vp3Update(true)});document.getElementById('vp3More')?.addEventListener('click',()=>{const p=document.getElementById('vp3MorePanel'),b=document.getElementById('vp3More');p.hidden=!p.hidden;b.textContent=p.hidden?'Más filtros':'Menos filtros'});document.getElementById('vp3LoadBtn')?.addEventListener('click',()=>document.getElementById('vp3ExcelInput')?.click());document.getElementById('vp3Retry')?.addEventListener('click',vp3AutoLoad);document.getElementById('vp3ExcelInput')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;vp3Connection('Procesando Excel…',f.name);try{await vp3ReadFile(f);vp3Connection('Excel conectado',f.name,true)}catch(err){vp3Connection('No se pudo leer el Excel',err.message||String(err));alert(err.message||String(err))}finally{e.target.value=''}});document.querySelectorAll('#vp3Legend button').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.series;if(VP3.hiddenSeries.has(k)){VP3.hiddenSeries.delete(k);b.classList.remove('off')}else{VP3.hiddenSeries.add(k);b.classList.add('off')}vp3DrawTrend(vp3Filtered())}));vp3ResetDisplay();setTimeout(vp3AutoLoad,350);document.querySelectorAll('#nav button[data-page="pesados"]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{if(vp3Has())vp3Update(false)},80)));let t;window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(()=>{if(document.getElementById('pesados')?.classList.contains('active')&&vp3Has())vp3Update(false)},150)})}
 vp3Init();
+
+// ==========================================================
+// V35 - MERCADO REMOLQUES Y SEMIRREMOLQUES DINAMICO
+// ==========================================================
+const R4={rows:[],months:[],labels:[],year:2026,meta:{prevMonthYear:684,file:''}};
+const r4Els={month:document.getElementById('r4Month'),brand:document.getElementById('r4Brand'),model:document.getElementById('r4Model'),office:document.getElementById('r4Office'),dept:document.getElementById('r4Dept'),body:document.getElementById('r4Body'),cat:document.getElementById('r4Cat')};
+const r4Norm=v=>String(v??'').trim().replace(/\s+/g,' ');
+const r4Hdr=v=>r4Norm(v).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9 ]/g,'').replace(/\s+/g,' ');
+const r4Fmt=n=>Math.round(Number(n)||0).toLocaleString('es-PE');
+const r4Pct=(n,d)=>d?((n/d)*100).toFixed(1)+'%':'0.0%';
+const r4Set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+function r4SetClass(id,v,cls){const e=document.getElementById(id);if(e){e.textContent=v;e.classList.remove('positive','negative');if(cls)e.classList.add(cls)}}
+function r4Connection(t,s,ok=false){r4Set('r4ConnectTitle',t);r4Set('r4ConnectSub',s);const b=document.getElementById('r4Connect');if(b){b.style.borderColor=ok?'#b9e4ce':'#ead8e1';b.style.background=ok?'linear-gradient(135deg,#fff,#f1fbf6)':'linear-gradient(135deg,#fff,#fff8ec)'}}
+function r4ResetDisplay(){['r4HeroTotal','r4Total','r4MonthTotal','r4Mom','r4Yoy','r4Peak','r4O4','r4LeadBrand','r4LeadOffice','r4Top3Brands','r4Top3Offices','r4DonutTotal','r4Coverage','r4Quality'].forEach(id=>r4Set(id,'—'));['r4Brands','r4Models','r4Depts','r4Offices','r4Bodies','r4DonutLegend'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='<div style="color:#9197a2;font-size:11px">Carga el Excel para generar este indicador.</div>'})}
+function r4Has(){return R4.rows.length&&R4.months.length}
+function r4Populate(sel,vals,label){if(!sel)return;const cur=sel.value;sel.innerHTML='<option value="ALL">'+label+'</option>'+vals.map(v=>'<option value="'+String(v).replace(/"/g,'&quot;')+'">'+v+'</option>').join('');sel.value=vals.includes(cur)?cur:'ALL'}
+function r4RowVal(r){const m=r4Els.month?.value||'ALL';if(m==='ALL')return r.m.reduce((a,b)=>a+(Number(b)||0),0);return Number(r.m[Number(m)])||0}
+function r4Matches(r,exclude){for(const [k,e] of Object.entries(r4Els)){if(k===exclude||k==='month')continue;const v=e?.value||'ALL';if(v!=='ALL'&&r[k]!==v)return false}return true}
+function r4Filtered(exclude){return R4.rows.filter(r=>r4Matches(r,exclude))}
+function r4Agg(rows,key){const m=new Map();rows.forEach(r=>{const v=r4RowVal(r);if(!v)return;const k=r[key]||'SIN DATO';m.set(k,(m.get(k)||0)+v)});return [...m.entries()].sort((a,b)=>b[1]-a[1])}
+function r4RefreshOptions(){r4Populate(r4Els.brand,[...new Set(r4Filtered('brand').map(r=>r.brand))].filter(Boolean).sort(),'Todas');r4Populate(r4Els.model,[...new Set(r4Filtered('model').map(r=>r.model))].filter(Boolean).sort(),'Todos');r4Populate(r4Els.office,[...new Set(r4Filtered('office').map(r=>r.office))].filter(Boolean).sort(),'Todas');r4Populate(r4Els.dept,[...new Set(r4Filtered('dept').map(r=>r.dept))].filter(Boolean).sort(),'Todos');r4Populate(r4Els.body,[...new Set(r4Filtered('body').map(r=>r.body))].filter(Boolean).sort(),'Todas');r4Populate(r4Els.cat,[...new Set(r4Filtered('cat').map(r=>r.cat))].filter(Boolean).sort(),'Todas')}
+function r4LoadWorkbook(wb,file){const ws=wb.Sheets['BASE'];if(!ws)throw new Error('No se encontró la hoja BASE.');const data=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});if(data.length<2)throw new Error('La hoja BASE está vacía.');const h=data[0].map(r4Hdr),idx={office:h.indexOf('OFICINA REGISTRAL'),dept:h.indexOf('DEPARTAMENTO'),brand:h.indexOf('MARCA'),model:h.indexOf('MODELO'),body:h.indexOf('CARROCERIA'),cat:h.indexOf('CATEGORIA')};if(Object.values(idx).some(x=>x<0))throw new Error('La estructura del Excel no corresponde al Archivo 4.');const names=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SETIEMBRE','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];R4.months=[];R4.labels=[];h.forEach((x,i)=>{if(names.includes(x)&&!R4.months.includes(i)){R4.months.push(i);R4.labels.push(x==='SETIEMBRE'?'Set':x==='SEPTIEMBRE'?'Set':x.slice(0,3)[0]+x.slice(1,3).toLowerCase())}});if(!R4.months.length)throw new Error('No se detectaron columnas mensuales.');R4.rows=data.slice(1).filter(r=>r.some(v=>v!==null&&v!=='')).map(r=>({office:r4Norm(r[idx.office])||'SIN DATO',dept:r4Norm(r[idx.dept])||'SIN DATO',brand:r4Norm(r[idx.brand])||'SIN DATO',model:r4Norm(r[idx.model])||'SIN DATO',body:r4Norm(r[idx.body])||'SIN DATO',cat:r4Norm(r[idx.cat])||'SIN DATO',m:R4.months.map(i=>Number(r[i])||0)}));R4.meta.file=file||'Excel cargado';r4Els.month.innerHTML='<option value="ALL">Acumulado</option>'+R4.labels.map((l,i)=>'<option value="'+i+'">'+l+'</option>').join('');Object.values(r4Els).forEach((e)=>{if(e)e.value='ALL'});r4Connection('Excel conectado',R4.meta.file,true);r4Set('r4HeroStatus',R4.meta.file+' · '+R4.rows.length.toLocaleString('es-PE')+' registros útiles');r4Update(true);return true}
+async function r4ReadFile(f){if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel.');const buf=await f.arrayBuffer();return r4LoadWorkbook(XLSX.read(buf,{type:'array',cellDates:true}),f.name)}
+async function r4AutoLoad(){r4Connection('Buscando Excel automáticamente…','Se intentará cargar el archivo desde la carpeta del sistema.');for(const u of ['./vehiculos_remolques.xlsx','./data/vehiculos_remolques.xlsx','./08.4_Venta_e_Inmatriculación_de_Remolques_SemiR_Agosto_2026(2).xlsx','./08.4_Venta_e_Inmatriculación_de_Remolques_SemiR_Agosto_2026.xlsx']){try{const res=await fetch(u,{cache:'no-store'});if(!res.ok)continue;const buf=await res.arrayBuffer();const wb=XLSX.read(buf,{type:'array',cellDates:true});if(r4LoadWorkbook(wb,decodeURIComponent(u.split('/').pop())))return}catch(e){}}r4Connection('Excel de Remolques no encontrado','Sube “vehiculos_remolques.xlsx” junto al HTML o selecciónalo manualmente.');r4Set('r4HeroStatus','Selecciona el Excel para activar el dashboard')}
+function r4RenderRank(id,arr,total,filterKey){const el=document.getElementById(id);if(!el)return;const top=arr.slice(0,10),mx=top[0]?.[1]||1;el.innerHTML=top.map(([n,v],i)=>'<div class="r4-rank-row" data-key="'+String(n).replace(/"/g,'&quot;')+'"><span class="name">'+(i+1)+'. '+n+'</span><div class="r4-track"><div class="r4-fill" style="width:'+((v/mx)*100).toFixed(1)+'%"></div></div><b>'+r4Fmt(v)+'</b></div>').join('')||'<div style="color:#9197a2;font-size:11px">Sin datos</div>';if(filterKey)el.querySelectorAll('.r4-rank-row').forEach(x=>x.onclick=()=>{r4Els[filterKey].value=x.dataset.key;r4Update(true)})}
+function r4RenderBars(id,arr,total,filterKey,limit=8){const el=document.getElementById(id);if(!el)return;const top=arr.slice(0,limit),mx=top[0]?.[1]||1;el.innerHTML=top.map(([n,v])=>'<div class="r4-bar-row" data-key="'+String(n).replace(/"/g,'&quot;')+'"><div class="r4-bar-head"><span>'+n+'</span><b>'+r4Fmt(v)+' · '+r4Pct(v,total)+'</b></div><div class="r4-bar-track"><div class="r4-bar-fill" style="width:'+((v/mx)*100).toFixed(1)+'%"></div></div></div>').join('')||'<div style="color:#9197a2;font-size:11px">Sin datos</div>';if(filterKey)el.querySelectorAll('.r4-bar-row').forEach(x=>x.onclick=()=>{r4Els[filterKey].value=x.dataset.key;r4Update(true)})}
+function r4DrawDonut(cats,total){const canvas=document.getElementById('r4Donut');if(!canvas)return;const box=Math.max(150,Math.min(canvas.parentElement.clientWidth-2,220)),dpr=Math.min(devicePixelRatio||1,2);canvas.width=box*dpr;canvas.height=box*dpr;canvas.style.width=box+'px';canvas.style.height=box+'px';const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,box,box);const colors=['#f5ae00','#ee0b70','#252a34','#9ca3af'],cx=box/2,cy=box/2,R=box*.43,r=box*.29;let st=-Math.PI/2;canvas._parts=[];cats.slice(0,4).forEach(([name,value],i)=>{const a=total?Math.PI*2*value/total:0;c.beginPath();c.arc(cx,cy,R,st,st+a);c.arc(cx,cy,r,st+a,st,true);c.closePath();c.fillStyle=colors[i];c.fill();canvas._parts.push({name,value,start:st,end:st+a,color:colors[i]});st+=a});r4Set('r4DonutTotal',r4Fmt(total));const leg=document.getElementById('r4DonutLegend');if(leg)leg.innerHTML=cats.slice(0,4).map(([n,v],i)=>'<button data-cat="'+n+'"><i style="background:'+colors[i]+'"></i><span>'+n+'</span><b>'+r4Fmt(v)+' · '+r4Pct(v,total)+'</b></button>').join('');const tip=document.getElementById('r4DonutTip');const hit=e=>{const rc=canvas.getBoundingClientRect(),x=e.clientX-rc.left,y=e.clientY-rc.top,dx=x-cx,dy=y-cy,rr=Math.hypot(dx,dy);let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;return canvas._parts.find(p=>rr>=r&&rr<=R&&a>=p.start&&a<=p.end)};canvas.onmousemove=e=>{const p=hit(e);if(p){tip.style.display='block';tip.style.left=e.clientX+12+'px';tip.style.top=e.clientY+12+'px';tip.innerHTML='<b>'+p.name+'</b><br>'+r4Fmt(p.value)+' · '+r4Pct(p.value,total)}else tip.style.display='none'};canvas.onmouseleave=()=>tip.style.display='none';canvas.onclick=e=>{const p=hit(e);if(p){r4Els.cat.value=p.name;r4Update(true)}};leg?.querySelectorAll('button').forEach(b=>b.onclick=()=>{r4Els.cat.value=b.dataset.cat;r4Update(true)})}
+function r4DrawTrend(rows){const canvas=document.getElementById('r4Trend');if(!canvas||!R4.labels.length)return;const totals=R4.labels.map((_,i)=>rows.reduce((s,r)=>s+(r.m[i]||0),0)),rect=canvas.getBoundingClientRect(),w=Math.max(380,Math.round(rect.width)),h=Math.max(230,Math.round(rect.height)),dpr=Math.min(devicePixelRatio||1,2);canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);const p={l:46,r:16,t:18,b:30},cw=w-p.l-p.r,ch=h-p.t-p.b,max=Math.max(...totals,1)*1.12,den=Math.max(1,totals.length-1);c.font='9px Segoe UI';for(let i=0;i<4;i++){const y=p.t+ch*i/3;c.strokeStyle='#eceef2';c.beginPath();c.moveTo(p.l,y);c.lineTo(w-p.r,y);c.stroke();c.fillStyle='#9aa0aa';c.textAlign='right';c.fillText(Math.round(max*(1-i/3)).toLocaleString('es-PE'),p.l-7,y+3)}R4.labels.forEach((lab,i)=>{const x=p.l+cw*i/den;c.fillStyle='#9aa0aa';c.textAlign='center';c.fillText(lab,x,h-9)});const pts=totals.map((v,i)=>({x:p.l+cw*i/den,y:p.t+ch-(v/max)*ch,v}));const grad=c.createLinearGradient(0,p.t,0,p.t+ch);grad.addColorStop(0,'rgba(245,174,0,.18)');grad.addColorStop(1,'rgba(255,255,255,0)');c.beginPath();c.moveTo(pts[0].x,p.t+ch);pts.forEach(pt=>c.lineTo(pt.x,pt.y));c.lineTo(pts.at(-1).x,p.t+ch);c.closePath();c.fillStyle=grad;c.fill();c.beginPath();pts.forEach((pt,i)=>i?c.lineTo(pt.x,pt.y):c.moveTo(pt.x,pt.y));c.strokeStyle='#f5ae00';c.lineWidth=2.7;c.stroke();pts.forEach(pt=>{c.beginPath();c.arc(pt.x,pt.y,3.5,0,Math.PI*2);c.fillStyle='#fff';c.fill();c.lineWidth=2;c.strokeStyle='#f5ae00';c.stroke()});canvas._plot={p,cw,den,totals,pts,w,h,dpr};const tip=document.getElementById('r4TrendTip');canvas.onmousemove=e=>{const q=canvas._plot,rr=canvas.getBoundingClientRect(),idx=Math.max(0,Math.min(R4.labels.length-1,Math.round(((e.clientX-rr.left)-q.p.l)/q.cw*q.den))),xx=q.p.l+q.cw*idx/q.den;r4DrawTrend(rows);const cc=canvas.getContext('2d');cc.setTransform(dpr,0,0,dpr,0,0);cc.strokeStyle='rgba(238,11,112,.28)';cc.setLineDash([4,4]);cc.beginPath();cc.moveTo(xx,q.p.t);cc.lineTo(xx,h-q.p.b);cc.stroke();cc.setLineDash([]);const v=q.totals[idx],prev=idx>0?q.totals[idx-1]:null,chg=prev?((v-prev)/prev*100):null;tip.style.display='block';tip.style.left=e.clientX+12+'px';tip.style.top=e.clientY+12+'px';tip.innerHTML='<b>'+R4.labels[idx]+' '+R4.year+'</b><br>Unidades: <b>'+r4Fmt(v)+'</b>'+(chg===null?'':'<br>Vs mes anterior: <b>'+(chg>=0?'+':'')+chg.toFixed(1)+'%</b>')};canvas.onmouseleave=()=>{tip.style.display='none';r4DrawTrend(rows)};canvas.onclick=e=>{const q=canvas._plot,rr=canvas.getBoundingClientRect(),idx=Math.max(0,Math.min(R4.labels.length-1,Math.round(((e.clientX-rr.left)-q.p.l)/q.cw*q.den)));r4Els.month.value=String(idx);r4Update(true)}}
+function r4Update(refresh=true){if(!r4Has()){r4ResetDisplay();return}if(refresh)r4RefreshOptions();const rows=r4Filtered(),sel=r4Els.month.value||'ALL',all=sel==='ALL',mi=all?R4.labels.length-1:Number(sel),total=rows.reduce((s,r)=>s+r4RowVal(r),0),monthTotal=rows.reduce((s,r)=>s+(r.m[mi]||0),0),prev=mi>0?rows.reduce((s,r)=>s+(r.m[mi-1]||0),0):null,mom=prev?((monthTotal-prev)/prev)*100:null,monthly=R4.labels.map((_,i)=>rows.reduce((s,r)=>s+(r.m[i]||0),0));let peak=0;for(let i=1;i<monthly.length;i++)if(monthly[i]>monthly[peak])peak=i;const brands=r4Agg(rows,'brand'),models=r4Agg(rows,'model'),offices=r4Agg(rows,'office'),depts=r4Agg(rows,'dept'),bodies=r4Agg(rows,'body'),cats=r4Agg(rows,'cat'),o4=cats.find(x=>x[0]==='O4')?.[1]||0;r4Set('r4Total',r4Fmt(total));r4Set('r4HeroTotal',r4Fmt(total));r4Set('r4TotalSub',all?(R4.labels[0]+'–'+R4.labels.at(-1)+' '+R4.year):(R4.labels[mi]+' '+R4.year));r4Set('r4MonthLabel',R4.labels[mi]||'Último mes');r4Set('r4MonthTotal',r4Fmt(monthTotal));r4SetClass('r4Mom',mom===null?'—':(mom>=0?'+':'')+mom.toFixed(1)+'%',mom===null?'':mom>=0?'positive':'negative');r4Set('r4MomSub',mi>0?'vs '+R4.labels[mi-1]:'sin mes anterior');r4Set('r4Peak',r4Fmt(monthly[peak]||0));r4Set('r4PeakSub',R4.labels[peak]+' '+R4.year);r4Set('r4O4',r4Fmt(o4));r4Set('r4O4Share',r4Pct(o4,total)+' del total');const noDims=Object.entries(r4Els).filter(([k])=>k!=='month').every(([,e])=>(e?.value||'ALL')==='ALL');if(noDims&&mi===R4.labels.length-1&&R4.meta.prevMonthYear){const y=(monthTotal-R4.meta.prevMonthYear)/R4.meta.prevMonthYear*100;r4SetClass('r4Yoy',(y>=0?'+':'')+y.toFixed(1)+'%',y>=0?'positive':'negative');r4Set('r4YoySub','vs '+r4Fmt(R4.meta.prevMonthYear)+' en '+R4.labels[mi]+' 2025')}else{r4Set('r4Yoy','—');r4Set('r4YoySub','disponible para el total del último mes')}r4Set('r4LeadBrand',brands[0]?.[0]||'—');r4Set('r4LeadBrandSub',brands[0]?r4Fmt(brands[0][1])+' · '+r4Pct(brands[0][1],total):'—');r4Set('r4LeadOffice',offices[0]?.[0]||'—');r4Set('r4LeadOfficeSub',offices[0]?r4Fmt(offices[0][1])+' · '+r4Pct(offices[0][1],total):'—');r4Set('r4Top3Brands',r4Pct(brands.slice(0,3).reduce((s,x)=>s+x[1],0),total));r4Set('r4Top3Offices',r4Pct(offices.slice(0,3).reduce((s,x)=>s+x[1],0),total));r4RenderRank('r4Brands',brands,total,'brand');r4RenderRank('r4Models',models,total,'model');r4RenderBars('r4Depts',depts,total,'dept',8);r4RenderBars('r4Offices',offices,total,'office',8);r4RenderBars('r4Bodies',bodies,total,'body',10);r4DrawDonut(cats,total);r4DrawTrend(rows);const active=[];if(!all)active.push(R4.labels[mi]);for(const [k,l] of [['brand','Marca'],['model','Modelo'],['office','Oficina'],['dept','Departamento'],['body','Carrocería'],['cat','Categoría']]){const v=r4Els[k]?.value;if(v&&v!=='ALL')active.push(l+': '+v)}r4Set('r4FilterNote',active.length?'Filtros activos · '+active.join(' · '):'Vista acumulada · '+R4.labels[0]+'–'+R4.labels.at(-1)+' '+R4.year+' · '+rows.length.toLocaleString('es-PE')+' registros útiles');const missingModel=rows.filter(r=>!r.model||r.model==='SIN DATO'||r.model==='-').reduce((s,r)=>s+r4RowVal(r),0),missingBody=rows.filter(r=>!r.body||r.body==='SIN DATO'||r.body==='-').reduce((s,r)=>s+r4RowVal(r),0);r4Set('r4Coverage',r4Fmt(total)+' unidades · '+rows.length.toLocaleString('es-PE')+' filas útiles');r4Set('r4Quality','Modelos sin dato '+r4Fmt(missingModel)+' · Carrocería sin clasificar '+r4Fmt(missingBody));const q=document.getElementById('r4QualityList');if(q)q.innerHTML='<div>✓ Base dinámica leída desde la hoja BASE.</div><div>Modelo sin información: <b>'+r4Fmt(missingModel)+'</b> unidades.</div><div>Carrocería sin clasificar: <b>'+r4Fmt(missingBody)+'</b> unidades.</div>';const top3off=offices.slice(0,3).reduce((s,x)=>s+x[1],0);document.getElementById('r4Exec').innerHTML='<b>'+((brands[0]?.[0])||'—')+'</b> lidera con '+r4Fmt(brands[0]?.[1]||0)+' unidades. <b>'+((offices[0]?.[0])||'—')+'</b> concentra '+r4Pct(offices[0]?.[1]||0,total)+' y las 3 primeras oficinas reúnen '+r4Pct(top3off,total)+'. La categoría <b>O4</b> representa '+r4Pct(o4,total)+'.';r4Set('r4TrendInsight',(R4.labels[mi]||'Último mes')+': '+r4Fmt(monthTotal)+(mom===null?'':' · '+(mom>=0?'+':'')+mom.toFixed(1)+'% vs '+R4.labels[Math.max(0,mi-1)])+'. Pico: '+R4.labels[peak]+' con '+r4Fmt(monthly[peak]||0)+'.')}
+function r4Init(){Object.values(r4Els).forEach(e=>e?.addEventListener('change',()=>{e.classList.toggle('active',e.value!=='ALL');r4Update(true)}));document.getElementById('r4Reset')?.addEventListener('click',()=>{Object.values(r4Els).forEach(e=>{if(e)e.value='ALL'});r4Update(true)});document.getElementById('r4LoadBtn')?.addEventListener('click',()=>document.getElementById('r4ExcelInput')?.click());document.getElementById('r4Retry')?.addEventListener('click',r4AutoLoad);document.getElementById('r4ExcelInput')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;r4Connection('Procesando Excel…',f.name);try{await r4ReadFile(f)}catch(err){r4Connection('No se pudo leer el Excel',err.message||String(err));alert(err.message||String(err))}finally{e.target.value=''}});r4ResetDisplay();setTimeout(r4AutoLoad,500);document.querySelectorAll('#nav button[data-page="remolques"]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{if(r4Has())r4Update(false)},80)));let t;window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(()=>{if(document.getElementById('remolques')?.classList.contains('active')&&r4Has())r4Update(false)},150)})}
+r4Init();
+
 </script>
 
 </body>
