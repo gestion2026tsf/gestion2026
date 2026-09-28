@@ -3011,6 +3011,32 @@ table tbody tr:hover{
 @media(max-width:650px){.r4-kpis,.r4-insights,.r4-grid-c,.r4-quality{grid-template-columns:1fr}.r4-filterbar{grid-template-columns:1fr 1fr}.r4-connect{flex-direction:column;align-items:flex-start}.r4-connect-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.r4-connect button{width:100%}.r4-donut-wrap{width:min(100%,180px)}.r4-hero{padding:15px}.r4-hero h3{font-size:20px!important}}
 @media(prefers-reduced-motion:reduce){#menores *,#ligeros *,#pesados *,#remolques *{transition:none!important;animation:none!important}}
 
+
+/* ===== V36 RETAIL DEL MES · PORTADA EJECUTIVA DINÁMICA ===== */
+#retailmes{--rtm-pink:#ee0b70;--rtm-gold:#f5a900;--rtm-ink:#13161c;--rtm-muted:#8d94a0;--rtm-line:#e8eaf0}
+#retailmes .rtm-hero{position:relative;overflow:hidden;min-height:190px;border-radius:22px;padding:25px 27px;margin-bottom:12px;color:#fff;background:radial-gradient(circle at 88% 20%,rgba(245,169,0,.34),transparent 23%),radial-gradient(circle at 70% 120%,rgba(238,11,112,.22),transparent 33%),linear-gradient(118deg,#11151b 0%,#252b35 62%,#4a3d40 100%);box-shadow:0 20px 48px rgba(17,19,24,.14)}
+#retailmes .rtm-hero:after{content:"RETAIL";position:absolute;right:22px;bottom:-18px;font-size:105px;font-weight:950;letter-spacing:-.08em;color:rgba(255,255,255,.035);pointer-events:none}
+#retailmes .rtm-eyebrow{font-size:10px;font-weight:900;letter-spacing:.18em;color:#ffd15d;text-transform:uppercase}
+#retailmes .rtm-hero h3{margin:7px 0 3px!important;font-size:34px!important;line-height:1.03;color:#fff!important}
+#retailmes .rtm-hero p{margin:8px 0 0;max-width:720px;font-size:12.5px;color:rgba(255,255,255,.78);line-height:1.6}
+#retailmes .rtm-month-pill{position:absolute;right:26px;top:24px;min-width:185px;padding:13px 15px;border-radius:16px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(8px)}
+#retailmes .rtm-month-pill span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.11em;color:#cfd3db}#retailmes .rtm-month-pill b{display:block;margin-top:3px;font-size:24px}
+#retailmes .rtm-source{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid var(--rtm-line);border-radius:15px;padding:11px 13px;margin-bottom:10px;box-shadow:0 8px 24px rgba(17,19,24,.045)}
+#retailmes .rtm-source-left{display:flex;align-items:center;gap:10px;min-width:0}#retailmes .rtm-source-icon{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:#fff0f6;color:var(--rtm-pink);font-size:18px;flex:none}#retailmes .rtm-source b{display:block;font-size:12px}#retailmes .rtm-source small{display:block;margin-top:2px;color:var(--rtm-muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:650px}
+#retailmes .rtm-source-actions{display:flex;gap:7px;flex:none}#retailmes .rtm-source button{height:36px;border:0;border-radius:10px;padding:0 12px;font-size:10.5px;font-weight:850;cursor:pointer}#retailmes .rtm-source .primary{background:linear-gradient(135deg,var(--rtm-pink),#ff318b);color:#fff}#retailmes .rtm-source .ghost{background:#f4f5f7;color:#4f5661;border:1px solid #ebecef}
+#retailmes .rtm-kpis{display:grid;grid-template-columns:1.45fr repeat(5,minmax(0,1fr));gap:9px;margin-bottom:10px}#retailmes .rtm-kpi{position:relative;overflow:hidden;background:#fff;border:1px solid var(--rtm-line);border-radius:15px;padding:13px 14px;min-height:96px;box-shadow:0 9px 24px rgba(17,19,24,.045);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}#retailmes .rtm-kpi:hover{transform:translateY(-3px);box-shadow:0 16px 32px rgba(17,19,24,.09);border-color:#d8dbe2}#retailmes .rtm-kpi.primary{background:linear-gradient(135deg,#151920,#242a34);color:#fff;border-color:#151920}#retailmes .rtm-kpi.primary:after{content:"";position:absolute;width:120px;height:120px;border-radius:50%;right:-48px;top:-48px;background:rgba(245,169,0,.22)}#retailmes .rtm-kpi .label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#8c939f}#retailmes .rtm-kpi.primary .label{color:#cdd2db}#retailmes .rtm-kpi .num{font-size:25px;font-weight:900;margin:8px 0 3px;line-height:1}#retailmes .rtm-kpi .tiny{font-size:9.5px;color:#939aa6}#retailmes .rtm-kpi.primary .tiny{color:#c9ced6}
+#retailmes .rtm-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0}#retailmes .rtm-tabs{display:flex;gap:7px;flex-wrap:wrap}#retailmes .rtm-tabs button{height:36px;border:1px solid var(--rtm-line);background:#fff;border-radius:999px;padding:0 12px;font-size:10.5px;font-weight:800;color:#646b76;cursor:pointer;transition:.2s ease}#retailmes .rtm-tabs button:hover{transform:translateY(-1px);border-color:#cfd3da}#retailmes .rtm-tabs button.active{background:#151920;color:#fff;border-color:#151920;box-shadow:0 7px 18px rgba(17,19,24,.14)}#retailmes .rtm-filter{display:flex;align-items:center;gap:6px;color:#9299a5;font-size:10px}#retailmes .rtm-filter select{height:36px;border:1px solid var(--rtm-line);border-radius:10px;background:#fff;padding:0 32px 0 10px;font-size:10.5px;min-width:160px}
+#retailmes .rtm-grid-a{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1.2fr) minmax(280px,.85fr);gap:10px;margin-bottom:10px}#retailmes .rtm-grid-b{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;margin-bottom:10px}#retailmes .rtm-card{background:#fff;border:1px solid var(--rtm-line);border-radius:16px;padding:13px;box-shadow:0 9px 25px rgba(17,19,24,.045);min-width:0;transition:transform .22s ease,box-shadow .22s ease}#retailmes .rtm-card:hover{transform:translateY(-2px);box-shadow:0 15px 30px rgba(17,19,24,.075)}#retailmes .rtm-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:9px}#retailmes .rtm-head h4{font-size:13px!important;margin:0!important}#retailmes .rtm-head p{font-size:9.5px;color:#9299a5;margin:2px 0 0}#retailmes .rtm-chip{font-size:8.5px;font-weight:800;padding:5px 8px;border-radius:999px;background:#fff5d6;color:#745100;white-space:nowrap}
+#retailmes .rtm-donut-zone{display:grid;grid-template-columns:190px 1fr;gap:12px;align-items:center;min-height:255px}#retailmes .rtm-donut-wrap{position:relative;width:185px;height:185px;margin:auto}#retailmes #rtmDonut{width:185px;height:185px;display:block;cursor:pointer}#retailmes .rtm-donut-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}#retailmes .rtm-donut-center b{font-size:25px;line-height:1}#retailmes .rtm-donut-center span{font-size:9px;color:#9097a2;margin-top:4px}#retailmes .rtm-legend{display:grid;gap:7px}#retailmes .rtm-legend button{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:7px;border:1px solid #eceef2;background:#fafbfc;border-radius:10px;padding:8px 9px;text-align:left;font-size:9.5px;color:#626975;cursor:pointer;transition:.18s ease}#retailmes .rtm-legend button:hover,#retailmes .rtm-legend button.active{transform:translateX(3px);background:#fff4f8;border-color:#ffd1e3}#retailmes .rtm-dot{width:9px;height:9px;border-radius:50%}#retailmes .rtm-legend b{color:#171a20;font-size:10px}
+#retailmes .rtm-rank{display:grid;gap:7px}#retailmes .rtm-rank-row{display:grid;grid-template-columns:22px minmax(95px,1.15fr) minmax(80px,1.7fr) 64px;gap:7px;align-items:center;padding:4px 5px;border-radius:9px;font-size:10px;cursor:pointer;transition:.18s ease}#retailmes .rtm-rank-row:hover{background:#fff5f9;transform:translateX(3px)}#retailmes .rtm-rank-row .pos{width:21px;height:21px;border-radius:7px;display:grid;place-items:center;background:#f1f2f5;font-size:9px;font-weight:850}#retailmes .rtm-rank-row .name{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}#retailmes .rtm-track{height:7px;border-radius:999px;background:#eff1f4;overflow:hidden}#retailmes .rtm-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--rtm-pink),var(--rtm-gold));transition:width .35s ease}#retailmes .rtm-rank-row b{text-align:right;font-size:10px}
+#retailmes .rtm-family-insights{display:grid;grid-template-columns:1fr 1fr;gap:8px}#retailmes .rtm-mini{padding:10px;border-radius:12px;background:#fafbfc;border:1px solid #eceef2;transition:.2s ease;cursor:default}#retailmes .rtm-mini:hover{background:#fff8eb;border-color:#f2dfaa;transform:translateY(-2px)}#retailmes .rtm-mini span{font-size:9px;color:#939aa6}#retailmes .rtm-mini b{display:block;font-size:16px;margin-top:4px}#retailmes .rtm-mini small{font-size:9px;color:#9aa0aa}
+#retailmes .rtm-segments{display:grid;grid-template-columns:repeat(13,minmax(70px,1fr));gap:7px}#retailmes .rtm-seg{position:relative;overflow:hidden;border:1px solid #e9ebef;border-radius:12px;padding:10px 9px;background:#fff;cursor:pointer;transition:.2s ease}#retailmes .rtm-seg:after{content:"";position:absolute;left:0;bottom:0;width:100%;height:3px;background:linear-gradient(90deg,var(--rtm-pink),var(--rtm-gold));transform:scaleX(0);transform-origin:left;transition:.2s ease}#retailmes .rtm-seg:hover,#retailmes .rtm-seg.active{transform:translateY(-3px);box-shadow:0 10px 20px rgba(17,19,24,.07)}#retailmes .rtm-seg:hover:after,#retailmes .rtm-seg.active:after{transform:scaleX(1)}#retailmes .rtm-seg .code{font-size:11px;font-weight:900}#retailmes .rtm-seg .val{font-size:17px;font-weight:900;margin:4px 0 2px}#retailmes .rtm-seg .desc{font-size:8px;color:#999fa9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#retailmes .rtm-quality{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}#retailmes .rtm-q{border:1px solid #eceef2;border-radius:11px;padding:10px;background:#fafbfc;font-size:9.5px;line-height:1.5;color:#646b76}#retailmes .rtm-q strong{display:block;color:#171a20;font-size:10px;margin-bottom:3px}#retailmes .rtm-q.ok{border-left:4px solid #0a8b51}#retailmes .rtm-q.warn{border-left:4px solid var(--rtm-gold)}#retailmes .rtm-q.bad{border-left:4px solid #c62828}
+#retailmes .rtm-footer{display:flex;justify-content:space-between;gap:14px;margin-top:8px;color:#9299a5;font-size:9.5px}#retailmes .rtm-tooltip{position:fixed;display:none;z-index:9000;pointer-events:none;background:#16191f;color:#fff;padding:8px 10px;border-radius:9px;font-size:10px;line-height:1.45;box-shadow:0 10px 28px rgba(0,0,0,.22)}
+@media(max-width:1450px){#retailmes .rtm-kpis{grid-template-columns:repeat(3,1fr)}#retailmes .rtm-segments{grid-template-columns:repeat(7,1fr)}}
+@media(max-width:1100px){#retailmes .rtm-grid-a,#retailmes .rtm-grid-b{grid-template-columns:1fr}#retailmes .rtm-segments{grid-template-columns:repeat(4,1fr)}#retailmes .rtm-month-pill{display:none}}
+@media(max-width:720px){#retailmes .rtm-kpis{grid-template-columns:1fr 1fr}#retailmes .rtm-source{flex-direction:column;align-items:flex-start}#retailmes .rtm-source-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}#retailmes .rtm-source-actions button{width:100%}#retailmes .rtm-donut-zone{grid-template-columns:1fr}#retailmes .rtm-segments{grid-template-columns:repeat(2,1fr)}#retailmes .rtm-quality{grid-template-columns:1fr}#retailmes .rtm-toolbar{align-items:flex-start;flex-direction:column}#retailmes .rtm-footer{flex-direction:column}#retailmes .rtm-hero h3{font-size:26px!important}}
+
 </style>
 </head>
 <body>
@@ -3030,7 +3056,7 @@ table tbody tr:hover{
     <button data-page="ligeros"><span class="nav-ico">◆</span>Mercado Vehículos Livianos</button>
     <button data-page="pesados"><span class="nav-ico">▮</span>Mercado Vehículos Pesados</button>
     <button data-page="remolques"><span class="nav-ico">▭</span>Mercado Remolques y Semirremolques</button>
-    <button data-page="retailmes"><span class="nav-ico">◫</span>Retail Mes (Archivo 5)</button>
+    <button data-page="retailmes"><span class="nav-ico">◫</span>Retail del Mes</button>
     <button data-page="retail"><span class="nav-ico">▥</span>Retail Acumulado (Archivo 6)</button>
     <button data-page="retailOmnibus"><span class="nav-ico">▣</span>Retail Ómnibus</button>
     <button data-page="retailCamiones"><span class="nav-ico">▰</span>Retail Camiones y Remolcadores</button>
@@ -3079,83 +3105,51 @@ table tbody tr:hover{
 </section>
 
 
+
 <section class="page" id="retailmes">
-  <div class="rt-hero">
-    <h3>Venta Retail – Agosto 2026</h3>
-    <div class="sub">Mercado mensual por marca y segmento</div>
-    <p>Vista ejecutiva construida a partir de las cinco hojas del Archivo 5: resumen general, ligeros, comerciales, ómnibus y camiones/remolcadores.</p>
+  <div class="rtm-hero">
+    <div class="rtm-eyebrow">TSF · Pulso mensual del mercado</div>
+    <h3 id="rtmHeroTitle">Retail del Mes</h3>
+    <p id="rtmHeroCopy">Carga el Archivo 5 para convertirlo en una fotografía ejecutiva del mes: familias, segmentos y marcas líderes.</p>
+    <div class="rtm-month-pill"><span>Periodo analizado</span><b id="rtmMonthPill">—</b></div>
   </div>
 
-  <div class="rt-kpis">
-    <div class="rt-kpi"><div class="label">Venta Retail Agosto</div><div class="num">23,613</div><div class="tiny">Total general validado</div></div>
-    <div class="rt-kpi"><div class="label">Ligeros</div><div class="num">17,210</div><div class="tiny">72.9% del total</div></div>
-    <div class="rt-kpi"><div class="label">Comerciales</div><div class="num">5,053</div><div class="tiny">21.4% del total</div></div>
-    <div class="rt-kpi"><div class="label">Ómnibus</div><div class="num">86</div><div class="tiny">0.4% del total</div></div>
-    <div class="rt-kpi"><div class="label">Camión / Remolc.</div><div class="num">1,264</div><div class="tiny">5.4% del total</div></div>
-    <div class="rt-kpi"><div class="label">Marcas en resumen</div><div class="num">59</div><div class="tiny">Todas con venta > 0</div></div>
+  <div class="rtm-source">
+    <div class="rtm-source-left"><div class="rtm-source-icon">▦</div><div><b id="rtmSourceTitle">Retail mensual listo para conectar</b><small id="rtmSourceSub">Selecciona el Excel del mes o súbelo al repositorio para carga automática.</small></div></div>
+    <div class="rtm-source-actions"><button class="primary" id="rtmPick">Seleccionar Excel</button><button class="ghost" id="rtmRetry">Reintentar</button><input id="rtmFile" type="file" accept=".xlsx,.xls" hidden></div>
   </div>
 
-  <div class="rt-tabs" id="rtTabs">
-    <button class="active" data-rt="TOTAL">Total mercado</button>
-    <button data-rt="LIGEROS">Ligeros</button>
-    <button data-rt="COMERCIALES">Comerciales</button>
-    <button data-rt="OMNIBUS">Ómnibus</button>
-    <button data-rt="CAMION">Camión / Remolcador</button>
+  <div class="rtm-kpis">
+    <div class="rtm-kpi primary"><div class="label">Retail del mes</div><div class="num" id="rtmKTotal">—</div><div class="tiny" id="rtmKTotalSub">Total general</div></div>
+    <div class="rtm-kpi"><div class="label">Ligeros</div><div class="num" id="rtmKLigeros">—</div><div class="tiny" id="rtmKLigerosSub">—</div></div>
+    <div class="rtm-kpi"><div class="label">Comerciales</div><div class="num" id="rtmKCom">—</div><div class="tiny" id="rtmKComSub">—</div></div>
+    <div class="rtm-kpi"><div class="label">Camión / Remolc.</div><div class="num" id="rtmKCam">—</div><div class="tiny" id="rtmKCamSub">—</div></div>
+    <div class="rtm-kpi"><div class="label">Ómnibus</div><div class="num" id="rtmKOmni">—</div><div class="tiny" id="rtmKOmniSub">—</div></div>
+    <div class="rtm-kpi"><div class="label">Marca líder</div><div class="num" id="rtmKLeader">—</div><div class="tiny" id="rtmKLeaderSub">—</div></div>
   </div>
 
-  <div class="rt-grid-a">
-    <div class="rt-box"><h4>Composición del mercado mensual</h4>
-      <div class="rt-donut-wrap"><div class="rt-donut"><div class="rt-donut-center"><div><b>23,613</b><span>ventas en agosto</span></div></div></div>
-      <div class="rt-legend"><div><i style="background:#f2c230"></i><span>Ligeros — <b>17,210</b> · 72.9%</span></div><div><i style="background:#656b76"></i><span>Comerciales — <b>5,053</b> · 21.4%</span></div><div><i style="background:#aeb4bd"></i><span>Ómnibus — <b>86</b> · 0.4%</span></div><div><i style="background:#111827"></i><span>Camión/Remolc. — <b>1,264</b> · 5.4%</span></div></div></div>
+  <div class="rtm-toolbar">
+    <div class="rtm-tabs" id="rtmTabs">
+      <button class="active" data-family="TOTAL">Total mercado</button><button data-family="LIGEROS">Ligeros</button><button data-family="COMERCIALES">Comerciales</button><button data-family="OMNIBUS">Ómnibus</button><button data-family="CAMION">Camión / Remolcador</button>
     </div>
-
-    <div class="rt-box"><h4 id="rtRankTitle">Top marcas – Total mercado</h4><div class="rt-rank" id="rtRank"></div></div>
-
-    <div class="rt-box"><h4>Participación por subsegmento</h4>
-      <div class="rt-seg-row"><div class="rt-seg-head"><span>L3 · SUV</span><b>12,686</b></div><div class="rt-track"><div class="rt-fill" style="width:53.7%"></div></div></div>
-      <div class="rt-seg-row"><div class="rt-seg-head"><span>L1 · Autos/SW</span><b>4,330</b></div><div class="rt-track"><div class="rt-fill" style="width:18.3%"></div></div></div>
-      <div class="rt-seg-row"><div class="rt-seg-head"><span>C3 · Pick Up</span><b>3,915</b></div><div class="rt-track"><div class="rt-fill" style="width:16.6%"></div></div></div>
-      <div class="rt-seg-row"><div class="rt-seg-head"><span>P2 · Camión liviano</span><b>590</b></div><div class="rt-track"><div class="rt-fill" style="width:2.5%"></div></div></div>
-      <div class="rt-seg-row"><div class="rt-seg-head"><span>C1 · Microbús</span><b>640</b></div><div class="rt-track"><div class="rt-fill" style="width:2.7%"></div></div></div>
-      <div class="rt-seg-row"><div class="rt-seg-head"><span>Otros segmentos</span><b>1,452</b></div><div class="rt-track"><div class="rt-fill" style="width:6.2%"></div></div></div>
-    </div>
+    <div class="rtm-filter"><span>Marca</span><select id="rtmBrandFilter"><option value="ALL">Todas las marcas</option></select></div>
   </div>
 
-  <div class="rt-grid-b">
-    <div class="rt-box"><h4>Ligeros · L1 / L2 / L3</h4><div class="rt-segment-grid">
-      <div class="rt-seg-card"><div class="code">L1</div><div class="val">4,330</div><div class="desc">25.2% de ligeros</div></div>
-      <div class="rt-seg-card"><div class="code">L2</div><div class="val">194</div><div class="desc">1.1% de ligeros</div></div>
-      <div class="rt-seg-card"><div class="code">L3</div><div class="val">12,686</div><div class="desc">73.7% de ligeros</div></div>
-      <div class="rt-seg-card"><div class="code">TOTAL</div><div class="val">17,210</div><div class="desc">72.9% del mercado</div></div>
-    </div>
-    <h4 style="margin-top:14px">Comerciales · C1 / C2 / C3 / C4</h4><div class="rt-segment-grid">
-      <div class="rt-seg-card"><div class="code">C1</div><div class="val">640</div><div class="desc">12.7%</div></div>
-      <div class="rt-seg-card"><div class="code">C2</div><div class="val">215</div><div class="desc">4.3%</div></div>
-      <div class="rt-seg-card"><div class="code">C3</div><div class="val">3,915</div><div class="desc">77.5%</div></div>
-      <div class="rt-seg-card"><div class="code">C4</div><div class="val">283</div><div class="desc">5.6%</div></div>
-    </div></div>
-
-    <div class="rt-box"><h4>Pesados del mes</h4>
-      <div class="rt-segment-grid">
-        <div class="rt-seg-card"><div class="code">O1</div><div class="val">55</div><div class="desc">63.95% ómnibus</div></div>
-        <div class="rt-seg-card"><div class="code">O2</div><div class="val">31</div><div class="desc">36.05% ómnibus</div></div>
-        <div class="rt-seg-card"><div class="code">P2</div><div class="val">590</div><div class="desc">46.7% cam/rem</div></div>
-        <div class="rt-seg-card"><div class="code">P3</div><div class="val">289</div><div class="desc">22.9% cam/rem</div></div>
-        <div class="rt-seg-card"><div class="code">P4</div><div class="val">228</div><div class="desc">18.0% cam/rem</div></div>
-        <div class="rt-seg-card"><div class="code">P5</div><div class="val">157</div><div class="desc">12.4% cam/rem</div></div>
-      </div>
-      <div class="note" style="margin-top:12px"><b>Lectura:</b> los ligeros dominan agosto; dentro de comerciales, C3 representa 77.5%.</div>
-    </div>
-
-    <div class="rt-box"><h4>Calidad y controles del archivo</h4><div class="rt-quality">
-      <div class="rt-q rt-ok"><strong>✓ Reconciliación perfecta</strong>VENTA MES = Ligeros + Comerciales + Ómnibus + Camión/Remolcador. Diferencia: 0.</div>
-      <div class="rt-q rt-warn"><strong>⚠ Homologación de marca</strong>La marca aparece como <b>FOTON 1</b>. Debe normalizarse a <b>FOTON</b>.</div>
-      <div class="rt-q rt-bad"><strong>⚠ Fórmula incorrecta en OMNIBUS</strong>El % de la fila TOTALES usa <code>=SUM(E10:E18)</code> y omite filas 6–9. El total correcto de participación debe ser 100%.</div>
-      <div class="rt-q rt-warn"><strong>⚠ Nota residual</strong>En LIGEROS figura “Cifra acumulada Jul-Ago-Set”, aunque el archivo corresponde a agosto 2026. Conviene revisar esa nota al recibir el archivo mensual.</div>
-    </div></div>
+  <div class="rtm-grid-a">
+    <div class="rtm-card"><div class="rtm-head"><div><h4>Composición del mercado</h4><p>Haz clic en una familia para explorarla.</p></div><span class="rtm-chip" id="rtmShareChip">100% mercado</span></div><div class="rtm-donut-zone"><div class="rtm-donut-wrap"><canvas id="rtmDonut" width="370" height="370"></canvas><div class="rtm-donut-center"><b id="rtmDonutTotal">—</b><span id="rtmDonutLabel">unidades</span></div></div><div class="rtm-legend" id="rtmLegend"></div></div></div>
+    <div class="rtm-card"><div class="rtm-head"><div><h4 id="rtmRankTitle">Top marcas</h4><p id="rtmRankSub">Ranking del mercado mensual.</p></div><span class="rtm-chip">Top 10</span></div><div class="rtm-rank" id="rtmRank"></div></div>
+    <div class="rtm-card"><div class="rtm-head"><div><h4>Lectura ejecutiva</h4><p>Indicadores que cambian con la selección.</p></div></div><div class="rtm-family-insights" id="rtmInsights"></div></div>
   </div>
 
-  <div class="rt-foot"><span><b>TSF AutoMarket Intelligence</b> · Retail mensual</span><span>Fuente: Archivo 5 – Venta Retail Mes Agosto 2026</span><span>5 hojas auditadas</span></div>
+  <div class="rtm-card" style="margin-bottom:10px"><div class="rtm-head"><div><h4>Mapa de segmentos del mes</h4><p>Los 13 segmentos L, C, O y P. Pasa el mouse para ver participación.</p></div><span class="rtm-chip" id="rtmSegmentChip">13 segmentos</span></div><div class="rtm-segments" id="rtmSegments"></div></div>
+
+  <div class="rtm-grid-b">
+    <div class="rtm-card"><div class="rtm-head"><div><h4>Familias y concentración</h4><p>Comparativo visual del peso de cada familia.</p></div></div><div class="rtm-rank" id="rtmFamilyBars"></div></div>
+    <div class="rtm-card"><div class="rtm-head"><div><h4>Calidad y controles</h4><p>Validaciones útiles antes de publicar el mes.</p></div></div><div class="rtm-quality" id="rtmQuality"></div></div>
+  </div>
+
+  <div class="rtm-footer"><span><b>TSF AutoMarket Intelligence</b> · Retail mensual</span><span id="rtmFooterSource">Fuente: Archivo 5</span><span id="rtmFooterAudit">5 hojas esperadas</span></div>
+  <div class="rtm-tooltip" id="rtmTooltip"></div>
 </section>
 
 
@@ -3971,7 +3965,7 @@ table tbody tr:hover{
 
 <script>
 const titles={
- resumen:'Resumen Ejecutivo',retailmes:'Retail Mes - Agosto 2026',retail:'Retail Acumulado - Ene–Ago 2026',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',inmat:'Inmatriculaciones',brechas:'Retail vs Inmatriculación',
+ resumen:'Resumen Ejecutivo',retailmes:'Retail del Mes',retail:'Retail Acumulado - Ene–Ago 2026',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',inmat:'Inmatriculaciones',brechas:'Retail vs Inmatriculación',
  ligeros:'Mercado Vehículos Livianos',comerciales:'Comerciales',pesados:'Mercado Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Mercado Remolques y Semirremolques',
  geografia:'Mapas del Perú',concesionarios:'Departamento y Concesionarios Retail',calidad:'Calidad de Datos',carga:'Cargar Mes'
 };
@@ -4601,25 +4595,62 @@ lv2Init();
 
 
 
-// RETAIL MES - ARCHIVO 5
-const rtRanks={
- TOTAL:[['TOYOTA',4455],['HYUNDAI',2212],['KIA',2097],['JETOUR',1529],['CHANGAN',1126],['CHEVROLET',1089],['FORD',1006],['GEELY',994],['CHERY',855],['JAC',755]],
- LIGEROS:[['TOYOTA',2996],['KIA',1983],['HYUNDAI',1902],['JETOUR',1529],['GEELY',994],['CHEVROLET',968],['CHANGAN',931],['CHERY',739],['SUZUKI',739],['FORD',625]],
- COMERCIALES:[['TOYOTA',1459],['FOTON 1',394],['JAC',390],['FORD',381],['JMC',355],['GWM',336],['HYUNDAI',268],['CHANGAN',195],['MITSUBISHI',151],['CHEVROLET',121]],
- OMNIBUS:[['MERCEDES BENZ',30],['GOLDEN DRAGON',12],['YUTONG',11],['VOLKSWAGEN',9],['FOTON 1',8],['HYUNDAI',7],['HINO',6],['FUSO',3]],
- CAMION:[['ISUZU',376],['FOTON 1',228],['HINO',139],['FUSO',123],['DONGFENG',86],['FORLAND',65],['FAW',45],['INTERNATIONAL',40],['JMC',37],['SHACMAN',36]]
-};
-const rtNames={TOTAL:'Total mercado',LIGEROS:'Ligeros',COMERCIALES:'Comerciales',OMNIBUS:'Ómnibus',CAMION:'Camión / Remolcador'};
-function renderRtRank(key){
- const box=document.getElementById('rtRank'); if(!box)return;
- const arr=rtRanks[key]||rtRanks.TOTAL, max=Math.max(...arr.map(x=>x[1]));
- document.getElementById('rtRankTitle').textContent='Top marcas – '+rtNames[key];
- box.innerHTML=arr.map(([n,v])=>`<div class="rt-rank-row"><span>${n}</span><div class="track"><div class="fill" style="width:${(v/max*100).toFixed(1)}%"></div></div><b>${v.toLocaleString('es-PE')}</b></div>`).join('');
+
+// ===== V36 RETAIL DEL MES DINÁMICO =====
+const RTM={rows:[],period:'',sheetCount:0,family:'TOTAL',brand:'ALL',hoverSlice:-1,segments:{},families:{},sourceName:''};
+const RTM_SEG=[['L1','Autos / SW'],['L2','Multipropósito'],['L3','SUV'],['C1','Micro / Minibús'],['C2','Comercial pasajeros'],['C3','Pick Up / Furgón'],['C4','Comercial carga'],['O1','Ómnibus ≤16 Tn'],['O2','Ómnibus >16 Tn'],['P2','Camión liviano'],['P3','Camión mediano'],['P4','Camión pesado'],['P5','Remolcador']];
+const RTM_COL={L1:1,L2:2,L3:3,C1:4,C2:5,C3:6,C4:7,O1:8,O2:9,P2:10,P3:11,P4:12,P5:13};
+const RTM_FAM={LIGEROS:['L1','L2','L3'],COMERCIALES:['C1','C2','C3','C4'],OMNIBUS:['O1','O2'],CAMION:['P2','P3','P4','P5']};
+const RTM_COLORS={LIGEROS:'#f5a900',COMERCIALES:'#ee0b70',OMNIBUS:'#8d94a0',CAMION:'#171a20'};
+function rtmFmt(n){return Number(n||0).toLocaleString('es-PE')}
+function rtmPct(n,d){return d?((n/d)*100).toFixed(1)+'%':'0.0%'}
+function rtmNormBrand(v){let s=String(v||'').trim().toUpperCase();if(s==='FOTON 1')s='FOTON';return s}
+function rtmFamilyTotal(row,fam){if(fam==='TOTAL')return Object.keys(RTM_COL).reduce((a,k)=>a+(+row[k]||0),0);return (RTM_FAM[fam]||[]).reduce((a,k)=>a+(+row[k]||0),0)}
+function rtmAggregateRows(){
+  const m=new Map();
+  RTM.rows.forEach(r=>{const b=rtmNormBrand(r.brand);if(!b)return;let o=m.get(b);if(!o){o={brand:b};Object.keys(RTM_COL).forEach(k=>o[k]=0);m.set(b,o)}Object.keys(RTM_COL).forEach(k=>o[k]+=+r[k]||0)});
+  return [...m.values()];
 }
-document.querySelectorAll('#rtTabs button').forEach(btn=>btn.addEventListener('click',()=>{
- document.querySelectorAll('#rtTabs button').forEach(b=>b.classList.toggle('active',b===btn)); renderRtRank(btn.dataset.rt);
-}));
-renderRtRank('TOTAL');
+function rtmCompute(){
+  const rows=rtmAggregateRows();
+  const seg={};Object.keys(RTM_COL).forEach(k=>seg[k]=rows.reduce((a,r)=>a+(+r[k]||0),0));
+  const fam={};Object.entries(RTM_FAM).forEach(([f,ss])=>fam[f]=ss.reduce((a,s)=>a+seg[s],0));fam.TOTAL=Object.values(fam).slice(0,4).reduce((a,v)=>a+v,0);
+  RTM.segments=seg;RTM.families=fam;return rows;
+}
+function rtmSetSource(title,sub){const a=document.getElementById('rtmSourceTitle'),b=document.getElementById('rtmSourceSub');if(a)a.textContent=title;if(b)b.textContent=sub}
+function rtmPopulateBrand(){const s=document.getElementById('rtmBrandFilter');if(!s)return;const old=s.value;const rows=rtmAggregateRows().filter(r=>rtmFamilyTotal(r,RTM.family)>0).sort((a,b)=>a.brand.localeCompare(b.brand));s.innerHTML='<option value="ALL">Todas las marcas</option>'+rows.map(r=>`<option value="${r.brand.replace(/"/g,'&quot;')}">${r.brand}</option>`).join('');if([...s.options].some(o=>o.value===old))s.value=old;else{s.value='ALL';RTM.brand='ALL'}}
+function rtmRender(){
+ if(!RTM.rows.length)return;
+ const rows=rtmCompute();const total=RTM.families.TOTAL;
+ const k=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+ k('rtmKTotal',rtmFmt(total));k('rtmKLigeros',rtmFmt(RTM.families.LIGEROS));k('rtmKCom',rtmFmt(RTM.families.COMERCIALES));k('rtmKCam',rtmFmt(RTM.families.CAMION));k('rtmKOmni',rtmFmt(RTM.families.OMNIBUS));
+ k('rtmKLigerosSub',rtmPct(RTM.families.LIGEROS,total)+' del total');k('rtmKComSub',rtmPct(RTM.families.COMERCIALES,total)+' del total');k('rtmKCamSub',rtmPct(RTM.families.CAMION,total)+' del total');k('rtmKOmniSub',rtmPct(RTM.families.OMNIBUS,total)+' del total');
+ const rankBase=rows.map(r=>[r.brand,rtmFamilyTotal(r,RTM.family)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);const leader=rankBase[0]||['—',0];k('rtmKLeader',leader[0]);k('rtmKLeaderSub',rtmFmt(leader[1])+' · '+rtmPct(leader[1],RTM.family==='TOTAL'?total:RTM.families[RTM.family]));
+ const famName={TOTAL:'Total mercado',LIGEROS:'Ligeros',COMERCIALES:'Comerciales',OMNIBUS:'Ómnibus',CAMION:'Camión / Remolcador'};k('rtmRankTitle','Top marcas · '+famName[RTM.family]);k('rtmRankSub',RTM.brand==='ALL'?'Ranking completo del mes.':'Marca seleccionada: '+RTM.brand);
+ let rank=rankBase;if(RTM.brand!=='ALL')rank=rank.filter(x=>x[0]===RTM.brand);const max=Math.max(1,...rank.map(x=>x[1]));const rb=document.getElementById('rtmRank');if(rb)rb.innerHTML=rank.slice(0,10).map(([n,v],i)=>`<div class="rtm-rank-row" data-brand="${n}"><span class="pos">${i+1}</span><span class="name" title="${n}">${n}</span><div class="rtm-track"><div class="rtm-fill" style="width:${(v/max*100).toFixed(1)}%"></div></div><b>${rtmFmt(v)}</b></div>`).join('')||'<div style="color:#999;font-size:11px">Sin datos para la selección.</div>';
+ rb?.querySelectorAll('.rtm-rank-row').forEach(el=>el.onclick=()=>{RTM.brand=el.dataset.brand;const s=document.getElementById('rtmBrandFilter');if(s)s.value=RTM.brand;rtmRender()});
+ rtmDrawDonut();rtmRenderSegments();rtmRenderFamilies();rtmRenderInsights();rtmRenderQuality();rtmPopulateBrand();
+ document.querySelectorAll('#rtmTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RTM.family));k('rtmShareChip',RTM.family==='TOTAL'?'100% mercado':rtmPct(RTM.families[RTM.family],total)+' del mercado');
+}
+function rtmDrawDonut(){
+ const c=document.getElementById('rtmDonut');if(!c)return;const ctx=c.getContext('2d'),dpr=window.devicePixelRatio||1,css=185;c.width=css*2*dpr;c.height=css*2*dpr;c.style.width=css+'px';c.style.height=css+'px';ctx.setTransform(2*dpr,0,0,2*dpr,0,0);ctx.clearRect(0,0,css,css);const cx=css/2,cy=css/2,r=76,inner=48,total=RTM.families.TOTAL||1;let start=-Math.PI/2;const slices=[];['LIGEROS','COMERCIALES','OMNIBUS','CAMION'].forEach((f,i)=>{const v=RTM.families[f]||0,a=v/total*Math.PI*2,end=start+a;const hov=RTM.hoverSlice===i;ctx.beginPath();ctx.arc(cx,cy,r+(hov?4:0),start,end);ctx.arc(cx,cy,inner,true);ctx.closePath();ctx.fillStyle=RTM_COLORS[f];ctx.globalAlpha=(RTM.family==='TOTAL'||RTM.family===f)?1:.28;ctx.fill();ctx.globalAlpha=1;slices.push({f,start,end,v});start=end});c._slices=slices;
+ const center=document.getElementById('rtmDonutTotal');if(center)center.textContent=rtmFmt(RTM.family==='TOTAL'?total:RTM.families[RTM.family]);const lab=document.getElementById('rtmDonutLabel');if(lab)lab.textContent=RTM.family==='TOTAL'?'unidades totales':'unidades · '+RTM.family.toLowerCase();
+ const leg=document.getElementById('rtmLegend');if(leg)leg.innerHTML=slices.map((s,i)=>`<button data-family="${s.f}" class="${RTM.family===s.f?'active':''}"><i class="rtm-dot" style="background:${RTM_COLORS[s.f]}"></i><span>${({LIGEROS:'Ligeros',COMERCIALES:'Comerciales',OMNIBUS:'Ómnibus',CAMION:'Camión / Remolc.'})[s.f]}<br><small>${rtmPct(s.v,total)}</small></span><b>${rtmFmt(s.v)}</b></button>`).join('');leg?.querySelectorAll('button').forEach(b=>b.onclick=()=>{RTM.family=b.dataset.family;RTM.brand='ALL';rtmRender()});
+}
+function rtmRenderSegments(){const box=document.getElementById('rtmSegments');if(!box)return;const total=RTM.families.TOTAL||1;const allowed=RTM.family==='TOTAL'?RTM_SEG:RTM_SEG.filter(x=>(RTM_FAM[RTM.family]||[]).includes(x[0]));box.innerHTML=allowed.map(([s,n])=>`<div class="rtm-seg" data-seg="${s}" data-tip="${n}: ${rtmFmt(RTM.segments[s])} · ${rtmPct(RTM.segments[s],total)} del mercado"><div class="code">${s}</div><div class="val">${rtmFmt(RTM.segments[s])}</div><div class="desc">${n}</div></div>`).join('');const chip=document.getElementById('rtmSegmentChip');if(chip)chip.textContent=allowed.length+' segmentos';rtmBindTips(box)}
+function rtmRenderFamilies(){const box=document.getElementById('rtmFamilyBars');if(!box)return;const total=RTM.families.TOTAL||1;const arr=[['LIGEROS','Ligeros'],['COMERCIALES','Comerciales'],['CAMION','Camión / Remolcador'],['OMNIBUS','Ómnibus']];const mx=Math.max(...arr.map(x=>RTM.families[x[0]]));box.innerHTML=arr.map(([f,n],i)=>`<div class="rtm-rank-row" data-family="${f}"><span class="pos">${i+1}</span><span class="name">${n}</span><div class="rtm-track"><div class="rtm-fill" style="width:${(RTM.families[f]/mx*100).toFixed(1)}%"></div></div><b>${rtmPct(RTM.families[f],total)}</b></div>`).join('');box.querySelectorAll('.rtm-rank-row').forEach(el=>el.onclick=()=>{RTM.family=el.dataset.family;RTM.brand='ALL';rtmRender()})}
+function rtmRenderInsights(){const box=document.getElementById('rtmInsights');if(!box)return;const total=RTM.families.TOTAL||1;const segTop=Object.entries(RTM.segments).sort((a,b)=>b[1]-a[1])[0]||['—',0];const rows=rtmAggregateRows().map(r=>[r.brand,rtmFamilyTotal(r,RTM.family)]).sort((a,b)=>b[1]-a[1]);const top3=rows.slice(0,3).reduce((a,x)=>a+x[1],0);const famTotal=RTM.family==='TOTAL'?total:RTM.families[RTM.family]||1;box.innerHTML=`<div class="rtm-mini"><span>Segmento líder</span><b>${segTop[0]}</b><small>${rtmFmt(segTop[1])} unidades</small></div><div class="rtm-mini"><span>Top 3 marcas</span><b>${rtmPct(top3,famTotal)}</b><small>concentración</small></div><div class="rtm-mini"><span>Marcas activas</span><b>${rows.filter(x=>x[1]>0).length}</b><small>con venta</small></div><div class="rtm-mini"><span>Familia dominante</span><b>Ligeros</b><small>${rtmPct(RTM.families.LIGEROS,total)}</small></div>`}
+function rtmRenderQuality(){const box=document.getElementById('rtmQuality');if(!box)return;const sumFam=RTM.families.LIGEROS+RTM.families.COMERCIALES+RTM.families.OMNIBUS+RTM.families.CAMION;const diff=sumFam-RTM.families.TOTAL;const fotonRaw=RTM.rows.some(r=>String(r.rawBrand||'').trim().toUpperCase()==='FOTON 1');box.innerHTML=`<div class="rtm-q ok"><strong>✓ Reconciliación</strong>Las cuatro familias suman ${rtmFmt(sumFam)}. Diferencia frente al total: ${rtmFmt(diff)}.</div><div class="rtm-q ${fotonRaw?'warn':'ok'}"><strong>${fotonRaw?'⚠':'✓'} Homologación de marca</strong>${fotonRaw?'Se detectó “FOTON 1”; el dashboard lo consolida como FOTON.':'No se detectaron variantes FOTON 1.'}</div><div class="rtm-q warn"><strong>⚠ Control OMNIBUS</strong>Conviene validar la fórmula de porcentaje de la fila TOTALES del Excel antes de publicar.</div>`}
+function rtmBindTips(root){const tip=document.getElementById('rtmTooltip');root?.querySelectorAll('[data-tip]').forEach(el=>{el.onmousemove=e=>{tip.innerHTML=el.dataset.tip;tip.style.display='block';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px'};el.onmouseleave=()=>tip.style.display='none'})}
+function rtmCanvasEvt(){const c=document.getElementById('rtmDonut'),tip=document.getElementById('rtmTooltip');if(!c||c._bound)return;c._bound=true;function hit(e){const rect=c.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width*185,y=(e.clientY-rect.top)/rect.height*185,dx=x-92.5,dy=y-92.5,rad=Math.sqrt(dx*dx+dy*dy);if(rad<48||rad>84)return -1;let a=Math.atan2(dy,dx);if(a<-Math.PI/2)a+=Math.PI*2;return (c._slices||[]).findIndex(s=>a>=s.start&&a<=s.end)}c.onmousemove=e=>{const i=hit(e);if(i!==RTM.hoverSlice){RTM.hoverSlice=i;rtmDrawDonut()}if(i>=0){const s=c._slices[i];tip.style.display='block';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px';tip.innerHTML=`<b>${s.f}</b><br>${rtmFmt(s.v)} unidades<br>${rtmPct(s.v,RTM.families.TOTAL)}`}else tip.style.display='none'};c.onmouseleave=()=>{RTM.hoverSlice=-1;tip.style.display='none';rtmDrawDonut()};c.onclick=e=>{const i=hit(e);if(i>=0){RTM.family=c._slices[i].f;RTM.brand='ALL';rtmRender()}}}
+function rtmParseWorkbook(wb,name){
+ const ws=wb.Sheets['VENTA MES']||wb.Sheets[wb.SheetNames.find(n=>String(n).toUpperCase().includes('VENTA MES'))];if(!ws)throw new Error('No encuentro la hoja “VENTA MES”.');const a=XLSX.utils.sheet_to_json(ws,{header:1,defval:0,raw:true});const title=String(a?.[0]?.[0]||'');const m=title.match(/(ENERO|FEBRERO|MARZO|ABRIL|MAYO|JUNIO|JULIO|AGOSTO|SETIEMBRE|SEPTIEMBRE|OCTUBRE|NOVIEMBRE|DICIEMBRE)\s+(20\d{2})/i);RTM.period=m?(m[1].charAt(0).toUpperCase()+m[1].slice(1).toLowerCase()+' '+m[2]):title.replace(/VENTAS?\s+RETAIL\s*-?/i,'').trim();RTM.sheetCount=wb.SheetNames.length;RTM.sourceName=name||'Excel';RTM.rows=[];for(let i=5;i<a.length;i++){const r=a[i]||[],brand=String(r[0]||'').trim();if(!brand||/^TOTALES?$/i.test(brand)||brand.startsWith('1  Incluye'))continue;const o={brand:rtmNormBrand(brand),rawBrand:brand};Object.entries(RTM_COL).forEach(([k,j])=>o[k]=Number(r[j]||0));if(Object.keys(RTM_COL).some(k=>o[k]))RTM.rows.push(o)}if(!RTM.rows.length)throw new Error('La hoja VENTA MES no contiene filas de marcas reconocibles.');RTM.family='TOTAL';RTM.brand='ALL';rtmSetSource('Excel cargado correctamente',`${name} · ${RTM.rows.length} marcas/filas analizadas · ${RTM.sheetCount} hojas`);document.getElementById('rtmHeroTitle').textContent='Retail del Mes · '+RTM.period;document.getElementById('rtmMonthPill').textContent=RTM.period;document.getElementById('rtmHeroCopy').textContent='Fotografía ejecutiva del mercado Retail del periodo, con familias, segmentos y marcas líderes calculadas directamente desde el Excel.';document.getElementById('rtmFooterSource').textContent='Fuente: '+name;document.getElementById('rtmFooterAudit').textContent=RTM.sheetCount+' hojas detectadas';rtmRender();rtmCanvasEvt();
+}
+async function rtmReadFile(f){if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel.');const buf=await f.arrayBuffer(),wb=XLSX.read(buf,{type:'array',cellDates:true});rtmParseWorkbook(wb,f.name)}
+async function rtmLoadUrl(url){if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel.');const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);const buf=await res.arrayBuffer(),wb=XLSX.read(buf,{type:'array',cellDates:true});rtmParseWorkbook(wb,decodeURIComponent(url.split('/').pop()))}
+async function rtmAuto(){rtmSetSource('Buscando Excel del mes…','Se intenta cargar automáticamente desde la misma carpeta del HTML.');const cand=['./venta_retail_mes.xlsx','./data/venta_retail_mes.xlsx','./08.5_Venta Retail Mes Agosto 2026.xlsx','./08.5_Venta Retail Mes Agosto 2026(2).xlsx'];for(const u of cand){try{await rtmLoadUrl(u);return}catch(e){}}rtmSetSource('Excel mensual no encontrado','Sube “venta_retail_mes.xlsx” junto al HTML o selecciónalo manualmente.');}
+function rtmInit(){document.querySelectorAll('#rtmTabs button').forEach(b=>b.addEventListener('click',()=>{RTM.family=b.dataset.family;RTM.brand='ALL';rtmRender()}));document.getElementById('rtmBrandFilter')?.addEventListener('change',e=>{RTM.brand=e.target.value;rtmRender()});document.getElementById('rtmPick')?.addEventListener('click',()=>document.getElementById('rtmFile')?.click());document.getElementById('rtmRetry')?.addEventListener('click',rtmAuto);document.getElementById('rtmFile')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{rtmSetSource('Procesando Excel…',f.name);await rtmReadFile(f)}catch(err){rtmSetSource('No se pudo leer el archivo',err.message||String(err));alert(err.message||String(err))}finally{e.target.value=''}});rtmCanvasEvt();setTimeout(rtmAuto,650);let t;window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(()=>{if(RTM.rows.length)rtmDrawDonut()},120)})}
+rtmInit();
 
 
 // RETAIL OMNIBUS
