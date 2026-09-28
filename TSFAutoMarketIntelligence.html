@@ -3061,6 +3061,96 @@ table tbody tr:hover{
 .lv2-chart-tip .row{display:flex;justify-content:space-between;gap:12px;margin-top:2px}
 .lv2-chart-tip i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
 
+
+/* ===== V39 DONA RETAIL DEL MES PULIDA ===== */
+#retailmes .rtm-donut-zone{
+  display:grid!important;
+  grid-template-columns:minmax(220px, .9fr) minmax(210px,1.1fr)!important;
+  gap:18px!important;
+  align-items:center!important;
+  min-height:310px!important;
+  padding:10px 4px 4px!important;
+}
+#retailmes .rtm-donut-wrap{
+  width:220px!important;
+  height:220px!important;
+  margin:0 auto!important;
+  filter:drop-shadow(0 10px 18px rgba(17,19,24,.08));
+}
+#retailmes #rtmDonut{
+  width:220px!important;
+  height:220px!important;
+}
+#retailmes .rtm-donut-center b{
+  font-size:30px!important;
+  font-weight:900!important;
+  letter-spacing:-.03em!important;
+  color:#171a20!important;
+}
+#retailmes .rtm-donut-center span{
+  font-size:10px!important;
+  color:#8d94a0!important;
+  margin-top:5px!important;
+  text-transform:none!important;
+}
+#retailmes .rtm-legend{
+  display:grid!important;
+  gap:8px!important;
+  align-content:center!important;
+}
+#retailmes .rtm-legend button{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:9px!important;
+  min-height:52px!important;
+  padding:9px 11px!important;
+  border-radius:12px!important;
+  border:1px solid #e8eaf0!important;
+  background:linear-gradient(180deg,#fff,#fafbfc)!important;
+  box-shadow:0 5px 14px rgba(17,19,24,.035)!important;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important;
+}
+#retailmes .rtm-legend button:hover{
+  transform:translateX(4px)!important;
+  box-shadow:0 8px 20px rgba(17,19,24,.08)!important;
+  border-color:#ffd1e3!important;
+}
+#retailmes .rtm-legend button.active{
+  background:#fff3f8!important;
+  border-color:#ffc4db!important;
+}
+#retailmes .rtm-legend .rtm-dot{
+  width:11px!important;
+  height:11px!important;
+  box-shadow:0 0 0 3px rgba(17,19,24,.04)!important;
+}
+#retailmes .rtm-legend span{
+  font-size:10px!important;
+  line-height:1.25!important;
+  color:#4f5662!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#retailmes .rtm-legend span small{
+  font-size:9px!important;
+  color:#9aa0aa!important;
+}
+#retailmes .rtm-legend b{
+  font-size:11px!important;
+  color:#171a20!important;
+  white-space:nowrap!important;
+}
+@media(max-width:1100px){
+  #retailmes .rtm-donut-zone{grid-template-columns:1fr!important;}
+  #retailmes .rtm-legend{grid-template-columns:1fr 1fr!important;}
+}
+@media(max-width:620px){
+  #retailmes .rtm-donut-wrap{width:190px!important;height:190px!important;}
+  #retailmes #rtmDonut{width:190px!important;height:190px!important;}
+  #retailmes .rtm-legend{grid-template-columns:1fr!important;}
+}
+
 </style>
 </head>
 <body>
@@ -4663,35 +4753,76 @@ function rtmRender(){
 }
 function rtmDrawDonut(){
  const c=document.getElementById('rtmDonut');if(!c)return;
+ const total=RTM.families.TOTAL||0;
+ const slices=[];
  try{
-  const ctx=c.getContext('2d'),dpr=Math.min(window.devicePixelRatio||1,2),css=185;
+  const wrap=c.parentElement;
+  const css=Math.max(185,Math.min((wrap?.clientWidth||220),220));
+  const dpr=Math.min(window.devicePixelRatio||1,2);
   c.width=Math.round(css*dpr);c.height=Math.round(css*dpr);c.style.width=css+'px';c.style.height=css+'px';
-  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,css,css);
-  const cx=css/2,cy=css/2,r=76,inner=48,total=RTM.families.TOTAL||1;
-  let start=-Math.PI/2;const slices=[];
+  const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,css,css);
+  const cx=css/2,cy=css/2,R=css*.43,inner=css*.285;
+  let start=-Math.PI/2;
   ['LIGEROS','COMERCIALES','OMNIBUS','CAMION'].forEach((f,i)=>{
-   const v=RTM.families[f]||0,a=v/total*Math.PI*2,end=start+a,hov=RTM.hoverSlice===i;
+   const v=RTM.families[f]||0;
+   const ang=total? v/total*Math.PI*2 : 0;
+   const end=start+ang;
+   const hov=RTM.hoverSlice===i;
+   const mid=start+ang/2;
+   const off=hov?4:0;
+   const ox=Math.cos(mid)*off,oy=Math.sin(mid)*off;
    ctx.beginPath();
-   ctx.arc(cx,cy,r+(hov?4:0),start,end,false);
-   ctx.arc(cx,cy,inner,end,start,true);
+   ctx.arc(cx+ox,cy+oy,R+(hov?3:0),start,end,false);
+   ctx.arc(cx+ox,cy+oy,inner,end,start,true);
    ctx.closePath();
-   ctx.fillStyle=RTM_COLORS[f];ctx.globalAlpha=(RTM.family==='TOTAL'||RTM.family===f)?1:.28;ctx.fill();ctx.globalAlpha=1;
-   slices.push({f,start,end,v});start=end;
+   ctx.fillStyle=RTM_COLORS[f];
+   ctx.globalAlpha=(RTM.family==='TOTAL'||RTM.family===f)?1:.24;
+   ctx.fill();ctx.globalAlpha=1;
+   if(hov){ctx.save();ctx.shadowColor='rgba(17,19,24,.18)';ctx.shadowBlur=14;ctx.strokeStyle='rgba(255,255,255,.92)';ctx.lineWidth=2;ctx.stroke();ctx.restore()}
+   slices.push({f,start,end,v,cx,cy,R,inner,index:i});
+   start=end;
   });
+  if(!total){
+   ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.arc(cx,cy,inner,0,Math.PI*2,true);ctx.fillStyle='#eceef2';ctx.fill();
+  }
   c._slices=slices;
+  c._geom={css,cx,cy,R,inner};
  }catch(err){
   console.error('Error dibujando dona Retail del Mes:',err);
   c._slices=[];
  }
- const center=document.getElementById('rtmDonutTotal');if(center)center.textContent=rtmFmt(RTM.family==='TOTAL'?total:RTM.families[RTM.family]);const lab=document.getElementById('rtmDonutLabel');if(lab)lab.textContent=RTM.family==='TOTAL'?'unidades totales':'unidades · '+RTM.family.toLowerCase();
- const leg=document.getElementById('rtmLegend');if(leg)leg.innerHTML=slices.map((s,i)=>`<button data-family="${s.f}" class="${RTM.family===s.f?'active':''}"><i class="rtm-dot" style="background:${RTM_COLORS[s.f]}"></i><span>${({LIGEROS:'Ligeros',COMERCIALES:'Comerciales',OMNIBUS:'Ómnibus',CAMION:'Camión / Remolc.'})[s.f]}<br><small>${rtmPct(s.v,total)}</small></span><b>${rtmFmt(s.v)}</b></button>`).join('');leg?.querySelectorAll('button').forEach(b=>b.onclick=()=>{RTM.family=b.dataset.family;RTM.brand='ALL';rtmRender()});
+ const selected=RTM.family==='TOTAL'?total:(RTM.families[RTM.family]||0);
+ const center=document.getElementById('rtmDonutTotal');if(center)center.textContent=rtmFmt(selected);
+ const lab=document.getElementById('rtmDonutLabel');if(lab)lab.textContent=RTM.family==='TOTAL'?'unidades totales':'unidades · '+({LIGEROS:'Ligeros',COMERCIALES:'Comerciales',OMNIBUS:'Ómnibus',CAMION:'Camión / Remolc.'}[RTM.family]||RTM.family);
+ const names={LIGEROS:'Ligeros',COMERCIALES:'Comerciales',OMNIBUS:'Ómnibus',CAMION:'Camión / Remolc.'};
+ const leg=document.getElementById('rtmLegend');
+ if(leg){
+   leg.innerHTML=slices.map(s=>`<button data-family="${s.f}" class="${RTM.family===s.f?'active':''}" data-tip="${names[s.f]}: ${rtmFmt(s.v)} unidades · ${rtmPct(s.v,total)}"><i class="rtm-dot" style="background:${RTM_COLORS[s.f]}"></i><span>${names[s.f]}<br><small>${rtmPct(s.v,total)} del mercado</small></span><b>${rtmFmt(s.v)}</b></button>`).join('');
+   leg.querySelectorAll('button').forEach(b=>b.onclick=()=>{RTM.family=b.dataset.family;RTM.brand='ALL';rtmRender()});
+   rtmBindTips(leg);
+ }
 }
 function rtmRenderSegments(){const box=document.getElementById('rtmSegments');if(!box)return;const total=RTM.families.TOTAL||1;const allowed=RTM.family==='TOTAL'?RTM_SEG:RTM_SEG.filter(x=>(RTM_FAM[RTM.family]||[]).includes(x[0]));box.innerHTML=allowed.map(([s,n])=>`<div class="rtm-seg" data-seg="${s}" data-tip="${n}: ${rtmFmt(RTM.segments[s])} · ${rtmPct(RTM.segments[s],total)} del mercado"><div class="code">${s}</div><div class="val">${rtmFmt(RTM.segments[s])}</div><div class="desc">${n}</div></div>`).join('');const chip=document.getElementById('rtmSegmentChip');if(chip)chip.textContent=allowed.length+' segmentos';rtmBindTips(box)}
 function rtmRenderFamilies(){const box=document.getElementById('rtmFamilyBars');if(!box)return;const total=RTM.families.TOTAL||1;const arr=[['LIGEROS','Ligeros'],['COMERCIALES','Comerciales'],['CAMION','Camión / Remolcador'],['OMNIBUS','Ómnibus']];const mx=Math.max(...arr.map(x=>RTM.families[x[0]]));box.innerHTML=arr.map(([f,n],i)=>`<div class="rtm-rank-row" data-family="${f}"><span class="pos">${i+1}</span><span class="name">${n}</span><div class="rtm-track"><div class="rtm-fill" style="width:${(RTM.families[f]/mx*100).toFixed(1)}%"></div></div><b>${rtmPct(RTM.families[f],total)}</b></div>`).join('');box.querySelectorAll('.rtm-rank-row').forEach(el=>el.onclick=()=>{RTM.family=el.dataset.family;RTM.brand='ALL';rtmRender()})}
 function rtmRenderInsights(){const box=document.getElementById('rtmInsights');if(!box)return;const total=RTM.families.TOTAL||1;const segTop=Object.entries(RTM.segments).sort((a,b)=>b[1]-a[1])[0]||['—',0];const rows=rtmAggregateRows().map(r=>[r.brand,rtmFamilyTotal(r,RTM.family)]).sort((a,b)=>b[1]-a[1]);const top3=rows.slice(0,3).reduce((a,x)=>a+x[1],0);const famTotal=RTM.family==='TOTAL'?total:RTM.families[RTM.family]||1;box.innerHTML=`<div class="rtm-mini"><span>Segmento líder</span><b>${segTop[0]}</b><small>${rtmFmt(segTop[1])} unidades</small></div><div class="rtm-mini"><span>Top 3 marcas</span><b>${rtmPct(top3,famTotal)}</b><small>concentración</small></div><div class="rtm-mini"><span>Marcas activas</span><b>${rows.filter(x=>x[1]>0).length}</b><small>con venta</small></div><div class="rtm-mini"><span>Familia dominante</span><b>Ligeros</b><small>${rtmPct(RTM.families.LIGEROS,total)}</small></div>`}
 function rtmRenderQuality(){const box=document.getElementById('rtmQuality');if(!box)return;const sumFam=RTM.families.LIGEROS+RTM.families.COMERCIALES+RTM.families.OMNIBUS+RTM.families.CAMION;const diff=sumFam-RTM.families.TOTAL;const fotonRaw=RTM.rows.some(r=>String(r.rawBrand||'').trim().toUpperCase()==='FOTON 1');box.innerHTML=`<div class="rtm-q ok"><strong>✓ Reconciliación</strong>Las cuatro familias suman ${rtmFmt(sumFam)}. Diferencia frente al total: ${rtmFmt(diff)}.</div><div class="rtm-q ${fotonRaw?'warn':'ok'}"><strong>${fotonRaw?'⚠':'✓'} Homologación de marca</strong>${fotonRaw?'Se detectó “FOTON 1”; el dashboard lo consolida como FOTON.':'No se detectaron variantes FOTON 1.'}</div><div class="rtm-q warn"><strong>⚠ Control OMNIBUS</strong>Conviene validar la fórmula de porcentaje de la fila TOTALES del Excel antes de publicar.</div>`}
 function rtmBindTips(root){const tip=document.getElementById('rtmTooltip');root?.querySelectorAll('[data-tip]').forEach(el=>{el.onmousemove=e=>{tip.innerHTML=el.dataset.tip;tip.style.display='block';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px'};el.onmouseleave=()=>tip.style.display='none'})}
-function rtmCanvasEvt(){const c=document.getElementById('rtmDonut'),tip=document.getElementById('rtmTooltip');if(!c||c._bound)return;c._bound=true;function hit(e){const rect=c.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width*185,y=(e.clientY-rect.top)/rect.height*185,dx=x-92.5,dy=y-92.5,rad=Math.sqrt(dx*dx+dy*dy);if(rad<48||rad>84)return -1;let a=Math.atan2(dy,dx);if(a<-Math.PI/2)a+=Math.PI*2;return (c._slices||[]).findIndex(s=>a>=s.start&&a<=s.end)}c.onmousemove=e=>{const i=hit(e);if(i!==RTM.hoverSlice){RTM.hoverSlice=i;rtmDrawDonut()}if(i>=0){const s=c._slices[i];tip.style.display='block';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px';tip.innerHTML=`<b>${s.f}</b><br>${rtmFmt(s.v)} unidades<br>${rtmPct(s.v,RTM.families.TOTAL)}`}else tip.style.display='none'};c.onmouseleave=()=>{RTM.hoverSlice=-1;tip.style.display='none';rtmDrawDonut()};c.onclick=e=>{const i=hit(e);if(i>=0){RTM.family=c._slices[i].f;RTM.brand='ALL';rtmRender()}}}
+function rtmCanvasEvt(){
+ const c=document.getElementById('rtmDonut'),tip=document.getElementById('rtmTooltip');if(!c||c._bound)return;c._bound=true;
+ function hit(e){
+  const rect=c.getBoundingClientRect(),g=c._geom;if(!g)return -1;
+  const x=(e.clientX-rect.left)/rect.width*g.css,y=(e.clientY-rect.top)/rect.height*g.css,dx=x-g.cx,dy=y-g.cy,rad=Math.hypot(dx,dy);
+  if(rad<g.inner-3||rad>g.R+8)return -1;
+  let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;
+  return (c._slices||[]).findIndex(s=>a>=s.start&&a<=s.end);
+ }
+ c.onmousemove=e=>{
+  const i=hit(e);if(i!==RTM.hoverSlice){RTM.hoverSlice=i;rtmDrawDonut()}
+  if(i>=0){const s=c._slices[i],names={LIGEROS:'Ligeros',COMERCIALES:'Comerciales',OMNIBUS:'Ómnibus',CAMION:'Camión / Remolc.'};tip.style.display='block';tip.innerHTML=`<b>${names[s.f]}</b><br>${rtmFmt(s.v)} unidades<br>${rtmPct(s.v,RTM.families.TOTAL)}`;positionTooltipNearCursor(tip,e.clientX,e.clientY)}else tip.style.display='none'
+ };
+ c.onmouseleave=()=>{RTM.hoverSlice=-1;tip.style.display='none';rtmDrawDonut()};
+ c.onclick=e=>{const i=hit(e);if(i>=0){RTM.family=c._slices[i].f;RTM.brand='ALL';rtmRender()}}
+}
 function rtmParseWorkbook(wb,name){
  const ws=wb.Sheets['VENTA MES']||wb.Sheets[wb.SheetNames.find(n=>String(n).toUpperCase().includes('VENTA MES'))];if(!ws)throw new Error('No encuentro la hoja “VENTA MES”.');const a=XLSX.utils.sheet_to_json(ws,{header:1,defval:0,raw:true});const title=String(a?.[0]?.[0]||'');const m=title.match(/(ENERO|FEBRERO|MARZO|ABRIL|MAYO|JUNIO|JULIO|AGOSTO|SETIEMBRE|SEPTIEMBRE|OCTUBRE|NOVIEMBRE|DICIEMBRE)\s+(20\d{2})/i);RTM.period=m?(m[1].charAt(0).toUpperCase()+m[1].slice(1).toLowerCase()+' '+m[2]):title.replace(/VENTAS?\s+RETAIL\s*-?/i,'').trim();RTM.sheetCount=wb.SheetNames.length;RTM.sourceName=name||'Excel';RTM.rows=[];for(let i=5;i<a.length;i++){const r=a[i]||[],brand=String(r[0]||'').trim();if(!brand||/^TOTALES?$/i.test(brand)||brand.startsWith('1  Incluye'))continue;const o={brand:rtmNormBrand(brand),rawBrand:brand};Object.entries(RTM_COL).forEach(([k,j])=>o[k]=Number(r[j]||0));if(Object.keys(RTM_COL).some(k=>o[k]))RTM.rows.push(o)}if(!RTM.rows.length)throw new Error('La hoja VENTA MES no contiene filas de marcas reconocibles.');RTM.family='TOTAL';RTM.brand='ALL';rtmSetSource('Excel cargado correctamente',`${name} · ${RTM.rows.length} marcas/filas analizadas · ${RTM.sheetCount} hojas`);document.getElementById('rtmHeroTitle').textContent='Retail del Mes · '+RTM.period;document.getElementById('rtmMonthPill').textContent=RTM.period;document.getElementById('rtmHeroCopy').textContent='Fotografía ejecutiva del mercado Retail del periodo, con familias, segmentos y marcas líderes calculadas directamente desde el Excel.';document.getElementById('rtmFooterSource').textContent='Fuente: '+name;document.getElementById('rtmFooterAudit').textContent=RTM.sheetCount+' hojas detectadas';rtmRender();rtmCanvasEvt();rtmSetSource('Excel cargado correctamente',`${name} · ${RTM.rows.length} marcas/filas analizadas · ${RTM.sheetCount} hojas`);
 }
