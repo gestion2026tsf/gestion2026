@@ -2702,7 +2702,6 @@ table tbody tr:hover{
 }
 
 
-
 /* ==========================================================
    V27 - PULIDO 100%: FILTROS + MICROINTERACCIONES + GRAFICOS
    ========================================================== */
@@ -4181,10 +4180,8 @@ canvas{transition:filter .14s ease,opacity .14s ease}
     <button data-page="retailCamiones"><span class="nav-ico">▰</span>Retail Camiones y Remolcadores</button>
     <button data-page="inmat"><span class="nav-ico">◎</span>Inmatriculaciones</button>
     <button data-page="brechas"><span class="nav-ico">⇄</span>Retail vs Inmat.</button>
-    <button data-page="geografia"><span class="nav-ico">⌖</span>Mapas del Perú</button>
-    <button data-page="concesionarios"><span class="nav-ico">▦</span>Departamento y Concesionarios</button>
-    <button data-page="calidad"><span class="nav-ico">✓</span>Calidad de Datos</button>
-    <button data-page="carga"><span class="nav-ico">＋</span>Cargar Mes</button>
+<button data-page="concesionarios"><span class="nav-ico">▦</span>Departamento y Concesionarios</button>
+<button data-page="carga"><span class="nav-ico">＋</span>Cargar Mes</button>
   </div>
 </aside>
 
@@ -4221,7 +4218,6 @@ canvas{transition:filter .14s ease,opacity .14s ease}
     </div>
   </div>
 </section>
-
 
 
 <section class="page" id="retailmes">
@@ -4379,7 +4375,6 @@ canvas{transition:filter .14s ease,opacity .14s ease}
     <tr><td>Mercedes-Benz</td><td>300</td><td>1,455</td><td>-1,155</td><td><span class="pill warn">Cobertura parcial</span></td></tr>
   </tbody></table></div>
 </section>
-
 
 
 <section class="page" id="ligeros">
@@ -4725,79 +4720,6 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 </section>
 
 
-
-<section class="page" id="geografia">
-  <div class="hero"><div><h3>Mapas del Perú</h3><p>Ahora sí incorporé mapas estilizados del Perú dentro del HTML. Puedes alternar entre Retail e Inmatriculaciones y pasar el mouse por los puntos principales.</p></div></div>
-
-  <div class="card">
-    <div class="map-toolbar">
-      <button class="active" data-map="retail">Mapa Retail</button>
-      <button data-map="inmat">Mapa Inmatriculaciones</button>
-    </div>
-    <div class="map-card">
-      <div>
-        <div class="peru-map">
-          <svg id="peruSvg" viewBox="0 0 520 640" width="100%" height="100%" aria-label="Mapa estilizado del Perú">
-            <defs>
-              <linearGradient id="gRetail" x1="0%" x2="0%" y1="0%" y2="100%">
-                <stop offset="0%" stop-color="#fff7cc"/>
-                <stop offset="60%" stop-color="#f2c230"/>
-                <stop offset="100%" stop-color="#cc9700"/>
-              </linearGradient>
-              <linearGradient id="gInmat" x1="0%" x2="0%" y1="0%" y2="100%">
-                <stop offset="0%" stop-color="#d1d5db"/>
-                <stop offset="60%" stop-color="#6b7280"/>
-                <stop offset="100%" stop-color="#111827"/>
-              </linearGradient>
-            </defs>
-
-            <!-- Silueta aproximada del Perú -->
-            <path id="peruShape" d="M198 38
-              L228 52 L242 84 L236 113 L259 144 L262 182 L281 214 L266 245 L271 280 L252 315
-              L252 346 L239 382 L223 416 L209 447 L208 478 L192 516 L166 555 L151 592 L131 598
-              L110 576 L112 537 L97 511 L103 476 L93 444 L75 406 L71 371 L74 332 L64 293 L76 262
-              L93 225 L104 190 L96 152 L112 114 L139 87 L161 53 Z"
-              fill="url(#gRetail)" stroke="#8b6b00" stroke-width="3"/>
-
-            <!-- rejilla decorativa -->
-            <g stroke="#ffffff" stroke-opacity="0.35" stroke-width="1">
-              <path d="M152 70 L229 578"/>
-              <path d="M118 120 L240 515"/>
-              <path d="M90 190 L225 450"/>
-              <path d="M78 280 L208 385"/>
-            </g>
-
-            <!-- marcadores -->
-            <g id="markers"></g>
-
-            <!-- etiquetas fijas -->
-            <text x="330" y="70" font-size="18" font-weight="700" fill="#111827">Perú</text>
-            <text x="330" y="94" font-size="12" fill="#6b7280">Mapa analítico</text>
-            <text x="330" y="126" font-size="12" fill="#6b7280">• Hover sobre cada punto</text>
-            <text x="330" y="145" font-size="12" fill="#6b7280">• Click para fijar selección visual</text>
-          </svg>
-        </div>
-        <div class="map-legend">
-          <span>Intensidad relativa</span>
-          <div class="grad"></div>
-          <span id="legendText">Retail acumulado por departamento</span>
-        </div>
-      </div>
-      <div class="side-stat">
-        <h5 id="mapTitle">Top departamentos Retail</h5>
-        <div class="region-list" id="regionList"></div>
-        <div class="caption" id="mapCaption">Lima concentra 59.2% del Retail acumulado.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="note" style="margin-top:14px">
-    <b>Nota técnica:</b> esta versión ya muestra mapas del Perú dentro del HTML. Para una versión aún más profesional, después podemos reemplazar esta silueta estilizada por un <b>mapa departamental real con GeoJSON</b> y hacer filtros por departamento, ciudad y distrito.
-  </div>
-</section>
-
-
-
 <section class="page" id="concesionarios">
   <div class="dc11-hero">
     <div>
@@ -5114,21 +5036,6 @@ canvas{transition:filter .14s ease,opacity .14s ease}
   <div class="rc10-tip" id="rc10Tip"></div>
 </section>
 
-<section class="page" id="calidad">
-  <div class="hero"><div><h3>Calidad de Datos</h3><p>Validaciones automáticas antes de publicar el dashboard.</p></div></div>
-  <div class="check-list">
-    <div class="check"><span>Retail resumen vs detalle</span><b class="pill ok">0 diferencia</b></div>
-    <div class="check"><span>Códigos Retail 7–10 vs 11</span><b class="pill ok">1,514 / 1,514</b></div>
-    <div class="check"><span>Segmentos L1–P5</span><b class="pill ok">13 / 13</b></div>
-    <div class="check"><span>Duplicados exactos menores</span><b class="pill ok">0</b></div>
-    <div class="check"><span>Duplicados adicionales livianos</span><b class="pill warn">12</b></div>
-    <div class="check"><span>Impacto duplicados livianos</span><b class="pill warn">14 acum. / 9 agosto</b></div>
-    <div class="check"><span>Archivo 10 duplicado</span><b class="pill ok">Identificado</b></div>
-    <div class="check"><span>Marca FOTON 1 vs FOTON</span><b class="pill warn">Homologar</b></div>
-    <div class="check"><span>USA vs ESTADOS UNIDOS</span><b class="pill warn">Homologar</b></div>
-    <div class="check"><span>JAPAN/JAPON · BRAZIL/BRASIL</span><b class="pill warn">Homologar</b></div>
-  </div>
-</section>
 
 <section class="page" id="carga">
   <div class="hero"><div><h3>Cargar nuevo periodo</h3><p>Selecciona la carpeta mensual que contiene los 11 Excel. El sistema los reconoce por estructura y hojas, no solo por nombre.</p></div></div>
@@ -5164,7 +5071,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 const titles={
  resumen:'Resumen Ejecutivo',retailmes:'Retail del Mes',retail:'Retail Acumulado - Ene–Ago 2026',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',inmat:'Inmatriculaciones',brechas:'Retail vs Inmatriculación',
  ligeros:'Mercado Vehículos Livianos',comerciales:'Comerciales',pesados:'Mercado Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Mercado Remolques y Semirremolques',
- geografia:'Mapas del Perú',concesionarios:'Departamento y Concesionarios Retail',calidad:'Calidad de Datos',carga:'Cargar Mes'
+ concesionarios:'Departamento y Concesionarios Retail',carga:'Cargar Mes'
 };
 function go(page){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -5319,7 +5226,6 @@ document.getElementById('folderInput').addEventListener('change', async e=>{
 });
 
 
-
 // VEHICULOS LIVIANOS
 const vlSeries={
  'SUV,TODOTERRENOS':[11117,11474,11137,11127,11628,12569,10426,13548],
@@ -5334,7 +5240,6 @@ drawVLLines();
 const vlMonth=document.getElementById('vlMonth'),vlClass=document.getElementById('vlClass'),vlReset=document.getElementById('vlReset');
 function updateVLKpis(){if(!vlMonth||!vlClass)return;const month=vlMonth.value,cl=vlClass.value;const names=Object.keys(vlSeries);let vals={};names.forEach(n=>vals[n]=vlSeries[n].reduce((a,b)=>a+b,0));if(month!=='ALL'){const i=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO'].indexOf(month);names.forEach(n=>vals[n]=vlSeries[n][i]);}let total=Object.values(vals).reduce((a,b)=>a+b,0)+(month==='ALL'?9:(month==='MAYO'?6:month==='JUNIO'?1:month==='AGOSTO'?2:0));if(cl!=='ALL')total=vals[cl]||0;document.getElementById('vlTotal').textContent=total.toLocaleString('es-PE');document.getElementById('vlSUV').textContent=(cl==='ALL'||cl==='SUV,TODOTERRENOS'?vals['SUV,TODOTERRENOS']:0).toLocaleString('es-PE');document.getElementById('vlPick').textContent=(cl==='ALL'||cl==='PICK UP Y FURGONETAS'?vals['PICK UP Y FURGONETAS']:0).toLocaleString('es-PE');}
 vlMonth?.addEventListener('change',updateVLKpis);vlClass?.addEventListener('change',updateVLKpis);vlReset?.addEventListener('click',()=>{document.querySelectorAll('#ligeros select').forEach(s=>s.selectedIndex=0);updateVLKpis();});
-
 
 
 // VEHICULOS PESADOS
@@ -5369,7 +5274,6 @@ function updateVPKpis(){
 }
 vpMonth?.addEventListener('change',updateVPKpis);vpType?.addEventListener('change',updateVPKpis);
 vpReset?.addEventListener('click',()=>{document.querySelectorAll('#pesados select').forEach(s=>s.selectedIndex=0);updateVPKpis();});
-
 
 
 // ==================== V21 MERCADO VEHICULOS MENORES - EXCEL DINAMICO ====================
@@ -5674,7 +5578,6 @@ window.addEventListener('resize',vm20ResizeRedraw);
 if('ResizeObserver' in window){const ro=new ResizeObserver(vm20ResizeRedraw);['vm2Trend','vm2Donut'].forEach(id=>{const e=document.getElementById(id)?.parentElement;if(e)ro.observe(e)})}
 
 
-
 // ==========================================================
 // V28 - VEHICULOS LIVIANOS DINAMICO DESDE EXCEL
 // ==========================================================
@@ -5787,10 +5690,6 @@ async function lv2LoadUrl(url){if(typeof XLSX==='undefined')throw new Error('No 
 async function lv2AutoLoad(){lv2Connect('Buscando Excel automáticamente…','Se intenta cargar el archivo desde la misma carpeta del HTML.');const candidates=['./vehiculos_livianos.xlsx','./data/vehiculos_livianos.xlsx','./08.2_Venta_e_Inmatriculación_de_Vehículos_Livianos_Agosto_2026(4).xlsx','./08.2_Venta_e_Inmatriculación_de_Vehículos_Livianos_Agosto_2026.xlsx'];for(const u of candidates){try{await lv2LoadUrl(u);return}catch(e){}}lv2Connect('Excel de Vehículos Livianos no encontrado','Sube “vehiculos_livianos.xlsx” junto al HTML o selecciónalo manualmente.');lv2Set('lv2HeroStatus','Selecciona el Excel para activar este módulo')}
 function lv2Init(){Object.values(lv2Els).forEach(e=>e?.addEventListener('change',()=>lv2Update(true)));document.getElementById('lv2Reset')?.addEventListener('click',()=>{Object.values(lv2Els).forEach(e=>{if(e)e.value='ALL'});lv2Update(true)});document.getElementById('lv2More')?.addEventListener('click',()=>{const sh=document.getElementById('lv2FilterShell');sh?.classList.toggle('show-advanced');document.getElementById('lv2More').textContent=sh?.classList.contains('show-advanced')?'Menos filtros':'Más filtros'});document.getElementById('lv2LoadBtn')?.addEventListener('click',()=>document.getElementById('lv2ExcelInput')?.click());document.getElementById('lv2Retry')?.addEventListener('click',lv2AutoLoad);document.getElementById('lv2ExcelInput')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{lv2Connect('Procesando Excel…',f.name);await lv2ReadFile(f)}catch(err){lv2Connect('No se pudo leer el archivo',err.message||String(err));alert(err.message||String(err))}finally{e.target.value=''}});lv2ResetDisplay();setTimeout(lv2AutoLoad,450);let timer;window.addEventListener('resize',()=>{clearTimeout(timer);timer=setTimeout(()=>{if(document.getElementById('ligeros')?.classList.contains('active')&&lv2HasData())lv2Update(false)},140)})}
 lv2Init();
-
-
-
-
 
 
 // ===== V36 RETAIL DEL MES DINÁMICO =====
