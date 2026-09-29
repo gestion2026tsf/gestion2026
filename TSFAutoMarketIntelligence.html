@@ -4196,25 +4196,80 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 <div class="content">
 
 <section class="page active" id="resumen">
-  <div class="hero">
-    <div>
-      <h3>Panorama del mercado automotor</h3>
-      <p>Este resumen no contiene datos precargados. Los indicadores se habilitan únicamente con los Excel cargados en los módulos del sistema.</p>
+  <div class="sx-wrap">
+    <div class="sx-head">
+      <div>
+        <div class="sx-eyebrow">INTELIGENCIA DE MERCADO AUTOMOTOR · TSF</div>
+        <h3>Resumen <span>Ejecutivo</span></h3>
+        <p id="sxPeriod">Carga tus Excel para consolidar el mercado.</p>
+      </div>
+      <div class="sx-head-actions">
+        <div class="sx-status"><i></i><div><span>Archivos cargados</span><b id="sxLoaded">0 / 11</b></div></div>
+        <div class="sx-status subtle"><div><span>Estado</span><b id="sxState">Esperando archivos</b></div></div>
+      </div>
     </div>
-  </div>
 
-  <div class="grid kpis" id="summaryKpis">
-    <div class="card kpi accent"><div class="label">Retail del mes</div><div class="value" id="sumRetailMes">—</div><div class="sub">Carga el Archivo 5</div></div>
-    <div class="card kpi"><div class="label">Retail acumulado</div><div class="value" id="sumRetailAcum">—</div><div class="sub">Carga el Archivo 6</div></div>
-    <div class="card kpi accent"><div class="label">Mercados de inmatriculación</div><div class="value" id="sumInmat">—</div><div class="sub">Carga los Archivos 1–4</div></div>
-    <div class="card kpi"><div class="label">Departamento / concesionarios</div><div class="value" id="sumGeo">—</div><div class="sub">Carga el Archivo 11</div></div>
-  </div>
+    <div class="sx-kpis">
+      <div class="sx-kpi hot"><span>Inmatriculaciones acumuladas</span><b id="sxInmatTotal">—</b><small>Archivos 1–4</small></div>
+      <div class="sx-kpi"><span>Retail del mes</span><b id="sxRetailMonth">—</b><small id="sxRetailMonthSub">Archivo 5</small></div>
+      <div class="sx-kpi"><span>Retail acumulado</span><b id="sxRetailYtd">—</b><small id="sxRetailYtdSub">Archivo 6</small></div>
+      <div class="sx-kpi"><span>Marca líder Retail</span><b id="sxLeadBrand">—</b><small id="sxLeadBrandSub">Esperando Archivo 6</small></div>
+      <div class="sx-kpi"><span>Departamento líder</span><b id="sxLeadDept">—</b><small id="sxLeadDeptSub">Esperando Archivo 11</small></div>
+      <div class="sx-kpi"><span>Concesionario líder</span><b id="sxLeadDealer">—</b><small id="sxLeadDealerSub">Esperando Archivo 11</small></div>
+    </div>
 
-  <div class="card" style="margin-top:14px">
-    <h4 style="margin:0 0 6px">Resumen construido desde tus Excel</h4>
-    <p class="small" style="margin:0">
-      Sin archivos cargados no se muestran cifras, rankings ni gráficos. Cada módulo lee su Excel y calcula sus indicadores en el navegador.
-    </p>
+    <div class="sx-hero">
+      <div class="sx-hero-copy">
+        <div class="sx-line"></div>
+        <h4>Panorama ejecutivo<br>del <span>mercado automotor</span></h4>
+        <p>Consolidación de inmatriculaciones, retail, segmentos, marcas y red comercial. Esta portada se calcula exclusivamente con los Excel cargados en el sistema.</p>
+      </div>
+      <div class="sx-hero-points">
+        <div><i>↗</i><span>Mercado y crecimiento</span></div>
+        <div><i>◎</i><span>Familias y segmentos líderes</span></div>
+        <div><i>⌖</i><span>Concentración geográfica y comercial</span></div>
+      </div>
+    </div>
+
+    <div class="sx-row sx-row-main">
+      <div class="sx-card">
+        <div class="sx-card-head"><div><h4>Composición Retail acumulada</h4><p>Participación por familia.</p></div><span class="sx-chip" id="sxRetailChip">Archivo 6</span></div>
+        <div class="sx-donut-wrap"><canvas id="sxRetailDonut"></canvas><div class="sx-donut-center"><b id="sxRetailDonutTotal">—</b><span>unidades</span></div></div>
+        <div class="sx-legend" id="sxRetailLegend"></div>
+      </div>
+
+      <div class="sx-card">
+        <div class="sx-card-head"><div><h4>Composición de inmatriculaciones</h4><p>Archivos 1–4.</p></div><span class="sx-chip" id="sxInmatChip">0 / 4</span></div>
+        <div class="sx-donut-wrap"><canvas id="sxInmatDonut"></canvas><div class="sx-donut-center"><b id="sxInmatDonutTotal">—</b><span>unidades</span></div></div>
+        <div class="sx-legend" id="sxInmatLegend"></div>
+      </div>
+
+      <div class="sx-card sx-trend-card">
+        <div class="sx-card-head"><div><h4>Evolución mensual</h4><p>Retail vs inmatriculaciones cuando están disponibles los archivos de detalle.</p></div></div>
+        <div class="sx-trend-wrap"><canvas id="sxTrend"></canvas></div>
+      </div>
+    </div>
+
+    <div class="sx-row sx-row-ranks">
+      <div class="sx-card"><div class="sx-card-head"><div><h4>Top marcas Retail</h4><p>Acumulado del Archivo 6.</p></div></div><div class="sx-rank" id="sxBrands"></div></div>
+      <div class="sx-card"><div class="sx-card-head"><div><h4>Top departamentos Retail</h4><p>Archivo 11.</p></div></div><div class="sx-rank" id="sxDepts"></div></div>
+      <div class="sx-card"><div class="sx-card-head"><div><h4>Top concesionarios Retail</h4><p>Archivo 11.</p></div></div><div class="sx-rank" id="sxDealers"></div></div>
+    </div>
+
+    <div class="sx-card sx-segments-card">
+      <div class="sx-card-head"><div><h4>Segmentos líderes del mercado</h4><p>Se actualizan conforme cargas los Excel.</p></div></div>
+      <div class="sx-segments" id="sxSegments"></div>
+    </div>
+
+    <div class="sx-card">
+      <div class="sx-card-head"><div><h4>Principales insights</h4><p>Lectura automática basada únicamente en los archivos disponibles.</p></div></div>
+      <div class="sx-insights" id="sxInsights"></div>
+    </div>
+
+    <div class="sx-card">
+      <div class="sx-card-head"><div><h4>Estado de carga de archivos</h4><p>El resumen solo usa información de archivos marcados como cargados.</p></div></div>
+      <div class="sx-files" id="sxFiles"></div>
+    </div>
   </div>
 </section>
 
@@ -6060,7 +6115,7 @@ async function autoLoad(){
 
 <script id="v47-retail-ligeros-js">
 (()=>{
-const RL={rows:[],headers:[],months:[],period:'',file:'',hidden:new Set(),slices:[]};
+const RL={rows:[],headers:[],months:[],period:'',file:'',hidden:new Set(),slices:[]}; window.__RL_STATE=RL;
 const $=id=>document.getElementById(id); const fmt=n=>Math.round(+n||0).toLocaleString('en-US'); const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0.0%';
 const norm=v=>(v??'').toString().trim(); const num=v=>Number(v)||0;
 const fids=['rlMonthFilter','rlSegmentFilter','rlBrandFilter','rlModelFilter','rlOriginFilter','rlFuelFilter','rlBodyFilter','rlTransFilter','rlDriveFilter','rlVersionFilter','rlCatFilter'];
@@ -6092,7 +6147,7 @@ fids.forEach(id=>$(id)?.addEventListener('change',update));$('rlReset')?.addEven
 
 <script id="v48-retail-comerciales-js">
 (function(){
-const $=id=>document.getElementById(id), RC={rows:[],months:[],headers:[],period:'',hidden:new Set(),slices:[]};
+const $=id=>document.getElementById(id), RC={rows:[],months:[],headers:[],period:'',hidden:new Set(),slices:[]}; window.__RC8_STATE=RC;
 const norm=v=>(v??'').toString().trim(), num=v=>{const n=Number(v);return Number.isFinite(n)?n:0}, fmt=n=>Math.round(n||0).toLocaleString('en-US'), pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0.0%';
 const segCode=s=>{s=norm(s).toUpperCase();const m=s.match(/\bC[1-4]\b/);return m?m[0]:s};
 const fids=['rcMonthFilter','rcSegmentFilter','rcBrandFilter','rcModelFilter','rcOriginFilter','rcFuelFilter','rcTransFilter','rcDriveFilter','rcBodyFilter','rcCatFilter','rcVersionFilter'];
@@ -6119,7 +6174,7 @@ fids.forEach(id=>$(id)?.addEventListener('change',update));$('rcReset')?.addEven
 
 <script id="v49-retail-omnibus-js">
 (function(){
-const RO={rows:[],headers:[],months:[],period:'',hidden:new Set(),slices:[]};
+const RO={rows:[],headers:[],months:[],period:'',hidden:new Set(),slices:[]}; window.__RO9_STATE=RO;
 const $=id=>document.getElementById(id), fmt=n=>(Number(n)||0).toLocaleString('en-US'), num=v=>{const n=Number(v);return Number.isFinite(n)?n:0}, norm=v=>String(v??'').trim(), pct=(a,b)=>b?`${(a/b*100).toFixed(1)}%`:'0.0%';
 const fids=['roMonthFilter','roSegmentFilter','roBrandFilter','roModelFilter','roOriginFilter','roFuelFilter','roTransFilter','roDriveFilter','roCatFilter','roBodyFilter','roVersionFilter'];
 function segCode(v){const s=norm(v).toUpperCase();const m=s.match(/\b(O[12])\b/);return m?m[1]:s}
@@ -6148,7 +6203,7 @@ fids.forEach(id=>$(id)?.addEventListener('change',update));$('roReset')?.addEven
 
 <script id="v50-retail-camiones-js">
 (()=>{
-const RC={rows:[],headers:[],months:[],period:'',hidden:new Set(),slices:[]};const $=id=>document.getElementById(id),norm=v=>(v??'').toString().trim(),num=v=>Number(v)||0,fmt=n=>Math.round(+n||0).toLocaleString('en-US'),pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0.0%';
+const RC={rows:[],headers:[],months:[],period:'',hidden:new Set(),slices:[]};window.__RC10_STATE=RC;const $=id=>document.getElementById(id),norm=v=>(v??'').toString().trim(),num=v=>Number(v)||0,fmt=n=>Math.round(+n||0).toLocaleString('en-US'),pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0.0%';
 const fids=['rc10MonthFilter','rc10SegmentFilter','rc10BrandFilter','rc10ModelFilter','rc10OriginFilter','rc10FuelFilter','rc10TransFilter','rc10DriveFilter','rc10BodyFilter','rc10CatFilter','rc10VersionFilter'];
 function seg(v){v=norm(v).toUpperCase();for(const s of ['P2','P3','P4','P5'])if(v.startsWith(s))return s;return v||'SIN DATO'}
 function filters(){return Object.fromEntries(fids.map(id=>[id,$(id)?.value||'ALL']))}
@@ -6284,7 +6339,7 @@ fids.forEach(id=>$(id)?.addEventListener('change',update));$('rc10Reset')?.addEv
 (function(){
   const $=id=>document.getElementById(id), fmt=n=>Math.round(Number(n)||0).toLocaleString('en-US');
   const MONTHS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-  let rows=[], monthCols=[], fileName='', state={month:'ALL'};
+  let rows=[], monthCols=[], fileName='', state={month:'ALL'}; window.__DC11_API={get rows(){return rows},get monthCols(){return monthCols},get fileName(){return fileName}};
   const colors=['#f5ae00','#ee0b70','#20242d','#949dac','#5e6673'];
   const ids=['Dept','City','District','Dealer','Brand','Segment','Model','Origin','Body'];
   function txt(v){return String(v??'').trim()}
@@ -6383,6 +6438,202 @@ fids.forEach(id=>$(id)?.addEventListener('change',update));$('rc10Reset')?.addEv
 
   document.addEventListener('click',()=>setTimeout(()=>window.refreshExcelOnlySummary?.(),80));
   setInterval(()=>window.refreshExcelOnlySummary?.(),1500);
+})();
+</script>
+
+
+<style id="v56-summary-style">
+#resumen{background:#f6f7fa!important}
+#resumen .sx-wrap{display:grid;gap:11px}
+.sx-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:3px 1px 0}
+.sx-eyebrow{font-size:9px;font-weight:900;letter-spacing:1.25px;color:#9a7a11}
+.sx-head h3{font-size:29px!important;line-height:1;margin:7px 0 5px!important;color:#151820}.sx-head h3 span{color:#ee0b70}
+.sx-head p{margin:0;color:#78808d;font-size:10.5px}
+.sx-head-actions{display:flex;gap:8px}.sx-status{display:flex;align-items:center;gap:9px;background:#eaf9f1;border:1px solid #d7f0e3;border-radius:13px;padding:9px 12px;min-width:142px}.sx-status.subtle{background:#fff;border-color:#e8eaf0}.sx-status i{width:10px;height:10px;border-radius:50%;background:#0db96a;box-shadow:0 0 0 5px rgba(13,185,106,.10)}.sx-status span{display:block;font-size:8px;color:#818997}.sx-status b{display:block;font-size:13px;color:#12161d;margin-top:2px}
+.sx-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}.sx-kpi{background:#fff;border:1px solid #e7e9ee;border-radius:15px;padding:11px 12px;box-shadow:0 8px 22px rgba(18,22,31,.035);min-width:0}.sx-kpi.hot{background:linear-gradient(135deg,#f20b72,#ff7040);border:0;color:#fff}.sx-kpi span{display:block;font-size:8px;color:#8c94a1;text-transform:uppercase;letter-spacing:.5px}.sx-kpi.hot span,.sx-kpi.hot small{color:#fff}.sx-kpi b{display:block;font-size:22px;line-height:1.05;margin:7px 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sx-kpi small{font-size:8.5px;color:#9198a4;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sx-hero{min-height:135px;border-radius:18px;background:linear-gradient(115deg,#111820 0%,#1b2230 51%,#553029 100%);color:#fff;padding:22px 24px;display:flex;justify-content:space-between;align-items:center;gap:24px;overflow:hidden;position:relative;box-shadow:0 12px 28px rgba(18,22,31,.10)}.sx-hero:after{content:"TSF";position:absolute;right:22px;bottom:-28px;font-size:100px;font-weight:900;opacity:.035}.sx-hero-copy{max-width:700px;z-index:1}.sx-line{width:34px;height:3px;border-radius:10px;background:linear-gradient(90deg,#ee0b70,#f5ae00);margin-bottom:10px}.sx-hero h4{font-size:26px!important;line-height:1.08;margin:0 0 8px!important}.sx-hero h4 span{color:#ff3b8c}.sx-hero p{margin:0;font-size:10.5px;line-height:1.55;color:#d5d8de;max-width:670px}.sx-hero-points{display:grid;gap:10px;min-width:260px;z-index:1}.sx-hero-points div{display:flex;align-items:center;gap:10px;font-size:9.5px;color:#e8ebef}.sx-hero-points i{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.09);font-style:normal;color:#ffd35c;font-weight:900}
+.sx-row{display:grid;gap:10px}.sx-row-main{grid-template-columns:.88fr .88fr 1.4fr}.sx-row-ranks{grid-template-columns:1fr 1fr 1fr}.sx-card{background:#fff;border:1px solid #e5e8ef;border-radius:17px;padding:13px 14px;box-shadow:0 8px 22px rgba(20,24,35,.04);min-width:0}.sx-card-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:7px}.sx-card-head h4{margin:0!important;font-size:12.5px!important;color:#171a20}.sx-card-head p{margin:3px 0 0;font-size:8.7px;color:#9097a3}.sx-chip{padding:5px 8px;border-radius:999px;background:#fff4d7;color:#765500;font-size:8px;font-weight:900;white-space:nowrap}
+.sx-donut-wrap{width:min(100%,205px);aspect-ratio:1;margin:7px auto 10px;position:relative}.sx-donut-wrap canvas{width:100%!important;height:100%!important}.sx-donut-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}.sx-donut-center b{font-size:24px;line-height:1}.sx-donut-center span{font-size:8.5px;color:#9299a5;margin-top:4px}.sx-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px}.sx-leg{border:1px solid #e8ebf0;border-radius:10px;padding:7px 8px;display:grid;grid-template-columns:auto 1fr auto;gap:6px;align-items:center;background:#fafbfc}.sx-leg i{width:8px;height:8px;border-radius:50%}.sx-leg span{font-size:8px;color:#6b7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sx-leg b{font-size:8.5px}
+.sx-trend-wrap{height:260px}.sx-trend-wrap canvas{width:100%!important;height:100%!important}
+.sx-rank{display:grid;gap:5px}.sx-rank-row{display:grid;grid-template-columns:22px minmax(100px,1fr) minmax(80px,1.2fr) 58px;gap:7px;align-items:center;padding:4px 3px;border-radius:8px}.sx-rank-row .n{width:22px;height:22px;border-radius:7px;background:#f2f4f6;display:grid;place-items:center;font-size:8px;font-weight:900}.sx-rank-row .name{font-size:8.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sx-rank-row .track{height:7px;background:#edf0f4;border-radius:999px;overflow:hidden}.sx-rank-row .track i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#ef0b70,#f6ac00)}.sx-rank-row b{text-align:right;font-size:8.5px}
+.sx-segments{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px}.sx-seg{border:1px solid #e8ebf0;border-radius:11px;padding:9px;background:#fafbfc;min-width:0}.sx-seg span{display:block;font-size:7.5px;color:#8c94a0}.sx-seg b{display:block;font-size:14px;margin:5px 0 2px;color:#171a20;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sx-seg small{font-size:7.5px;color:#ee0b70;font-weight:800}
+.sx-insights{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.sx-insight{border-radius:11px;padding:9px 10px;background:#fff7fa;border:1px solid #ffe1ed;font-size:8.5px;line-height:1.4;color:#5e6673}.sx-insight b{display:block;color:#171a20;font-size:11px;margin-bottom:3px}
+.sx-files{display:grid;grid-template-columns:repeat(11,minmax(70px,1fr));gap:6px}.sx-file{border:1px solid #e8ebf0;background:#fafbfc;border-radius:10px;padding:7px 6px;text-align:center}.sx-file.ok{background:#eefaf4;border-color:#d2f0df}.sx-file i{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#e8ebef;color:#87909c;font-style:normal;font-size:9px;font-weight:900;margin-bottom:4px}.sx-file.ok i{background:#14b86a;color:#fff}.sx-file b{display:block;font-size:8px}.sx-file span{display:block;font-size:7px;color:#858d99;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:1450px){.sx-kpis{grid-template-columns:repeat(3,1fr)}.sx-row-main{grid-template-columns:1fr 1fr}.sx-trend-card{grid-column:1/-1}.sx-segments{grid-template-columns:repeat(4,1fr)}.sx-files{grid-template-columns:repeat(6,1fr)}}
+@media(max-width:980px){.sx-row-ranks,.sx-row-main{grid-template-columns:1fr}.sx-trend-card{grid-column:auto}.sx-insights{grid-template-columns:repeat(2,1fr)}.sx-hero{flex-direction:column;align-items:flex-start}.sx-hero-points{min-width:0}.sx-files{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:650px){.sx-kpis{grid-template-columns:1fr 1fr}.sx-head{flex-direction:column}.sx-head-actions{width:100%}.sx-status{flex:1}.sx-segments{grid-template-columns:repeat(2,1fr)}.sx-legend{grid-template-columns:1fr}.sx-files{grid-template-columns:repeat(2,1fr)}}
+</style>
+
+
+<script id="v56-summary-js">
+(function(){
+  const $=id=>document.getElementById(id);
+  const fmt=n=>Math.round(Number(n)||0).toLocaleString('es-PE');
+  const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0.0%';
+  const COLORS=['#ef0b70','#f5ae00','#2f7de1','#8f68e8','#262b35','#9aa2ad'];
+
+  function sumVM20(){
+    if(typeof VM20==='undefined'||!VM20.rows?.length)return 0;
+    return VM20.rows.reduce((s,r)=>s+r.slice(8).reduce((a,v)=>a+(Number(v)||0),0),0);
+  }
+  function monthlyVM20(){
+    if(typeof VM20==='undefined'||!VM20.rows?.length||typeof VM20_MONTHS==='undefined')return [];
+    return VM20_MONTHS.map((_,i)=>VM20.rows.reduce((s,r)=>s+(Number(r[8+i])||0),0));
+  }
+  function sumLV2(){
+    if(typeof LV2==='undefined'||!LV2.rows?.length)return 0;
+    return LV2.rows.reduce((s,r)=>s+(LV2.months||[]).reduce((a,m)=>a+(Number(r[m])||0),0),0);
+  }
+  function monthlyLV2(){
+    if(typeof LV2==='undefined'||!LV2.rows?.length)return [];
+    return (LV2.months||[]).map(m=>LV2.rows.reduce((s,r)=>s+(Number(r[m])||0),0));
+  }
+  function sumVP3(){
+    if(typeof VP3==='undefined'||!VP3.rows?.length)return 0;
+    return VP3.rows.reduce((s,r)=>s+(r.m||[]).reduce((a,v)=>a+(Number(v)||0),0),0);
+  }
+  function monthlyVP3(){
+    if(typeof VP3==='undefined'||!VP3.rows?.length)return [];
+    const n=VP3.months?.length||0;return Array.from({length:n},(_,i)=>VP3.rows.reduce((s,r)=>s+(Number(r.m?.[i])||0),0));
+  }
+  function sumR4(){
+    if(typeof R4==='undefined'||!R4.rows?.length)return 0;
+    return R4.rows.reduce((s,r)=>s+(r.m||[]).reduce((a,v)=>a+(Number(v)||0),0),0);
+  }
+  function monthlyR4(){
+    if(typeof R4==='undefined'||!R4.rows?.length)return [];
+    const n=R4.months?.length||R4.labels?.length||0;return Array.from({length:n},(_,i)=>R4.rows.reduce((s,r)=>s+(Number(r.m?.[i])||0),0));
+  }
+
+  function retailMonthlyFromDetail(){
+    const states=[window.__RL_STATE,window.__RC8_STATE,window.__RO9_STATE,window.__RC10_STATE].filter(s=>s?.rows?.length&&s?.months?.length);
+    if(!states.length)return {months:[],vals:[]};
+    const months=states.reduce((a,s)=>s.months.length>a.length?s.months:a,[]);
+    return {months,vals:months.map(m=>states.reduce((tot,s)=>tot+s.rows.reduce((x,r)=>x+(Number(r[m])||0),0),0))};
+  }
+
+  function inmatMonthly(){
+    const arrs=[monthlyVM20(),monthlyLV2(),monthlyVP3(),monthlyR4()].filter(a=>a.length);
+    const n=Math.max(0,...arrs.map(a=>a.length));return Array.from({length:n},(_,i)=>arrs.reduce((s,a)=>s+(Number(a[i])||0),0));
+  }
+
+  function setupCanvas(c,h=220){
+    if(!c)return null;const d=devicePixelRatio||1,w=Math.max(220,c.clientWidth||c.parentElement.clientWidth||300);
+    c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return{x,w,h};
+  }
+
+  function donut(id,totalId,legendId,data){
+    const c=$(id),s=setupCanvas(c,205);if(!s)return;const {x:ctx,w,h}=s,tot=data.reduce((a,z)=>a+z.value,0),cx=w/2,cy=h/2,R=Math.min(w,h)*.40,r=R*.59;
+    ctx.clearRect(0,0,w,h);let a=-Math.PI/2;
+    if(!tot){ctx.strokeStyle='#edf0f4';ctx.lineWidth=R-r;ctx.beginPath();ctx.arc(cx,cy,(R+r)/2,0,Math.PI*2);ctx.stroke()}
+    else data.forEach((z,i)=>{const da=z.value/tot*Math.PI*2;ctx.beginPath();ctx.arc(cx,cy,R,a,a+da);ctx.arc(cx,cy,r,a+da,a,true);ctx.closePath();ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();a+=da});
+    $(totalId).textContent=tot?fmt(tot):'—';
+    $(legendId).innerHTML=data.map((z,i)=>`<div class="sx-leg"><i style="background:${COLORS[i%COLORS.length]}"></i><span title="${z.label}">${z.label}</span><b>${tot?pct(z.value,tot):'—'}</b></div>`).join('');
+  }
+
+  function trend(ret,inm,labels){
+    const c=$('sxTrend'),s=setupCanvas(c,260);if(!s)return;const {x:ctx,w,h}=s,p={l:42,r:18,t:22,b:32},max=Math.max(1,...ret,...inm);
+    ctx.clearRect(0,0,w,h);ctx.font='9px Arial';ctx.fillStyle='#8e96a3';ctx.strokeStyle='#edf0f4';
+    for(let i=0;i<4;i++){const y=p.t+(h-p.t-p.b)*i/3;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(w-p.r,y);ctx.stroke();ctx.fillText(fmt(max*(1-i/3)),3,y+3)}
+    labels.forEach((m,i)=>{const x=p.l+(w-p.l-p.r)*(labels.length===1?.5:i/Math.max(1,labels.length-1));ctx.fillText(m.slice(0,3),x-7,h-9)});
+    const draw=(vals,color)=>{if(!vals.length)return;ctx.beginPath();vals.forEach((v,i)=>{const x=p.l+(w-p.l-p.r)*(vals.length===1?.5:i/Math.max(1,vals.length-1)),y=p.t+(h-p.t-p.b)*(1-v/max);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.stroke();vals.forEach((v,i)=>{const x=p.l+(w-p.l-p.r)*(vals.length===1?.5:i/Math.max(1,vals.length-1)),y=p.t+(h-p.t-p.b)*(1-v/max);ctx.beginPath();ctx.arc(x,y,3.2,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle=color;ctx.stroke()})};
+    draw(inm,'#2f7de1');draw(ret,'#ef0b70');
+    ctx.fillStyle='#ef0b70';ctx.fillRect(w-156,9,8,8);ctx.fillStyle='#515967';ctx.fillText('Retail',w-144,17);ctx.fillStyle='#2f7de1';ctx.fillRect(w-96,9,8,8);ctx.fillStyle='#515967';ctx.fillText('Inmat.',w-84,17);
+  }
+
+  function rank(id,data){
+    const box=$(id),max=data[0]?.[1]||1;
+    box.innerHTML=data.slice(0,5).map((x,i)=>`<div class="sx-rank-row"><span class="n">${i+1}</span><span class="name" title="${x[0]}">${x[0]}</span><span class="track"><i style="width:${x[1]/max*100}%"></i></span><b>${fmt(x[1])}</b></div>`).join('')||'<div class="small">Carga el Excel correspondiente.</div>';
+  }
+
+  function racBrands(){
+    if(typeof RAC==='undefined'||!RAC.rows?.length)return [];
+    const m=new Map();RAC.rows.forEach(r=>m.set(r.brand,(m.get(r.brand)||0)+(Number(r.cur)||0)));return [...m].sort((a,b)=>b[1]-a[1]);
+  }
+  function geoAgg(field){
+    const api=window.__DC11_API,rows=api?.rows||[];if(!rows.length)return [];const m=new Map();rows.forEach(r=>{const k=r[field]||'SIN DATO',v=(r.months||[]).reduce((a,x)=>a+(Number(x)||0),0);m.set(k,(m.get(k)||0)+v)});return [...m].sort((a,b)=>b[1]-a[1]);
+  }
+
+  function loadedList(){
+    return [
+      !!(typeof VM20!=='undefined'&&VM20.rows?.length),
+      !!(typeof LV2!=='undefined'&&LV2.rows?.length),
+      !!(typeof VP3!=='undefined'&&VP3.rows?.length),
+      !!(typeof R4!=='undefined'&&R4.rows?.length),
+      !!(typeof RTM!=='undefined'&&RTM.rows?.length),
+      !!(typeof RAC!=='undefined'&&RAC.rows?.length),
+      !!window.__RL_STATE?.rows?.length,
+      !!window.__RC8_STATE?.rows?.length,
+      !!window.__RO9_STATE?.rows?.length,
+      !!window.__RC10_STATE?.rows?.length,
+      !!window.__DC11_API?.rows?.length
+    ];
+  }
+
+  function segmentCards(){
+    const cards=[];
+    const push=(label,value,sub)=>{if(value&&value!=='—')cards.push({label,value,sub})};
+    const txt=id=>$(id)?.textContent?.trim()||'—';
+    push('Menores',txt('vm2TypeLeader'),txt('vm2TypeLeaderSub'));
+    push('Livianos',txt('lv2LeadClass'),txt('lv2LeadClassSub'));
+    push('Pesados',txt('vp3LeadClass'),txt('vp3LeadClassSub'));
+    push('Remolques',txt('r4LeadCat'),txt('r4LeadCatSub'));
+    push('Retail Ligeros',txt('rlSegment'),txt('rlSegmentSub'));
+    push('Retail Comerciales',txt('rcSegment'),txt('rcSegmentSub'));
+    push('Retail Ómnibus',txt('roSegment'),txt('roSegmentSub'));
+    push('Retail Camiones',txt('rc10Segment'),txt('rc10SegmentSub'));
+    return cards;
+  }
+
+  function render(){
+    const loaded=loadedList(),count=loaded.filter(Boolean).length;
+    $('sxLoaded').textContent=`${count} / 11`;$('sxState').textContent=count===11?'Base completa':count?'Carga parcial':'Esperando archivos';
+    const periods=[typeof RTM!=='undefined'?RTM.period:'',typeof RAC!=='undefined'?RAC.period:'',window.__DC11_API?.fileName?'Archivo 11 cargado':''].filter(Boolean);
+    $('sxPeriod').textContent=count?('Consolidación dinámica · '+(periods[0]||periods[1]||'periodos cargados')):'Carga tus Excel para consolidar el mercado.';
+
+    const inmatParts=[
+      {label:'Vehículos Menores',value:sumVM20()},
+      {label:'Vehículos Livianos',value:sumLV2()},
+      {label:'Vehículos Pesados',value:sumVP3()},
+      {label:'Remolques / Semirremolques',value:sumR4()}
+    ].filter(x=>x.value>0);
+    const inmatTotal=inmatParts.reduce((s,x)=>s+x.value,0);
+    $('sxInmatTotal').textContent=inmatTotal?fmt(inmatTotal):'—';$('sxInmatChip').textContent=`${inmatParts.length} / 4`;donut('sxInmatDonut','sxInmatDonutTotal','sxInmatLegend',inmatParts);
+
+    let retailMonth=0;if(typeof RTM!=='undefined'&&RTM.rows?.length){if(!RTM.families?.TOTAL&&typeof rtmCompute==='function')try{rtmCompute()}catch(e){}retailMonth=Number(RTM.families?.TOTAL)||0}
+    $('sxRetailMonth').textContent=retailMonth?fmt(retailMonth):'—';$('sxRetailMonthSub').textContent=retailMonth?(RTM.period||'Archivo 5'):'Archivo 5';
+
+    let retailYtd=0,retailFamilies=[];
+    if(typeof RAC!=='undefined'&&RAC.rows?.length){
+      retailYtd=RAC.rows.reduce((s,r)=>s+(Number(r.cur)||0),0);
+      retailFamilies=Object.values(RAC.families||{}).map(f=>({label:f.label||f.key,value:Number(f.cur)||0})).filter(x=>x.value>0)
+    }
+    $('sxRetailYtd').textContent=retailYtd?fmt(retailYtd):'—';$('sxRetailYtdSub').textContent=retailYtd?(RAC.period||'Archivo 6'):'Archivo 6';$('sxRetailChip').textContent=retailFamilies.length?'100% mercado':'Archivo 6';donut('sxRetailDonut','sxRetailDonutTotal','sxRetailLegend',retailFamilies);
+
+    const brands=racBrands();$('sxLeadBrand').textContent=brands[0]?.[0]||'—';$('sxLeadBrandSub').textContent=brands[0]?`${fmt(brands[0][1])} · ${pct(brands[0][1],retailYtd)}`:'Esperando Archivo 6';rank('sxBrands',brands);
+    const depts=geoAgg('dept'),dealers=geoAgg('dealer');$('sxLeadDept').textContent=depts[0]?.[0]||'—';$('sxLeadDeptSub').textContent=depts[0]?`${fmt(depts[0][1])} · ${pct(depts[0][1],depts.reduce((s,x)=>s+x[1],0))}`:'Esperando Archivo 11';$('sxLeadDealer').textContent=dealers[0]?.[0]||'—';$('sxLeadDealerSub').textContent=dealers[0]?`${fmt(dealers[0][1])} · ${pct(dealers[0][1],dealers.reduce((s,x)=>s+x[1],0))}`:'Esperando Archivo 11';rank('sxDepts',depts);rank('sxDealers',dealers);
+
+    const r=retailMonthlyFromDetail(),im=inmatMonthly(),n=Math.max(r.vals.length,im.length),labels=(r.months.length?r.months:(typeof VM20_MONTHS!=='undefined'?VM20_MONTHS:[])).slice(0,n);trend(r.vals,im,labels);
+
+    const segs=segmentCards();$('sxSegments').innerHTML=segs.map(s=>`<div class="sx-seg"><span>${s.label}</span><b>${s.value}</b><small>${s.sub||''}</small></div>`).join('')||'<div class="small">Los segmentos aparecerán al cargar sus archivos.</div>';
+
+    const insights=[];
+    if(retailYtd&&typeof RAC!=='undefined'){const prev=RAC.rows.reduce((s,r)=>s+(Number(r.prev)||0),0);if(prev)insights.push({t:'Retail acumulado',d:`${(retailYtd/prev-1)>=0?'+':''}${((retailYtd/prev-1)*100).toFixed(1)}% vs 2025`})}
+    if(brands[0])insights.push({t:'Marca líder Retail',d:`${brands[0][0]} concentra ${pct(brands[0][1],retailYtd)}.`});
+    if(depts[0])insights.push({t:'Concentración territorial',d:`${depts[0][0]} lidera con ${pct(depts[0][1],depts.reduce((s,x)=>s+x[1],0))}.`});
+    if(dealers[0])insights.push({t:'Red comercial',d:`${dealers[0][0]} es el concesionario con mayor volumen cargado.`});
+    if(inmatParts.length===4){const lead=[...inmatParts].sort((a,b)=>b.value-a.value)[0];insights.push({t:'Inmatriculaciones',d:`${lead.label} es el bloque de mayor volumen: ${pct(lead.value,inmatTotal)}.`})}
+    $('sxInsights').innerHTML=insights.slice(0,5).map(x=>`<div class="sx-insight"><b>${x.t}</b>${x.d}</div>`).join('')||'<div class="small">Carga los Excel para generar insights automáticos.</div>';
+
+    const names=['08.1 Menores','08.2 Livianos','08.3 Pesados','08.4 Remolques','08.5 Retail Mes','08.6 Retail Acum.','08.7 Retail Ligeros','08.8 Comerciales','08.9 Ómnibus','08.10 Camiones','08.11 Dpto./Conces.'];
+    $('sxFiles').innerHTML=names.map((n,i)=>`<div class="sx-file ${loaded[i]?'ok':''}"><i>${loaded[i]?'✓':'·'}</i><b>${n.split(' ')[0]}</b><span>${n.substring(n.indexOf(' ')+1)}</span></div>`).join('');
+  }
+
+  window.refreshExecutiveSummary=render;
+  setInterval(()=>{if($('resumen')?.classList.contains('active'))render()},1200);
+  document.addEventListener('click',()=>setTimeout(()=>{if($('resumen')?.classList.contains('active'))render()},100));
+  window.addEventListener('resize',()=>{if($('resumen')?.classList.contains('active'))setTimeout(render,100)});
+  setTimeout(render,500);
 })();
 </script>
 
