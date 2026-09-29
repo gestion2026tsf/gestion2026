@@ -4211,13 +4211,13 @@ canvas{transition:filter .14s ease,opacity .14s ease}
         <p id="sxPeriod">Carga tus Excel para consolidar el mercado.</p>
       </div>
       <div class="sx-head-actions">
-        <div class="sx-status"><i></i><div><span>Archivos cargados</span><b id="sxLoaded">0 / 11</b></div></div>
+        <div class="sx-status"><i></i><div><span>Archivos cargados</span><b id="sxLoaded">0 / 9</b></div></div>
         <div class="sx-status subtle"><div><span>Estado</span><b id="sxState">Esperando archivos</b></div></div>
       </div>
     </div>
 
     <div class="sx-kpis">
-      <div class="sx-kpi hot"><span>Inmatriculaciones acumuladas</span><b id="sxInmatTotal">—</b><small>Archivos 1–4</small></div>
+      <div class="sx-kpi hot"><span>Inmatriculaciones acumuladas</span><b id="sxInmatTotal">—</b><small>Archivos 2–3</small></div>
       <div class="sx-kpi"><span>Retail del mes</span><b id="sxRetailMonth">—</b><small id="sxRetailMonthSub">Archivo 5</small></div>
       <div class="sx-kpi"><span>Retail acumulado</span><b id="sxRetailYtd">—</b><small id="sxRetailYtdSub">Archivo 6</small></div>
       <div class="sx-kpi"><span>Marca líder Retail</span><b id="sxLeadBrand">—</b><small id="sxLeadBrandSub">Esperando Archivo 6</small></div>
@@ -4246,7 +4246,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
       </div>
 
       <div class="sx-card">
-        <div class="sx-card-head"><div><h4>Composición de inmatriculaciones</h4><p>Archivos 1–4.</p></div><span class="sx-chip" id="sxInmatChip">0 / 4</span></div>
+        <div class="sx-card-head"><div><h4>Composición de inmatriculaciones</h4><p>Archivos 2–3.</p></div><span class="sx-chip" id="sxInmatChip">0 / 2</span></div>
         <div class="sx-donut-wrap"><canvas id="sxInmatDonut"></canvas><div class="sx-donut-center"><b id="sxInmatDonutTotal">—</b><span>unidades</span></div></div>
         <div class="sx-legend" id="sxInmatLegend"></div>
       </div>
@@ -6614,7 +6614,7 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
   }
 
   function inmatMonthly(){
-    const arrs=[monthlyVM20(),monthlyLV2(),monthlyVP3(),monthlyR4()].filter(a=>a.length);
+    const arrs=[monthlyLV2(),monthlyVP3()].filter(a=>a.length);
     const n=Math.max(0,...arrs.map(a=>a.length));return Array.from({length:n},(_,i)=>arrs.reduce((s,a)=>s+(Number(a[i])||0),0));
   }
 
@@ -6657,10 +6657,8 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
 
   function loadedList(){
     return [
-      !!(typeof VM20!=='undefined'&&VM20.rows?.length),
       !!(typeof LV2!=='undefined'&&LV2.rows?.length),
       !!(typeof VP3!=='undefined'&&VP3.rows?.length),
-      !!(typeof R4!=='undefined'&&R4.rows?.length),
       !!(typeof RTM!=='undefined'&&RTM.rows?.length),
       !!(typeof RAC!=='undefined'&&RAC.rows?.length),
       !!window.__RL_STATE?.rows?.length,
@@ -6675,10 +6673,8 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
     const cards=[];
     const push=(label,value,sub)=>{if(value&&value!=='—')cards.push({label,value,sub})};
     const txt=id=>$(id)?.textContent?.trim()||'—';
-    push('Menores',txt('vm2TypeLeader'),txt('vm2TypeLeaderSub'));
     push('Livianos',txt('lv2LeadClass'),txt('lv2LeadClassSub'));
     push('Pesados',txt('vp3LeadClass'),txt('vp3LeadClassSub'));
-    push('Remolques',txt('r4LeadCat'),txt('r4LeadCatSub'));
     push('Retail Ligeros',txt('rlSegment'),txt('rlSegmentSub'));
     push('Retail Comerciales',txt('rcSegment'),txt('rcSegmentSub'));
     push('Retail Ómnibus',txt('roSegment'),txt('roSegmentSub'));
@@ -6688,18 +6684,16 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
 
   function render(){
     const loaded=loadedList(),count=loaded.filter(Boolean).length;
-    $('sxLoaded').textContent=`${count} / 11`;$('sxState').textContent=count===11?'Base completa':count?'Carga parcial':'Esperando archivos';
+    $('sxLoaded').textContent=`${count} / 9`;$('sxState').textContent=count===9?'Base completa':count?'Carga parcial':'Esperando archivos';
     const periods=[typeof RTM!=='undefined'?RTM.period:'',typeof RAC!=='undefined'?RAC.period:'',window.__DC11_API?.fileName?'Archivo 11 cargado':''].filter(Boolean);
     $('sxPeriod').textContent=count?('Consolidación dinámica · '+(periods[0]||periods[1]||'periodos cargados')):'Carga tus Excel para consolidar el mercado.';
 
     const inmatParts=[
-      {label:'Vehículos Menores',value:sumVM20()},
       {label:'Vehículos Livianos',value:sumLV2()},
-      {label:'Vehículos Pesados',value:sumVP3()},
-      {label:'Remolques / Semirremolques',value:sumR4()}
+      {label:'Vehículos Pesados',value:sumVP3()}
     ].filter(x=>x.value>0);
     const inmatTotal=inmatParts.reduce((s,x)=>s+x.value,0);
-    $('sxInmatTotal').textContent=inmatTotal?fmt(inmatTotal):'—';$('sxInmatChip').textContent=`${inmatParts.length} / 4`;donut('sxInmatDonut','sxInmatDonutTotal','sxInmatLegend',inmatParts);
+    $('sxInmatTotal').textContent=inmatTotal?fmt(inmatTotal):'—';$('sxInmatChip').textContent=`${inmatParts.length} / 2`;donut('sxInmatDonut','sxInmatDonutTotal','sxInmatLegend',inmatParts);
 
     let retailMonth=0;if(typeof RTM!=='undefined'&&RTM.rows?.length){if(!RTM.families?.TOTAL&&typeof rtmCompute==='function')try{rtmCompute()}catch(e){}retailMonth=Number(RTM.families?.TOTAL)||0}
     $('sxRetailMonth').textContent=retailMonth?fmt(retailMonth):'—';$('sxRetailMonthSub').textContent=retailMonth?(RTM.period||'Archivo 5'):'Archivo 5';
@@ -6723,10 +6717,10 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
     if(brands[0])insights.push({t:'Marca líder Retail',d:`${brands[0][0]} concentra ${pct(brands[0][1],retailYtd)}.`});
     if(depts[0])insights.push({t:'Concentración territorial',d:`${depts[0][0]} lidera con ${pct(depts[0][1],depts.reduce((s,x)=>s+x[1],0))}.`});
     if(dealers[0])insights.push({t:'Red comercial',d:`${dealers[0][0]} es el concesionario con mayor volumen cargado.`});
-    if(inmatParts.length===4){const lead=[...inmatParts].sort((a,b)=>b.value-a.value)[0];insights.push({t:'Inmatriculaciones',d:`${lead.label} es el bloque de mayor volumen: ${pct(lead.value,inmatTotal)}.`})}
+    if(inmatParts.length===2){const lead=[...inmatParts].sort((a,b)=>b.value-a.value)[0];insights.push({t:'Inmatriculaciones',d:`${lead.label} es el bloque de mayor volumen: ${pct(lead.value,inmatTotal)}.`})}
     $('sxInsights').innerHTML=insights.slice(0,5).map(x=>`<div class="sx-insight"><b>${x.t}</b>${x.d}</div>`).join('')||'<div class="small">Carga los Excel para generar insights automáticos.</div>';
 
-    const names=['08.1 Menores','08.2 Livianos','08.3 Pesados','08.4 Remolques','08.5 Retail Mes','08.6 Retail Acum.','08.7 Retail Ligeros','08.8 Comerciales','08.9 Ómnibus','08.10 Camiones','08.11 Dpto./Conces.'];
+    const names=['08.2 Livianos','08.3 Pesados','08.5 Retail Mes','08.6 Retail Acum.','08.7 Retail Ligeros','08.8 Comerciales','08.9 Ómnibus','08.10 Camiones','08.11 Dpto./Conces.'];
     $('sxFiles').innerHTML=names.map((n,i)=>`<div class="sx-file ${loaded[i]?'ok':''}"><i>${loaded[i]?'✓':'·'}</i><b>${n.split(' ')[0]}</b><span>${n.substring(n.indexOf(' ')+1)}</span></div>`).join('');
   }
 
@@ -6798,12 +6792,10 @@ window.__LOAD_08_5 = (wb,name) => {
   ];
 
   const FILES = [
-    {key:'08.1', match:'08.1_', loader:'__LOAD_08_1'},
     {key:'08.2', match:'08.2_', loader:'__LOAD_08_2'},
     {key:'08.3', match:'08.3_', loader:'__LOAD_08_3'},
-    {key:'08.4', match:'08.4_', loader:'__LOAD_08_4'},
     {key:'08.5', match:'08.5_', loader:'__LOAD_08_5'},
-    {key:'08.6', match:'08.6_', loader:'__LOAD_08_6'},
+    {key:'08.6', match:'08.6', loader:'__LOAD_08_6'},
     {key:'08.7', match:'08.7_', loader:'__LOAD_08_7'},
     {key:'08.8', match:'08.8_', loader:'__LOAD_08_8'},
     {key:'08.9', match:'08.9_', loader:'__LOAD_08_9'},
@@ -6889,10 +6881,21 @@ window.__LOAD_08_5 = (wb,name) => {
       try{
         ui(
           'Cargando '+periodLabel+'…',
-          `Archivo ${loaded+1}/11 · ${spec.key}`
+          `Archivo ${loaded+1}/9 · ${spec.key}`
         );
 
-        const payload = await requestOne(currentPeriod, spec.match || spec.key);
+        let payload;
+        try{
+          payload = await requestOne(currentPeriod, spec.match || spec.key);
+        }catch(firstErr){
+          // Fallback robusto: si el nombre real no contiene "_" exactamente,
+          // vuelve a intentar usando solo el código del archivo.
+          if((spec.match || spec.key) !== spec.key){
+            payload = await requestOne(currentPeriod, spec.key);
+          }else{
+            throw firstErr;
+          }
+        }
         const ab = base64ToArrayBuffer(payload.contenido);
         const wb = XLSX.read(ab,{type:'array',cellDates:true});
 
@@ -6907,7 +6910,7 @@ window.__LOAD_08_5 = (wb,name) => {
 
         // Update loaded counter if present
         document.querySelectorAll('[data-exec-loaded-count]').forEach(el=>{
-          el.textContent = `${loaded} / 11`;
+          el.textContent = `${loaded} / 9`;
         });
 
       }catch(e){
@@ -6927,14 +6930,14 @@ window.__LOAD_08_5 = (wb,name) => {
 
     if(errors.length){
       ui(
-        `Datos cargados: ${loaded}/11`,
+        `Datos cargados: ${loaded}/9`,
         errors.slice(0,4).join(' · '),
         'error'
       );
     }else{
       ui(
         'Datos actualizados correctamente',
-        `${periodLabel} · 11/11 archivos cargados.`,
+        `${periodLabel} · 9/9 archivos cargados.`,
         'ok'
       );
     }
