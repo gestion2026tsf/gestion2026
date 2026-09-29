@@ -6679,6 +6679,11 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
   }
 
   function trend(ret,inm,labels){
+    window.__SX_TREND_DATA={
+      retail:Array.isArray(ret)?ret.slice():[],
+      inmat:Array.isArray(inm)?inm.slice():[],
+      labels:Array.isArray(labels)?labels.slice():[]
+    };
     const c=$('sxTrend'),s=setupCanvas(c,260);if(!s)return;const {x:ctx,w,h}=s,p={l:42,r:18,t:22,b:32},max=Math.max(1,...ret,...inm);
     ctx.clearRect(0,0,w,h);ctx.font='9px Arial';ctx.fillStyle='#8e96a3';ctx.strokeStyle='#edf0f4';
     for(let i=0;i<4;i++){const y=p.t+(h-p.t-p.b)*i/3;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(w-p.r,y);ctx.stroke();ctx.fillText(fmt(max*(1-i/3)),3,y+3)}
@@ -7061,63 +7066,362 @@ select option.tsf-seg-option{font-size:inherit}
 </script>
 
 
-<script id="v68-summary-bi-interactions">
+
+<script id="v69-summary-bi-interactions">
 (function(){
   const $=id=>document.getElementById(id);
   const fmt=n=>Math.round(Number(n)||0).toLocaleString('es-PE');
   const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0.0%';
-  const state={retail:{hover:null,lock:null},inmat:{hover:null,lock:null}};
-  const tip=document.createElement('div');tip.id='sxBiTip';document.body.appendChild(tip);
+
+  // Solo el clic fija el filtro. Hover únicamente informa.
+  const state={retail:{lock:null},inmat:{lock:null}};
+  const tip=document.getElementById('sxBiTip') || document.createElement('div');
+  tip.id='sxBiTip';
+  if(!tip.parentNode) document.body.appendChild(tip);
+
   const retailColors=['#ef0b70','#f5ae00','#2f7de1','#8f68e8','#262b35','#9aa2ad'];
 
   function retailData(){
-    const R=window.__RAC_STATE;if(!R?.families)return [];
-    return Object.values(R.families).map((f,i)=>({key:f.key,label:f.label||f.key,value:Number(f.cur)||0,color:retailColors[i%retailColors.length]})).filter(x=>x.value>0);
+    const R=window.__RAC_STATE;
+    if(!R?.families)return [];
+    return Object.values(R.families)
+      .map((f,i)=>({
+        key:f.key,
+        label:f.label||f.key,
+        value:Number(f.cur)||0,
+        color:retailColors[i%retailColors.length]
+      }))
+      .filter(x=>x.value>0);
   }
+
   function inmatData(){
     const out=[];
-    if(typeof LV2!=='undefined'&&LV2.rows?.length){const v=LV2.rows.reduce((s,r)=>s+(LV2.months||[]).reduce((a,m)=>a+(Number(r[m])||0),0),0);if(v)out.push({key:'LIVIANOS',label:'Vehículos Livianos',value:v,color:'#ef0b70'})}
-    if(typeof VP3!=='undefined'&&VP3.rows?.length){const v=VP3.rows.reduce((s,r)=>s+(r.m||[]).reduce((a,x)=>a+(Number(x)||0),0),0);if(v)out.push({key:'PESADOS',label:'Vehículos Pesados',value:v,color:'#f5ae00'})}
+    if(typeof LV2!=='undefined'&&LV2.rows?.length){
+      const v=LV2.rows.reduce((s,r)=>s+(LV2.months||[]).reduce((a,m)=>a+(Number(r[m])||0),0),0);
+      if(v) out.push({key:'LIVIANOS',label:'Vehículos Livianos',value:v,color:'#ef0b70'});
+    }
+    if(typeof VP3!=='undefined'&&VP3.rows?.length){
+      const v=VP3.rows.reduce((s,r)=>s+(r.m||[]).reduce((a,x)=>a+(Number(x)||0),0),0);
+      if(v) out.push({key:'PESADOS',label:'Vehículos Pesados',value:v,color:'#f5ae00'});
+    }
     return out;
   }
+
   function hit(canvas,e,data){
-    if(!canvas||!data.length)return null;const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,cx=r.width/2,cy=r.height/2,dx=x-cx,dy=y-cy,rad=Math.hypot(dx,dy),R=Math.min(r.width,r.height)*.40,rin=R*.59;
-    if(rad<rin||rad>R+4)return null;let a=Math.atan2(dy,dx)+Math.PI/2;if(a<0)a+=Math.PI*2;const tot=data.reduce((s,z)=>s+z.value,0);let cur=0;for(const z of data){const end=cur+z.value/tot*Math.PI*2;if(a>=cur&&a<=end)return z;cur=end}return null;
+    if(!canvas||!data.length)return null;
+    const r=canvas.getBoundingClientRect();
+    const x=e.clientX-r.left, y=e.clientY-r.top;
+    const cx=r.width/2, cy=r.height/2;
+    const dx=x-cx, dy=y-cy;
+    const rad=Math.hypot(dx,dy);
+    const R=Math.min(r.width,r.height)*.40, rin=R*.59;
+    if(rad<rin||rad>R+4)return null;
+
+    let a=Math.atan2(dy,dx)+Math.PI/2;
+    if(a<0)a+=Math.PI*2;
+    const tot=data.reduce((s,z)=>s+z.value,0);
+
+    let cur=0;
+    for(const z of data){
+      const end=cur+z.value/tot*Math.PI*2;
+      if(a>=cur&&a<=end)return z;
+      cur=end;
+    }
+    return null;
   }
-  function active(kind){return state[kind].lock||state[kind].hover}
+
   function paintLegend(kind,data,selected){
-    const box=$(kind==='retail'?'sxRetailLegend':'sxInmatLegend');if(!box)return;
-    [...box.querySelectorAll('.sx-leg')].forEach((el,i)=>{const z=data[i];el.classList.toggle('bi-selected',!!selected&&z?.key===selected.key);el.classList.toggle('bi-muted',!!selected&&z?.key!==selected.key);el.dataset.biKey=z?.key||''});
+    const box=$(kind==='retail'?'sxRetailLegend':'sxInmatLegend');
+    if(!box)return;
+    [...box.querySelectorAll('.sx-leg')].forEach((el,i)=>{
+      const z=data[i];
+      el.classList.toggle('bi-selected',!!selected&&z?.key===selected.key);
+      el.classList.toggle('bi-muted',!!selected&&z?.key!==selected.key);
+      el.dataset.biKey=z?.key||'';
+    });
   }
+
   function applyRetail(sel){
-    const R=window.__RAC_STATE;if(!R?.rows?.length)return;
-    if(!sel){window.refreshExecutiveSummary?.();return}
-    const rows=R.rows.filter(r=>r.family===sel.key),total=rows.reduce((s,r)=>s+(Number(r.cur)||0),0),m=new Map();rows.forEach(r=>m.set(r.brand,(m.get(r.brand)||0)+(Number(r.cur)||0)));const brands=[...m].sort((a,b)=>b[1]-a[1]);
-    $('sxRetailYtd').textContent=fmt(total);$('sxRetailYtdSub').textContent=sel.label;$('sxRetailDonutTotal').textContent=fmt(total);$('sxRetailChip').textContent=sel.label;
-    $('sxLeadBrand').textContent=brands[0]?.[0]||'—';$('sxLeadBrandSub').textContent=brands[0]?`${fmt(brands[0][1])} · ${pct(brands[0][1],total)}`:'—';
-    const box=$('sxBrands'),max=brands[0]?.[1]||1;box.innerHTML=brands.slice(0,5).map((x,i)=>`<div class="sx-rank-row"><span class="n">${i+1}</span><span class="name" title="${x[0]}">${x[0]}</span><span class="track"><i style="width:${x[1]/max*100}%"></i></span><b>${fmt(x[1])}</b></div>`).join('');
+    const R=window.__RAC_STATE;
+    if(!R?.rows?.length)return;
+
+    if(!sel){
+      window.refreshExecutiveSummary?.();
+      return;
+    }
+
+    const rows=R.rows.filter(r=>r.family===sel.key);
+    const total=rows.reduce((s,r)=>s+(Number(r.cur)||0),0);
+    const m=new Map();
+    rows.forEach(r=>m.set(r.brand,(m.get(r.brand)||0)+(Number(r.cur)||0)));
+    const brands=[...m].sort((a,b)=>b[1]-a[1]);
+
+    $('sxRetailYtd').textContent=fmt(total);
+    $('sxRetailYtdSub').textContent=sel.label;
+    $('sxRetailDonutTotal').textContent=fmt(total);
+    $('sxRetailChip').textContent=sel.label;
+    $('sxLeadBrand').textContent=brands[0]?.[0]||'—';
+    $('sxLeadBrandSub').textContent=brands[0]?`${fmt(brands[0][1])} · ${pct(brands[0][1],total)}`:'—';
+
+    const box=$('sxBrands');
+    const max=brands[0]?.[1]||1;
+    if(box){
+      box.innerHTML=brands.slice(0,5).map((x,i)=>`
+        <div class="sx-rank-row">
+          <span class="n">${i+1}</span>
+          <span class="name" title="${x[0]}">${x[0]}</span>
+          <span class="track"><i style="width:${x[1]/max*100}%"></i></span>
+          <b>${fmt(x[1])}</b>
+        </div>`).join('');
+    }
   }
+
   function applyInmat(sel){
-    if(!sel){window.refreshExecutiveSummary?.();return}
-    $('sxInmatTotal').textContent=fmt(sel.value);$('sxInmatDonutTotal').textContent=fmt(sel.value);$('sxInmatChip').textContent=sel.label.replace('Vehículos ','');
+    if(!sel){
+      window.refreshExecutiveSummary?.();
+      return;
+    }
+    $('sxInmatTotal').textContent=fmt(sel.value);
+    $('sxInmatDonutTotal').textContent=fmt(sel.value);
+    $('sxInmatChip').textContent=sel.label.replace('Vehículos ','');
   }
-  function apply(kind){const data=kind==='retail'?retailData():inmatData(),sel=active(kind);paintLegend(kind,data,sel);kind==='retail'?applyRetail(sel):applyInmat(sel)}
-  function showTip(e,z,tot){tip.innerHTML=`${z.label} · ${fmt(z.value)}<small>${pct(z.value,tot)} del total · clic para fijar</small>`;tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+12)+'px';tip.style.display='block'}
-  function hideTip(){tip.style.display='none'}
+
+  function apply(kind){
+    const data=kind==='retail'?retailData():inmatData();
+    const sel=state[kind].lock;
+    paintLegend(kind,data,sel);
+    kind==='retail'?applyRetail(sel):applyInmat(sel);
+  }
+
+  function showTip(e,z,tot){
+    tip.innerHTML=`<b>${z.label}</b> · ${fmt(z.value)}
+      <small>${pct(z.value,tot)} del total · clic para filtrar</small>`;
+    tip.style.left=(e.clientX+12)+'px';
+    tip.style.top=(e.clientY+12)+'px';
+    tip.style.display='block';
+  }
+
+  function hideTip(){ tip.style.display='none'; }
+
   function bind(kind,canvasId,legendId,getData){
-    const c=$(canvasId),l=$(legendId);if(!c||c.dataset.biBound)return;c.dataset.biBound='1';
-    c.addEventListener('pointermove',e=>{if(state[kind].lock)return;const data=getData(),z=hit(c,e,data);state[kind].hover=z;apply(kind);if(z)showTip(e,z,data.reduce((s,x)=>s+x.value,0));else hideTip()});
-    c.addEventListener('pointerleave',()=>{if(state[kind].lock)return;state[kind].hover=null;hideTip();window.refreshExecutiveSummary?.();setTimeout(()=>apply(kind),0)});
-    c.addEventListener('click',e=>{const data=getData(),z=hit(c,e,data);if(!z)return;state[kind].lock=(state[kind].lock?.key===z.key)?null:z;state[kind].hover=null;apply(kind);hideTip();e.stopPropagation()});
-    l?.addEventListener('pointerover',e=>{if(state[kind].lock)return;const el=e.target.closest('.sx-leg');if(!el)return;const data=getData(),z=data.find(x=>x.key===el.dataset.biKey)||data[[...l.children].indexOf(el)];if(z){state[kind].hover=z;apply(kind)}});
-    l?.addEventListener('pointerleave',()=>{if(state[kind].lock)return;state[kind].hover=null;window.refreshExecutiveSummary?.();setTimeout(()=>apply(kind),0)});
-    l?.addEventListener('click',e=>{const el=e.target.closest('.sx-leg');if(!el)return;const data=getData(),z=data.find(x=>x.key===el.dataset.biKey)||data[[...l.children].indexOf(el)];if(!z)return;state[kind].lock=(state[kind].lock?.key===z.key)?null:z;state[kind].hover=null;apply(kind);e.stopPropagation()});
+    const c=$(canvasId), l=$(legendId);
+    if(!c||c.dataset.biBound)return;
+    c.dataset.biBound='1';
+
+    // HOVER: solo tooltip. NO filtra.
+    c.addEventListener('pointermove',e=>{
+      const data=getData();
+      const z=hit(c,e,data);
+      c.style.cursor=z?'pointer':'default';
+      if(z) showTip(e,z,data.reduce((s,x)=>s+x.value,0));
+      else hideTip();
+    });
+
+    c.addEventListener('pointerleave',()=>{
+      c.style.cursor='default';
+      hideTip();
+    });
+
+    // CLIC: fija o cambia filtro.
+    c.addEventListener('pointerdown',e=>{
+      const data=getData();
+      const z=hit(c,e,data);
+      if(!z)return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Selección persistente: solo cambia cuando el usuario hace clic/tap.
+      state[kind].lock=(state[kind].lock?.key===z.key)?null:z;
+      apply(kind);
+      paintLegend(kind,data,state[kind].lock);
+      hideTip();
+    });
+
+    if(l){
+      l.addEventListener('pointermove',e=>{
+        const el=e.target.closest('.sx-leg');
+        if(!el){hideTip();return}
+        const data=getData();
+        const idx=[...l.children].indexOf(el);
+        const z=data.find(x=>x.key===el.dataset.biKey)||data[idx];
+        if(z){
+          showTip(e,z,data.reduce((s,x)=>s+x.value,0));
+          el.style.cursor='pointer';
+        }
+      });
+
+      l.addEventListener('pointerleave',hideTip);
+
+      l.addEventListener('pointerdown',e=>{
+        const el=e.target.closest('.sx-leg');
+        if(!el)return;
+        const data=getData();
+        const idx=[...l.children].indexOf(el);
+        const z=data.find(x=>x.key===el.dataset.biKey)||data[idx];
+        if(!z)return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        state[kind].lock=(state[kind].lock?.key===z.key)?null:z;
+        apply(kind);
+        paintLegend(kind,data,state[kind].lock);
+        hideTip();
+      });
+    }
   }
-  document.addEventListener('click',e=>{if(e.target.closest('#sxRetailDonut,#sxInmatDonut,#sxRetailLegend,#sxInmatLegend'))return;let changed=false;for(const k of ['retail','inmat'])if(state[k].lock){state[k].lock=null;state[k].hover=null;changed=true}if(changed){hideTip();window.refreshExecutiveSummary?.()}});
-  const boot=()=>{bind('retail','sxRetailDonut','sxRetailLegend',retailData);bind('inmat','sxInmatDonut','sxInmatLegend',inmatData)};
-  setTimeout(boot,800);setInterval(()=>{boot();for(const k of ['retail','inmat'])if(active(k))apply(k)},1500);
+
+  // Clic en cualquier otra parte = regresar al total.
+  document.addEventListener('pointerdown',e=>{
+    if(e.target.closest('#sxRetailDonut,#sxInmatDonut,#sxRetailLegend,#sxInmatLegend'))return;
+
+    let changed=false;
+    for(const k of ['retail','inmat']){
+      if(state[k].lock){
+        state[k].lock=null;
+        changed=true;
+      }
+    }
+
+    if(changed){
+      hideTip();
+      window.refreshExecutiveSummary?.();
+      setTimeout(()=>{
+        paintLegend('retail',retailData(),null);
+        paintLegend('inmat',inmatData(),null);
+      },0);
+    }
+  }, true);
+
+  const boot=()=>{
+    bind('retail','sxRetailDonut','sxRetailLegend',retailData);
+    bind('inmat','sxInmatDonut','sxInmatLegend',inmatData);
+  };
+
+  setTimeout(boot,500);
+  setInterval(()=>{
+    boot();
+    for(const k of ['retail','inmat']){
+      if(state[k].lock) apply(k);
+    }
+  },1500);
 })();
 </script>
+
+
+
+<style id="v69-summary-trend-tooltip-style">
+.sx-trend-wrap{position:relative!important}
+#sxTrend{cursor:crosshair}
+.sx-trend-hover-line{
+  position:absolute;
+  top:22px;
+  bottom:32px;
+  width:0;
+  border-left:1px dashed #ee0b70;
+  pointer-events:none;
+  display:none;
+  z-index:3;
+}
+.sx-trend-tip{
+  position:fixed;
+  z-index:99999;
+  display:none;
+  pointer-events:none;
+  min-width:175px;
+  background:#171a20;
+  color:#fff;
+  border-radius:10px;
+  padding:9px 11px;
+  font-size:10px;
+  line-height:1.45;
+  box-shadow:0 10px 28px rgba(0,0,0,.24);
+}
+.sx-trend-tip strong{display:block;font-size:11px;margin-bottom:5px}
+.sx-trend-tip .row{display:grid;grid-template-columns:auto 1fr auto;gap:7px;align-items:center}
+.sx-trend-tip i{width:8px;height:8px;border-radius:50%;display:block}
+.sx-trend-tip b{font-size:10px;text-align:right}
+.sx-trend-tip .total{border-top:1px solid rgba(255,255,255,.14);margin-top:5px;padding-top:5px}
+</style>
+
+
+<script id="v69-summary-trend-tooltip">
+(function(){
+  const fmt=n=>Math.round(Number(n)||0).toLocaleString('es-PE');
+
+  function init(){
+    const c=document.getElementById('sxTrend');
+    const wrap=c?.closest('.sx-trend-wrap');
+    if(!c||!wrap||c.dataset.tipBound)return;
+    c.dataset.tipBound='1';
+
+    const line=document.createElement('div');
+    line.className='sx-trend-hover-line';
+    wrap.appendChild(line);
+
+    const tip=document.createElement('div');
+    tip.className='sx-trend-tip';
+    document.body.appendChild(tip);
+
+    c.addEventListener('pointermove',e=>{
+      const d=window.__SX_TREND_DATA;
+      if(!d?.labels?.length)return;
+
+      const r=c.getBoundingClientRect();
+      const padL=42, padR=18;
+      const plotW=Math.max(1,r.width-padL-padR);
+      const px=Math.max(padL,Math.min(r.width-padR,e.clientX-r.left));
+      const n=d.labels.length;
+      const idx=n===1?0:Math.max(0,Math.min(n-1,Math.round((px-padL)/plotW*(n-1))));
+      const x=n===1?padL+plotW/2:padL+plotW*idx/(n-1);
+
+      const retail=Number(d.retail?.[idx])||0;
+      const inmat=Number(d.inmat?.[idx])||0;
+      const label=String(d.labels[idx]||'');
+
+      line.style.left=x+'px';
+      line.style.display='block';
+
+      tip.innerHTML=`
+        <strong>${label}</strong>
+        <div class="row"><i style="background:#ef0b70"></i><span>Retail</span><b>${fmt(retail)}</b></div>
+        <div class="row"><i style="background:#2f7de1"></i><span>Inmat.</span><b>${fmt(inmat)}</b></div>
+        <div class="row total"><span></span><span>Total</span><b>${fmt(retail+inmat)}</b></div>
+      `;
+
+      tip.style.left=Math.min(window.innerWidth-205,e.clientX+14)+'px';
+      tip.style.top=Math.max(8,e.clientY-28)+'px';
+      tip.style.display='block';
+    });
+
+    c.addEventListener('pointerleave',()=>{
+      line.style.display='none';
+      tip.style.display='none';
+    });
+  }
+
+  setTimeout(init,500);
+  setInterval(init,1600);
+})();
+</script>
+
+
+<style id="v70-selection-visual">
+#sxRetailLegend .sx-leg.bi-selected,
+#sxInmatLegend .sx-leg.bi-selected{
+  outline:2px solid #ee0b70;
+  outline-offset:1px;
+  background:#fff4f8;
+}
+#sxRetailLegend .sx-leg.bi-muted,
+#sxInmatLegend .sx-leg.bi-muted{
+  opacity:.42;
+}
+#sxRetailDonut,
+#sxInmatDonut{
+  touch-action:manipulation;
+}
+</style>
 
 </body>
 </html>
