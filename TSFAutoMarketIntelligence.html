@@ -6777,7 +6777,7 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
   }
 
   window.refreshExecutiveSummary=render;
-  setInterval(()=>{if($('resumen')?.classList.contains('active'))render()},1200);
+  setInterval(()=>{if($('resumen')?.classList.contains('active') && !window.__SX_FILTER_LOCKED)render()},1200);
   document.addEventListener('click',()=>setTimeout(()=>{if($('resumen')?.classList.contains('active'))render()},100));
   window.addEventListener('resize',()=>{if($('resumen')?.classList.contains('active'))setTimeout(render,100)});
   setTimeout(render,500);
@@ -7075,6 +7075,11 @@ select option.tsf-seg-option{font-size:inherit}
 
   // Solo el clic fija el filtro. Hover únicamente informa.
   const state={retail:{lock:null},inmat:{lock:null}};
+  window.__SX_FILTER_LOCKED=false;
+
+  function syncGlobalLock(){
+    window.__SX_FILTER_LOCKED=!!(state.retail.lock || state.inmat.lock);
+  }
   const tip=document.getElementById('sxBiTip') || document.createElement('div');
   tip.id='sxBiTip';
   if(!tip.parentNode) document.body.appendChild(tip);
@@ -7232,6 +7237,7 @@ select option.tsf-seg-option{font-size:inherit}
 
       // Selección persistente: solo cambia cuando el usuario hace clic/tap.
       state[kind].lock=(state[kind].lock?.key===z.key)?null:z;
+      syncGlobalLock();
       apply(kind);
       paintLegend(kind,data,state[kind].lock);
       hideTip();
@@ -7264,6 +7270,7 @@ select option.tsf-seg-option{font-size:inherit}
         e.stopPropagation();
 
         state[kind].lock=(state[kind].lock?.key===z.key)?null:z;
+        syncGlobalLock();
         apply(kind);
         paintLegend(kind,data,state[kind].lock);
         hideTip();
@@ -7284,6 +7291,7 @@ select option.tsf-seg-option{font-size:inherit}
     }
 
     if(changed){
+      syncGlobalLock();
       hideTip();
       window.refreshExecutiveSummary?.();
       setTimeout(()=>{
@@ -7420,6 +7428,26 @@ select option.tsf-seg-option{font-size:inherit}
 #sxRetailDonut,
 #sxInmatDonut{
   touch-action:manipulation;
+}
+</style>
+
+
+<style id="v71-stable-selection-style">
+#sxRetailLegend .sx-leg,
+#sxInmatLegend .sx-leg{
+  transition:opacity .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease!important;
+}
+#sxRetailLegend .sx-leg.bi-selected,
+#sxInmatLegend .sx-leg.bi-selected{
+  background:#fff1f7!important;
+  border-color:#ee0b70!important;
+  box-shadow:0 0 0 2px rgba(238,11,112,.12)!important;
+  opacity:1!important;
+  transform:none!important;
+}
+#sxRetailLegend .sx-leg.bi-muted,
+#sxInmatLegend .sx-leg.bi-muted{
+  opacity:.32!important;
 }
 </style>
 
