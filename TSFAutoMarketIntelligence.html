@@ -4163,7 +4163,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
     <div class="brand-mark" aria-label="TOTAL"></div>
     <div class="brand-copy"><strong>TOTAL</strong><small>servicios financieros</small></div>
   </div>
-  <div class="brand-product">INTELIGENCIA DE MERCADO AUTOMOTOR · 2026</div>
+  <div class="brand-product">INTELIGENCIA DE MERCADO AUTOMOTOR</div>
 </div>
   <div class="nav-title">Dashboard</div>
   <div class="nav" id="nav">
@@ -4178,7 +4178,6 @@ canvas{transition:filter .14s ease,opacity .14s ease}
     <button data-page="retailComerciales"><span class="nav-ico">▱</span>Retail Comerciales</button>
     <button data-page="retailOmnibus"><span class="nav-ico">▣</span>Retail Ómnibus</button>
     <button data-page="retailCamiones"><span class="nav-ico">▰</span>Retail Camiones y Remolcadores</button>
-<button data-page="brechas"><span class="nav-ico">⇄</span>Retail vs Inmat.</button>
 <button data-page="concesionarios"><span class="nav-ico">▦</span>Departamento y Concesionarios</button>
 <button data-page="carga"><span class="nav-ico">＋</span>Cargar Mes</button>
   </div>
@@ -4186,7 +4185,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
 <main class="main">
 <header class="topbar">
-  <div class="topbar-left"><h2 id="pageTitle">Resumen Ejecutivo</h2><small id="periodText">Periodo analizado: Enero – Agosto 2026</small></div>
+  <div class="topbar-left"><h2 id="pageTitle">Resumen Ejecutivo</h2><small id="periodText">Carga tus Excel para iniciar el análisis</small></div>
   <div class="actions"><span class="tsf-live">Base validada</span>
     <button class="btn" id="qualityBtn">✓ Validación</button>
     <button class="btn yellow" data-go="carga">📁 Cargar periodo</button>
@@ -4197,24 +4196,25 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 <div class="content">
 
 <section class="page active" id="resumen">
-  <div class="hero"><div><h3>Panorama del mercado automotor</h3><p>Vista consolidada de Retail e Inmatriculaciones. No se suman entre sí porque representan universos distintos.</p></div>
-  <div class="filters"><select><option>2026</option></select><select><option>Ene–Ago</option></select><select><option>Todos los segmentos</option></select></div></div>
-  <div class="grid kpis">
-    <div class="card kpi accent"><div class="label">Retail acumulado</div><div class="value">176,170</div><div class="sub">Enero – Agosto 2026</div></div>
-    <div class="card kpi"><div class="label">Retail agosto</div><div class="value">23,613</div><div class="sub">Último mes cargado</div></div>
-    <div class="card kpi accent"><div class="label">Inmatriculaciones</div><div class="value">580,217</div><div class="sub">Menores + Livianos + Pesados + Remolques</div></div>
-    <div class="card kpi"><div class="label">Inmat. agosto</div><div class="value">78,595</div><div class="sub">Incluye vehículos menores</div></div>
-  </div>
-  <div class="section-title"><h4>Evolución mensual</h4><span>Retail vs Inmatriculaciones</span></div>
-  <div class="grid two">
-    <div class="card"><canvas id="trendChart" class="chart"></canvas><div class="legend"><span><i style="background:#111827"></i>Retail</span><span><i style="background:#f2c230"></i>Inmatriculaciones</span></div></div>
-    <div class="card"><h4 style="margin-top:0">Composición Retail</h4>
-      <div class="bar-row"><div class="bar-head"><span>Ligeros</span><b>126,070</b></div><div class="bar-bg"><div class="bar-fill yellow" style="width:71.6%"></div></div></div>
-      <div class="bar-row"><div class="bar-head"><span>Comerciales</span><b>39,575</b></div><div class="bar-bg"><div class="bar-fill" style="width:22.5%"></div></div></div>
-      <div class="bar-row"><div class="bar-head"><span>Camiones/Remolcadores</span><b>9,795</b></div><div class="bar-bg"><div class="bar-fill" style="width:5.6%"></div></div></div>
-      <div class="bar-row"><div class="bar-head"><span>Ómnibus</span><b>730</b></div><div class="bar-bg"><div class="bar-fill" style="width:.4%"></div></div></div>
-      <div class="note" style="margin-top:14px">Los archivos 5 y 6 funcionan como <b>control</b>. Las fuentes Retail de detalle son 7–10 y la geografía/concesionarios proviene del archivo 11.</div>
+  <div class="hero">
+    <div>
+      <h3>Panorama del mercado automotor</h3>
+      <p>Este resumen no contiene datos precargados. Los indicadores se habilitan únicamente con los Excel cargados en los módulos del sistema.</p>
     </div>
+  </div>
+
+  <div class="grid kpis" id="summaryKpis">
+    <div class="card kpi accent"><div class="label">Retail del mes</div><div class="value" id="sumRetailMes">—</div><div class="sub">Carga el Archivo 5</div></div>
+    <div class="card kpi"><div class="label">Retail acumulado</div><div class="value" id="sumRetailAcum">—</div><div class="sub">Carga el Archivo 6</div></div>
+    <div class="card kpi accent"><div class="label">Mercados de inmatriculación</div><div class="value" id="sumInmat">—</div><div class="sub">Carga los Archivos 1–4</div></div>
+    <div class="card kpi"><div class="label">Departamento / concesionarios</div><div class="value" id="sumGeo">—</div><div class="sub">Carga el Archivo 11</div></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h4 style="margin:0 0 6px">Resumen construido desde tus Excel</h4>
+    <p class="small" style="margin:0">
+      Sin archivos cargados no se muestran cifras, rankings ni gráficos. Cada módulo lee su Excel y calcula sus indicadores en el navegador.
+    </p>
   </div>
 </section>
 
@@ -4345,26 +4345,6 @@ canvas{transition:filter .14s ease,opacity .14s ease}
   <div class="rac-footer"><span><b>TSF AutoMarket Intelligence</b> · Retail acumulado</span><span id="racSource">Fuente: Archivo 6</span><span id="racAudit">5 hojas esperadas</span></div>
   <div class="rac-tooltip" id="racTooltip"></div>
 </section>
-
-
-<section class="page" id="brechas">
-  <div class="hero"><div><h3>Retail vs Inmatriculación</h3><p>Comparación analítica. No representa una resta contable directa; requiere homologación por marca/segmento.</p></div></div>
-  <div class="grid kpis">
-    <div class="card kpi accent"><div class="label">Livianos inmat.</div><div class="value">167,244</div></div>
-    <div class="card kpi"><div class="label">Retail Ligeros + Comerc.</div><div class="value">165,645</div><div class="sub">Diferencia global: 1,599</div></div>
-    <div class="card kpi accent"><div class="label">Pesados inmat.</div><div class="value">21,572</div></div>
-    <div class="card kpi"><div class="label">Retail Ómnibus + Camiones</div><div class="value">10,525</div><div class="sub">Brecha visible: 11,047</div></div>
-  </div>
-  <div class="card table-wrap" style="margin-top:14px"><table><thead><tr><th>Marca</th><th>Retail</th><th>Inmatriculación</th><th>Brecha</th><th>Lectura</th></tr></thead><tbody>
-    <tr><td>Toyota</td><td>31,645</td><td>30,658</td><td>+987</td><td><span class="pill ok">Alta cobertura</span></td></tr>
-    <tr><td>Volvo</td><td>0</td><td>1,859</td><td>-1,859</td><td><span class="pill warn">Revisar fuente Retail</span></td></tr>
-    <tr><td>Scania</td><td>0</td><td>1,067</td><td>-1,067</td><td><span class="pill warn">No reportante / parcial</span></td></tr>
-    <tr><td>Sinotruk</td><td>0</td><td>2,195</td><td>-2,195</td><td><span class="pill bad">Brecha relevante</span></td></tr>
-    <tr><td>Mercedes-Benz</td><td>300</td><td>1,455</td><td>-1,155</td><td><span class="pill warn">Cobertura parcial</span></td></tr>
-  </tbody></table></div>
-</section>
-
-
 <section class="page" id="ligeros">
   <div class="lv2-hero">
     <div>
@@ -4448,27 +4428,11 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
   <div class="lv2-quality">
     <div><span>Cobertura</span><b id="lv2Coverage">—</b></div>
-    <div><span>Base técnica</span><b id="lv2BaseInfo">12,320 filas · 24 columnas</b></div>
-    <div class="warn"><span>Duplicados exactos</span><b id="lv2DupInfo">12 filas adicionales · 14 unidades</b></div>
+    <div><span>Base técnica</span><b id="lv2BaseInfo">—</b></div>
+    <div class="warn"><span>Duplicados exactos</span><b id="lv2DupInfo">—</b></div>
     <div><span>Control</span><b id="lv2Control">La suma mensual debe reconciliar con RESUMEN</b></div>
   </div>
 </section>
-
-
-<section class="page" id="comerciales">
-  <div class="hero"><div><h3>Comerciales</h3><p>Microbuses, minibuses, pick ups, paneles y furgones.</p></div></div>
-  <div class="grid kpis">
-    <div class="card kpi accent"><div class="label">Retail acumulado</div><div class="value">39,575</div></div>
-    <div class="card kpi"><div class="label">Agosto</div><div class="value">5,053</div></div>
-    <div class="card kpi"><div class="label">Pick Up C3</div><div class="value">28,852</div><div class="sub">72.9% del bloque</div></div>
-    <div class="card kpi"><div class="label">Marcas</div><div class="value">38</div></div>
-  </div>
-  <div class="grid two" style="margin-top:14px"><div class="card"><h4 style="margin-top:0">Top modelos</h4>
-    <p><b>Toyota Hilux</b> — 8,893</p><p><b>Ford Ranger</b> — 2,404</p><p><b>GWM Poer</b> — 2,317</p><p><b>Mitsubishi L200</b> — 1,666</p><p><b>JAC T8</b> — 1,657</p>
-  </div><div class="card"><h4 style="margin-top:0">Combustible</h4><p>Diesel: <b>29,586</b></p><p>Gasolina: <b>8,264</b></p><p>GLP: 786</p><p>GNV: 181</p><p>Híbrido gasolina: 145 · Eléctrico: 9</p></div></div>
-</section>
-
-
 <section class="page" id="pesados">
   <div class="vp3-hero">
     <div>
@@ -5049,16 +5013,20 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 </main>
 </div>
 
-<div class="modal" id="qualityModal"><div class="modal-card"><button class="close" id="closeModal">✕</button><h2>Validación general</h2>
-<p>Retail acumulado validado en tres niveles: resumen (archivo 6), detalle técnico (7–10) y geografía/concesionarios (11).</p>
-<div class="check-list"><div class="check"><span>Total Retail</span><b class="pill ok">176,170 ✓</b></div><div class="check"><span>Agosto Retail</span><b class="pill ok">23,613 ✓</b></div><div class="check"><span>Códigos</span><b class="pill ok">1,514 ✓</b></div><div class="check"><span>Segmentos</span><b class="pill ok">13/13 ✓</b></div></div>
-</div></div>
-<div class="popup" id="popup"></div>
+<div class="modal" id="qualityModal"><div class="modal-card">
+      <button class="close" id="closeModal">✕</button>
+      <h2>Validación general</h2>
+      <p>La validación se calcula con los Excel cargados en cada módulo. No hay cifras precargadas en el código.</p>
+      <div class="check-list">
+        <div class="check"><span>Estado</span><b class="pill">Esperando archivos</b></div>
+      </div>
+    </div></div>
+    <div class="popup" id="popup"></div>
 
 <script>
 const titles={
- resumen:'Resumen Ejecutivo',retailmes:'Retail del Mes',retail:'Retail Acumulado - Ene–Ago 2026',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',brechas:'Retail vs Inmatriculación',
- ligeros:'Mercado Vehículos Livianos',comerciales:'Comerciales',pesados:'Mercado Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Mercado Remolques y Semirremolques',
+ resumen:'Resumen Ejecutivo',retailmes:'Retail del Mes',retail:'Retail Acumulado',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',
+ ligeros:'Mercado Vehículos Livianos',pesados:'Mercado Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Mercado Remolques y Semirremolques',
  concesionarios:'Departamento y Concesionarios Retail',carga:'Cargar Mes'
 };
 function go(page){
@@ -5141,42 +5109,12 @@ function drawLine(canvas, labels, series){
 }
 
 function redrawVisibleCharts(page){
- const monthLabels=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'];
- const safe=(fn)=>{try{ if(typeof fn==='function') fn(); }catch(e){console.warn(e)}};
-
- if(page==='resumen'){
-   drawLine(document.getElementById('trendChart'),monthLabels,[
-     {color:'#EE0B70',data:[21214,19700,20028,21793,22520,23156,24146,23613]},
-     {color:'#F5A900',data:[65021,64664,69475,75514,76264,81255,69429,78595]}
-   ]);
- }
- if(page==='inmat'){
-   drawLine(document.getElementById('inmatChart'),monthLabels,[
-     {color:'#EE0B70',data:[65021,64664,69475,75514,76264,81255,69429,78595]}
-   ]);
- }
- if(page==='ligeros') safe(window.drawVLLines);
- if(page==='pesados') safe(window.drawVPLines);
- if(page==='menores') safe(window.drawVMLines);
- if(page==='remolques') safe(window.drawRM);
- if(page==='retailOmnibus'){
-   drawLine(document.getElementById('obTrend'),monthLabels,[
-     {color:'#EE0B70',data:[87,90,73,98,54,120,122,86]}
-   ]);
- }
- if(page==='retailCamiones'){
-   drawLine(document.getElementById('crTrend'),monthLabels,[
-     {color:'#EE0B70',data:[1095,974,1198,1141,1383,1484,1256,1264]}
-   ]);
- }
+  const safe=(fn)=>{try{ if(typeof fn==='function') fn(); }catch(e){console.warn(e)}};
+  if(page==='ligeros') safe(window.lv2Update ? ()=>window.lv2Update(false) : null);
+  if(page==='pesados') safe(window.vp3Update ? ()=>window.vp3Update(false) : null);
+  if(page==='menores') safe(window.vm20Update ? ()=>window.vm20Update(false) : null);
+  if(page==='remolques') safe(window.r4Update ? ()=>window.r4Update(false) : null);
 }
-
-const months=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'];
-drawLine(document.getElementById('trendChart'),months,[
- {color:'#111827',data:[21214,19700,20028,21793,22520,23156,24146,23613]},
- {color:'#f2c230',data:[65021,64664,69475,75514,76264,81255,69429,78595]}
-]);
-drawLine(document.getElementById('inmatChart'),months,[{color:'#f2c230',data:[65021,64664,69475,75514,76264,81255,69429,78595]}]);
 
 const patterns=[
  {id:'01',keys:['BASE ESPECIFICACIONES TÉCNICAS'],name:'Vehículos Menores'},
@@ -5212,56 +5150,6 @@ document.getElementById('folderInput').addEventListener('change', async e=>{
  status.innerHTML=out;
  if(loadedMenores)go('menores');
 });
-
-
-// VEHICULOS LIVIANOS
-const vlSeries={
- 'SUV,TODOTERRENOS':[11117,11474,11137,11127,11628,12569,10426,13548],
- 'PICK UP Y FURGONETAS':[3947,3770,3692,3463,3984,4470,3573,4006],
- 'AUTOMOVIL':[3007,2890,2952,2668,2616,3294,2523,3272],
- 'CAMIONETAS':[2557,2822,2729,2541,2327,2180,2342,2584]
-};
-function drawVLLines(){const c=document.getElementById('vlTrend');if(!c)return;drawLine(c,['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'],[
- {color:'#f2c230',data:vlSeries['SUV,TODOTERRENOS']},{color:'#111827',data:vlSeries['PICK UP Y FURGONETAS']},{color:'#6b7280',data:vlSeries['AUTOMOVIL']},{color:'#b7bdc8',data:vlSeries['CAMIONETAS']}
-]);}
-drawVLLines();
-const vlMonth=document.getElementById('vlMonth'),vlClass=document.getElementById('vlClass'),vlReset=document.getElementById('vlReset');
-function updateVLKpis(){if(!vlMonth||!vlClass)return;const month=vlMonth.value,cl=vlClass.value;const names=Object.keys(vlSeries);let vals={};names.forEach(n=>vals[n]=vlSeries[n].reduce((a,b)=>a+b,0));if(month!=='ALL'){const i=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO'].indexOf(month);names.forEach(n=>vals[n]=vlSeries[n][i]);}let total=Object.values(vals).reduce((a,b)=>a+b,0)+(month==='ALL'?9:(month==='MAYO'?6:month==='JUNIO'?1:month==='AGOSTO'?2:0));if(cl!=='ALL')total=vals[cl]||0;document.getElementById('vlTotal').textContent=total.toLocaleString('es-PE');document.getElementById('vlSUV').textContent=(cl==='ALL'||cl==='SUV,TODOTERRENOS'?vals['SUV,TODOTERRENOS']:0).toLocaleString('es-PE');document.getElementById('vlPick').textContent=(cl==='ALL'||cl==='PICK UP Y FURGONETAS'?vals['PICK UP Y FURGONETAS']:0).toLocaleString('es-PE');}
-vlMonth?.addEventListener('change',updateVLKpis);vlClass?.addEventListener('change',updateVLKpis);vlReset?.addEventListener('click',()=>{document.querySelectorAll('#ligeros select').forEach(s=>s.selectedIndex=0);updateVLKpis();});
-
-
-// VEHICULOS PESADOS
-const vpSeries={
-  CAMIONES:[1535,1698,1704,1818,1807,2122,1995,2015],
-  TRACTOCAMIONES:[534,395,427,465,431,542,463,540],
-  BUSES:[372,463,356,359,338,387,445,361]
-};
-function drawVP(){
- const c=document.getElementById('vpTrend'); if(!c)return;
- drawLine(c,['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'],[
-  {color:'#f2c230',data:vpSeries.CAMIONES},
-  {color:'#232936',data:vpSeries.TRACTOCAMIONES},
-  {color:'#9ca3af',data:vpSeries.BUSES}
- ]);
-}
-drawVP();
-const vpMonth=document.getElementById('vpMonth'), vpType=document.getElementById('vpType'), vpReset=document.getElementById('vpReset');
-function updateVPKpis(){
- if(!vpMonth||!vpType)return;
- const idx=['ENE','FEB','MAR','ABR','MAYO','JUNIO','JULIO','AGOSTO'].indexOf(vpMonth.value);
- let tr=14694,tc=3797,bs=3081;
- if(idx>=0){tr=vpSeries.CAMIONES[idx];tc=vpSeries.TRACTOCAMIONES[idx];bs=vpSeries.BUSES[idx];}
- let total=tr+tc+bs;
- if(vpType.value==='CAMIONES'){total=tr;tc=0;bs=0}
- if(vpType.value==='TRACTOCAMIONES'){total=tc;tr=0;bs=0}
- if(vpType.value==='BUSES Y CHASISES'){total=bs;tr=0;tc=0}
- document.getElementById('vpTotal').textContent=total.toLocaleString('es-PE');
- document.getElementById('vpTruck').textContent=tr.toLocaleString('es-PE');
- document.getElementById('vpTracto').textContent=tc.toLocaleString('es-PE');
- document.getElementById('vpBus').textContent=bs.toLocaleString('es-PE');
-}
-vpMonth?.addEventListener('change',updateVPKpis);vpType?.addEventListener('change',updateVPKpis);
-vpReset?.addEventListener('click',()=>{document.querySelectorAll('#pesados select').forEach(s=>s.selectedIndex=0);updateVPKpis();});
 
 
 // ==================== V21 MERCADO VEHICULOS MENORES - EXCEL DINAMICO ====================
@@ -5572,7 +5460,7 @@ if('ResizeObserver' in window){const ro=new ResizeObserver(vm20ResizeRedraw);['v
 const LV2_MONTH_NAMES=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
 const LV2_MONTH_SHORT={ENERO:'Ene',FEBRERO:'Feb',MARZO:'Mar',ABRIL:'Abr',MAYO:'May',JUNIO:'Jun',JULIO:'Jul',AGOSTO:'Ago',SEPTIEMBRE:'Sep',OCTUBRE:'Oct',NOVIEMBRE:'Nov',DICIEMBRE:'Dic'};
 const LV2_COLORS=['#f5ae00','#252a34','#ee0b70','#87909f','#c9ced6','#5a6070'];
-const LV2={rows:[],months:[],year:2026,file:'',meta:{prevMonth:null,prevYtd:null},dup:{extraRows:12,units:14,aug:9}};
+const LV2={rows:[],months:[],year:null,file:'',meta:{prevMonth:null,prevYtd:null},dup:{extraRows:null,units:null,aug:null}};
 const lv2Els={month:document.getElementById('lv2Month'),cls:document.getElementById('lv2Class'),brand:document.getElementById('lv2Brand'),model:document.getElementById('lv2Model'),office:document.getElementById('lv2Office'),fuel:document.getElementById('lv2Fuel'),body:document.getElementById('lv2Body'),trans:document.getElementById('lv2Trans'),drive:document.getElementById('lv2Drive'),origin:document.getElementById('lv2Origin'),year:document.getElementById('lv2ModelYear')};
 function lv2Norm(v){return String(v??'').trim().replace(/\s+/g,' ')}
 function lv2Head(v){return lv2Norm(v).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
@@ -5803,99 +5691,6 @@ function rtmInit(){document.querySelectorAll('#rtmTabs button').forEach(b=>b.add
 rtmInit();
 
 
-// RETAIL OMNIBUS
-const obCanvas=document.getElementById('obTrend');
-if(obCanvas){drawLine(obCanvas,['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'],[{color:'#f2c230',data:[87,90,73,98,54,120,122,86]}]);}
-
-
-// RETAIL CAMIONES Y REMOLCADORES
-const crCanvas=document.getElementById('crTrend');
-if(crCanvas){drawLine(crCanvas,['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'],[{color:'#f2c230',data:[1095,974,1198,1141,1383,1484,1256,1264]}]);}
-
-// MAPAS DEL PERÚ
-const popup=document.getElementById('popup');
-const peruShape=document.getElementById('peruShape');
-const markerLayer=document.getElementById('markers');
-const regionList=document.getElementById('regionList');
-const mapTitle=document.getElementById('mapTitle');
-const mapCaption=document.getElementById('mapCaption');
-const legendText=document.getElementById('legendText');
-
-const mapData={
- retail:{
-   fill:'url(#gRetail)',
-   legend:'Retail acumulado por departamento',
-   title:'Top departamentos Retail',
-   caption:'Lima concentra 59.2% del Retail acumulado.',
-   items:[
-     {name:'Lima', value:104299, x:186, y:355, share:'59.2%'},
-     {name:'Arequipa', value:19101, x:163, y:446, share:'10.8%'},
-     {name:'La Libertad', value:11508, x:150, y:258, share:'6.5%'},
-     {name:'Cusco', value:8121, x:214, y:429, share:'4.6%'},
-     {name:'Junín', value:5327, x:196, y:333, share:'3.0%'},
-     {name:'Piura', value:4956, x:124, y:175, share:'2.8%'},
-     {name:'Lambayeque', value:4398, x:136, y:214, share:'2.5%'},
-     {name:'Puno', value:3208, x:230, y:483, share:'1.8%'}
-   ]
- },
- inmat:{
-   fill:'url(#gInmat)',
-   legend:'Concentración referencial de inmatriculaciones',
-   title:'Puntos clave de Inmatriculación',
-   caption:'La lectura mezcla los universos 1–4; los puntos muestran focos relevantes validados en el análisis.',
-   items:[
-     {name:'Lima', value:86146, x:186, y:355, share:'Vehículos menores'},
-     {name:'Piura', value:39058, x:124, y:175, share:'Vehículos menores'},
-     {name:'Chiclayo', value:33007, x:137, y:219, share:'Vehículos menores'},
-     {name:'Tarapoto', value:22288, x:215, y:214, share:'Vehículos menores'},
-     {name:'Madre de Dios', value:18255, x:260, y:472, share:'Vehículos menores'},
-     {name:'Arequipa', value:765, x:163, y:446, share:'Remolques'},
-     {name:'La Libertad', value:1046, x:150, y:258, share:'Remolques'},
-     {name:'Lima (Remolques)', value:3579, x:199, y:367, share:'Remolques'}
-   ]
- }
-};
-
-function renderMap(mode){
-  const cfg=mapData[mode];
-  peruShape.setAttribute('fill', cfg.fill);
-  mapTitle.textContent=cfg.title;
-  mapCaption.textContent=cfg.caption;
-  legendText.textContent=cfg.legend;
-  markerLayer.innerHTML='';
-  regionList.innerHTML='';
-
-  const max=Math.max(...cfg.items.map(d=>d.value));
-  cfg.items.forEach((d,i)=>{
-    const r = 8 + (d.value/max)*14;
-    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
-    g.setAttribute('class','marker');
-    g.dataset.name=d.name; g.dataset.value=d.value; g.dataset.share=d.share;
-    g.innerHTML=`
-      <circle cx="${d.x}" cy="${d.y}" r="${r+6}" fill="rgba(242,194,48,0.15)"></circle>
-      <circle cx="${d.x}" cy="${d.y}" r="${r}" fill="${mode==='retail' ? '#f2c230' : '#111827'}" stroke="#fff" stroke-width="3"></circle>
-      <text x="${d.x+10}" y="${d.y-10}" font-size="12" font-weight="700" fill="#111827">${d.name}</text>
-    `;
-    g.addEventListener('mousemove', ev=>{
-      popup.style.display='block';
-      popup.style.left=(ev.pageX+16)+'px';
-      popup.style.top=(ev.pageY+16)+'px';
-      popup.innerHTML=`<b>${d.name}</b><br>${mode==='retail'?'Retail':'Referencia'}: ${d.value.toLocaleString('es-PE')}<br>${d.share}`;
-    });
-    g.addEventListener('mouseleave', ()=>popup.style.display='none');
-    markerLayer.appendChild(g);
-
-    const div=document.createElement('div');
-    div.className='region-item';
-    div.innerHTML=`<div class="top"><span>${i+1}. ${d.name}</span><b>${d.value.toLocaleString('es-PE')}</b></div><div class="caption">${d.share}</div>`;
-    regionList.appendChild(div);
-  });
-
-  document.querySelectorAll('.map-toolbar button').forEach(b=>b.classList.toggle('active',b.dataset.map===mode));
-}
-document.querySelectorAll('.map-toolbar button').forEach(btn=>btn.addEventListener('click',()=>renderMap(btn.dataset.map)));
-renderMap('retail');
-
 // ===== V32 - REFUERZO DE NAVEGACION Y BOTONES =====
 (function(){
   function bindUI(){
@@ -5932,7 +5727,7 @@ renderMap('retail');
 
 <script>
 // ===== V34 - MERCADO VEHICULOS PESADOS DINAMICO =====
-const VP3={rows:[],months:[],monthLabels:[],year:2026,meta:{prevMonthYear:null,prevYtd:null,file:''},hiddenSeries:new Set()};
+const VP3={rows:[],months:[],monthLabels:[],year:null,meta:{prevMonthYear:null,prevYtd:null,file:''},hiddenSeries:new Set()};
 const VP3_MONTH_NAMES=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SETIEMBRE','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
 const VP3_SHORT={ENERO:'Ene',FEBRERO:'Feb',MARZO:'Mar',ABRIL:'Abr',MAYO:'May',JUNIO:'Jun',JULIO:'Jul',AGOSTO:'Ago',SETIEMBRE:'Set',SEPTIEMBRE:'Set',OCTUBRE:'Oct',NOVIEMBRE:'Nov',DICIEMBRE:'Dic'};
 const vp3Els={month:document.getElementById('vp3Month'),subclass:document.getElementById('vp3Subclass'),brand:document.getElementById('vp3Brand'),model:document.getElementById('vp3Model'),office:document.getElementById('vp3Office'),fuel:document.getElementById('vp3Fuel'),origin:document.getElementById('vp3Origin'),formula:document.getElementById('vp3Formula'),category:document.getElementById('vp3Category'),body:document.getElementById('vp3Body'),modelyear:document.getElementById('vp3ModelYear')};
@@ -5957,7 +5752,7 @@ function vp3LoadWorkbook(wb,fileName='Excel cargado'){
  if(!cols.office||!cols.subclass||!cols.brand||!cols.model)throw new Error('La estructura del Excel no coincide con Vehículos Pesados.');
  const months=headers.filter(h=>VP3_MONTH_NAMES.includes(vp3Header(h)));if(!months.length)throw new Error('No detecté columnas mensuales.');
  VP3.months=months;VP3.monthLabels=months.map(h=>VP3_SHORT[vp3Header(h)]||h);VP3.rows=raw.map(o=>({office:vp3Norm(o[cols.office])||'SIN DATO',subclass:vp3Norm(o[cols.subclass])||'SIN DATO',brand:vp3Norm(o[cols.brand])||'SIN DATO',model:vp3Norm(o[cols.model])||'SIN DATO',body:vp3Norm(o[cols.body])||'SIN DATO',category:vp3Norm(o[cols.category])||'SIN DATO',origin:vp3Norm(o[cols.origin])||'SIN DATO',fuel:vp3Norm(o[cols.fuel])||'SIN DATO',formula:vp3Norm(o[cols.formula])||'SIN DATO',modelyear:vp3Norm(o[cols.modelyear])||'SIN DATO',m:months.map(h=>Number(o[h])||0)})).filter(r=>r.m.some(v=>v!==0));
- VP3.meta.file=fileName;VP3.meta.prevMonthYear=null;VP3.meta.prevYtd=null;vp3ReadMeta(wb);vp3PopulateMonth();vp3Update(true);vp3Set('vp3HeroStatus',fileName+' · '+VP3.rows.length.toLocaleString('es-PE')+' registros útiles');vp3Set('vp3HeroPeriod','Camiones, tractocamiones, buses y chasises · '+VP3.monthLabels[0]+'–'+VP3.monthLabels.at(-1)+' '+VP3.year+' · datos leídos directamente desde '+fileName+'.');return true
+ VP3.meta.file=fileName;VP3.meta.prevMonthYear=null;VP3.meta.prevYtd=null;const vp3YearMatch=String(fileName||'').match(/20\d{2}/);VP3.year=vp3YearMatch?Number(vp3YearMatch[0]):null;vp3ReadMeta(wb);vp3PopulateMonth();vp3Update(true);vp3Set('vp3HeroStatus',fileName+' · '+VP3.rows.length.toLocaleString('es-PE')+' registros útiles');vp3Set('vp3HeroPeriod','Camiones, tractocamiones, buses y chasises · '+VP3.monthLabels[0]+'–'+VP3.monthLabels.at(-1)+' '+VP3.year+' · datos leídos directamente desde '+fileName+'.');return true
 }
 async function vp3ReadFile(file){if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel.');const buf=await file.arrayBuffer();return vp3LoadWorkbook(XLSX.read(buf,{type:'array',cellDates:true}),file.name)}
 function vp3PopulateMonth(){if(!vp3Els.month)return;vp3Els.month.innerHTML='<option value="ALL">Acumulado</option>'+VP3.months.map((m,i)=>'<option value="'+i+'">'+(VP3.monthLabels[i]||m)+'</option>').join('')}
@@ -5981,7 +5776,7 @@ vp3Init();
 // ==========================================================
 // V35 - MERCADO REMOLQUES Y SEMIRREMOLQUES DINAMICO
 // ==========================================================
-const R4={rows:[],months:[],labels:[],year:2026,meta:{prevMonthYear:684,file:''}};
+const R4={rows:[],months:[],labels:[],year:null,meta:{prevMonthYear:null,file:''}};
 const r4Els={month:document.getElementById('r4Month'),brand:document.getElementById('r4Brand'),model:document.getElementById('r4Model'),office:document.getElementById('r4Office'),dept:document.getElementById('r4Dept'),body:document.getElementById('r4Body'),cat:document.getElementById('r4Cat')};
 const r4Norm=v=>String(v??'').trim().replace(/\s+/g,' ');
 const r4Hdr=v=>r4Norm(v).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9 ]/g,'').replace(/\s+/g,' ');
@@ -6547,6 +6342,47 @@ fids.forEach(id=>$(id)?.addEventListener('change',update));$('rc10Reset')?.addEv
   $('dc11Trend').addEventListener('mousemove',e=>{const c=e.currentTarget,rect=c.getBoundingClientRect(),x=e.clientX-rect.left;const pts=c._pts||[];if(!pts.length)return;let q=pts.reduce((a,b)=>Math.abs(b.x-x)<Math.abs(a.x-x)?b:a);const tip=$('dc11TrendTip');tip.innerHTML=`<b>${monthCols[q.i]?.label||''}</b><br>${fmt(q.v)} unidades`;tip.style.display='block';tooltipMove(tip,e)});$('dc11Trend').addEventListener('mouseleave',()=>{$('dc11TrendTip').style.display='none'});$('dc11Trend').addEventListener('click',e=>{const rect=e.currentTarget.getBoundingClientRect(),x=e.clientX-rect.left,pts=e.currentTarget._pts||[];if(!pts.length)return;const q=pts.reduce((a,b)=>Math.abs(b.x-x)<Math.abs(a.x-x)?b:a);$('dc11Month').value=String(q.i);render()});
   $('dc11Donut').addEventListener('mousemove',e=>{const c=e.currentTarget,r=c.getBoundingClientRect(),x=(e.clientX-r.left)*240/r.width-120,y=(e.clientY-r.top)*240/r.height-120,rad=Math.hypot(x,y);if(rad<58||rad>92){$('dc11DonutTip').style.display='none';return}let a=Math.atan2(y,x);if(a< -Math.PI/2)a+=Math.PI*2;const s=(c._slices||[]).find(z=>a>=z.a0&&a<=z.a1);if(!s){$('dc11DonutTip').style.display='none';return}const tip=$('dc11DonutTip');tip.innerHTML=`<b>${esc(s.label)}</b><br>${fmt(s.value)} unidades`;tip.style.display='block';tooltipMove(tip,e)});$('dc11Donut').addEventListener('mouseleave',()=>{$('dc11DonutTip').style.display='none'});
   window.addEventListener('resize',()=>{if(rows.length)render()});
+})();
+</script>
+
+
+<script id="v55-no-hardcoded-summary">
+(function(){
+  function setText(id,v){const e=document.getElementById(id);if(e)e.textContent=v||'—';}
+
+  window.refreshExcelOnlySummary=function(){
+    try{
+      if(typeof RTM!=='undefined' && RTM?.rows?.length){
+        setText('sumRetailMes', RTM.families?.TOTAL ? Math.round(RTM.families.TOTAL).toLocaleString('es-PE') : '—');
+      }else setText('sumRetailMes','—');
+
+      if(typeof __RAC_API!=='undefined' && __RAC_API?.RAC){
+        const r=__RAC_API.RAC;
+        setText('sumRetailAcum', r?.families?.TOTAL ? Math.round(r.families.TOTAL).toLocaleString('es-PE') : '—');
+      }else setText('sumRetailAcum','—');
+
+      let inmat=0, any=false;
+      if(typeof VM20!=='undefined' && Array.isArray(VM20.rows) && VM20.rows.length){
+        any=true; inmat += VM20.rows.reduce((s,r)=>s+(Array.isArray(r)?r.slice(8).reduce((a,v)=>a+(Number(v)||0),0):0),0);
+      }
+      if(typeof LV2!=='undefined' && Array.isArray(LV2.rows) && LV2.rows.length){
+        any=true; inmat += LV2.rows.reduce((s,r)=>s+(LV2.months||[]).reduce((a,m)=>a+(Number(r[m])||0),0),0);
+      }
+      if(typeof VP3!=='undefined' && Array.isArray(VP3.rows) && VP3.rows.length){
+        any=true; inmat += VP3.rows.reduce((s,r)=>s+(r.m||[]).reduce((a,v)=>a+(Number(v)||0),0),0);
+      }
+      if(typeof R4!=='undefined' && Array.isArray(R4.rows) && R4.rows.length){
+        any=true; inmat += R4.rows.reduce((s,r)=>s+(r.m||[]).reduce((a,v)=>a+(Number(v)||0),0),0);
+      }
+      setText('sumInmat', any ? Math.round(inmat).toLocaleString('es-PE') : '—');
+
+      const geoLoaded = typeof GEO11!=='undefined' && Array.isArray(GEO11.rows) && GEO11.rows.length;
+      setText('sumGeo', geoLoaded ? GEO11.rows.length.toLocaleString('es-PE')+' filas' : '—');
+    }catch(e){ console.warn('Resumen dinámico:',e); }
+  };
+
+  document.addEventListener('click',()=>setTimeout(()=>window.refreshExcelOnlySummary?.(),80));
+  setInterval(()=>window.refreshExcelOnlySummary?.(),1500);
 })();
 </script>
 
