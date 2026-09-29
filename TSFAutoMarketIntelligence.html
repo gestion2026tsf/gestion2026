@@ -4217,12 +4217,12 @@ canvas{transition:filter .14s ease,opacity .14s ease}
     </div>
 
     <div class="sx-kpis">
-      <div class="sx-kpi hot"><span>Inmatriculaciones acumuladas</span><b id="sxInmatTotal">—</b><small>Archivos 2–3</small></div>
-      <div class="sx-kpi"><span>Retail del mes</span><b id="sxRetailMonth">—</b><small id="sxRetailMonthSub">Archivo 5</small></div>
-      <div class="sx-kpi"><span>Retail acumulado</span><b id="sxRetailYtd">—</b><small id="sxRetailYtdSub">Archivo 6</small></div>
-      <div class="sx-kpi"><span>Marca líder Retail</span><b id="sxLeadBrand">—</b><small id="sxLeadBrandSub">Esperando Archivo 6</small></div>
-      <div class="sx-kpi"><span>Departamento líder</span><b id="sxLeadDept">—</b><small id="sxLeadDeptSub">Esperando Archivo 11</small></div>
-      <div class="sx-kpi"><span>Concesionario líder</span><b id="sxLeadDealer">—</b><small id="sxLeadDealerSub">Esperando Archivo 11</small></div>
+      <div class="sx-kpi hot"><span>Inmatriculaciones acumuladas</span><b id="sxInmatTotal">—</b><small>Mercado acumulado cargado</small></div>
+      <div class="sx-kpi"><span>Retail del mes</span><b id="sxRetailMonth">—</b><small id="sxRetailMonthSub">Esperando datos</small></div>
+      <div class="sx-kpi"><span>Retail acumulado</span><b id="sxRetailYtd">—</b><small id="sxRetailYtdSub">Esperando datos</small></div>
+      <div class="sx-kpi"><span>Marca líder Retail</span><b id="sxLeadBrand">—</b><small id="sxLeadBrandSub">Esperando Retail acumulado</small></div>
+      <div class="sx-kpi"><span>Departamento líder</span><b id="sxLeadDept">—</b><small id="sxLeadDeptSub">Esperando geografía</small></div>
+      <div class="sx-kpi"><span>Concesionario líder</span><b id="sxLeadDealer">—</b><small id="sxLeadDealerSub">Esperando red comercial</small></div>
     </div>
 
     <div class="sx-hero">
@@ -4240,13 +4240,13 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
     <div class="sx-row sx-row-main">
       <div class="sx-card">
-        <div class="sx-card-head"><div><h4>Composición Retail acumulada</h4><p>Participación por familia.</p></div><span class="sx-chip" id="sxRetailChip">Archivo 6</span></div>
+        <div class="sx-card-head"><div><h4>Composición Retail acumulada</h4><p>Participación por familia · clic para explorar.</p></div><span class="sx-chip" id="sxRetailChip">Sin datos</span></div>
         <div class="sx-donut-wrap"><canvas id="sxRetailDonut"></canvas><div class="sx-donut-center"><b id="sxRetailDonutTotal">—</b><span>unidades</span></div></div>
         <div class="sx-legend" id="sxRetailLegend"></div>
       </div>
 
       <div class="sx-card">
-        <div class="sx-card-head"><div><h4>Composición de inmatriculaciones</h4><p>Archivos 2–3.</p></div><span class="sx-chip" id="sxInmatChip">0 / 2</span></div>
+        <div class="sx-card-head"><div><h4>Composición de inmatriculaciones</h4><p>Livianos vs. pesados · clic para explorar.</p></div><span class="sx-chip" id="sxInmatChip">Sin datos</span></div>
         <div class="sx-donut-wrap"><canvas id="sxInmatDonut"></canvas><div class="sx-donut-center"><b id="sxInmatDonutTotal">—</b><span>unidades</span></div></div>
         <div class="sx-legend" id="sxInmatLegend"></div>
       </div>
@@ -4258,9 +4258,9 @@ canvas{transition:filter .14s ease,opacity .14s ease}
     </div>
 
     <div class="sx-row sx-row-ranks">
-      <div class="sx-card"><div class="sx-card-head"><div><h4>Top marcas Retail</h4><p>Acumulado del Archivo 6.</p></div></div><div class="sx-rank" id="sxBrands"></div></div>
-      <div class="sx-card"><div class="sx-card-head"><div><h4>Top departamentos Retail</h4><p>Archivo 11.</p></div></div><div class="sx-rank" id="sxDepts"></div></div>
-      <div class="sx-card"><div class="sx-card-head"><div><h4>Top concesionarios Retail</h4><p>Archivo 11.</p></div></div><div class="sx-rank" id="sxDealers"></div></div>
+      <div class="sx-card"><div class="sx-card-head"><div><h4>Top marcas Retail</h4><p>Participación sobre el Retail acumulado.</p></div></div><div class="sx-rank" id="sxBrands"></div></div>
+      <div class="sx-card"><div class="sx-card-head"><div><h4>Top departamentos Retail</h4><p>Concentración territorial del mercado.</p></div></div><div class="sx-rank" id="sxDepts"></div></div>
+      <div class="sx-card"><div class="sx-card-head"><div><h4>Top concesionarios Retail</h4><p>Concentración de la red comercial.</p></div></div><div class="sx-rank" id="sxDealers"></div></div>
     </div>
 
     <div class="sx-card sx-segments-card">
@@ -6623,13 +6623,38 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
     c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return{x,w,h};
   }
 
+  const SX_DONUT_STATE=window.__SX_DONUT_STATE||(window.__SX_DONUT_STATE={});
   function donut(id,totalId,legendId,data){
-    const c=$(id),s=setupCanvas(c,205);if(!s)return;const {x:ctx,w,h}=s,tot=data.reduce((a,z)=>a+z.value,0),cx=w/2,cy=h/2,R=Math.min(w,h)*.40,r=R*.59;
-    ctx.clearRect(0,0,w,h);let a=-Math.PI/2;
+    const c=$(id),s=setupCanvas(c,205);if(!s)return;
+    const {x:ctx,w,h}=s,tot=data.reduce((a,z)=>a+z.value,0),cx=w/2,cy=h/2,R=Math.min(w,h)*.40,r=R*.59;
+    const selected=SX_DONUT_STATE[id]||null;
+    ctx.clearRect(0,0,w,h);let a=-Math.PI/2;const parts=[];
     if(!tot){ctx.strokeStyle='#edf0f4';ctx.lineWidth=R-r;ctx.beginPath();ctx.arc(cx,cy,(R+r)/2,0,Math.PI*2);ctx.stroke()}
-    else data.forEach((z,i)=>{const da=z.value/tot*Math.PI*2;ctx.beginPath();ctx.arc(cx,cy,R,a,a+da);ctx.arc(cx,cy,r,a+da,a,true);ctx.closePath();ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();a+=da});
-    $(totalId).textContent=tot?fmt(tot):'—';
-    $(legendId).innerHTML=data.map((z,i)=>`<div class="sx-leg"><i style="background:${COLORS[i%COLORS.length]}"></i><span title="${z.label}">${z.label}</span><b>${tot?pct(z.value,tot):'—'}</b></div>`).join('');
+    else data.forEach((z,i)=>{
+      const da=z.value/tot*Math.PI*2,end=a+da,isSel=selected===z.label,dim=selected&&!isSel;
+      const mid=a+da/2,off=isSel?5:0,ox=Math.cos(mid)*off,oy=Math.sin(mid)*off;
+      ctx.save();ctx.globalAlpha=dim?.22:1;ctx.beginPath();ctx.arc(cx+ox,cy+oy,R,a,end);ctx.arc(cx+ox,cy+oy,r,end,a,true);ctx.closePath();ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();
+      if(isSel){ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=3;ctx.stroke()}ctx.restore();
+      parts.push({label:z.label,value:z.value,start:a,end,cx,cy,R,r});a=end;
+    });
+    c._sxParts=parts;c.style.cursor=tot?'pointer':'default';
+    const active=data.find(z=>z.label===selected);
+    $(totalId).textContent=active?fmt(active.value):(tot?fmt(tot):'—');
+    const center=$(totalId)?.nextElementSibling;if(center)center.textContent=active?`${pct(active.value,tot)} · ${active.label}`:'unidades';
+    const legend=$(legendId);
+    legend.innerHTML=data.map((z,i)=>`<button type="button" class="sx-leg ${selected===z.label?'active':''}" data-sx-label="${String(z.label).replace(/"/g,'&quot;')}"><i style="background:${COLORS[i%COLORS.length]}"></i><span title="${z.label}">${z.label}</span><b>${tot?pct(z.value,tot):'—'}</b></button>`).join('');
+    if(!c.dataset.sxBound){
+      c.dataset.sxBound='1';c.addEventListener('click',e=>{
+        e.stopPropagation();const rect=c.getBoundingClientRect(),sx=c.width/rect.width,sy=c.height/rect.height;
+        const x=(e.clientX-rect.left)*sx/(devicePixelRatio||1),y=(e.clientY-rect.top)*sy/(devicePixelRatio||1);
+        const dx=x-c.clientWidth/2,dy=y-205/2,rr=Math.hypot(dx,dy);let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;
+        const part=(c._sxParts||[]).find(p=>rr>=p.r&&rr<=p.R&&ang>=p.start&&ang<=p.end);
+        if(part){SX_DONUT_STATE[id]=SX_DONUT_STATE[id]===part.label?null:part.label;render()}
+      });
+    }
+    if(!legend.dataset.sxBound){
+      legend.dataset.sxBound='1';legend.addEventListener('click',e=>{const b=e.target.closest('[data-sx-label]');if(!b)return;e.stopPropagation();const label=b.dataset.sxLabel;SX_DONUT_STATE[id]=SX_DONUT_STATE[id]===label?null:label;render()});
+    }
   }
 
   function trend(ret,inm,labels){
@@ -6685,7 +6710,7 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
   function render(){
     const loaded=loadedList(),count=loaded.filter(Boolean).length;
     $('sxLoaded').textContent=`${count} / 9`;$('sxState').textContent=count===9?'Base completa':count?'Carga parcial':'Esperando archivos';
-    const periods=[typeof RTM!=='undefined'?RTM.period:'',window.__RAC_STATE?.period||'',window.__DC11_API?.fileName?'Archivo 11 cargado':''].filter(Boolean);
+    const periods=[typeof RTM!=='undefined'?RTM.period:'',window.__RAC_STATE?.period||'',window.__DC11_API?.fileName?'Geografía cargada':''].filter(Boolean);
     $('sxPeriod').textContent=count?('Consolidación dinámica · '+(periods[0]||periods[1]||'periodos cargados')):'Carga tus Excel para consolidar el mercado.';
 
     const inmatParts=[
@@ -6693,10 +6718,10 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
       {label:'Vehículos Pesados',value:sumVP3()}
     ].filter(x=>x.value>0);
     const inmatTotal=inmatParts.reduce((s,x)=>s+x.value,0);
-    $('sxInmatTotal').textContent=inmatTotal?fmt(inmatTotal):'—';$('sxInmatChip').textContent=`${inmatParts.length} / 2`;donut('sxInmatDonut','sxInmatDonutTotal','sxInmatLegend',inmatParts);
+    $('sxInmatTotal').textContent=inmatTotal?fmt(inmatTotal):'—';$('sxInmatChip').textContent=inmatParts.length?`${inmatParts.length} / 2 fuentes`:'Sin datos';donut('sxInmatDonut','sxInmatDonutTotal','sxInmatLegend',inmatParts);
 
     let retailMonth=0;if(typeof RTM!=='undefined'&&RTM.rows?.length){if(!RTM.families?.TOTAL&&typeof rtmCompute==='function')try{rtmCompute()}catch(e){}retailMonth=Number(RTM.families?.TOTAL)||0}
-    $('sxRetailMonth').textContent=retailMonth?fmt(retailMonth):'—';$('sxRetailMonthSub').textContent=retailMonth?(RTM.period||'Archivo 5'):'Archivo 5';
+    $('sxRetailMonth').textContent=retailMonth?fmt(retailMonth):'—';$('sxRetailMonthSub').textContent=retailMonth?(RTM.period||'Periodo cargado'):'Esperando datos';
 
     let retailYtd=0,retailFamilies=[];
     const RAC6=window.__RAC_STATE;
@@ -6704,10 +6729,10 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
       retailYtd=RAC6.rows.reduce((s,r)=>s+(Number(r.cur)||0),0);
       retailFamilies=Object.values(RAC6.families||{}).map(f=>({label:f.label||f.key,value:Number(f.cur)||0})).filter(x=>x.value>0)
     }
-    $('sxRetailYtd').textContent=retailYtd?fmt(retailYtd):'—';$('sxRetailYtdSub').textContent=retailYtd?(RAC6?.period||'Archivo 6'):'Archivo 6';$('sxRetailChip').textContent=retailFamilies.length?'100% mercado':'Archivo 6';donut('sxRetailDonut','sxRetailDonutTotal','sxRetailLegend',retailFamilies);
+    $('sxRetailYtd').textContent=retailYtd?fmt(retailYtd):'—';$('sxRetailYtdSub').textContent=retailYtd?(RAC6?.period||'Acumulado cargado'):'Esperando datos';$('sxRetailChip').textContent=retailFamilies.length?'100% mercado':'Sin datos';donut('sxRetailDonut','sxRetailDonutTotal','sxRetailLegend',retailFamilies);
 
-    const brands=racBrands();$('sxLeadBrand').textContent=brands[0]?.[0]||'—';$('sxLeadBrandSub').textContent=brands[0]?`${fmt(brands[0][1])} · ${pct(brands[0][1],retailYtd)}`:'Esperando Archivo 6';rank('sxBrands',brands);
-    const depts=geoAgg('dept'),dealers=geoAgg('dealer');$('sxLeadDept').textContent=depts[0]?.[0]||'—';$('sxLeadDeptSub').textContent=depts[0]?`${fmt(depts[0][1])} · ${pct(depts[0][1],depts.reduce((s,x)=>s+x[1],0))}`:'Esperando Archivo 11';$('sxLeadDealer').textContent=dealers[0]?.[0]||'—';$('sxLeadDealerSub').textContent=dealers[0]?`${fmt(dealers[0][1])} · ${pct(dealers[0][1],dealers.reduce((s,x)=>s+x[1],0))}`:'Esperando Archivo 11';rank('sxDepts',depts);rank('sxDealers',dealers);
+    const brands=racBrands();$('sxLeadBrand').textContent=brands[0]?.[0]||'—';$('sxLeadBrandSub').textContent=brands[0]?`${fmt(brands[0][1])} · ${pct(brands[0][1],retailYtd)}`:'Esperando Retail acumulado';rank('sxBrands',brands);
+    const depts=geoAgg('dept'),dealers=geoAgg('dealer');$('sxLeadDept').textContent=depts[0]?.[0]||'—';$('sxLeadDeptSub').textContent=depts[0]?`${fmt(depts[0][1])} · ${pct(depts[0][1],depts.reduce((s,x)=>s+x[1],0))}`:'Esperando geografía';$('sxLeadDealer').textContent=dealers[0]?.[0]||'—';$('sxLeadDealerSub').textContent=dealers[0]?`${fmt(dealers[0][1])} · ${pct(dealers[0][1],dealers.reduce((s,x)=>s+x[1],0))}`:'Esperando red comercial';rank('sxDepts',depts);rank('sxDealers',dealers);
 
     const r=retailMonthlyFromDetail(),im=inmatMonthly(),n=Math.max(r.vals.length,im.length),labels=(r.months.length?r.months:(typeof VM20_MONTHS!=='undefined'?VM20_MONTHS:[])).slice(0,n);trend(r.vals,im,labels);
 
@@ -7014,5 +7039,47 @@ select option.tsf-seg-option{font-size:inherit}
 })();
 </script>
 
+
+<style id="v68-executive-polish">
+/* V68 · Resumen Ejecutivo elegante + interacción discreta */
+#resumen .sx-wrap{gap:12px!important;padding-bottom:22px}
+#resumen .sx-head{padding:2px 2px 0}
+#resumen .sx-kpis{gap:10px}
+#resumen .sx-kpi{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;background:linear-gradient(180deg,#fff 0%,#fcfcfd 100%)}
+#resumen .sx-kpi:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(17,24,39,.08);border-color:#dfe3ea}
+#resumen .sx-kpi.hot{background:linear-gradient(135deg,#ed0b70 0%,#ff4c58 58%,#ff7d38 100%);box-shadow:0 13px 28px rgba(238,11,112,.18)}
+#resumen .sx-card{border-color:#e7e9ee;box-shadow:0 10px 28px rgba(17,24,39,.045);transition:box-shadow .18s ease,transform .18s ease}
+#resumen .sx-card:hover{box-shadow:0 14px 34px rgba(17,24,39,.07)}
+#resumen .sx-card-head h4{font-size:13px!important;letter-spacing:-.1px}
+#resumen .sx-card-head p{font-size:9px;line-height:1.35}
+#resumen .sx-donut-wrap{width:min(100%,215px);margin:10px auto 11px}
+#resumen .sx-donut-wrap canvas{filter:drop-shadow(0 6px 10px rgba(17,24,39,.06))}
+#resumen .sx-donut-center b{font-size:26px;letter-spacing:-.8px}
+#resumen .sx-donut-center span{max-width:125px;line-height:1.25;margin-inline:auto}
+#resumen .sx-legend{gap:7px}
+#resumen .sx-leg{font-family:inherit;width:100%;border:1px solid #e8ebf0;border-radius:11px;padding:8px 9px;display:grid;grid-template-columns:auto 1fr auto;gap:7px;align-items:center;background:#fbfcfd;color:inherit;text-align:left;cursor:pointer;transition:.16s ease}
+#resumen .sx-leg:hover{background:#fff;border-color:#d9dde5;transform:translateY(-1px);box-shadow:0 6px 15px rgba(17,24,39,.05)}
+#resumen .sx-leg.active{background:#fff7fa;border-color:#ffb8d4;box-shadow:0 0 0 3px rgba(238,11,112,.07)}
+#resumen .sx-leg.active span,#resumen .sx-leg.active b{color:#171a20}
+#resumen .sx-rank-row{transition:background .15s ease,transform .15s ease}
+#resumen .sx-rank-row:hover{background:#faf7f9;transform:translateX(2px)}
+#resumen .sx-chip{background:#fff7df;border:1px solid #f8e9b8;color:#735900}
+#resumen .sx-trend-wrap{height:250px}
+#resumen .sx-hero{background:radial-gradient(circle at 88% 20%,rgba(238,11,112,.14),transparent 24%),linear-gradient(112deg,#111720 0%,#1d2430 60%,#432a2a 100%)}
+#resumen .sx-insight{background:linear-gradient(180deg,#fff 0%,#fff8fb 100%)}
+@media(max-width:1450px){#resumen .sx-row-main{grid-template-columns:1fr 1fr}#resumen .sx-trend-card{grid-column:1/-1}}
+</style>
+<script id="v68-executive-interaction">
+(()=>{
+  // Al hacer clic fuera de una dona del Resumen Ejecutivo, vuelve a la vista total.
+  document.addEventListener('click',e=>{
+    if(e.target.closest('#sxRetailDonut,#sxInmatDonut,#sxRetailLegend,#sxInmatLegend'))return;
+    const st=window.__SX_DONUT_STATE;if(!st)return;
+    const had=Object.values(st).some(Boolean);if(!had)return;
+    st.sxRetailDonut=null;st.sxInmatDonut=null;
+    if(typeof window.refreshExecutiveSummary==='function')window.refreshExecutiveSummary();
+  });
+})();
+</script>
 </body>
 </html>
