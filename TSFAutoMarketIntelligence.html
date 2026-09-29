@@ -4178,8 +4178,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
     <button data-page="retailComerciales"><span class="nav-ico">▱</span>Retail Comerciales</button>
     <button data-page="retailOmnibus"><span class="nav-ico">▣</span>Retail Ómnibus</button>
     <button data-page="retailCamiones"><span class="nav-ico">▰</span>Retail Camiones y Remolcadores</button>
-    <button data-page="inmat"><span class="nav-ico">◎</span>Inmatriculaciones</button>
-    <button data-page="brechas"><span class="nav-ico">⇄</span>Retail vs Inmat.</button>
+<button data-page="brechas"><span class="nav-ico">⇄</span>Retail vs Inmat.</button>
 <button data-page="concesionarios"><span class="nav-ico">▦</span>Departamento y Concesionarios</button>
 <button data-page="carga"><span class="nav-ico">＋</span>Cargar Mes</button>
   </div>
@@ -4347,17 +4346,6 @@ canvas{transition:filter .14s ease,opacity .14s ease}
   <div class="rac-tooltip" id="racTooltip"></div>
 </section>
 
-<section class="page" id="inmat">
-  <div class="hero"><div><h3>Inmatriculaciones</h3><p>Registro efectivo de vehículos. Fuente: archivos 1–4.</p></div></div>
-  <div class="grid kpis">
-    <div class="card kpi accent"><div class="label">Vehículos menores</div><div class="value">385,654</div><div class="sub">66.5% del universo mostrado</div></div>
-    <div class="card kpi"><div class="label">Livianos</div><div class="value">167,244</div><div class="sub">878 modelos</div></div>
-    <div class="card kpi"><div class="label">Pesados</div><div class="value">21,572</div><div class="sub">Camiones, tractos y buses</div></div>
-    <div class="card kpi"><div class="label">Remolques</div><div class="value">5,747</div><div class="sub">139 marcas</div></div>
-  </div>
-  <div class="section-title"><h4>Detalle mensual conjunto</h4><span>Archivos 1–4</span></div>
-  <div class="card"><canvas id="inmatChart" class="chart"></canvas></div>
-</section>
 
 <section class="page" id="brechas">
   <div class="hero"><div><h3>Retail vs Inmatriculación</h3><p>Comparación analítica. No representa una resta contable directa; requiere homologación por marca/segmento.</p></div></div>
@@ -5069,7 +5057,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
 <script>
 const titles={
- resumen:'Resumen Ejecutivo',retailmes:'Retail del Mes',retail:'Retail Acumulado - Ene–Ago 2026',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',inmat:'Inmatriculaciones',brechas:'Retail vs Inmatriculación',
+ resumen:'Resumen Ejecutivo',retailmes:'Retail del Mes',retail:'Retail Acumulado - Ene–Ago 2026',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',brechas:'Retail vs Inmatriculación',
  ligeros:'Mercado Vehículos Livianos',comerciales:'Comerciales',pesados:'Mercado Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Mercado Remolques y Semirremolques',
  concesionarios:'Departamento y Concesionarios Retail',carga:'Cargar Mes'
 };
