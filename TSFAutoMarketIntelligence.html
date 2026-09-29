@@ -4153,7 +4153,6 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 @media(max-width:900px){.rc10-grid-a,.rc10-grid-b{grid-template-columns:1fr}.rc10-advanced{grid-template-columns:repeat(2,1fr)}.rc10-quality{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:620px){.rc10-kpis,.rc10-filterbar,.rc10-advanced,.rc10-grid-c,.rc10-insights,.rc10-quality{grid-template-columns:1fr}.rc10-hero,.rc10-source{flex-direction:column;align-items:flex-start}.rc10-source-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.rc10-donut-legend{grid-template-columns:1fr}}
 </style>
-
 </head>
 <body>
 <div class="app">
@@ -4188,7 +4187,11 @@ canvas{transition:filter .14s ease,opacity .14s ease}
   <div class="topbar-left"><h2 id="pageTitle">Resumen Ejecutivo</h2><small id="periodText">Carga tus Excel para iniciar el análisis</small></div>
   <div class="actions"><span class="tsf-live">Base validada</span>
     <button class="btn" id="qualityBtn">✓ Validación</button>
-    <button class="btn yellow" data-go="carga">📁 Cargar periodo</button>
+    <div class="sp-period-wrap">
+      <label>Periodo</label>
+      <select id="spPeriodSelect" disabled><option>Selecciona periodo</option></select>
+    </div>
+    <button class="btn yellow" id="spConnectBtn" type="button">↻ Cargar datos</button>
     <button class="btn primary" onclick="window.print()">⬇ Exportar / Imprimir</button>
   </div>
 </header>
@@ -4197,6 +4200,10 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
 <section class="page active" id="resumen">
   <div class="sx-wrap">
+    <div class="sp-sync-banner" id="spSyncBanner">
+      <i class="sp-sync-dot"></i>
+      <div><b id="spSyncTitle">Datos no cargados</b><span id="spSyncSub">Selecciona un periodo y carga los datos desde Power Automate.</span></div>
+    </div>
     <div class="sx-head">
       <div>
         <div class="sx-eyebrow">INTELIGENCIA DE MERCADO AUTOMOTOR · TSF</div>
@@ -5948,6 +5955,7 @@ function renderMovers(brands){
 }
 function renderQuality(total){let control=null;try{const a=XLSX.utils.sheet_to_json(RAC.wb.Sheets['VTA ACUM'],{header:1,defval:null,raw:true});for(const row of a){if(String(row?.[0]||'').toUpperCase().includes('TOTALES')){control=num(row?.[30]);break}}}catch(e){}const diff=control===null?null:total-control;const ligeros=RAC.families.LIGEROS?.cur||0;const q=[['Total hojas detalle',fmt(total),'ok'],['VTA ACUM',control===null?'No leído':fmt(control),control===total?'ok':'bad'],['Diferencia',diff===null?'—':fmt(diff),diff===0?'ok':'bad'],['FOTON 1','Homologado a FOTON','warn'],['LIGEROS B:D','Se recalcula desde detalle','warn']];$('racQuality').innerHTML=q.map(x=>`<div class="rac-q ${x[2]}"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('')}
 function render(refresh=true){if(!RAC.rows.length)return;if(refresh)refreshBrands();const rows=filteredRows(),total=rows.reduce((s,r)=>s+r.cur,0),prev=rows.reduce((s,r)=>s+r.prev,0),growth=prev?(total/prev-1)*100:null,brands=aggBrands(rows),segs=aggSegments(rows),fams=familyData(rows);$('racPeriod').textContent=RAC.period;$('racHeroText').textContent='Visión acumulada a '+RAC.period+' · tamaño de mercado, crecimiento 2026 vs 2025, concentración y marcas impulsoras.';$('racTotal').textContent=fmt(total);$('racTotalSub').textContent=RAC.family==='TOTAL'?'Mercado total':CFG[RAC.family].label;$('racPrev').textContent=fmt(prev);$('racGrowth').textContent=growth===null?'—':(growth>=0?'+':'')+growth.toFixed(1)+'%';$('racGrowth').className=growth===null?'':growth>=0?'positive':'negative';$('racGrowthSub').textContent=growth===null?'sin base comparable':((total-prev)>=0?'+':'')+fmt(total-prev)+' unidades';$('racBrands').textContent=brands.filter(x=>x.cur>0).length;$('racLeader').textContent=brands[0]?.brand||'—';$('racLeaderSub').textContent=brands[0]?fmt(brands[0].cur)+' · '+pct(brands[0].cur,total):'—';$('racSegLead').textContent=segs[0]?.seg||'—';$('racSegLeadSub').textContent=segs[0]?fmt(segs[0].value)+' · '+pct(segs[0].value,total):'—';$('racShareChip').textContent=RAC.family==='TOTAL'?'100% mercado':CFG[RAC.family].label;$('racRankTitle').textContent='Top marcas acumuladas · '+(RAC.family==='TOTAL'?'Total mercado':CFG[RAC.family].label);$('racSelection').textContent='Vista: '+(RAC.family==='TOTAL'?'Total mercado':CFG[RAC.family].label)+(RAC.brand!=='ALL'?' · '+RAC.brand:'');drawDonut(fams,total);renderRank(brands,total);renderFamilies(fams);renderSegments(segs,total);renderMovers(brands);renderQuality(RAC.rows.reduce((s,r)=>s+r.cur,0));const top3=brands.slice(0,3).reduce((s,x)=>s+x.cur,0),topFam=fams.slice().sort((a,b)=>b.cur-a.cur)[0];$('racInsights').innerHTML=`<div class="rac-insight"><span>Familia dominante</span><b>${topFam?.label||'—'}</b><small>${pct(topFam?.cur||0,total)}</small></div><div class="rac-insight"><span>Top 3 marcas</span><b>${pct(top3,total)}</b><small>concentración</small></div><div class="rac-insight"><span>Variación absoluta</span><b>${(total-prev)>=0?'+':''}${fmt(total-prev)}</b><small>vs 2025</small></div><div class="rac-insight"><span>Segmento líder</span><b>${segs[0]?.seg||'—'}</b><small>${segs[0]?pct(segs[0].value,total):'—'}</small></div>`;}
+window.__LOAD_08_6=(wb,name)=>parseWorkbook(wb,name);window.__RAC_STATE=RAC;
 async function readFile(file){try{setLoad(false,'Procesando Excel…',file.name);const buf=await file.arrayBuffer();const wb=XLSX.read(buf,{type:'array'});parseWorkbook(wb,file.name)}catch(err){console.error(err);setLoad(false,'No se pudo leer el archivo',err.message||String(err));alert('No se pudo cargar Retail Acumulado: '+(err.message||err))}}
 async function autoLoad(){
   $('rc10SourceTitle').textContent='Sube tu Excel de Camiones y Remolcadores';
@@ -6165,6 +6173,8 @@ function renderRank(id,rows,field,filterId){const m=$('rcMonthFilter').value,a=a
 function renderBars(id,rows,field,filterId){const m=$('rcMonthFilter').value,a=aggregate(rows,field,m).slice(0,8),max=a[0]?.[1]||1,total=a.reduce((s,x)=>s+x[1],0)||1;$(id).innerHTML=a.map(([k,v])=>`<div class="rc-barrow" data-v="${k.replace(/"/g,'&quot;')}"><span>${k}</span><div class="track"><i style="width:${v/max*100}%"></i></div><b>${pct(v,total)}</b></div>`).join('');$(id).querySelectorAll('.rc-barrow').forEach(el=>{if(filterId)el.onclick=()=>{$(filterId).value=el.dataset.v;update()};el.onmousemove=e=>{const v=a.find(x=>x[0]===el.dataset.v)?.[1]||0;tip(`<b>${el.dataset.v}</b><br>${fmt(v)} unidades<br>${pct(v,total)}`,e)};el.onmouseleave=hideTip})}
 function update(){if(!RC.rows.length)return;const rows=filtered(),month=$('rcMonthFilter').value,total=sum(rows,month),baseNoMonth=filtered('rcMonthFilter'),latest=RC.months.at(-1),prev=RC.months.at(-2),latestVal=sum(baseNoMonth,latest),prevVal=sum(baseNoMonth,prev),seg=aggregate(rows,'Segmento',month)[0]||['—',0],brand=aggregate(rows,'Marca',month)[0]||['—',0],model=aggregate(rows,'Modelo',month)[0]||['—',0],fuelAgg=aggregate(rows,'Combustible',month),driveAgg=aggregate(rows,'Fórmula rodante',month),diesel=fuelAgg.find(x=>x[0]==='DSL')?.[1]||0,x4=driveAgg.find(x=>x[0]==='4x4')?.[1]||0;$('rcTotal').textContent=fmt(total);$('rcTotalSub').textContent=month==='ALL'?'Acumulado de la selección':'Vista mensual';$('rcMonthLabel').textContent=latest||'Último mes';$('rcMonth').textContent=fmt(latestVal);$('rcMonthSub').textContent='último mes disponible';$('rcMom').textContent=prevVal?((latestVal/prevVal-1)*100).toFixed(1)+'%':'—';$('rcMomSub').textContent=prev?`${latest} vs ${prev}`:'—';$('rcSegment').textContent=seg[0];$('rcSegmentSub').textContent=`${fmt(seg[1])} · ${pct(seg[1],total)}`;$('rcBrand').textContent=brand[0];$('rcBrandSub').textContent=`${fmt(brand[1])} · ${pct(brand[1],total)}`;$('rcModel').textContent=model[0];$('rcModelSub').textContent=`${fmt(model[1])} · ${pct(model[1],total)}`;$('rcDiesel').textContent=pct(diesel,total);$('rcDieselSub').textContent=`${fmt(diesel)} unidades`;$('rc4x4').textContent=pct(x4,total);$('rc4x4Sub').textContent=`${fmt(x4)} unidades`;$('rcFilterNote').textContent=`${fmt(total)} unidades · ${rows.length.toLocaleString()} filas técnicas visibles`;drawTrend();drawDonut(rows);renderRank('rcBrands',rows,'Marca','rcBrandFilter');renderRank('rcModels',rows,'Modelo','rcModelFilter');renderBars('rcOrigins',rows,'Origen','rcOriginFilter');renderBars('rcFuels',rows,'Combustible','rcFuelFilter');renderBars('rcTrans',rows,'Tipo de Transmision','rcTransFilter');renderBars('rcBodies',rows,'Carroceria','rcBodyFilter');const brands=aggregate(rows,'Marca',month),top3=brands.slice(0,3).reduce((s,x)=>s+x[1],0),china=aggregate(rows,'Origen',month).find(x=>x[0].toUpperCase()==='CHINA')?.[1]||0,c3=aggregate(rows,'Segmento',month).find(x=>x[0]==='C3')?.[1]||0;$('rcTop3').textContent=pct(top3,total);$('rcChina').textContent=pct(china,total);$('rcC3').textContent=pct(c3,total);$('rcModelCount').textContent=new Set(rows.filter(r=>val(r,month)>0).map(r=>norm(r.Modelo))).size.toLocaleString();$('rcShareChip').textContent=total?`${pct(total,sum(RC.rows,'ALL'))} selección`:'0%'}
 function parseWorkbook(wb,name){const ws=wb.Sheets['COMERCIALES']||wb.Sheets[wb.SheetNames[0]],raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});let hi=raw.findIndex(r=>r.some(v=>norm(v)==='Marca')&&r.some(v=>norm(v)==='Modelo'));if(hi<0)throw new Error('No se encontró la fila de encabezados del archivo COMERCIALES.');const headers=raw[hi].map(v=>norm(v)),months=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].filter(m=>headers.includes(m));const rows=raw.slice(hi+1).map(a=>Object.fromEntries(headers.map((h,i)=>[h,a[i]]))).filter(r=>norm(r.Marca)&&norm(r.Modelo)&&months.some(m=>num(r[m])!==0));let period='';for(const rr of raw.slice(0,hi)){for(const v of rr){const s=norm(v);if(/MES\/AÑO/i.test(s)){period=s.replace(/^.*?:\s*/,'');break}}if(period)break}RC.rows=rows;RC.headers=headers;RC.months=months;RC.period=period||months.at(-1)||'—';refreshOptions();$('rcPeriod').textContent=RC.period;$('rcSourceTitle').textContent='Excel cargado correctamente';$('rcSourceSub').textContent=`${name} · ${rows.length.toLocaleString()} filas · ${headers.length} columnas`;$('rcRows').textContent=rows.length.toLocaleString()+' filas';$('rcUniqueCodes').textContent=new Set(rows.map(r=>norm(r['Código de modelo']))).size.toLocaleString();const missFuel=rows.filter(r=>!norm(r.Combustible)).length,missTrans=rows.filter(r=>!norm(r['Tipo de Transmision'])).length,missCap=rows.filter(r=>r['Capacidad de Carga  (kg)']==null||r['Capacidad de Carga  (kg)']==='').length;$('rcMissing').textContent=`Combustible: ${missFuel} · Transmisión: ${missTrans} · Carga: ${missCap}`;const keys=new Set(),dups=[];rows.forEach(r=>{const k=headers.slice(0,34).map(h=>norm(r[h])).join('|');if(keys.has(k))dups.push(k);else keys.add(k)});$('rcDup').textContent=dups.length?`${dups.length} duplicados adicionales`:'0 duplicados exactos';update()}
+window.__LOAD_08_7=(wb,name)=>parseWorkbook(wb,name);window.__RL_STATE=RL;
+window.__LOAD_08_8=(wb,name)=>parseWorkbook(wb,name);window.__RC8_STATE=RC;
 async function readFile(file){const ab=await file.arrayBuffer();parseWorkbook(XLSX.read(ab,{type:'array'}),file.name)}
 async function autoLoad(){const candidates=['./data/retail_comerciales.xlsx','./retail_comerciales.xlsx','./08.8_Comerciales Retail Agosto 2026.xlsx'];for(const url of candidates){try{const r=await fetch(url,{cache:'no-store'});if(!r.ok)continue;parseWorkbook(XLSX.read(await r.arrayBuffer(),{type:'array'}),url.split('/').pop());return}catch(e){}}$('rcSourceTitle').textContent='Selecciona el Excel de Retail Comerciales';$('rcSourceSub').textContent='No se encontró retail_comerciales.xlsx automáticamente. Puedes cargarlo con el botón.'}
 fids.forEach(id=>$(id)?.addEventListener('change',update));$('rcReset')?.addEventListener('click',()=>{fids.forEach(id=>{if($(id))$(id).value='ALL'});update()});$('rcMore')?.addEventListener('click',()=>{const p=$('rcAdvanced');p.hidden=!p.hidden;$('rcMore').textContent=p.hidden?'Más filtros':'Menos filtros'});$('rcLoad')?.addEventListener('click',()=>$('rcFile').click());$('rcRetry')?.addEventListener('click',autoLoad);$('rcFile')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;$('rcSourceTitle').textContent='Procesando Excel…';$('rcSourceSub').textContent=f.name;try{await readFile(f)}catch(err){$('rcSourceTitle').textContent='No se pudo leer el archivo';$('rcSourceSub').textContent=err.message||String(err);alert(err.message||String(err))}finally{e.target.value=''}});document.querySelectorAll('#rcLegend button').forEach(b=>b.addEventListener('click',()=>{const s=b.dataset.s;if(RC.hidden.has(s)){RC.hidden.delete(s);b.classList.remove('off')}else{RC.hidden.add(s);b.classList.add('off')}drawTrend()}));document.querySelectorAll('#nav button[data-page="retailComerciales"]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{if(RC.rows.length)update()},80)));window.addEventListener('resize',()=>{if($('retailComerciales')?.classList.contains('active')&&RC.rows.length){clearTimeout(window.__rc8r);window.__rc8r=setTimeout(()=>{drawTrend();drawDonut(filtered())},150)}});document.addEventListener('mousemove',moveTip);setTimeout(autoLoad,900);
@@ -6194,6 +6204,7 @@ function renderRank(id,rows,field,filterId){const m=$('roMonthFilter').value,a=a
 function renderBars(id,rows,field,filterId){const m=$('roMonthFilter').value,a=aggregate(rows,field,m).slice(0,8),max=a[0]?.[1]||1,total=sum(rows,m)||1;$(id).innerHTML=a.map(([k,v])=>`<div class="ro-barrow" data-v="${k.replace(/"/g,'&quot;')}"><span>${k}</span><div class="track"><i style="width:${v/max*100}%"></i></div><b>${pct(v,total)}</b></div>`).join('');$(id).querySelectorAll('.ro-barrow').forEach(el=>{if(filterId)el.onclick=()=>{$(filterId).value=el.dataset.v;update()};el.onmousemove=e=>{const v=a.find(x=>x[0]===el.dataset.v)?.[1]||0;tip(`<b>${el.dataset.v}</b><br>${fmt(v)} unidades<br>${pct(v,total)}`,e)};el.onmouseleave=hideTip})}
 function update(){if(!RO.rows.length)return;const rows=filtered(),m=$('roMonthFilter').value,total=sum(rows,m),baseNoMonth=filtered('roMonthFilter'),latest=RO.months.at(-1),prev=RO.months.at(-2),latestVal=sum(baseNoMonth,latest),prevVal=sum(baseNoMonth,prev),brand=aggregate(rows,'Marca',m)[0]||['—',0],seg=aggregate(rows,'Segmento',m)[0]||['—',0],origin=aggregate(rows,'Origen',m)[0]||['—',0],fuels=aggregate(rows,'Combustible',m),diesel=fuels.find(x=>x[0].toUpperCase()==='DSL'||x[0].toUpperCase()==='DIESEL')?.[1]||0,monthTotals=RO.months.map(mm=>[mm,sum(baseNoMonth,mm)]),peak=monthTotals.sort((a,b)=>b[1]-a[1])[0]||['—',0];$('roTotal').textContent=fmt(total);$('roTotalSub').textContent=m==='ALL'?'Acumulado de la selección':'Vista mensual';$('roMonthLabel').textContent=latest||'Último mes';$('roMonth').textContent=fmt(latestVal);$('roMonthSub').textContent='último mes disponible';$('roMom').textContent=prevVal?((latestVal/prevVal-1)*100).toFixed(1)+'%':'—';$('roMomSub').textContent=prev?`${latest} vs ${prev}`:'—';$('roPeak').textContent=fmt(peak[1]);$('roPeakSub').textContent=peak[0];$('roBrand').textContent=brand[0];$('roBrandSub').textContent=`${fmt(brand[1])} · ${pct(brand[1],total)}`;$('roSegment').textContent=seg[0];$('roSegmentSub').textContent=`${fmt(seg[1])} · ${pct(seg[1],total)}`;$('roDiesel').textContent=pct(diesel,total);$('roDieselSub').textContent=`${fmt(diesel)} unidades`;$('roOrigin').textContent=origin[0];$('roOriginSub').textContent=`${fmt(origin[1])} · ${pct(origin[1],total)}`;$('roFilterNote').textContent=`${fmt(total)} unidades · ${rows.length.toLocaleString()} filas técnicas visibles`;drawTrend();drawDonut(rows);renderRank('roBrands',rows,'Marca','roBrandFilter');renderRank('roModels',rows,'Modelo','roModelFilter');renderBars('roOrigins',rows,'Origen','roOriginFilter');renderBars('roFuels',rows,'Combustible','roFuelFilter');renderBars('roDrive',rows,'Fórmula rodante','roDriveFilter');renderBars('roCats',rows,'Categoría RENAV','roCatFilter');const brands=aggregate(rows,'Marca',m),top3=brands.slice(0,3).reduce((s,x)=>s+x[1],0),brazil=aggregate(rows,'Origen',m).find(x=>x[0].toUpperCase()==='BRASIL')?.[1]||0,x4=aggregate(rows,'Fórmula rodante',m).find(x=>x[0]==='4x2')?.[1]||0,mt=aggregate(rows,'Tipo de Transmision',m).find(x=>x[0].toUpperCase()==='MT')?.[1]||0;$('roTop3').textContent=pct(top3,total);$('roBrazil').textContent=pct(brazil,total);$('ro4x2').textContent=pct(x4,total);$('roMT').textContent=pct(mt,total);$('roShareChip').textContent=total?`${pct(total,sum(RO.rows,'ALL'))} selección`:'0%'}
 function parseWorkbook(wb,name){const ws=wb.Sheets['OMNIBUS']||wb.Sheets[wb.SheetNames[0]],raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});let hi=raw.findIndex(r=>r.some(v=>norm(v)==='Marca')&&r.some(v=>norm(v)==='Modelo'));if(hi<0)throw new Error('No se encontró la fila de encabezados del archivo OMNIBUS.');const headers=raw[hi].map(v=>norm(v)),months=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].filter(m=>headers.includes(m));const rows=raw.slice(hi+1).map(a=>Object.fromEntries(headers.map((h,i)=>[h,a[i]]))).filter(r=>norm(r.Marca)&&norm(r.Modelo)&&months.some(m=>num(r[m])!==0));let period='';for(const rr of raw.slice(0,hi)){for(const v of rr){const s=norm(v);if(/MES\/AÑO/i.test(s)){period=s.replace(/^.*?:\s*/,'');break}}if(period)break}RO.rows=rows;RO.headers=headers;RO.months=months;RO.period=period||months.at(-1)||'—';refreshOptions();$('roPeriod').textContent=RO.period;$('roSourceTitle').textContent='Excel cargado correctamente';$('roSourceSub').textContent=`${name} · ${rows.length.toLocaleString()} filas · ${headers.length} columnas`;$('roRows').textContent=rows.length.toLocaleString()+' filas';$('roUniqueCodes').textContent=new Set(rows.map(r=>norm(r['Código de modelo']))).size.toLocaleString();const missCyl=rows.filter(r=>r['Cilindrada  (cc)']==null||r['Cilindrada  (cc)']==='').length,missGear=rows.filter(r=>r['Número de Cambios']==null||r['Número de Cambios']==='').length;$('roMissing').textContent=`Cilindrada: ${missCyl} · N° cambios: ${missGear}`;const keys=new Set(),dups=[];rows.forEach(r=>{const k=headers.slice(0,24).map(h=>norm(r[h])).join('|');if(keys.has(k))dups.push(k);else keys.add(k)});$('roDup').textContent=dups.length?`${dups.length} duplicados adicionales`:'0 duplicados exactos';update()}
+window.__LOAD_08_9=(wb,name)=>parseWorkbook(wb,name);window.__RO9_STATE=RO;
 async function readFile(file){parseWorkbook(XLSX.read(await file.arrayBuffer(),{type:'array'}),file.name)}
 async function autoLoad(){const candidates=['./data/retail_omnibus.xlsx','./retail_omnibus.xlsx','./08.9_Omnibus Retail Agosto 2026.xlsx'];for(const url of candidates){try{const r=await fetch(url,{cache:'no-store'});if(!r.ok)continue;parseWorkbook(XLSX.read(await r.arrayBuffer(),{type:'array'}),url.split('/').pop());return}catch(e){}}$('roSourceTitle').textContent='Selecciona el Excel de Retail Ómnibus';$('roSourceSub').textContent='No se encontró retail_omnibus.xlsx automáticamente. Puedes cargarlo con el botón.'}
 fids.forEach(id=>$(id)?.addEventListener('change',update));$('roReset')?.addEventListener('click',()=>{fids.forEach(id=>{if($(id))$(id).value='ALL'});update()});$('roMore')?.addEventListener('click',()=>{const p=$('roAdvanced');p.hidden=!p.hidden;$('roMore').textContent=p.hidden?'Más filtros':'Menos filtros'});$('roLoad')?.addEventListener('click',()=>$('roFile').click());$('roRetry')?.addEventListener('click',autoLoad);$('roFile')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;$('roSourceTitle').textContent='Procesando Excel…';$('roSourceSub').textContent=f.name;try{await readFile(f)}catch(err){$('roSourceTitle').textContent='No se pudo leer el archivo';$('roSourceSub').textContent=err.message||String(err);alert(err.message||String(err))}finally{e.target.value=''}});document.querySelectorAll('#roLegend button').forEach(b=>b.addEventListener('click',()=>{const s=b.dataset.s;if(RO.hidden.has(s)){RO.hidden.delete(s);b.classList.remove('off')}else{RO.hidden.add(s);b.classList.add('off')}drawTrend()}));document.querySelectorAll('#nav button[data-page="retailOmnibus"]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{if(RO.rows.length)update()},80)));window.addEventListener('resize',()=>{if($('retailOmnibus')?.classList.contains('active')&&RO.rows.length){clearTimeout(window.__ro9r);window.__ro9r=setTimeout(()=>{drawTrend();drawDonut(filtered())},150)}});document.addEventListener('mousemove',moveTip);setTimeout(autoLoad,1000);
@@ -6221,6 +6232,7 @@ function renderRank(id,rows,field,filterId){const a=aggregate(rows,field).slice(
 function renderBars(id,rows,field,filterId){const a=aggregate(rows,field).slice(0,8),max=a[0]?.[1]||1,total=sum(rows)||1;$(id).innerHTML=a.map(([k,v])=>`<div class="rc10-barrow" data-v="${k.replace(/"/g,'&quot;')}"><span>${k}</span><div class="track"><i style="width:${v/max*100}%"></i></div><b>${pct(v,total)}</b></div>`).join('');$(id).querySelectorAll('.rc10-barrow').forEach(el=>{el.onclick=()=>{$(filterId).value=el.dataset.v;update()};el.onmousemove=e=>{const v=a.find(x=>x[0]===el.dataset.v)?.[1]||0;tip(`<b>${el.dataset.v}</b><br>${fmt(v)} unidades<br>${pct(v,total)}`,e)};el.onmouseleave=hideTip})}
 function update(){if(!RC.rows.length)return;const rows=filtered(),m=$('rc10MonthFilter').value,total=sum(rows),base=filtered('rc10MonthFilter'),latest=RC.months.at(-1),prev=RC.months.at(-2),latestVal=sum(base,latest),prevVal=sum(base,prev),brand=aggregate(rows,'Marca')[0]||['—',0],sg=aggregate(rows,'Segmento')[0]||['—',0],fuel=aggregate(rows,'Combustible'),diesel=fuel.find(x=>['DSL','DIESEL'].includes(x[0].toUpperCase()))?.[1]||0,drive=aggregate(rows,'Fórmula rodante'),x4=drive.find(x=>x[0].toLowerCase()==='4x2')?.[1]||0,peak=RC.months.map(mm=>[mm,sum(base,mm)]).sort((a,b)=>b[1]-a[1])[0]||['—',0];$('rc10Total').textContent=fmt(total);$('rc10TotalSub').textContent=m==='ALL'?'Acumulado de la selección':'Vista mensual';$('rc10MonthLabel').textContent=latest||'Último mes';$('rc10Month').textContent=fmt(latestVal);$('rc10MonthSub').textContent='último mes disponible';$('rc10Mom').textContent=prevVal?((latestVal/prevVal-1)*100).toFixed(1)+'%':'—';$('rc10MomSub').textContent=prev?`${latest} vs ${prev}`:'—';$('rc10Peak').textContent=fmt(peak[1]);$('rc10PeakSub').textContent=peak[0];$('rc10Brand').textContent=brand[0];$('rc10BrandSub').textContent=`${fmt(brand[1])} · ${pct(brand[1],total)}`;$('rc10Segment').textContent=sg[0];$('rc10SegmentSub').textContent=`${fmt(sg[1])} · ${pct(sg[1],total)}`;$('rc10Diesel').textContent=pct(diesel,total);$('rc10DieselSub').textContent=`${fmt(diesel)} unidades`;$('rc104x2').textContent=pct(x4,total);$('rc104x2Sub').textContent=`${fmt(x4)} unidades`;$('rc10Note').textContent=`${fmt(total)} unidades · ${rows.length.toLocaleString()} filas técnicas visibles`;drawTrend();drawDonut(rows);renderRank('rc10Brands',rows,'Marca','rc10BrandFilter');renderRank('rc10Models',rows,'Modelo','rc10ModelFilter');renderBars('rc10Origins',rows,'Origen','rc10OriginFilter');renderBars('rc10Fuels',rows,'Combustible','rc10FuelFilter');renderBars('rc10Drive',rows,'Fórmula rodante','rc10DriveFilter');renderBars('rc10Bodies',rows,'Carroceria','rc10BodyFilter');const brands=aggregate(rows,'Marca'),top3=brands.slice(0,3).reduce((s,x)=>s+x[1],0),orig=aggregate(rows,'Origen'),jp=orig.find(x=>x[0].toUpperCase()==='JAPON'||x[0].toUpperCase()==='JAPÓN')?.[1]||0,cn=orig.find(x=>x[0].toUpperCase()==='CHINA')?.[1]||0,mt=aggregate(rows,'Tipo de Transmision').find(x=>x[0].toUpperCase()==='MT')?.[1]||0,p2=aggregate(rows,'Segmento').find(x=>x[0]==='P2')?.[1]||0;$('rc10Top3').textContent=pct(top3,total);$('rc10Japan').textContent=pct(jp,total);$('rc10China').textContent=pct(cn,total);$('rc10MT').textContent=pct(mt,total);$('rc10P2').textContent=pct(p2,total);$('rc10ModelCount').textContent=new Set(rows.filter(r=>val(r)>0).map(r=>norm(r.Modelo)).filter(Boolean)).size.toLocaleString();$('rc10ShareChip').textContent=total?`${pct(total,sum(RC.rows,'ALL'))} selección`:'0%'}
 function parseWorkbook(wb,name){const ws=wb.Sheets['CAMIONES Y TRACTO']||wb.Sheets[wb.SheetNames[0]],raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});let hi=raw.findIndex(r=>r.some(v=>norm(v)==='Marca')&&r.some(v=>norm(v)==='Modelo'));if(hi<0)throw new Error('No se encontró la fila de encabezados del archivo Camiones y Remolcadores.');const headers=raw[hi].map(v=>norm(v)),allMonths=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],months=allMonths.filter(m=>headers.includes(m));const rows=raw.slice(hi+1).map(a=>Object.fromEntries(headers.map((h,i)=>[h,a[i]]))).filter(r=>norm(r.Marca)&&norm(r.Modelo)&&months.some(m=>num(r[m])!==0));let period='';for(const rr of raw.slice(0,hi)){for(const v of rr){const s=norm(v);if(/MES\/AÑO/i.test(s)){period=s.replace(/^.*?:\s*/,'');break}}if(period)break}RC.rows=rows;RC.headers=headers;RC.months=months;RC.period=period||months.at(-1)||'—';refreshOptions();$('rc10Period').textContent=RC.period;$('rc10SourceTitle').textContent='Excel cargado correctamente'; if($('rc10EmptyNote')) $('rc10EmptyNote').style.display='none';$('rc10SourceSub').textContent=`${name} · ${rows.length.toLocaleString()} filas · ${headers.length} columnas`;$('rc10Rows').textContent=rows.length.toLocaleString()+' filas';$('rc10Codes').textContent=new Set(rows.map(r=>norm(r['Código de modelo']))).size.toLocaleString();const missG=rows.filter(r=>r['Número de Cambios']==null||r['Número de Cambios']===''),missT=rows.filter(r=>r['Tipo de Transmision']==null||r['Tipo de Transmision']===''),missF=rows.filter(r=>r.Combustible==null||r.Combustible===''),missP=rows.filter(r=>r['Potencia / revoluciones\n(HP / rpm)']==null||r['Potencia / revoluciones\n(HP / rpm)']==='');$('rc10MissingGears').textContent=`${missG.length} filas · ${fmt(missG.reduce((s,r)=>s+RC.months.reduce((a,m)=>a+num(r[m]),0),0))} und.`;$('rc10MissingOther').textContent=`Transm.: ${missT.length} · Comb.: ${missF.length} · Potencia: ${missP.length}`;const seen=new Set();let d=0;rows.forEach(r=>{const k=headers.slice(0,24).map(h=>norm(r[h])).join('|');if(seen.has(k))d++;else seen.add(k)});$('rc10Dup').textContent=d?`${d} duplicados adicionales`:'0 duplicados exactos';update()}
+window.__LOAD_08_10=(wb,name)=>parseWorkbook(wb,name);window.__RC10_STATE=RC;
 async function autoLoad(){const cand=['./data/retail_camiones_remolcadores.xlsx','./retail_camiones_remolcadores.xlsx','./08.10_Camiones y Remolcadores Retail Agosto 2026.xlsx'];for(const url of cand){try{const r=await fetch(url,{cache:'no-store'});if(!r.ok)continue;parseWorkbook(XLSX.read(await r.arrayBuffer(),{type:'array'}),url.split('/').pop());return}catch(e){}}$('rc10SourceTitle').textContent='Selecciona el Excel de Retail Camiones y Remolcadores';$('rc10SourceSub').textContent='No se encontró retail_camiones_remolcadores.xlsx automáticamente.'}
 fids.forEach(id=>$(id)?.addEventListener('change',update));$('rc10Reset')?.addEventListener('click',()=>{fids.forEach(id=>{if($(id))$(id).value='ALL'});update()});$('rc10More')?.addEventListener('click',()=>{const p=$('rc10Advanced');p.hidden=!p.hidden;$('rc10More').textContent=p.hidden?'Más filtros':'Menos filtros'});$('rc10Load')?.addEventListener('click',()=>$('rc10File').click());$('rc10Retry')?.addEventListener('click',autoLoad);$('rc10File')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;$('rc10SourceTitle').textContent='Procesando Excel…';$('rc10SourceSub').textContent=f.name;try{parseWorkbook(XLSX.read(await f.arrayBuffer(),{type:'array'}),f.name)}catch(err){$('rc10SourceTitle').textContent='No se pudo leer el archivo';$('rc10SourceSub').textContent=err.message||String(err);alert(err.message||String(err))}finally{e.target.value=''}});document.querySelectorAll('#rc10Legend button').forEach(b=>b.addEventListener('click',()=>{const s=b.dataset.s;if(RC.hidden.has(s)){RC.hidden.delete(s);b.classList.remove('off')}else{RC.hidden.add(s);b.classList.add('off')}drawTrend()}));document.querySelectorAll('#nav button[data-page="retailCamiones"]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{if(RC.rows.length)update()},80)));window.addEventListener('resize',()=>{if($('retailCamiones')?.classList.contains('active')&&RC.rows.length){clearTimeout(window.__rc10r);window.__rc10r=setTimeout(()=>{drawTrend();drawDonut(filtered())},120)}});document.addEventListener('mousemove',moveTip);setTimeout(autoLoad,250);
 
@@ -6391,7 +6403,8 @@ fids.forEach(id=>$(id)?.addEventListener('change',update));$('rc10Reset')?.addEv
   function reset(){['dc11Month',...ids.map(x=>'dc11'+x)].forEach(id=>{const e=$(id);if(e)e.value='ALL'});render()}
   function tooltipMove(tip,e){if(!tip||tip.style.display==='none')return;const r=tip.getBoundingClientRect(),g=12,ed=8;let x=e.clientX+g,y=e.clientY-r.height/2;if(x+r.width>innerWidth-ed)x=e.clientX-r.width-g;if(y<ed)y=ed;if(y+r.height>innerHeight-ed)y=innerHeight-r.height-ed;tip.style.left=x+'px';tip.style.top=y+'px'}
   $('dc11Load').onclick=()=>$('dc11File').click(); $('dc11Retry').onclick=reset;$('dc11Reset').onclick=reset;$('dc11More').onclick=()=>{const p=$('dc11MorePanel');p.hidden=!p.hidden;$('dc11More').textContent=p.hidden?'Más filtros':'Menos filtros'};
-  $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11SourceTitle').textContent='Procesando Excel…';$('dc11SourceSub').textContent=f.name;try{parseWorkbook(XLSX.read(await f.arrayBuffer(),{type:'array'}),f.name)}catch(err){$('dc11SourceTitle').textContent='No se pudo leer el archivo';$('dc11SourceSub').textContent=err.message||String(err)}};
+  window.__LOAD_08_11=(wb,name)=>parseWorkbook(wb,name);
+$('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11SourceTitle').textContent='Procesando Excel…';$('dc11SourceSub').textContent=f.name;try{parseWorkbook(XLSX.read(await f.arrayBuffer(),{type:'array'}),f.name)}catch(err){$('dc11SourceTitle').textContent='No se pudo leer el archivo';$('dc11SourceSub').textContent=err.message||String(err)}};
   ['dc11Month',...ids.map(x=>'dc11'+x)].forEach(id=>{const e=$(id);if(e)e.onchange=render});
   const zone=$('dc11Source');['dragenter','dragover'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();zone.classList.add('dragover')}));['dragleave','drop'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();zone.classList.remove('dragover')}));zone.addEventListener('drop',async e=>{const f=e.dataTransfer?.files?.[0];if(!f)return;try{parseWorkbook(XLSX.read(await f.arrayBuffer(),{type:'array'}),f.name)}catch(err){$('dc11SourceTitle').textContent='No se pudo leer el archivo';$('dc11SourceSub').textContent=err.message||String(err)}});
   $('dc11Trend').addEventListener('mousemove',e=>{const c=e.currentTarget,rect=c.getBoundingClientRect(),x=e.clientX-rect.left;const pts=c._pts||[];if(!pts.length)return;let q=pts.reduce((a,b)=>Math.abs(b.x-x)<Math.abs(a.x-x)?b:a);const tip=$('dc11TrendTip');tip.innerHTML=`<b>${monthCols[q.i]?.label||''}</b><br>${fmt(q.v)} unidades`;tip.style.display='block';tooltipMove(tip,e)});$('dc11Trend').addEventListener('mouseleave',()=>{$('dc11TrendTip').style.display='none'});$('dc11Trend').addEventListener('click',e=>{const rect=e.currentTarget.getBoundingClientRect(),x=e.clientX-rect.left,pts=e.currentTarget._pts||[];if(!pts.length)return;const q=pts.reduce((a,b)=>Math.abs(b.x-x)<Math.abs(a.x-x)?b:a);$('dc11Month').value=String(q.i);render()});
@@ -6634,6 +6647,277 @@ fids.forEach(id=>$(id)?.addEventListener('change',update));$('rc10Reset')?.addEv
   document.addEventListener('click',()=>setTimeout(()=>{if($('resumen')?.classList.contains('active'))render()},100));
   window.addEventListener('resize',()=>{if($('resumen')?.classList.contains('active'))setTimeout(render,100)});
   setTimeout(render,500);
+})();
+</script>
+
+
+<script id="v57-loader-bridges">
+window.__LOAD_08_1 = (wb,name) => {
+  if(typeof vm20LoadWorkbook!=='function') throw new Error('No está disponible el cargador 08.1');
+  return vm20LoadWorkbook(wb,name);
+};
+window.__LOAD_08_2 = (wb,name) => {
+  if(typeof lv2LoadWorkbook!=='function') throw new Error('No está disponible el cargador 08.2');
+  return lv2LoadWorkbook(wb,name);
+};
+window.__LOAD_08_3 = (wb,name) => {
+  if(typeof vp3LoadWorkbook!=='function') throw new Error('No está disponible el cargador 08.3');
+  return vp3LoadWorkbook(wb,name);
+};
+window.__LOAD_08_4 = (wb,name) => {
+  if(typeof r4LoadWorkbook!=='function') throw new Error('No está disponible el cargador 08.4');
+  return r4LoadWorkbook(wb,name);
+};
+window.__LOAD_08_5 = (wb,name) => {
+  if(typeof rtmParseWorkbook!=='function') throw new Error('No está disponible el cargador 08.5');
+  return rtmParseWorkbook(wb,name);
+};
+</script>
+
+
+<style id="v57-sharepoint-style">
+.sp-period-wrap{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #e5e8ee;border-radius:11px;padding:6px 9px}
+.sp-period-wrap label{font-size:8px;color:#89919d;font-weight:700}
+.sp-period-wrap select{border:0;background:transparent;font-size:9.5px;font-weight:800;color:#222832;outline:none;min-width:145px}
+.sp-period-wrap select:disabled{color:#8f96a2}
+#spConnectBtn.sp-connected{background:#e9f8f1!important;color:#087744!important;border:1px solid #ccebdc!important;box-shadow:none!important}
+#spConnectBtn.sp-error{background:#fff0f3!important;color:#b41045!important;border:1px solid #ffd1df!important}
+.sp-sync-banner{display:flex;align-items:center;gap:9px;border:1px solid #e6e9ee;background:#fff;border-radius:12px;padding:9px 12px;margin:0 0 10px;box-shadow:0 7px 18px rgba(18,22,31,.03)}
+.sp-sync-dot{width:9px;height:9px;border-radius:50%;background:#f5ae00;box-shadow:0 0 0 4px rgba(245,174,0,.12);flex:none}
+.sp-sync-banner.ok .sp-sync-dot{background:#10b86a;box-shadow:0 0 0 4px rgba(16,184,106,.10)}
+.sp-sync-banner.error .sp-sync-dot{background:#ee0b70;box-shadow:0 0 0 4px rgba(238,11,112,.10)}
+.sp-sync-banner b{font-size:10px;display:block}.sp-sync-banner span{font-size:8.5px;color:#8a929e}
+</style>
+
+
+
+
+
+<script id="v59-power-automate-loader">
+(function(){
+  /*
+   ==========================================================
+   TSF AUTOMARKET · CONEXIÓN POWER AUTOMATE
+   ==========================================================
+   PASO ÚNICO PENDIENTE:
+   Cuando publiques tu flujo en Power Automate, copia la HTTP URL
+   del trigger "When an HTTP request is received" y pégala aquí.
+  */
+  const POWER_AUTOMATE_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/c5edbc279af6435ea2a8f8b538d556dd/triggers/manual/paths/invoke?api-version=1';
+
+  const $ = id => document.getElementById(id);
+  let currentPeriod = '2026/08_AGOSTO';
+
+  const PERIODS = [
+    {value:'2026/08_AGOSTO', label:'Agosto 2026'},
+    {value:'2026/09_SEPTIEMBRE', label:'Septiembre 2026'},
+    {value:'2026/10_OCTUBRE', label:'Octubre 2026'},
+    {value:'2026/11_NOVIEMBRE', label:'Noviembre 2026'},
+    {value:'2026/12_DICIEMBRE', label:'Diciembre 2026'}
+  ];
+
+  const FILE_MAP = [
+    {key:'08.1', loader:'__LOAD_08_1'},
+    {key:'08.2', loader:'__LOAD_08_2'},
+    {key:'08.3', loader:'__LOAD_08_3'},
+    {key:'08.4', loader:'__LOAD_08_4'},
+    {key:'08.5', loader:'__LOAD_08_5'},
+    {key:'08.6', loader:'__LOAD_08_6'},
+    {key:'08.7', loader:'__LOAD_08_7'},
+    {key:'08.8', loader:'__LOAD_08_8'},
+    {key:'08.9', loader:'__LOAD_08_9'},
+    {key:'08.10', loader:'__LOAD_08_10'},
+    {key:'08.11', loader:'__LOAD_08_11'}
+  ];
+
+  function ui(title, sub, type=''){
+    const banner=$('spSyncBanner');
+    const btn=$('spConnectBtn');
+    if($('spSyncTitle')) $('spSyncTitle').textContent=title;
+    if($('spSyncSub')) $('spSyncSub').textContent=sub || '';
+    if(banner){
+      banner.classList.remove('ok','error');
+      if(type) banner.classList.add(type);
+    }
+    if(btn){
+      btn.classList.remove('sp-connected','sp-error');
+      if(type==='ok') btn.classList.add('sp-connected');
+      if(type==='error') btn.classList.add('sp-error');
+    }
+  }
+
+  function configurePeriodSelector(){
+    const sel=$('spPeriodSelect');
+    if(!sel) return;
+    sel.innerHTML = PERIODS.map(p=>`<option value="${p.value}">${p.label}</option>`).join('');
+    sel.disabled=false;
+    sel.value=currentPeriod;
+    sel.addEventListener('change',()=>{
+      currentPeriod=sel.value;
+      const label=sel.options[sel.selectedIndex]?.textContent || currentPeriod;
+      if($('periodText')) $('periodText').textContent='Periodo seleccionado: '+label;
+    });
+  }
+
+  function base64ToArrayBuffer(base64){
+    const clean = String(base64||'').replace(/^data:.*?;base64,/, '');
+    const binary = atob(clean);
+    const len = binary.length;
+    const bytes = new Uint8Array(len);
+    for(let i=0;i<len;i++) bytes[i]=binary.charCodeAt(i);
+    return bytes.buffer;
+  }
+
+  function extractBase64(fileObj){
+    if(!fileObj) return '';
+    return (
+      fileObj.base64 ||
+      fileObj.contentBase64 ||
+      fileObj.fileContent ||
+      fileObj.contenido ||
+      fileObj.content ||
+      fileObj['$content'] ||
+      fileObj.body?.['$content'] ||
+      ''
+    );
+  }
+
+  function normalizeFiles(payload){
+    // Formato recomendado:
+    // { periodo:"...", archivos: { "08.1": {nombre:"...", base64:"..."}, ... } }
+    if(payload?.archivos && !Array.isArray(payload.archivos)){
+      return Object.entries(payload.archivos).map(([key,val])=>({
+        key,
+        name: val?.nombre || val?.name || key+'.xlsx',
+        base64: extractBase64(val)
+      }));
+    }
+
+    // También acepta:
+    // { archivos:[{key:"08.1", nombre:"...", base64:"..."}] }
+    if(Array.isArray(payload?.archivos)){
+      return payload.archivos.map(x=>({
+        key:x.key || x.codigo || x.tipo || '',
+        name:x.nombre || x.name || '',
+        base64:extractBase64(x)
+      }));
+    }
+
+    return [];
+  }
+
+  async function loadPowerAutomatePeriod(){
+    if(!POWER_AUTOMATE_URL || POWER_AUTOMATE_URL.includes('PEGA_AQUI')){
+      ui(
+        'Falta pegar la URL de Power Automate',
+        'Publica el flujo, copia la HTTP URL del trigger y reemplaza POWER_AUTOMATE_URL en el código.',
+        'error'
+      );
+      return;
+    }
+
+    const sel=$('spPeriodSelect');
+    currentPeriod=sel?.value || currentPeriod;
+    const periodLabel=sel?.options?.[sel.selectedIndex]?.textContent || currentPeriod;
+
+    ui('Cargando '+periodLabel+'…','Solicitando los 11 Excel al flujo de Power Automate.');
+
+    try{
+      const res=await fetch(POWER_AUTOMATE_URL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({periodo:currentPeriod})
+      });
+
+      if(!res.ok){
+        const txt=await res.text().catch(()=> '');
+        throw new Error(`Power Automate respondió ${res.status}. ${txt.slice(0,220)}`);
+      }
+
+      const payload=await res.json();
+      const files=normalizeFiles(payload);
+
+      if(!files.length){
+        throw new Error('El flujo respondió, pero no devolvió archivos en el objeto "archivos".');
+      }
+
+      let loaded=0;
+      const errors=[];
+
+      for(const spec of FILE_MAP){
+        const f=files.find(x=>String(x.key).trim()===spec.key);
+        if(!f){
+          errors.push(spec.key+': no recibido');
+          continue;
+        }
+
+        try{
+          if(!f.base64) throw new Error('contenido vacío');
+          ui('Cargando '+periodLabel+'…', `${spec.key} · ${f.name || 'Excel'}`);
+
+          const ab=base64ToArrayBuffer(f.base64);
+          const wb=XLSX.read(ab,{type:'array',cellDates:true});
+          const loader=window[spec.loader];
+
+          if(typeof loader!=='function'){
+            throw new Error('No está disponible '+spec.loader);
+          }
+
+          await loader(wb, f.name || (spec.key+'.xlsx'));
+          loaded++;
+        }catch(e){
+          console.error('Error cargando '+spec.key,e);
+          errors.push(spec.key+': '+(e.message||e));
+        }
+      }
+
+      if($('periodText')) $('periodText').textContent='Periodo analizado: '+periodLabel;
+
+      if(window.refreshExecutiveSummary){
+        setTimeout(()=>window.refreshExecutiveSummary(),300);
+      }
+
+      if(errors.length){
+        ui(
+          `Datos cargados: ${loaded}/11`,
+          errors.slice(0,3).join(' · '),
+          'error'
+        );
+      }else{
+        ui(
+          'Datos actualizados correctamente',
+          `${periodLabel} · 11/11 archivos cargados desde SharePoint vía Power Automate.`,
+          'ok'
+        );
+      }
+
+      const btn=$('spConnectBtn');
+      if(btn) btn.textContent='↻ Actualizar datos';
+
+    }catch(e){
+      console.error(e);
+      ui('No se pudieron cargar los datos', e.message || String(e), 'error');
+    }
+  }
+
+  configurePeriodSelector();
+
+  $('spConnectBtn')?.addEventListener('click', loadPowerAutomatePeriod);
+
+  // No carga automáticamente hasta que exista URL del flujo.
+  ui(
+    'Power Automate listo',
+    'Selecciona el periodo y pulsa “Cargar datos”.'
+  );
+
+  window.__POWER_AUTOMATE_TSFAUTO = {
+    load: loadPowerAutomatePeriod,
+    get period(){ return currentPeriod; },
+    set period(v){
+      currentPeriod=v;
+      if($('spPeriodSelect')) $('spPeriodSelect').value=v;
+    }
+  };
 })();
 </script>
 
