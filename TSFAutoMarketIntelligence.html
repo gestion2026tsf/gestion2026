@@ -6693,16 +6693,9 @@ window.__LOAD_08_5 = (wb,name) => {
 
 
 
-<script id="v59-power-automate-loader">
+
+<script id="v62-power-automate-loader">
 (function(){
-  /*
-   ==========================================================
-   TSF AUTOMARKET · CONEXIÓN POWER AUTOMATE
-   ==========================================================
-   PASO ÚNICO PENDIENTE:
-   Cuando publiques tu flujo en Power Automate, copia la HTTP URL
-   del trigger "When an HTTP request is received" y pégala aquí.
-  */
   const POWER_AUTOMATE_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/c5edbc279af6435ea2a8f8b538d556dd/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AwgNYRvu5Ge-sqYduVc3Hs-T8UwfLEKZqhnRUQkXA-E';
 
   const $ = id => document.getElementById(id);
@@ -6716,7 +6709,7 @@ window.__LOAD_08_5 = (wb,name) => {
     {value:'2026/12_DICIEMBRE', label:'Diciembre 2026'}
   ];
 
-  const FILE_MAP = [
+  const FILES = [
     {key:'08.1', loader:'__LOAD_08_1'},
     {key:'08.2', loader:'__LOAD_08_2'},
     {key:'08.3', loader:'__LOAD_08_3'},
@@ -6762,149 +6755,105 @@ window.__LOAD_08_5 = (wb,name) => {
   function base64ToArrayBuffer(base64){
     const clean = String(base64||'').replace(/^data:.*?;base64,/, '');
     const binary = atob(clean);
-    const len = binary.length;
-    const bytes = new Uint8Array(len);
-    for(let i=0;i<len;i++) bytes[i]=binary.charCodeAt(i);
+    const bytes = new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
     return bytes.buffer;
   }
 
-  function extractBase64(fileObj){
-    if(!fileObj) return '';
-    return (
-      fileObj.base64 ||
-      fileObj.contentBase64 ||
-      fileObj.fileContent ||
-      fileObj.contenido ||
-      fileObj.content ||
-      fileObj['$content'] ||
-      fileObj.body?.['$content'] ||
-      ''
-    );
-  }
+  async function requestOne(periodo, archivo){
+    const res = await fetch(POWER_AUTOMATE_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({periodo, archivo})
+    });
 
-  function normalizeFiles(payload){
-    // Formato recomendado:
-    // { periodo:"...", archivos: { "08.1": {nombre:"...", base64:"..."}, ... } }
-    if(payload?.archivos && !Array.isArray(payload.archivos)){
-      return Object.entries(payload.archivos).map(([key,val])=>({
-        key,
-        name: val?.nombre || val?.name || key+'.xlsx',
-        base64: extractBase64(val)
-      }));
+    const text = await res.text();
+
+    if(!res.ok){
+      throw new Error(`Power Automate respondió ${res.status}. ${text.slice(0,500)}`);
     }
 
-    // También acepta:
-    // { archivos:[{key:"08.1", nombre:"...", base64:"..."}] }
-    if(Array.isArray(payload?.archivos)){
-      return payload.archivos.map(x=>({
-        key:x.key || x.codigo || x.tipo || '',
-        name:x.nombre || x.name || '',
-        base64:extractBase64(x)
-      }));
+    let payload;
+    try{
+      payload = text ? JSON.parse(text) : {};
+    }catch(e){
+      throw new Error(`Respuesta inválida para ${archivo}: ${text.slice(0,300)}`);
     }
 
-    return [];
+    if(!payload.contenido){
+      throw new Error(`${archivo}: el flujo no devolvió "contenido".`);
+    }
+
+    return payload;
   }
 
   async function loadPowerAutomatePeriod(){
-    if(!POWER_AUTOMATE_URL || POWER_AUTOMATE_URL.includes('PEGA_AQUI')){
-      ui(
-        'Falta pegar la URL de Power Automate',
-        'Publica el flujo, copia la HTTP URL del trigger y reemplaza POWER_AUTOMATE_URL en el código.',
-        'error'
-      );
-      return;
-    }
-
     const sel=$('spPeriodSelect');
     currentPeriod=sel?.value || currentPeriod;
     const periodLabel=sel?.options?.[sel.selectedIndex]?.textContent || currentPeriod;
 
-    ui('Cargando '+periodLabel+'…','Solicitando los 11 Excel al flujo de Power Automate.');
+    let loaded=0;
+    const errors=[];
 
-    try{
-      const res=await fetch(POWER_AUTOMATE_URL,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({periodo:currentPeriod})
-      });
+    ui('Cargando '+periodLabel+'…','Solicitando archivos uno por uno a Power Automate.');
 
-      if(!res.ok){
-        const txt=await res.text().catch(()=> '');
-        throw new Error(`Power Automate respondió ${res.status}. ${txt.slice(0,220)}`);
-      }
+    for(const spec of FILES){
+      try{
+        ui(
+          'Cargando '+periodLabel+'…',
+          `Archivo ${loaded+1}/11 · ${spec.key}`
+        );
 
-      const payload=await res.json();
-      const files=normalizeFiles(payload);
+        const payload = await requestOne(currentPeriod, spec.key);
+        const ab = base64ToArrayBuffer(payload.contenido);
+        const wb = XLSX.read(ab,{type:'array',cellDates:true});
 
-      if(!files.length){
-        throw new Error('El flujo respondió, pero no devolvió archivos en el objeto "archivos".');
-      }
-
-      let loaded=0;
-      const errors=[];
-
-      for(const spec of FILE_MAP){
-        const f=files.find(x=>String(x.key).trim()===spec.key);
-        if(!f){
-          errors.push(spec.key+': no recibido');
-          continue;
+        const loader = window[spec.loader];
+        if(typeof loader!=='function'){
+          throw new Error('No está disponible '+spec.loader);
         }
 
-        try{
-          if(!f.base64) throw new Error('contenido vacío');
-          ui('Cargando '+periodLabel+'…', `${spec.key} · ${f.name || 'Excel'}`);
+        await loader(wb, payload.nombre || (spec.key+'.xlsx'));
+        loaded++;
 
-          const ab=base64ToArrayBuffer(f.base64);
-          const wb=XLSX.read(ab,{type:'array',cellDates:true});
-          const loader=window[spec.loader];
+        // Update loaded counter if present
+        document.querySelectorAll('[data-exec-loaded-count]').forEach(el=>{
+          el.textContent = `${loaded} / 11`;
+        });
 
-          if(typeof loader!=='function'){
-            throw new Error('No está disponible '+spec.loader);
-          }
-
-          await loader(wb, f.name || (spec.key+'.xlsx'));
-          loaded++;
-        }catch(e){
-          console.error('Error cargando '+spec.key,e);
-          errors.push(spec.key+': '+(e.message||e));
-        }
+      }catch(e){
+        console.error(spec.key,e);
+        errors.push(spec.key+': '+(e.message||e));
       }
+    }
 
-      if($('periodText')) $('periodText').textContent='Periodo analizado: '+periodLabel;
+    if($('periodText')) $('periodText').textContent='Periodo analizado: '+periodLabel;
 
-      if(window.refreshExecutiveSummary){
-        setTimeout(()=>window.refreshExecutiveSummary(),300);
-      }
+    if(window.refreshExecutiveSummary){
+      try{ window.refreshExecutiveSummary(); }catch(e){}
+    }
 
-      if(errors.length){
-        ui(
-          `Datos cargados: ${loaded}/11`,
-          errors.slice(0,3).join(' · '),
-          'error'
-        );
-      }else{
-        ui(
-          'Datos actualizados correctamente',
-          `${periodLabel} · 11/11 archivos cargados desde SharePoint vía Power Automate.`,
-          'ok'
-        );
-      }
+    const btn=$('spConnectBtn');
+    if(btn) btn.textContent='↻ Actualizar datos';
 
-      const btn=$('spConnectBtn');
-      if(btn) btn.textContent='↻ Actualizar datos';
-
-    }catch(e){
-      console.error(e);
-      ui('No se pudieron cargar los datos', e.message || String(e), 'error');
+    if(errors.length){
+      ui(
+        `Datos cargados: ${loaded}/11`,
+        errors.slice(0,4).join(' · '),
+        'error'
+      );
+    }else{
+      ui(
+        'Datos actualizados correctamente',
+        `${periodLabel} · 11/11 archivos cargados.`,
+        'ok'
+      );
     }
   }
 
   configurePeriodSelector();
-
   $('spConnectBtn')?.addEventListener('click', loadPowerAutomatePeriod);
 
-  // No carga automáticamente hasta que exista URL del flujo.
   ui(
     'Power Automate listo',
     'Selecciona el periodo y pulsa “Cargar datos”.'
@@ -6920,6 +6869,7 @@ window.__LOAD_08_5 = (wb,name) => {
   };
 })();
 </script>
+
 
 </body>
 </html>
