@@ -4435,7 +4435,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
       <div class="sx-hero-copy">
         <div class="sx-line"></div>
         <h4>Panorama ejecutivo<br>del <span>mercado automotor</span></h4>
-        <p>Consolidación de inmatriculaciones, retail, segmentos, marcas y red comercial. Esta portada se calcula exclusivamente con los Excel cargados en el sistema.</p>
+        <p>Resumen comercial del universo C/O/P: comerciales, ómnibus, camiones/remolcadores y las inmatriculaciones de Pick-ups/Furgonetas + Pesados. Todas las cifras salen de los Excel cargados.</p>
       </div>
       <div class="sx-hero-points">
         <div><i>↗</i><span>Mercado y crecimiento</span></div>
@@ -4446,7 +4446,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
     <div class="sx-row sx-row-main">
       <div class="sx-card">
-        <div class="sx-card-head"><div><h4>Composición Retail acumulada</h4><p>Participación por familia.</p></div><span class="sx-chip" id="sxRetailChip">08.6 Retail acumulado</span></div>
+        <div class="sx-card-head"><div><h4>Composición Retail negocio acumulada</h4><p>Solo comerciales, ómnibus y camiones/remolcadores.</p></div><span class="sx-chip" id="sxRetailChip">08.6 Retail acumulado</span></div>
         <div class="sx-donut-wrap"><canvas id="sxRetailDonut"></canvas><div class="sx-donut-center"><b id="sxRetailDonutTotal">—</b><span>unidades</span></div></div>
         <div class="sx-legend" id="sxRetailLegend"></div>
       </div>
@@ -4458,15 +4458,15 @@ canvas{transition:filter .14s ease,opacity .14s ease}
       </div>
 
       <div class="sx-card sx-trend-card">
-        <div class="sx-card-head"><div><h4>Evolución mensual</h4><p>Retail vs inmatriculaciones cuando están disponibles los archivos de detalle.</p></div></div>
+        <div class="sx-card-head"><div><h4>Evolución mensual del negocio</h4><p>Retail C/O/P vs inmatriculaciones de Pick-ups/Furgonetas + Pesados.</p></div></div>
         <div class="sx-trend-wrap"><canvas id="sxTrend"></canvas></div>
       </div>
     </div>
 
     <div class="sx-row sx-row-ranks">
       <div class="sx-card"><div class="sx-card-head"><div><h4>Top marcas Retail</h4><p>Acumulado 08.6 Retail.</p></div></div><div class="sx-rank" id="sxBrands"></div></div>
-      <div class="sx-card"><div class="sx-card-head"><div><h4>Top departamentos Retail</h4><p>08.11 Dpto./Concesionarios.</p></div></div><div class="sx-rank" id="sxDepts"></div></div>
-      <div class="sx-card"><div class="sx-card-head"><div><h4>Top concesionarios Retail</h4><p>08.11 Dpto./Concesionarios.</p></div></div><div class="sx-rank" id="sxDealers"></div></div>
+      <div class="sx-card"><div class="sx-card-head"><div><h4>Top departamentos del negocio</h4><p>Solo segmentos C1–C4, O1–O2 y P2–P5 del 08.11.</p></div></div><div class="sx-rank" id="sxDepts"></div></div>
+      <div class="sx-card"><div class="sx-card-head"><div><h4>Top concesionarios del negocio</h4><p>Solo segmentos C1–C4, O1–O2 y P2–P5 del 08.11.</p></div></div><div class="sx-rank" id="sxDealers"></div></div>
     </div>
 
     <div class="sx-card sx-segments-card">
@@ -6891,7 +6891,16 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
     const m=new Map();R.rows.filter(r=>r.family!=='LIGEROS').forEach(r=>m.set(r.brand,(m.get(r.brand)||0)+(Number(r.cur)||0)));return [...m].sort((a,b)=>b[1]-a[1]);
   }
   function geoAgg(field){
-    const api=window.__DC11_API,rows=api?.rows||[];if(!rows.length)return [];const m=new Map();rows.forEach(r=>{const k=r[field]||'SIN DATO',v=(r.months||[]).reduce((a,x)=>a+(Number(x)||0),0);m.set(k,(m.get(k)||0)+v)});return [...m].sort((a,b)=>b[1]-a[1]);
+    const api=window.__DC11_API,rows=api?.rows||[];
+    if(!rows.length)return [];
+    const allowed=new Set(window.TSF_BUSINESS_SEGMENTS||['C1','C2','C3','C4','O1','O2','P2','P3','P4','P5']);
+    const code=v=>{const m=String(v||'').trim().toUpperCase().match(/^(C[1-4]|O[1-2]|P[2-5])/);return m?m[1]:''};
+    const m=new Map();
+    rows.filter(r=>allowed.has(code(r.segment))).forEach(r=>{
+      const k=r[field]||'SIN DATO',v=(r.months||[]).reduce((a,x)=>a+(Number(x)||0),0);
+      m.set(k,(m.get(k)||0)+v)
+    });
+    return [...m].sort((a,b)=>b[1]-a[1]);
   }
 
   function loadedList(){
@@ -6938,7 +6947,7 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
       retailYtd=RAC6.rows.filter(r=>r.family!=='LIGEROS').reduce((s,r)=>s+(Number(r.cur)||0),0);
       retailFamilies=Object.values(RAC6.families||{}).filter(f=>f.key!=='LIGEROS').map(f=>({label:f.label||f.key,value:Number(f.cur)||0})).filter(x=>x.value>0)
     }
-    $('sxRetailYtd').textContent=retailYtd?fmt(retailYtd):'—';$('sxRetailYtdSub').textContent=retailYtd?(RAC6?.period||'08.6 Retail acumulado'):'08.6 Retail acumulado';$('sxRetailChip').textContent=retailFamilies.length?'100% mercado':'08.6 Retail acumulado';donut('sxRetailDonut','sxRetailDonutTotal','sxRetailLegend',retailFamilies);
+    $('sxRetailYtd').textContent=retailYtd?fmt(retailYtd):'—';$('sxRetailYtdSub').textContent=retailYtd?(RAC6?.period||'08.6 Retail acumulado'):'08.6 Retail acumulado';$('sxRetailChip').textContent=retailFamilies.length?'100% universo negocio':'08.6 Retail acumulado';donut('sxRetailDonut','sxRetailDonutTotal','sxRetailLegend',retailFamilies);
 
     const brands=racBrands();$('sxLeadBrand').textContent=brands[0]?.[0]||'—';$('sxLeadBrandSub').textContent=brands[0]?`${fmt(brands[0][1])} · ${pct(brands[0][1],retailYtd)}`:'Esperando 08.6 Retail acumulado';rank('sxBrands',brands);
     const depts=geoAgg('dept'),dealers=geoAgg('dealer');$('sxLeadDept').textContent=depts[0]?.[0]||'—';$('sxLeadDeptSub').textContent=depts[0]?`${fmt(depts[0][1])} · ${pct(depts[0][1],depts.reduce((s,x)=>s+x[1],0))}`:'Esperando 08.11 Dpto./Conces.';$('sxLeadDealer').textContent=dealers[0]?.[0]||'—';$('sxLeadDealerSub').textContent=dealers[0]?`${fmt(dealers[0][1])} · ${pct(dealers[0][1],dealers.reduce((s,x)=>s+x[1],0))}`:'Esperando 08.11 Dpto./Conces.';rank('sxDepts',depts);rank('sxDealers',dealers);
@@ -6948,7 +6957,7 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
     const segs=segmentCards();$('sxSegments').innerHTML=segs.map(s=>`<div class="sx-seg" title="${window.tsfBusinessMeta(s.code).criterio} · ${window.tsfBusinessMeta(s.code).uso}"><span>${s.label}</span><b>${s.value}</b><small>${s.sub||''}</small></div>`).join('')||'<div class="small">Los segmentos aparecerán al cargar sus archivos.</div>';
 
     const insights=[];
-    if(retailYtd&&RAC6?.rows?.length){const prev=RAC6.rows.reduce((s,r)=>s+(Number(r.prev)||0),0);if(prev)insights.push({t:'Retail acumulado',d:`${(retailYtd/prev-1)>=0?'+':''}${((retailYtd/prev-1)*100).toFixed(1)}% vs 2025`})}
+    if(retailYtd&&RAC6?.rows?.length){const prev=RAC6.rows.filter(r=>r.family!=='LIGEROS').reduce((s,r)=>s+(Number(r.prev)||0),0);if(prev)insights.push({t:'Retail acumulado',d:`${(retailYtd/prev-1)>=0?'+':''}${((retailYtd/prev-1)*100).toFixed(1)}% vs 2025`})}
     if(brands[0])insights.push({t:'Marca líder Retail',d:`${brands[0][0]} es la marca con mayor volumen del universo negocio: ${fmt(brands[0][1])} unidades (${pct(brands[0][1],retailYtd)}).`});
     if(depts[0])insights.push({t:'Concentración territorial',d:`${depts[0][0]} es el departamento con mayor volumen cargado: ${fmt(depts[0][1])} unidades.`});
     if(dealers[0])insights.push({t:'Red comercial',d:`${dealers[0][0]} es el concesionario con mayor volumen cargado: ${fmt(dealers[0][1])} unidades.`});
@@ -7305,6 +7314,7 @@ select option.tsf-seg-option{font-size:inherit}
     const R=window.__RAC_STATE;
     if(!R?.families)return [];
     return Object.values(R.families)
+      .filter(f=>f.key!=='LIGEROS')
       .map((f,i)=>({
         key:f.key,
         label:f.label||f.key,
@@ -7317,8 +7327,10 @@ select option.tsf-seg-option{font-size:inherit}
   function inmatData(){
     const out=[];
     if(typeof LV2!=='undefined'&&LV2.rows?.length){
-      const v=LV2.rows.reduce((s,r)=>s+(LV2.months||[]).reduce((a,m)=>a+(Number(r[m])||0),0),0);
-      if(v) out.push({key:'LIVIANOS',label:'Vehículos Livianos',value:v,color:'#ef0b70'});
+      const v=LV2.rows
+        .filter(r=>typeof lv2Head==='function' ? lv2Head(r.cls)==='PICK UP Y FURGONETAS' : String(r.cls||'').toUpperCase().includes('PICK UP'))
+        .reduce((s,r)=>s+(LV2.months||[]).reduce((a,m)=>a+(Number(r[m])||0),0),0);
+      if(v) out.push({key:'PICKUPS',label:'Pick-ups / Furgonetas',value:v,color:'#ef0b70'});
     }
     if(typeof VP3!=='undefined'&&VP3.rows?.length){
       const v=VP3.rows.reduce((s,r)=>s+(r.m||[]).reduce((a,x)=>a+(Number(x)||0),0),0);
@@ -7403,7 +7415,7 @@ select option.tsf-seg-option{font-size:inherit}
     }
     $('sxInmatTotal').textContent=fmt(sel.value);
     $('sxInmatDonutTotal').textContent=fmt(sel.value);
-    $('sxInmatChip').textContent=sel.label.replace('Vehículos ','');
+    $('sxInmatChip').textContent=sel.label;
   }
 
   function apply(kind){
