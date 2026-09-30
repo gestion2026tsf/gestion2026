@@ -4790,51 +4790,66 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
 
 <section class="page" id="retailmes">
-  <div class="rtm-hero">
-    <div class="rtm-eyebrow">TSF · Pulso mensual del mercado</div>
-    <h3 id="rtmHeroTitle">Retail del Mes</h3>
-    <p id="rtmHeroCopy">Carga el Archivo 5 para convertirlo en una fotografía ejecutiva del mes: familias, segmentos y marcas líderes.</p>
-    <div class="rtm-month-pill"><span>Periodo analizado</span><b id="rtmMonthPill">—</b></div>
+  <div class="rtm-hero rtm-business-hero">
+    <div>
+      <div class="rtm-eyebrow">RETAIL · ARCHIVO 08.5 · UNIVERSO NEGOCIO</div>
+      <h3 id="rtmHeroTitle">Venta Retail del Negocio</h3>
+      <p id="rtmHeroCopy">Comerciales C1–C4, Ómnibus O1–O2 y Camiones/Remolcadores P2–P5. Los L1–L3 se conservan solo para reconciliar el mercado total.</p>
+    </div>
+    <div class="rtm-month-pill"><span>Periodo analizado</span><b id="rtmMonthPill">—</b><small id="rtmHeroBusinessTotal">Esperando archivo</small></div>
   </div>
 
   <div class="rtm-source">
-    <div class="rtm-source-left"><div class="rtm-source-icon">▦</div><div><b id="rtmSourceTitle">Retail mensual listo para conectar</b><small id="rtmSourceSub">Selecciona el Excel del mes o súbelo al repositorio para carga automática.</small></div></div>
+    <div class="rtm-source-left"><div class="rtm-source-icon">▦</div><div><b id="rtmSourceTitle">Retail mensual listo para conectar</b><small id="rtmSourceSub">El Archivo 08.5 se carga automáticamente desde Power Automate.</small></div></div>
     <div class="rtm-source-actions"><button class="primary" id="rtmPick">Seleccionar Excel</button><button class="ghost" id="rtmRetry">Reintentar</button><input id="rtmFile" type="file" accept=".xlsx,.xls" hidden></div>
   </div>
 
-  <div class="rtm-kpis">
-    <div class="rtm-kpi primary"><div class="label">Retail del mes</div><div class="num" id="rtmKTotal">—</div><div class="tiny" id="rtmKTotalSub">Universo negocio C / O / P</div></div>
-    
-    <div class="rtm-kpi"><div class="label">Comerciales</div><div class="num" id="rtmKCom">—</div><div class="tiny" id="rtmKComSub">—</div></div>
-    <div class="rtm-kpi"><div class="label">Camión / Remolc.</div><div class="num" id="rtmKCam">—</div><div class="tiny" id="rtmKCamSub">—</div></div>
-    <div class="rtm-kpi"><div class="label">Ómnibus</div><div class="num" id="rtmKOmni">—</div><div class="tiny" id="rtmKOmniSub">—</div></div>
-    <div class="rtm-kpi"><div class="label">Marca líder</div><div class="num" id="rtmKLeader">—</div><div class="tiny" id="rtmKLeaderSub">—</div></div>
+  <div class="rtm-market-context">
+    <div><span>Mercado Retail total del archivo</span><b id="rtmMarketTotal">—</b><small>Incluye L1–L3 + universo negocio</small></div>
+    <i>→</i>
+    <div class="focus"><span>Universo negocio analizado</span><b id="rtmKTotal">—</b><small id="rtmKTotalSub">C1–C4 · O1–O2 · P2–P5</small></div>
+  </div>
+
+  <div class="rtm-kpis rtm-kpis-business">
+    <div class="rtm-kpi"><div class="label">Comerciales C1–C4</div><div class="num" id="rtmKCom">—</div><div class="tiny" id="rtmKComSub">Microbuses, minibuses, pick-ups y panel/furgón</div></div>
+    <div class="rtm-kpi highlight"><div class="label">Pick-up C3</div><div class="num" id="rtmKPickup">—</div><div class="tiny" id="rtmKPickupSub">Segmento prioritario</div></div>
+    <div class="rtm-kpi"><div class="label">Camiones / Remolc. P2–P5</div><div class="num" id="rtmKCam">—</div><div class="tiny" id="rtmKCamSub">—</div></div>
+    <div class="rtm-kpi"><div class="label">Ómnibus O1–O2</div><div class="num" id="rtmKOmni">—</div><div class="tiny" id="rtmKOmniSub">—</div></div>
+    <div class="rtm-kpi"><div class="label">Marca líder negocio</div><div class="num brand" id="rtmKLeader">—</div><div class="tiny" id="rtmKLeaderSub">—</div></div>
   </div>
 
   <div class="rtm-toolbar">
     <div class="rtm-tabs" id="rtmTabs">
-      <button class="active" data-family="TOTAL">Total mercado</button><button data-family="COMERCIALES">Comerciales</button><button data-family="OMNIBUS">Ómnibus</button><button data-family="CAMION">Camión / Remolcador</button>
+      <button class="active" data-family="TOTAL">Universo negocio</button>
+      <button data-family="COMERCIALES">Comerciales C1–C4</button>
+      <button data-family="OMNIBUS">Ómnibus O1–O2</button>
+      <button data-family="CAMION">Camiones P2–P5</button>
     </div>
     <div class="rtm-filter"><span>Marca</span><select id="rtmBrandFilter"><option value="ALL">Todas las marcas</option></select></div>
   </div>
 
   <div class="rtm-grid-a">
-    <div class="rtm-card"><div class="rtm-head"><div><h4>Composición del mercado</h4><p>Haz clic en una familia para explorarla.</p></div><span class="rtm-chip" id="rtmShareChip">100% mercado</span></div><div class="rtm-donut-zone"><div class="rtm-donut-wrap"><canvas id="rtmDonut" width="370" height="370"></canvas><div class="rtm-donut-center"><b id="rtmDonutTotal">—</b><span id="rtmDonutLabel">unidades</span></div></div><div class="rtm-legend" id="rtmLegend"></div></div></div>
-    <div class="rtm-card"><div class="rtm-head"><div><h4 id="rtmRankTitle">Top marcas</h4><p id="rtmRankSub">Ranking del mercado mensual.</p></div><span class="rtm-chip">Top 10</span></div><div class="rtm-rank" id="rtmRank"></div></div>
-    <div class="rtm-card"><div class="rtm-head"><div><h4>Lectura ejecutiva</h4><p>Indicadores que cambian con la selección.</p></div></div><div class="rtm-family-insights" id="rtmInsights"></div></div>
+    <div class="rtm-card">
+      <div class="rtm-head"><div><h4>Composición del universo negocio</h4><p>Hover muestra detalle. Clic fija la familia; clic fuera limpia el filtro.</p></div><span class="rtm-chip" id="rtmShareChip">100% negocio</span></div>
+      <div class="rtm-donut-zone"><div class="rtm-donut-wrap"><canvas id="rtmDonut" width="370" height="370"></canvas><div class="rtm-donut-center"><b id="rtmDonutTotal">—</b><span id="rtmDonutLabel">unidades negocio</span></div></div><div class="rtm-legend" id="rtmLegend"></div></div>
+    </div>
+    <div class="rtm-card"><div class="rtm-head"><div><h4 id="rtmRankTitle">Top marcas · universo negocio</h4><p id="rtmRankSub">Ranking calculado solo con C/O/P.</p></div><span class="rtm-chip">Top 10</span></div><div class="rtm-rank" id="rtmRank"></div></div>
+    <div class="rtm-card"><div class="rtm-head"><div><h4>Lectura ejecutiva</h4><p>Qué está moviendo el negocio este mes.</p></div></div><div class="rtm-family-insights" id="rtmInsights"></div></div>
   </div>
 
-  <div class="rtm-card" style="margin-bottom:10px"><div class="rtm-head"><div><h4>Mapa de segmentos del mes</h4><p>Segmentos priorizados C, O y P para la lectura de negocio. L1-L3 no se muestran.</p></div><span class="rtm-chip" id="rtmSegmentChip">10 segmentos negocio</span></div><div class="rtm-segments" id="rtmSegments"></div></div>
+  <div class="rtm-card rtm-segment-business-card" style="margin-bottom:10px">
+    <div class="rtm-head"><div><h4>Segmentos del negocio</h4><p>C1–C4, O1–O2 y P2–P5. C3 Pick-up se destaca por ser el principal segmento comercial del mes.</p></div><span class="rtm-chip" id="rtmSegmentChip">10 segmentos</span></div>
+    <div class="rtm-segments" id="rtmSegments"></div>
+  </div>
 
   <div class="rtm-grid-b">
-    <div class="rtm-card"><div class="rtm-head"><div><h4>Familias y concentración</h4><p>Comparativo visual del peso de cada familia.</p></div></div><div class="rtm-rank" id="rtmFamilyBars"></div></div>
-    <div class="rtm-card"><div class="rtm-head"><div><h4>Calidad y controles</h4><p>Validaciones útiles antes de publicar el mes.</p></div></div><div class="rtm-quality" id="rtmQuality"></div></div>
+    <div class="rtm-card"><div class="rtm-head"><div><h4>Participación por familia</h4><p>Comerciales, Ómnibus y Camiones dentro del universo priorizado.</p></div></div><div class="rtm-rank" id="rtmFamilyBars"></div></div>
+    <div class="rtm-card"><div class="rtm-head"><div><h4>Calidad y reconciliación</h4><p>El dashboard separa el negocio visible del mercado total sin perder trazabilidad.</p></div></div><div class="rtm-quality" id="rtmQuality"></div></div>
   </div>
 
-  <div class="rtm-footer"><span><b>TSF AutoMarket Intelligence</b> · Retail mensual</span><span id="rtmFooterSource">Fuente: Archivo 5</span><span id="rtmFooterAudit">5 hojas esperadas</span></div>
+  <div class="rtm-footer"><span><b>TSF AutoMarket Intelligence</b> · Venta Retail del Negocio</span><span id="rtmFooterSource">Fuente: Archivo 08.5</span><span id="rtmFooterAudit">5 hojas esperadas</span></div>
   <div class="rtm-tooltip" id="rtmTooltip"></div>
 </section>
-
 
 <section class="page" id="retail">
   <div class="rac-hero">
@@ -4865,14 +4880,14 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
   <div class="rac-toolbar">
     <div class="rac-tabs" id="racTabs">
-      <button class="active" data-family="TOTAL">Total mercado</button>
+      <button class="active" data-family="TOTAL">Universo negocio</button>
       <button data-family="LIGEROS">Ligeros</button>
       <button data-family="COMERCIALES">Comerciales</button>
       <button data-family="OMNIBUS">Ómnibus</button>
       <button data-family="CAMION">Camión / Remolcador</button>
     </div>
     <div class="rac-toolbar-right">
-      <div class="rac-selection" id="racSelection">Vista: Total mercado</div>
+      <div class="rac-selection" id="racSelection">Vista: Universo negocio</div>
       <div class="rac-brand-filter"><span>Marca</span><select id="racBrand"><option value="ALL">Todas las marcas</option></select></div>
       <button class="rac-reset" id="racReset" title="Restablecer filtros">↻ Limpiar</button>
     </div>
@@ -4880,14 +4895,14 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
   <div class="rac-grid-top">
     <div class="rac-card">
-      <div class="rac-head"><div><h4>Composición acumulada</h4><p>Participación por familia. Haz clic para filtrar.</p></div><span class="rac-chip" id="racShareChip">100% mercado</span></div>
+      <div class="rac-head"><div><h4>Composición acumulada</h4><p>Participación por familia. Haz clic para filtrar.</p></div><span class="rac-chip" id="racShareChip">100% negocio</span></div>
       <div class="rac-donut-zone">
         <div class="rac-donut-wrap"><canvas id="racDonut" width="360" height="360"></canvas><div class="rac-donut-center"><b id="racDonutTotal">—</b><span>unidades</span></div></div>
         <div class="rac-legend" id="racLegend"></div>
       </div>
     </div>
     <div class="rac-card">
-      <div class="rac-head"><div><h4 id="racRankTitle">Top marcas acumuladas · Total mercado</h4><p>Volumen 2026, referencia 2025 y variación.</p></div><span class="rac-chip">Top 10</span></div>
+      <div class="rac-head"><div><h4 id="racRankTitle">Top marcas acumuladas · Universo negocio</h4><p>Volumen 2026, referencia 2025 y variación.</p></div><span class="rac-chip">Top 10</span></div>
       <div class="rac-rank" id="racRank"></div>
     </div>
     <div class="rac-card">
@@ -5372,7 +5387,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
   <div class="rl-grid rl-grid-a">
     <div class="rl-card"><div class="rl-head"><div><h4>Evolución mensual por segmento</h4><p id="rlTrendText">Tendencia acumulada del año.</p></div><div class="rl-legend" id="rlLegend"><button data-s="L1"><i class="l1"></i>L1</button><button data-s="L2"><i class="l2"></i>L2</button><button data-s="L3"><i class="l3"></i>L3</button></div></div><div class="rl-trend-wrap"><canvas id="rlTrend"></canvas></div></div>
-    <div class="rl-card"><div class="rl-head"><div><h4>Composición por segmento</h4><p>Pasa el cursor para ver detalle. Haz clic para filtrar.</p></div><span class="rl-chip" id="rlShareChip">100% mercado</span></div><div class="rl-donut-zone"><div class="rl-donut-wrap"><canvas id="rlDonut"></canvas><div class="rl-donut-center"><b id="rlDonutTotal">—</b><span>unidades</span></div></div><div class="rl-donut-legend" id="rlDonutLegend"></div></div></div>
+    <div class="rl-card"><div class="rl-head"><div><h4>Composición por segmento</h4><p>Pasa el cursor para ver detalle. Haz clic para filtrar.</p></div><span class="rl-chip" id="rlShareChip">100% negocio</span></div><div class="rl-donut-zone"><div class="rl-donut-wrap"><canvas id="rlDonut"></canvas><div class="rl-donut-center"><b id="rlDonutTotal">—</b><span>unidades</span></div></div><div class="rl-donut-legend" id="rlDonutLegend"></div></div></div>
   </div>
 
   <div class="rl-grid rl-grid-b">
@@ -5434,7 +5449,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
   <div class="rc-grid rc-grid-a">
     <div class="rc-card"><div class="rc-head"><div><h4>Evolución mensual por segmento</h4><p id="rcTrendInsight">La tendencia aparecerá al cargar el archivo.</p></div><div class="rc-legend" id="rcLegend"><button data-s="C1"><i class="c1"></i>C1</button><button data-s="C2"><i class="c2"></i>C2</button><button data-s="C3"><i class="c3"></i>C3</button><button data-s="C4"><i class="c4"></i>C4</button></div></div><div class="rc-trend-wrap"><canvas id="rcTrend"></canvas></div></div>
-    <div class="rc-card"><div class="rc-head"><div><h4>Composición por segmento</h4><p>Pasa el cursor para ver detalle. Haz clic para filtrar.</p></div><span class="rc-chip" id="rcShareChip">100% mercado</span></div><div class="rc-donut-zone"><div class="rc-donut-wrap"><canvas id="rcDonut"></canvas><div class="rc-donut-center"><b id="rcDonutTotal">—</b><span>unidades</span></div></div><div class="rc-donut-legend" id="rcDonutLegend"></div></div></div>
+    <div class="rc-card"><div class="rc-head"><div><h4>Composición por segmento</h4><p>Pasa el cursor para ver detalle. Haz clic para filtrar.</p></div><span class="rc-chip" id="rcShareChip">100% negocio</span></div><div class="rc-donut-zone"><div class="rc-donut-wrap"><canvas id="rcDonut"></canvas><div class="rc-donut-center"><b id="rcDonutTotal">—</b><span>unidades</span></div></div><div class="rc-donut-legend" id="rcDonutLegend"></div></div></div>
   </div>
 
   <div class="rc-grid rc-grid-b">
@@ -5497,7 +5512,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
   <div class="ro-grid ro-grid-a">
     <div class="ro-card"><div class="ro-head"><div><h4>Evolución mensual O1 vs O2</h4><p id="roTrendInsight">La tendencia aparecerá al cargar el archivo.</p></div><div class="ro-legend" id="roLegend"><button data-s="O1"><i class="o1"></i>O1</button><button data-s="O2"><i class="o2"></i>O2</button></div></div><div class="ro-trend-wrap"><canvas id="roTrend"></canvas></div></div>
-    <div class="ro-card"><div class="ro-head"><div><h4>Composición por segmento</h4><p>Pasa el cursor para ver detalle. Haz clic para filtrar.</p></div><span class="ro-chip" id="roShareChip">100% mercado</span></div><div class="ro-donut-zone"><div class="ro-donut-wrap"><canvas id="roDonut"></canvas><div class="ro-donut-center"><b id="roDonutTotal">—</b><span>unidades</span></div></div><div class="ro-donut-legend" id="roDonutLegend"></div></div></div>
+    <div class="ro-card"><div class="ro-head"><div><h4>Composición por segmento</h4><p>Pasa el cursor para ver detalle. Haz clic para filtrar.</p></div><span class="ro-chip" id="roShareChip">100% negocio</span></div><div class="ro-donut-zone"><div class="ro-donut-wrap"><canvas id="roDonut"></canvas><div class="ro-donut-center"><b id="roDonutTotal">—</b><span>unidades</span></div></div><div class="ro-donut-legend" id="roDonutLegend"></div></div></div>
   </div>
 
   <div class="ro-grid ro-grid-b">
@@ -5554,7 +5569,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
   <div class="rc10-note" id="rc10Note">Esperando conexión con el Excel.</div>
   <div class="rc10-grid rc10-grid-a">
     <div class="rc10-card"><div class="rc10-head"><div><h4>Evolución mensual por segmento</h4><p>Hover para detalle. Clic en un mes para filtrar todo el módulo.</p></div><div class="rc10-legend" id="rc10Legend"><button data-s="P2"><i style="background:#f5ae00"></i>P2</button><button data-s="P3"><i style="background:#252a34"></i>P3</button><button data-s="P4"><i style="background:#ee0b70"></i>P4</button><button data-s="P5"><i style="background:#8f98a6"></i>P5</button></div></div><div class="rc10-trend-wrap"><canvas id="rc10Trend"></canvas></div></div>
-    <div class="rc10-card"><div class="rc10-head"><div><h4>Composición por segmento</h4><p>Haz clic en una tarjeta o porción para filtrar.</p></div><span class="rc10-chip" id="rc10ShareChip">100% mercado</span></div><div class="rc10-donut-wrap"><canvas id="rc10Donut"></canvas><div class="rc10-donut-center"><b id="rc10DonutTotal">—</b><span>unidades</span></div></div><div class="rc10-donut-legend" id="rc10DonutLegend"></div></div>
+    <div class="rc10-card"><div class="rc10-head"><div><h4>Composición por segmento</h4><p>Haz clic en una tarjeta o porción para filtrar.</p></div><span class="rc10-chip" id="rc10ShareChip">100% negocio</span></div><div class="rc10-donut-wrap"><canvas id="rc10Donut"></canvas><div class="rc10-donut-center"><b id="rc10DonutTotal">—</b><span>unidades</span></div></div><div class="rc10-donut-legend" id="rc10DonutLegend"></div></div>
   </div>
   <div class="rc10-grid rc10-grid-b"><div class="rc10-card"><div class="rc10-head"><div><h4>Top marcas</h4><p>Ranking recalculado con tus filtros.</p></div></div><div class="rc10-rank" id="rc10Brands"></div></div><div class="rc10-card"><div class="rc10-head"><div><h4>Top modelos</h4><p>Modelos con mayor volumen.</p></div></div><div class="rc10-rank" id="rc10Models"></div></div></div>
   <div class="rc10-grid rc10-grid-c"><div class="rc10-card"><div class="rc10-head"><div><h4>Origen</h4><p>Procedencia del mercado.</p></div></div><div class="rc10-bars" id="rc10Origins"></div></div><div class="rc10-card"><div class="rc10-head"><div><h4>Combustible</h4><p>Mix energético.</p></div></div><div class="rc10-bars" id="rc10Fuels"></div></div><div class="rc10-card"><div class="rc10-head"><div><h4>Fórmula rodante</h4><p>Configuración técnica.</p></div></div><div class="rc10-bars" id="rc10Drive"></div></div><div class="rc10-card"><div class="rc10-head"><div><h4>Carrocería</h4><p>Composición por tipo.</p></div></div><div class="rc10-bars" id="rc10Bodies"></div></div></div>
@@ -5600,7 +5615,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
 <script>
 const titles={
- resumen:'Resumen Ejecutivo',retailmes:'Retail del Mes',retail:'Retail Acumulado',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',
+ resumen:'Resumen Ejecutivo',retailmes:'Venta Retail · Universo Negocio',retail:'Retail Acumulado',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',
  ligeros:'Mercado de Pick-up C3',pesados:'Mercado Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Mercado Remolques y Semirremolques',
  concesionarios:'Departamento y Concesionarios Retail',carga:'Cargar Mes'
 };
@@ -6187,19 +6202,29 @@ function rtmAggregateRows(){
 function rtmCompute(){
   const rows=rtmAggregateRows();
   const seg={};Object.keys(RTM_COL).forEach(k=>seg[k]=rows.reduce((a,r)=>a+(+r[k]||0),0));
-  const fam={};Object.entries(RTM_FAM).forEach(([f,ss])=>fam[f]=ss.reduce((a,s)=>a+seg[s],0));fam.TOTAL=fam.COMERCIALES+fam.OMNIBUS+fam.CAMION;
-  RTM.segments=seg;RTM.families=fam;return rows;
+  const fam={};Object.entries(RTM_FAM).forEach(([f,ss])=>fam[f]=ss.reduce((a,s)=>a+seg[s],0));fam.MARKET=Object.keys(RTM_COL).reduce((a,s)=>a+seg[s],0);fam.TOTAL=fam.COMERCIALES+fam.OMNIBUS+fam.CAMION;
+  RTM.segments=seg;RTM.families=fam;RTM.marketTotal=fam.MARKET;return rows;
 }
 function rtmSetSource(title,sub){const a=document.getElementById('rtmSourceTitle'),b=document.getElementById('rtmSourceSub');if(a)a.textContent=title;if(b)b.textContent=sub}
 function rtmPopulateBrand(){const s=document.getElementById('rtmBrandFilter');if(!s)return;const old=s.value;const rows=rtmAggregateRows().filter(r=>rtmFamilyTotal(r,RTM.family)>0).sort((a,b)=>a.brand.localeCompare(b.brand));s.innerHTML='<option value="ALL">Todas las marcas</option>'+rows.map(r=>`<option value="${r.brand.replace(/"/g,'&quot;')}">${r.brand}</option>`).join('');if([...s.options].some(o=>o.value===old))s.value=old;else{s.value='ALL';RTM.brand='ALL'}}
 function rtmRender(){
  if(!RTM.rows.length)return;
- const rows=rtmCompute();const total=RTM.families.TOTAL;
+ const rows=rtmCompute();const total=RTM.families.TOTAL,market=RTM.families.MARKET||total;
  const k=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
- k('rtmKTotal',rtmFmt(total));k('rtmKLigeros',rtmFmt(RTM.families.LIGEROS));k('rtmKCom',rtmFmt(RTM.families.COMERCIALES));k('rtmKCam',rtmFmt(RTM.families.CAMION));k('rtmKOmni',rtmFmt(RTM.families.OMNIBUS));
- k('rtmKLigerosSub',rtmPct(RTM.families.LIGEROS,total)+' del total');k('rtmKComSub',rtmPct(RTM.families.COMERCIALES,total)+' del total');k('rtmKCamSub',rtmPct(RTM.families.CAMION,total)+' del total');k('rtmKOmniSub',rtmPct(RTM.families.OMNIBUS,total)+' del total');
- const rankBase=rows.map(r=>[r.brand,rtmFamilyTotal(r,RTM.family)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);const leader=rankBase[0]||['—',0];k('rtmKLeader',leader[0]);k('rtmKLeaderSub',rtmFmt(leader[1])+' · '+rtmPct(leader[1],RTM.family==='TOTAL'?total:RTM.families[RTM.family]));
- const famName={TOTAL:'Total mercado',LIGEROS:'Ligeros',COMERCIALES:'Comerciales',OMNIBUS:'Ómnibus',CAMION:'Camión / Remolcador'};k('rtmRankTitle','Top marcas · '+famName[RTM.family]);k('rtmRankSub',RTM.brand==='ALL'?'Ranking completo del mes.':'Marca seleccionada: '+RTM.brand);
+ k('rtmMarketTotal',rtmFmt(market));
+ k('rtmKTotal',rtmFmt(total));
+ k('rtmKTotalSub',rtmPct(total,market)+' del mercado total · C1–C4 · O1–O2 · P2–P5');
+ k('rtmHeroBusinessTotal',rtmFmt(total)+' unidades negocio · '+rtmPct(total,market)+' del mercado Retail');
+ k('rtmKCom',rtmFmt(RTM.families.COMERCIALES));
+ k('rtmKCam',rtmFmt(RTM.families.CAMION));
+ k('rtmKOmni',rtmFmt(RTM.families.OMNIBUS));
+ k('rtmKPickup',rtmFmt(RTM.segments.C3||0));
+ k('rtmKComSub',rtmPct(RTM.families.COMERCIALES,total)+' del negocio · C1–C4');
+ k('rtmKCamSub',rtmPct(RTM.families.CAMION,total)+' del negocio · P2–P5');
+ k('rtmKOmniSub',rtmPct(RTM.families.OMNIBUS,total)+' del negocio · O1–O2');
+ k('rtmKPickupSub',rtmPct(RTM.segments.C3||0,total)+' del negocio · C3 Camioneta Pick-up');
+ const rankBase=rows.map(r=>[r.brand,rtmFamilyTotal(r,RTM.family)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);const leader=rankBase[0]||['—',0];k('rtmKLeader',leader[0]);k('rtmKLeaderSub',rtmFmt(leader[1])+' · '+rtmPct(leader[1],RTM.family==='TOTAL'?total:RTM.families[RTM.family])+' del '+(RTM.family==='TOTAL'?'negocio':'filtro'));
+ const famName={TOTAL:'Universo negocio',COMERCIALES:'Comerciales C1–C4',OMNIBUS:'Ómnibus O1–O2',CAMION:'Camiones / Remolcadores P2–P5'};k('rtmRankTitle','Top marcas · '+famName[RTM.family]);k('rtmRankSub',RTM.brand==='ALL'?'Ranking completo del mes.':'Marca seleccionada: '+RTM.brand);
  let rank=rankBase;if(RTM.brand!=='ALL')rank=rank.filter(x=>x[0]===RTM.brand);const max=Math.max(1,...rank.map(x=>x[1]));const rb=document.getElementById('rtmRank');if(rb)rb.innerHTML=rank.slice(0,10).map(([n,v],i)=>`<div class="rtm-rank-row" data-brand="${n}"><span class="pos">${i+1}</span><span class="name" title="${n}">${n}</span><div class="rtm-track"><div class="rtm-fill" style="width:${(v/max*100).toFixed(1)}%"></div></div><b>${rtmFmt(v)}</b></div>`).join('')||'<div style="color:#999;font-size:11px">Sin datos para la selección.</div>';
  rb?.querySelectorAll('.rtm-rank-row').forEach(el=>el.onclick=()=>{RTM.brand=el.dataset.brand;const s=document.getElementById('rtmBrandFilter');if(s)s.value=RTM.brand;rtmRender()});
  try{rtmDrawDonut()}catch(e){console.error(e)}
@@ -6208,7 +6233,7 @@ function rtmRender(){
  try{rtmRenderInsights()}catch(e){console.error(e)}
  try{rtmRenderQuality()}catch(e){console.error(e)}
  try{rtmPopulateBrand()}catch(e){console.error(e)}
- document.querySelectorAll('#rtmTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RTM.family));k('rtmShareChip',RTM.family==='TOTAL'?'100% mercado':rtmPct(RTM.families[RTM.family],total)+' del mercado');
+ document.querySelectorAll('#rtmTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RTM.family));k('rtmShareChip',RTM.family==='TOTAL'?'100% negocio':rtmPct(RTM.families[RTM.family],total)+' del mercado');
 }
 function rtmDrawDonut(){
  const c=document.getElementById('rtmDonut');if(!c)return;
@@ -6253,7 +6278,7 @@ function rtmDrawDonut(){
  const selected=RTM.family==='TOTAL'?total:(RTM.families[RTM.family]||0);
  const center=document.getElementById('rtmDonutTotal');if(center)center.textContent=rtmFmt(selected);
  const lab=document.getElementById('rtmDonutLabel');if(lab)lab.textContent=RTM.family==='TOTAL'?'unidades totales':'unidades · '+({LIGEROS:'Ligeros',COMERCIALES:'Comerciales',OMNIBUS:'Ómnibus',CAMION:'Camión / Remolc.'}[RTM.family]||RTM.family);
- const names={LIGEROS:'Ligeros',COMERCIALES:'Comerciales',OMNIBUS:'Ómnibus',CAMION:'Camión / Remolc.'};
+ const names={COMERCIALES:'Comerciales C1–C4',OMNIBUS:'Ómnibus O1–O2',CAMION:'Camiones / Remolcadores P2–P5'};
  const leg=document.getElementById('rtmLegend');
  if(leg){
    leg.innerHTML=slices.map(s=>`<button data-family="${s.f}" class="${RTM.family===s.f?'active':''}" data-tip="${names[s.f]}: ${rtmFmt(s.v)} unidades · ${rtmPct(s.v,total)}"><i class="rtm-dot" style="background:${RTM_COLORS[s.f]}"></i><span>${names[s.f]}<br><small>${rtmPct(s.v,total)} del mercado</small></span><b>${rtmFmt(s.v)}</b></button>`).join('');
@@ -6261,9 +6286,9 @@ function rtmDrawDonut(){
    rtmBindTips(leg);
  }
 }
-function rtmRenderSegments(){const box=document.getElementById('rtmSegments');if(!box)return;const total=RTM.families.TOTAL||1;const allowed=(RTM.family==='TOTAL'?RTM_SEG:RTM_SEG.filter(x=>(RTM_FAM[RTM.family]||[]).includes(x[0]))).filter(x=>window.TSF_BUSINESS_SEGMENTS.includes(x[0]));box.innerHTML=allowed.map(([s,n])=>{const m=window.tsfBusinessMeta(s);return `<div class="rtm-seg" data-seg="${s}" data-tip="${m.categoria}: ${rtmFmt(RTM.segments[s])} · ${rtmPct(RTM.segments[s],total)} · ${m.uso} · Riesgo ${m.riesgo}"><div class="desc">${m.categoria}</div><div class="val">${rtmFmt(RTM.segments[s])}</div><div class="code">${s} · ${m.descripcion}</div></div>`}).join('');const chip=document.getElementById('rtmSegmentChip');if(chip)chip.textContent=allowed.length+' segmentos';rtmBindTips(box)}
-function rtmRenderFamilies(){const box=document.getElementById('rtmFamilyBars');if(!box)return;const total=RTM.families.TOTAL||1;const arr=[['COMERCIALES','Comerciales'],['CAMION','Camión / Remolcador'],['OMNIBUS','Ómnibus']];const mx=Math.max(...arr.map(x=>RTM.families[x[0]]));box.innerHTML=arr.map(([f,n],i)=>`<div class="rtm-rank-row" data-family="${f}"><span class="pos">${i+1}</span><span class="name">${n}</span><div class="rtm-track"><div class="rtm-fill" style="width:${(RTM.families[f]/mx*100).toFixed(1)}%"></div></div><b>${rtmPct(RTM.families[f],total)}</b></div>`).join('');box.querySelectorAll('.rtm-rank-row').forEach(el=>el.onclick=()=>{RTM.family=el.dataset.family;RTM.brand='ALL';rtmRender()})}
-function rtmRenderInsights(){const box=document.getElementById('rtmInsights');if(!box)return;const total=RTM.families.TOTAL||1;const segTop=Object.entries(RTM.segments).filter(([s])=>window.TSF_BUSINESS_SEGMENTS.includes(s)).sort((a,b)=>b[1]-a[1])[0]||['—',0];const rows=rtmAggregateRows().map(r=>[r.brand,rtmFamilyTotal(r,RTM.family)]).sort((a,b)=>b[1]-a[1]);const top3=rows.slice(0,3).reduce((a,x)=>a+x[1],0);const famTotal=RTM.family==='TOTAL'?total:RTM.families[RTM.family]||1;box.innerHTML=`<div class="rtm-mini"><span>Segmento líder</span><b>${segTop[0]}</b><small>${rtmFmt(segTop[1])} unidades</small></div><div class="rtm-mini"><span>Top 3 marcas</span><b>${rtmPct(top3,famTotal)}</b><small>concentración</small></div><div class="rtm-mini"><span>Marcas activas</span><b>${rows.filter(x=>x[1]>0).length}</b><small>con venta</small></div><div class="rtm-mini"><span>Familia dominante</span><b>${[['COMERCIALES','Comerciales'],['CAMION','Camión / Remolcador'],['OMNIBUS','Ómnibus']].sort((a,b)=>(RTM.families[b[0]]||0)-(RTM.families[a[0]]||0))[0][1]}</b><small>universo negocio</small></div>`}
+function rtmRenderSegments(){const box=document.getElementById('rtmSegments');if(!box)return;const total=RTM.families.TOTAL||1;const allowed=(RTM.family==='TOTAL'?RTM_SEG:RTM_SEG.filter(x=>(RTM_FAM[RTM.family]||[]).includes(x[0]))).filter(x=>window.TSF_BUSINESS_SEGMENTS.includes(x[0]));box.innerHTML=allowed.map(([s,n])=>{const m=window.tsfBusinessMeta(s);return `<div class="rtm-seg ${s==='C3'?'priority':''}" data-seg="${s}" data-tip="${m.categoria}: ${rtmFmt(RTM.segments[s])} · ${rtmPct(RTM.segments[s],total)} · ${m.uso} · Riesgo ${m.riesgo}"><div class="desc">${m.categoria}</div><div class="val">${rtmFmt(RTM.segments[s])}</div><div class="code">${s} · ${m.descripcion}</div></div>`}).join('');const chip=document.getElementById('rtmSegmentChip');if(chip)chip.textContent=allowed.length+' segmentos';rtmBindTips(box);box.querySelectorAll('.rtm-seg').forEach(el=>{el.onclick=e=>{e.stopPropagation();const s=el.dataset.seg;RTM.family=s.startsWith('C')?'COMERCIALES':s.startsWith('O')?'OMNIBUS':'CAMION';RTM.brand='ALL';rtmRender()}})}
+function rtmRenderFamilies(){const box=document.getElementById('rtmFamilyBars');if(!box)return;const total=RTM.families.TOTAL||1;const arr=[['COMERCIALES','Comerciales C1–C4'],['CAMION','Camiones / Remolcadores P2–P5'],['OMNIBUS','Ómnibus O1–O2']];const mx=Math.max(...arr.map(x=>RTM.families[x[0]]));box.innerHTML=arr.map(([f,n],i)=>`<div class="rtm-rank-row" data-family="${f}"><span class="pos">${i+1}</span><span class="name">${n}</span><div class="rtm-track"><div class="rtm-fill" style="width:${(RTM.families[f]/mx*100).toFixed(1)}%"></div></div><b>${rtmPct(RTM.families[f],total)}</b></div>`).join('');box.querySelectorAll('.rtm-rank-row').forEach(el=>el.onclick=()=>{RTM.family=el.dataset.family;RTM.brand='ALL';rtmRender()})}
+function rtmRenderInsights(){const box=document.getElementById('rtmInsights');if(!box)return;const total=RTM.families.TOTAL||1;const rows=rtmAggregateRows().map(r=>[r.brand,rtmFamilyTotal(r,RTM.family)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);const leader=rows[0]||['—',0];const famLead=[['COMERCIALES','Comerciales C1–C4'],['CAMION','Camiones P2–P5'],['OMNIBUS','Ómnibus O1–O2']].sort((a,b)=>(RTM.families[b[0]]||0)-(RTM.families[a[0]]||0))[0];const famTotal=RTM.family==='TOTAL'?total:RTM.families[RTM.family]||1;box.innerHTML=`<div class="rtm-mini emphasis"><span>Pick-up C3</span><b>${rtmFmt(RTM.segments.C3||0)}</b><small>${rtmPct(RTM.segments.C3||0,total)} del universo negocio</small></div><div class="rtm-mini"><span>Marca líder</span><b>${leader[0]}</b><small>${rtmFmt(leader[1])} · ${rtmPct(leader[1],famTotal)}</small></div><div class="rtm-mini"><span>Familia dominante</span><b>${famLead[1]}</b><small>${rtmPct(RTM.families[famLead[0]]||0,total)} del negocio</small></div><div class="rtm-mini"><span>Mercado cubierto</span><b>${rtmPct(total,RTM.families.MARKET||total)}</b><small>${rtmFmt(total)} de ${rtmFmt(RTM.families.MARKET||total)} unidades</small></div>`}
 function rtmRenderQuality(){const box=document.getElementById('rtmQuality');if(!box)return;const sumFam=RTM.families.LIGEROS+RTM.families.COMERCIALES+RTM.families.OMNIBUS+RTM.families.CAMION;const visible=RTM.families.COMERCIALES+RTM.families.OMNIBUS+RTM.families.CAMION;const diff=0;const fotonRaw=RTM.rows.some(r=>String(r.rawBrand||'').trim().toUpperCase()==='FOTON 1');box.innerHTML=`<div class="rtm-q ok"><strong>✓ Reconciliación</strong>Base completa: ${rtmFmt(sumFam)} unidades. Universo negocio visible C/O/P: ${rtmFmt(visible)} unidades. L1-L3 se conservan solo para reconciliación.</div><div class="rtm-q ${fotonRaw?'warn':'ok'}"><strong>${fotonRaw?'⚠':'✓'} Homologación de marca</strong>${fotonRaw?'Se detectó “FOTON 1”; el dashboard lo consolida como FOTON.':'No se detectaron variantes FOTON 1.'}</div><div class="rtm-q warn"><strong>⚠ Control OMNIBUS</strong>Conviene validar la fórmula de porcentaje de la fila TOTALES del Excel antes de publicar.</div>`}
 function rtmBindTips(root){const tip=document.getElementById('rtmTooltip');root?.querySelectorAll('[data-tip]').forEach(el=>{el.onmousemove=e=>{tip.innerHTML=el.dataset.tip;tip.style.display='block';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px'};el.onmouseleave=()=>tip.style.display='none'})}
 function rtmCanvasEvt(){
@@ -6283,13 +6308,30 @@ function rtmCanvasEvt(){
  c.onclick=e=>{const i=hit(e);if(i>=0){RTM.family=c._slices[i].f;RTM.brand='ALL';rtmRender()}}
 }
 function rtmParseWorkbook(wb,name){
- const ws=wb.Sheets['VENTA MES']||wb.Sheets[wb.SheetNames.find(n=>String(n).toUpperCase().includes('VENTA MES'))];if(!ws)throw new Error('No encuentro la hoja “VENTA MES”.');const a=XLSX.utils.sheet_to_json(ws,{header:1,defval:0,raw:true});const title=String(a?.[0]?.[0]||'');const m=title.match(/(ENERO|FEBRERO|MARZO|ABRIL|MAYO|JUNIO|JULIO|AGOSTO|SETIEMBRE|SEPTIEMBRE|OCTUBRE|NOVIEMBRE|DICIEMBRE)\s+(20\d{2})/i);RTM.period=m?(m[1].charAt(0).toUpperCase()+m[1].slice(1).toLowerCase()+' '+m[2]):title.replace(/VENTAS?\s+RETAIL\s*-?/i,'').trim();RTM.sheetCount=wb.SheetNames.length;RTM.sourceName=name||'Excel';RTM.rows=[];for(let i=5;i<a.length;i++){const r=a[i]||[],brand=String(r[0]||'').trim();if(!brand||/^TOTALES?$/i.test(brand)||brand.startsWith('1  Incluye'))continue;const o={brand:rtmNormBrand(brand),rawBrand:brand};Object.entries(RTM_COL).forEach(([k,j])=>o[k]=Number(r[j]||0));if(Object.keys(RTM_COL).some(k=>o[k]))RTM.rows.push(o)}if(!RTM.rows.length)throw new Error('La hoja VENTA MES no contiene filas de marcas reconocibles.');RTM.family='TOTAL';RTM.brand='ALL';rtmSetSource('Excel cargado correctamente',`${name} · ${RTM.rows.length} marcas/filas analizadas · ${RTM.sheetCount} hojas`);document.getElementById('rtmHeroTitle').textContent='Retail del Mes · '+RTM.period;document.getElementById('rtmMonthPill').textContent=RTM.period;document.getElementById('rtmHeroCopy').textContent='Fotografía ejecutiva del mercado Retail del periodo, con familias, segmentos y marcas líderes calculadas directamente desde el Excel.';document.getElementById('rtmFooterSource').textContent='Fuente: '+name;document.getElementById('rtmFooterAudit').textContent=RTM.sheetCount+' hojas detectadas';rtmRender();rtmCanvasEvt();rtmSetSource('Excel cargado correctamente',`${name} · ${RTM.rows.length} marcas/filas analizadas · ${RTM.sheetCount} hojas`);
+ const ws=wb.Sheets['VENTA MES']||wb.Sheets[wb.SheetNames.find(n=>String(n).toUpperCase().includes('VENTA MES'))];if(!ws)throw new Error('No encuentro la hoja “VENTA MES”.');const a=XLSX.utils.sheet_to_json(ws,{header:1,defval:0,raw:true});const title=String(a?.[0]?.[0]||'');const m=title.match(/(ENERO|FEBRERO|MARZO|ABRIL|MAYO|JUNIO|JULIO|AGOSTO|SETIEMBRE|SEPTIEMBRE|OCTUBRE|NOVIEMBRE|DICIEMBRE)\s+(20\d{2})/i);RTM.period=m?(m[1].charAt(0).toUpperCase()+m[1].slice(1).toLowerCase()+' '+m[2]):title.replace(/VENTAS?\s+RETAIL\s*-?/i,'').trim();RTM.sheetCount=wb.SheetNames.length;RTM.sourceName=name||'Excel';RTM.rows=[];for(let i=5;i<a.length;i++){const r=a[i]||[],brand=String(r[0]||'').trim();if(!brand||/^TOTALES?$/i.test(brand)||brand.startsWith('1  Incluye'))continue;const o={brand:rtmNormBrand(brand),rawBrand:brand};Object.entries(RTM_COL).forEach(([k,j])=>o[k]=Number(r[j]||0));if(Object.keys(RTM_COL).some(k=>o[k]))RTM.rows.push(o)}if(!RTM.rows.length)throw new Error('La hoja VENTA MES no contiene filas de marcas reconocibles.');RTM.family='TOTAL';RTM.brand='ALL';rtmSetSource('Excel cargado correctamente',`${name} · ${RTM.rows.length} marcas/filas analizadas · ${RTM.sheetCount} hojas`);document.getElementById('rtmHeroTitle').textContent='Venta Retail del Negocio · '+RTM.period;document.getElementById('rtmMonthPill').textContent=RTM.period;document.getElementById('rtmHeroCopy').textContent='Vista ejecutiva de C1–C4, O1–O2 y P2–P5. L1–L3 se mantienen únicamente para reconciliar el total del mercado Retail.';document.getElementById('rtmFooterSource').textContent='Fuente: '+name;document.getElementById('rtmFooterAudit').textContent=RTM.sheetCount+' hojas detectadas';rtmRender();rtmCanvasEvt();rtmSetSource('Excel cargado correctamente',`${name} · ${RTM.rows.length} marcas/filas analizadas · ${RTM.sheetCount} hojas`);
 }
 async function rtmReadFile(f){if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel.');const buf=await f.arrayBuffer(),wb=XLSX.read(buf,{type:'array',cellDates:true});rtmParseWorkbook(wb,f.name)}
 async function rtmLoadUrl(url){if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel.');const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);const buf=await res.arrayBuffer(),wb=XLSX.read(buf,{type:'array',cellDates:true});rtmParseWorkbook(wb,decodeURIComponent(url.split('/').pop()))}
 async function rtmAuto(){rtmSetSource('Buscando Excel del mes…','Se intenta cargar automáticamente desde la misma carpeta del HTML.');const cand=['./venta_retail_mes.xlsx','./data/venta_retail_mes.xlsx','./08.5_Venta Retail Mes Agosto 2026.xlsx','./08.5_Venta Retail Mes Agosto 2026(2).xlsx'];for(const u of cand){try{await rtmLoadUrl(u);return}catch(e){}}rtmSetSource('Excel mensual no encontrado','Sube “venta_retail_mes.xlsx” junto al HTML o selecciónalo manualmente.');}
 function rtmInit(){document.querySelectorAll('#rtmTabs button').forEach(b=>b.addEventListener('click',()=>{RTM.family=b.dataset.family;RTM.brand='ALL';rtmRender()}));document.getElementById('rtmBrandFilter')?.addEventListener('change',e=>{RTM.brand=e.target.value;rtmRender()});document.getElementById('rtmPick')?.addEventListener('click',()=>document.getElementById('rtmFile')?.click());document.getElementById('rtmRetry')?.addEventListener('click',rtmAuto);document.getElementById('rtmFile')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{rtmSetSource('Procesando Excel…',f.name);await rtmReadFile(f)}catch(err){rtmSetSource('No se pudo leer el archivo',err.message||String(err));alert(err.message||String(err))}finally{e.target.value=''}});rtmCanvasEvt();/* V13: autocarga local desactivada (datos vía Power Automate) */let t;window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(()=>{if(RTM.rows.length)rtmDrawDonut()},120)})}
 rtmInit();
+
+// V90 · Interacción BI estable para Retail del Mes
+(function(){
+  const page=document.getElementById('retailmes');
+  if(!page)return;
+  const insideSel='#rtmDonut,#rtmLegend,#rtmTabs,#rtmFamilyBars,#rtmSegments,#rtmRank,#rtmBrandFilter';
+  page.addEventListener('pointerdown',e=>{
+    if(e.target.closest(insideSel))return;
+    if(RTM.rows.length && (RTM.family!=='TOTAL'||RTM.brand!=='ALL')){
+      RTM.family='TOTAL';RTM.brand='ALL';
+      const sel=document.getElementById('rtmBrandFilter');if(sel)sel.value='ALL';
+      document.querySelectorAll('#rtmTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family==='TOTAL'));
+      rtmRender();
+    }
+  });
+})();
+
 
 
 // ===== V32 - REFUERZO DE NAVEGACION Y BOTONES =====
@@ -6329,8 +6371,8 @@ rtmInit();
 <script>
 // ===== V34 - MERCADO VEHICULOS PESADOS DINAMICO =====
 const VP3={rows:[],months:[],monthLabels:[],year:null,meta:{prevMonthYear:null,prevYtd:null,file:''},hiddenSeries:new Set()};
-const VP3_MONTH_NAMES=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SETIEMBRE','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
-const VP3_SHORT={ENERO:'Ene',FEBRERO:'Feb',MARZO:'Mar',ABRIL:'Abr',MAYO:'May',JUNIO:'Jun',JULIO:'Jul',AGOSTO:'Ago',SETIEMBRE:'Set',SEPTIEMBRE:'Set',OCTUBRE:'Oct',NOVIEMBRE:'Nov',DICIEMBRE:'Dic'};
+const VP3_MONTH_NAMES=['ENE','ENERO','FEB','FEBRERO','MAR','MARZO','ABR','ABRIL','MAY','MAYO','JUN','JUNIO','JUL','JULIO','AGO','AGOSTO','SET','SETIEMBRE','SEP','SEPTIEMBRE','OCT','OCTUBRE','NOV','NOVIEMBRE','DIC','DICIEMBRE'];
+const VP3_SHORT={ENE:'Ene',ENERO:'Ene',FEB:'Feb',FEBRERO:'Feb',MAR:'Mar',MARZO:'Mar',ABR:'Abr',ABRIL:'Abr',MAY:'May',MAYO:'May',JUN:'Jun',JUNIO:'Jun',JUL:'Jul',JULIO:'Jul',AGO:'Ago',AGOSTO:'Ago',SET:'Set',SETIEMBRE:'Set',SEP:'Set',SEPTIEMBRE:'Set',OCT:'Oct',OCTUBRE:'Oct',NOV:'Nov',NOVIEMBRE:'Nov',DIC:'Dic',DICIEMBRE:'Dic'};
 const vp3Els={month:document.getElementById('vp3Month'),subclass:document.getElementById('vp3Subclass'),brand:document.getElementById('vp3Brand'),model:document.getElementById('vp3Model'),office:document.getElementById('vp3Office'),fuel:document.getElementById('vp3Fuel'),origin:document.getElementById('vp3Origin'),formula:document.getElementById('vp3Formula'),category:document.getElementById('vp3Category'),body:document.getElementById('vp3Body'),modelyear:document.getElementById('vp3ModelYear')};
 function vp3Norm(v){return String(v??'').trim().replace(/\s+/g,' ')}
 function vp3Header(v){return vp3Norm(v).toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9#_ ]/g,'').replace(/\s+/g,' ')}
@@ -6351,7 +6393,8 @@ function vp3LoadWorkbook(wb,fileName='Excel cargado'){
  const find=(key,alts=[])=>hmap[key]||alts.map(a=>hmap[a]).find(Boolean);
  const cols={office:find('OFICINA REGISTRAL'),subclass:find('SUBCLASE',['SUB-CLASE']),brand:find('MARCA'),model:find('MODELO'),body:find('CARROCERIA'),category:find('CATEGORIA'),origin:find('ORIGEN'),fuel:find('COMBUSTIBLE'),formula:find('FORMULA RODANTE'),modelyear:find('AÑO_MOD',['ANO_MOD']),pbv:find('PBV'),seats:find('# ASIENTO',['ASIENTO','ASIENTOS'])};
  if(!cols.office||!cols.subclass||!cols.brand||!cols.model)throw new Error('La estructura del Excel no coincide con Vehículos Pesados.');
- const months=headers.filter(h=>VP3_MONTH_NAMES.includes(vp3Header(h)));if(!months.length)throw new Error('No detecté columnas mensuales.');
+ const monthAliases=[['ENE','ENERO'],['FEB','FEBRERO'],['MAR','MARZO'],['ABR','ABRIL'],['MAY','MAYO'],['JUN','JUNIO'],['JUL','JULIO'],['AGO','AGOSTO'],['SET','SETIEMBRE','SEP','SEPTIEMBRE'],['OCT','OCTUBRE'],['NOV','NOVIEMBRE'],['DIC','DICIEMBRE']];
+ const months=monthAliases.map(group=>group.map(k=>hmap[k]).find(Boolean)).filter(Boolean);if(!months.length)throw new Error('No detecté columnas mensuales.');
  VP3.months=months;VP3.monthLabels=months.map(h=>VP3_SHORT[vp3Header(h)]||h);VP3.rows=raw.map(o=>({office:vp3Norm(o[cols.office])||'SIN DATO',subclass:vp3Norm(o[cols.subclass])||'SIN DATO',brand:vp3Norm(o[cols.brand])||'SIN DATO',model:vp3Norm(o[cols.model])||'SIN DATO',body:vp3Norm(o[cols.body])||'SIN DATO',category:vp3Norm(o[cols.category])||'SIN DATO',origin:vp3Norm(o[cols.origin])||'SIN DATO',fuel:vp3Norm(o[cols.fuel])||'SIN DATO',formula:vp3Norm(o[cols.formula])||'SIN DATO',modelyear:vp3Norm(o[cols.modelyear])||'SIN DATO',pbv:Number(o[cols.pbv])||0,seats:Number(o[cols.seats])||0,m:months.map(h=>Number(o[h])||0)})).filter(r=>r.m.some(v=>v!==0));
  VP3.meta.file=fileName;VP3.meta.prevMonthYear=null;VP3.meta.prevYtd=null;const vp3YearMatch=String(fileName||'').match(/20\d{2}/);VP3.year=vp3YearMatch?Number(vp3YearMatch[0]):null;vp3ReadMeta(wb);vp3PopulateMonth();vp3Update(true);vp3Set('vp3HeroStatus',fileName+' · '+VP3.rows.length.toLocaleString('es-PE')+' registros útiles');vp3Set('vp3HeroPeriod','Camiones, tractocamiones, buses y chasises · '+VP3.monthLabels[0]+'–'+VP3.monthLabels.at(-1)+' '+VP3.year+' · datos leídos directamente desde '+fileName+'.');return true
 }
@@ -8266,6 +8309,37 @@ select option.tsf-seg-option{font-size:inherit}
  document.addEventListener('pointerleave',hide,true);
 })();
 </script>
+
+
+<style id="v90-retail-negocio-style">
+#retailmes .rtm-business-hero{min-height:118px!important;padding:20px 24px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important}
+#retailmes .rtm-business-hero h3{font-size:25px!important;margin:4px 0 6px!important}
+#retailmes .rtm-business-hero p{max-width:900px!important;line-height:1.45!important}
+#retailmes .rtm-month-pill{min-width:210px!important;padding:12px 16px!important}
+#retailmes .rtm-month-pill small{display:block;margin-top:4px;font-size:10px;opacity:.78}
+#retailmes .rtm-market-context{display:grid;grid-template-columns:minmax(0,1fr) 36px minmax(0,1fr);align-items:center;gap:10px;margin:10px 0;padding:14px 18px;border:1px solid #e5e8ee;border-radius:18px;background:#fff}
+#retailmes .rtm-market-context>div{display:flex;flex-direction:column;gap:3px}
+#retailmes .rtm-market-context span{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#8b93a1;font-weight:700}
+#retailmes .rtm-market-context b{font-size:27px;color:#171a20;line-height:1}
+#retailmes .rtm-market-context small{font-size:10px;color:#8b93a1}
+#retailmes .rtm-market-context i{text-align:center;font-style:normal;font-size:22px;color:#f5ae00}
+#retailmes .rtm-market-context .focus{background:#fff8e7;border:1px solid #f5d78d;border-radius:14px;padding:10px 14px}
+#retailmes .rtm-kpis-business{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important}
+#retailmes .rtm-kpi{min-height:104px!important;padding:15px!important;border-radius:16px!important}
+#retailmes .rtm-kpi.highlight{background:#fff6df!important;border-color:#f1c85a!important;box-shadow:0 6px 18px rgba(245,174,0,.10)}
+#retailmes .rtm-kpi .num{font-size:26px!important}
+#retailmes .rtm-kpi .num.brand{font-size:20px!important;white-space:normal!important;line-height:1.1!important}
+#retailmes .rtm-grid-a{grid-template-columns:1.05fr 1fr .85fr!important;gap:10px!important}
+#retailmes .rtm-card{border-radius:18px!important;box-shadow:0 5px 16px rgba(23,26,32,.045)!important}
+#retailmes .rtm-segments{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+#retailmes .rtm-seg{min-height:96px!important;cursor:pointer!important;transition:.15s ease!important}
+#retailmes .rtm-seg:hover{transform:translateY(-2px);box-shadow:0 7px 17px rgba(23,26,32,.08)}
+#retailmes .rtm-seg.priority{background:#fff6df!important;border-color:#f5ae00!important;box-shadow:0 0 0 1px rgba(245,174,0,.16)}
+#retailmes .rtm-seg.priority .desc:after{content:' · PRIORITARIO';font-size:8px;color:#9a6a00;font-weight:800}
+#retailmes .rtm-mini.emphasis{background:#fff6df!important;border-color:#f1cf7a!important}
+#retailmes .rtm-tabs button.active{box-shadow:0 3px 10px rgba(238,11,112,.10)!important}
+@media(max-width:1200px){#retailmes .rtm-kpis-business{grid-template-columns:repeat(3,minmax(0,1fr))!important}#retailmes .rtm-grid-a{grid-template-columns:1fr 1fr!important}#retailmes .rtm-segments{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+</style>
 
 </body>
 </html>
