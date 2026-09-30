@@ -4646,6 +4646,22 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 }
 </style>
 
+
+<style id="v86-pickups-business-style">
+#ligeros .lv2-business-kpis{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+#ligeros .lv2-business-summary{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+#ligeros .lv2-business-filters{grid-template-columns:110px 1fr 1fr 1fr 1fr 220px!important}
+#ligeros .lv2-business-reading-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+#ligeros .lv2-business-read{border:1px solid #e7e9ef;border-radius:12px;padding:11px;background:#fbfbfc;min-width:0}
+#ligeros .lv2-business-read span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#8d94a0}
+#ligeros .lv2-business-read b{display:block;font-size:19px;margin:5px 0 3px;color:#17191f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ligeros .lv2-business-read small{display:block;font-size:9.5px;color:#7e8591;line-height:1.35}
+#ligeros .lv2-class-legend button{cursor:pointer}
+@media(max-width:1350px){#ligeros .lv2-business-kpis{grid-template-columns:repeat(3,minmax(0,1fr))!important}#ligeros .lv2-business-filters{grid-template-columns:repeat(3,minmax(0,1fr))!important}#ligeros .lv2-business-reading-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:850px){#ligeros .lv2-business-summary,#ligeros .lv2-business-reading-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:560px){#ligeros .lv2-business-kpis,#ligeros .lv2-business-summary,#ligeros .lv2-business-reading-grid,#ligeros .lv2-business-filters{grid-template-columns:1fr!important}}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -4661,7 +4677,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
   <div class="nav" id="nav">
     <button class="active" data-page="resumen"><span class="nav-ico">⌂</span>Resumen Ejecutivo</button>
     
-    <button data-page="ligeros"><span class="nav-ico">◆</span>Pick-ups y Furgonetas</button>
+    <button data-page="ligeros"><span class="nav-ico">◆</span>Pick-up C3</button>
     <button data-page="pesados"><span class="nav-ico">▮</span>Mercado Vehículos Pesados</button>
     
     <button data-page="retailmes"><span class="nav-ico">◫</span>Retail del Mes</button>
@@ -4709,7 +4725,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
     </div>
 
     <div class="sx-kpis">
-      <div class="sx-kpi hot"><span>Inmatriculaciones acumuladas</span><b id="sxInmatTotal">—</b><small>08.2 Pick-ups/Furgonetas + 08.3 Pesados</small></div>
+      <div class="sx-kpi hot"><span>Inmatriculaciones acumuladas</span><b id="sxInmatTotal">—</b><small>08.2 Pick-up C3 + 08.3 Pesados</small></div>
       <div class="sx-kpi"><span>Retail negocio del mes</span><b id="sxRetailMonth">—</b><small id="sxRetailMonthSub">08.5 Retail del mes</small></div>
       <div class="sx-kpi"><span>Retail negocio acumulado</span><b id="sxRetailYtd">—</b><small id="sxRetailYtdSub">08.6 Retail acumulado</small></div>
       <div class="sx-kpi"><span>Marca líder Retail</span><b id="sxLeadBrand">—</b><small id="sxLeadBrandSub">Esperando 08.6 Retail acumulado</small></div>
@@ -4721,7 +4737,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
       <div class="sx-hero-copy">
         <div class="sx-line"></div>
         <h4>Panorama ejecutivo<br>del <span>mercado automotor</span></h4>
-        <p>Resumen comercial del universo C/O/P: comerciales, ómnibus, camiones/remolcadores y las inmatriculaciones de Pick-ups/Furgonetas + Pesados. Todas las cifras salen de los Excel cargados.</p>
+        <p>Resumen comercial del universo C/O/P: comerciales, ómnibus, camiones/remolcadores y las inmatriculaciones de Pick-up C3 + Pesados. Todas las cifras salen de los Excel cargados.</p>
       </div>
       <div class="sx-hero-points">
         <div><i>↗</i><span>Mercado y crecimiento</span></div>
@@ -4738,13 +4754,13 @@ canvas{transition:filter .14s ease,opacity .14s ease}
       </div>
 
       <div class="sx-card">
-        <div class="sx-card-head"><div><h4>Composición de inmatriculaciones</h4><p>08.2 Pick-ups/Furgonetas + 08.3 Pesados.</p></div><span class="sx-chip" id="sxInmatChip">0 / 2</span></div>
+        <div class="sx-card-head"><div><h4>Composición de inmatriculaciones</h4><p>08.2 Pick-up C3 + 08.3 Pesados.</p></div><span class="sx-chip" id="sxInmatChip">0 / 2</span></div>
         <div class="sx-donut-wrap"><canvas id="sxInmatDonut"></canvas><div class="sx-donut-center"><b id="sxInmatDonutTotal">—</b><span>unidades</span></div></div>
         <div class="sx-legend" id="sxInmatLegend"></div>
       </div>
 
       <div class="sx-card sx-trend-card">
-        <div class="sx-card-head"><div><h4>Evolución mensual del negocio</h4><p>Retail C/O/P vs inmatriculaciones de Pick-ups/Furgonetas + Pesados.</p></div></div>
+        <div class="sx-card-head"><div><h4>Evolución mensual del negocio</h4><p>Retail C/O/P vs inmatriculaciones de Pick-up C3 + Pesados.</p></div></div>
         <div class="sx-trend-wrap"><canvas id="sxTrend"></canvas></div>
       </div>
     </div>
@@ -4902,89 +4918,86 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 <section class="page" id="ligeros">
   <div class="lv2-hero">
     <div>
-      <div class="lv2-eyebrow">INMATRICULACIONES · ARCHIVO 2</div>
-      <h3>Pick-ups y Furgonetas</h3>
-      <p>Vista de negocio enfocada en PICK UP Y FURGONETAS. Autos, station wagon y SUV quedan fuera de los indicadores visibles; la base completa se conserva para control y reconciliación.</p>
+      <div class="lv2-eyebrow">INMATRICULACIONES · ARCHIVO 08.2 · SEGMENTO C3</div>
+      <h3>Mercado de Pick-ups</h3>
+      <p>Vista de negocio enfocada exclusivamente en <b>C3 · CAMIONETA PICK-UP</b>. Se consideran únicamente registros con carrocería PICK UP; panel/furgón, baranda, chasis cabinado, autos, station wagon y SUV quedan fuera del análisis visible.</p>
     </div>
-    <div class="lv2-hero-stat"><b id="lv2HeroTotal">—</b><span id="lv2HeroStatus">Buscando base de Pick-ups y Furgonetas…</span></div>
+    <div class="lv2-hero-stat"><b id="lv2HeroTotal">—</b><span id="lv2HeroStatus">Esperando la base comercial liviana…</span></div>
   </div>
 
   <div class="lv2-connect" id="lv2Connect">
-    <div class="lv2-connect-left"><div class="lv2-connect-ico">▣</div><div><b id="lv2ConnectTitle">Buscando Excel automáticamente…</b><span id="lv2ConnectSub">Se intenta cargar el archivo desde la misma carpeta del HTML.</span></div></div>
+    <div class="lv2-connect-left"><div class="lv2-connect-ico">▣</div><div><b id="lv2ConnectTitle">Esperando datos del Archivo 08.2</b><span id="lv2ConnectSub">La carga automática llega desde Power Automate; también puedes seleccionar el Excel manualmente.</span></div></div>
     <div class="lv2-connect-buttons"><button class="primary" id="lv2LoadBtn">📁 Seleccionar Excel</button><button class="ghost" id="lv2Retry">↻ Reintentar</button></div>
     <input type="file" id="lv2ExcelInput" accept=".xlsx,.xls" hidden>
   </div>
 
-  <div class="lv2-kpis">
-    <div class="lv2-kpi primary"><span>Total acumulado</span><b id="lv2Total">—</b><small id="lv2TotalSub">Esperando archivo</small></div>
-    <div class="lv2-kpi"><span id="lv2MonthLabel">Último mes</span><b id="lv2MonthTotal">—</b><small>mes disponible</small></div>
-    <div class="lv2-kpi"><span>Vs mes anterior</span><b id="lv2Mom">—</b><small id="lv2MomSub">—</small></div>
-    <div class="lv2-kpi gold"><span>Vs mismo mes 2025</span><b id="lv2Yoy">—</b><small id="lv2YoySub">comparativo interanual</small></div>
-    <div class="lv2-kpi"><span>Acumulado vs 2025</span><b id="lv2YtdYoy">—</b><small id="lv2YtdYoySub">comparativo YTD</small></div>
+  <div class="lv2-kpis lv2-business-kpis">
+    <div class="lv2-kpi primary"><span>Acumulado Pick-up C3</span><b id="lv2Total">—</b><small id="lv2TotalSub">Pick-up C3</small></div>
+    <div class="lv2-kpi"><span id="lv2MonthLabel">Último mes</span><b id="lv2MonthTotal">—</b><small>inmatriculaciones del mes</small></div>
+    <div class="lv2-kpi"><span>Variación vs mes anterior</span><b id="lv2Mom">—</b><small id="lv2MomSub">—</small></div>
+    <div class="lv2-kpi gold"><span>Vs mismo mes 2025</span><b id="lv2Yoy">—</b><small id="lv2YoySub">comparativo exacto del universo Pick-up C3</small></div>
+    <div class="lv2-kpi"><span>Acumulado vs 2025</span><b id="lv2YtdYoy">—</b><small id="lv2YtdYoySub">comparativo exacto YTD</small></div>
     <div class="lv2-kpi"><span>Mes pico</span><b id="lv2Peak">—</b><small id="lv2PeakSub">—</small></div>
-    
-    <div class="lv2-kpi business"><span>Pick Up / Furgonetas</span><b id="lv2Pick">—</b><small id="lv2PickShare">100% del universo visible</small></div>
   </div>
 
-  <div class="lv2-insights">
+  <div class="lv2-insights lv2-business-summary">
     <div class="lv2-insight"><span>Marca líder</span><b id="lv2TopBrand">—</b><small id="lv2TopBrandSub">—</small></div>
     <div class="lv2-insight"><span>Modelo líder</span><b id="lv2TopModel">—</b><small id="lv2TopModelSub">—</small></div>
-    <div class="lv2-insight"><span>Oficina líder</span><b id="lv2TopOffice">—</b><small id="lv2TopOfficeSub">—</small></div>
-    <div class="lv2-insight"><span>Electrificados</span><b id="lv2Electrified">—</b><small id="lv2ElectrifiedSub">Híbrido + eléctrico</small></div>
+    <div class="lv2-insight"><span>Origen líder</span><b id="lv2TopOffice">—</b><small id="lv2TopOfficeSub">—</small></div>
+    <div class="lv2-insight"><span>Carrocería dominante</span><b id="lv2Electrified">—</b><small id="lv2ElectrifiedSub">—</small></div>
   </div>
 
   <div class="lv2-filter-shell" id="lv2FilterShell">
-    <div class="lv2-filters">
-      <div class="lv2-filter"><label>Mes</label><select id="lv2Month"><option value="ALL">Sin datos</option></select></div>
-      <div class="lv2-filter"><label>Clase</label><select id="lv2Class"><option value="ALL">Todas</option></select></div>
+    <div class="lv2-filters lv2-business-filters">
+      <div class="lv2-filter"><label>Periodo</label><select id="lv2Month"><option value="ALL">Acumulado</option></select></div>
       <div class="lv2-filter"><label>Marca</label><select id="lv2Brand"><option value="ALL">Todas</option></select></div>
       <div class="lv2-filter"><label>Modelo</label><select id="lv2Model"><option value="ALL">Todos</option></select></div>
-      <div class="lv2-filter"><label>Oficina</label><select id="lv2Office"><option value="ALL">Todas</option></select></div>
-      <div class="lv2-filter"><label>Combustible</label><select id="lv2Fuel"><option value="ALL">Todos</option></select></div>
+      <div class="lv2-filter"><label>Oficina registral</label><select id="lv2Office"><option value="ALL">Todas</option></select></div>
+      <div class="lv2-filter"><label>Origen</label><select id="lv2Origin"><option value="ALL">Todos</option></select></div>
       <div class="lv2-filter-actions"><button class="lv2-more" id="lv2More">Más filtros</button><button class="lv2-reset" id="lv2Reset">↻ Limpiar</button></div>
     </div>
     <div class="lv2-advanced">
-      <div class="lv2-filter"><label>Carrocería</label><select id="lv2Body"><option value="ALL">Todas</option></select></div>
+      
+      <div class="lv2-filter"><label>Combustible</label><select id="lv2Fuel"><option value="ALL">Todos</option></select></div>
       <div class="lv2-filter"><label>Transmisión</label><select id="lv2Trans"><option value="ALL">Todas</option></select></div>
       <div class="lv2-filter"><label>Tracción</label><select id="lv2Drive"><option value="ALL">Todas</option></select></div>
-      <div class="lv2-filter"><label>Origen</label><select id="lv2Origin"><option value="ALL">Todos</option></select></div>
       <div class="lv2-filter"><label>Año modelo</label><select id="lv2ModelYear"><option value="ALL">Todos</option></select></div>
     </div>
-    <div class="lv2-filter-note" id="lv2FilterNote">Esperando conexión con el Excel.</div>
+    <div class="lv2-filter-note" id="lv2FilterNote">Universo fijo: C3 · CAMIONETA PICK-UP.</div>
   </div>
 
   <div class="lv2-grid lv2-grid-a">
-    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Evolución mensual · Pick-ups y Furgonetas</h4><p id="lv2TrendInsight">La tendencia aparecerá al cargar el archivo.</p></div><div class="lv2-legend" id="lv2TrendLegend"></div></div><canvas id="lv2Trend"></canvas><div class="lv2-chart-tip" id="lv2TrendTip"></div></div>
-    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Universo visible</h4><p>Solo Pick-ups y Furgonetas; autos, station wagon y SUV no se muestran.</p></div></div><div class="lv2-donut-wrap"><canvas id="lv2Donut"></canvas><div class="lv2-donut-center"><b id="lv2DonutTotal">—</b><span>unidades</span></div></div><div class="lv2-class-legend" id="lv2ClassLegend"></div><div class="lv2-tip" id="lv2Tip"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Evolución mensual del negocio</h4><p id="lv2TrendInsight">Compara el comportamiento mensual de las camionetas Pick-up C3.</p></div><div class="lv2-legend" id="lv2TrendLegend"></div></div><canvas id="lv2Trend"></canvas><div class="lv2-chart-tip" id="lv2TrendTip"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>¿Qué tipo de vehículo se está inmatriculando?</h4><p>Universo fijo C3: únicamente carrocería PICK UP.</p></div><span class="lv2-chip">Clic para filtrar</span></div><div class="lv2-donut-wrap"><canvas id="lv2Donut"></canvas><div class="lv2-donut-center"><b id="lv2DonutTotal">—</b><span>unidades</span></div></div><div class="lv2-class-legend" id="lv2ClassLegend"></div><div class="lv2-tip" id="lv2Tip"></div></div>
   </div>
 
   <div class="lv2-grid lv2-grid-b">
-    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Top marcas</h4><p>Ranking según los filtros activos.</p></div><span class="lv2-chip" id="lv2BrandChip">Sin datos</span></div><div class="lv2-rank" id="lv2Brands"></div></div>
-    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Top modelos</h4><p>Modelos de mayor volumen en la selección.</p></div><span class="lv2-chip" id="lv2ModelChip">Sin datos</span></div><div class="lv2-rank" id="lv2Models"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Marcas líderes en Pick-up C3</h4><p>Participación acumulada según los filtros activos.</p></div><span class="lv2-chip" id="lv2BrandChip">Sin datos</span></div><div class="lv2-rank" id="lv2Brands"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Modelos de mayor volumen</h4><p>Incluye H100 Truck, K2500 y otros modelos cuando corresponda a la clasificación del Excel.</p></div><span class="lv2-chip" id="lv2ModelChip">Sin datos</span></div><div class="lv2-rank" id="lv2Models"></div></div>
   </div>
 
   <div class="lv2-card" style="margin-bottom:10px">
-    <div class="lv2-card-head"><div><h4>Concentración por oficinas registrales</h4><p>Ranking registral real, sin mapa referencial.</p></div><span class="lv2-chip" id="lv2OfficeChip">Sin datos</span></div>
-    <div class="lv2-offices"><div class="lv2-office-list" id="lv2Offices"></div><div class="lv2-office-side"><div class="lv2-mini"><span>Oficina líder</span><b id="lv2OfficeLeader">—</b><small id="lv2OfficeLeaderSub">—</small></div><div class="lv2-mini"><span>Top 5 oficinas</span><b id="lv2OfficeTop5">—</b><small>participación acumulada</small></div><div class="lv2-mini"><span>Marcas</span><b id="lv2BrandCount">—</b><small>con volumen en la selección</small></div><div class="lv2-mini"><span>Modelos</span><b id="lv2ModelCount">—</b><small>con volumen en la selección</small></div></div></div>
+    <div class="lv2-card-head"><div><h4>Concentración territorial</h4><p>Oficinas registrales con mayor volumen de camionetas Pick-up C3.</p></div><span class="lv2-chip" id="lv2OfficeChip">Sin datos</span></div>
+    <div class="lv2-offices"><div class="lv2-office-list" id="lv2Offices"></div><div class="lv2-office-side"><div class="lv2-mini"><span>Oficina líder</span><b id="lv2OfficeLeader">—</b><small id="lv2OfficeLeaderSub">—</small></div><div class="lv2-mini"><span>Top 5 oficinas</span><b id="lv2OfficeTop5">—</b><small>concentración territorial</small></div><div class="lv2-mini"><span>Marcas activas</span><b id="lv2BrandCount">—</b><small>con volumen en la selección</small></div><div class="lv2-mini"><span>Modelos activos</span><b id="lv2ModelCount">—</b><small>con volumen en la selección</small></div></div></div>
   </div>
 
   <div class="lv2-grid lv2-grid-c">
-    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Origen</h4><p>País de procedencia.</p></div></div><div class="lv2-bars" id="lv2Origins"></div></div>
-    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Combustible</h4><p>Perfil energético.</p></div></div><div class="lv2-bars" id="lv2Fuels"></div></div>
-    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Transmisión / Tracción</h4><p>Configuración técnica.</p></div></div><div class="lv2-bars dark" id="lv2TransDrive"></div></div>
-    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Año modelo</h4><p>Composición por año.</p></div></div><div class="lv2-bars" id="lv2Years"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Origen del vehículo</h4><p>Permite identificar el peso de China y otros países en el negocio.</p></div></div><div class="lv2-bars" id="lv2Origins"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Combustible</h4><p>Perfil energético del segmento Pick-up C3.</p></div></div><div class="lv2-bars" id="lv2Fuels"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Transmisión y tracción</h4><p>Configuración técnica y preferencia 4x4 / 4x2.</p></div></div><div class="lv2-bars dark" id="lv2TransDrive"></div></div>
+    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Año modelo</h4><p>Composición por año de fabricación/modelo.</p></div></div><div class="lv2-bars" id="lv2Years"></div></div>
   </div>
 
-  <div class="lv2-grid lv2-grid-b">
-    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Carrocerías principales</h4><p>Distribución del parque liviano registrado.</p></div></div><div class="lv2-bars" id="lv2Bodies"></div></div>
-    <div class="lv2-card"><div class="lv2-card-head"><div><h4>Lectura ejecutiva</h4><p>Indicadores que cambian con la selección.</p></div></div><div class="lv2-bars" id="lv2Executive"></div></div>
+  <div class="lv2-card lv2-business-reading" style="margin-bottom:10px">
+    <div class="lv2-card-head"><div><h4>Lectura ejecutiva para negocio</h4><p>Conclusiones calculadas automáticamente con la selección actual.</p></div><span class="lv2-chip">Dinámico</span></div>
+    <div class="lv2-business-reading-grid" id="lv2Executive"></div>
   </div>
 
   <div class="lv2-quality">
-    <div><span>Cobertura</span><b id="lv2Coverage">—</b></div>
+    <div><span>Cobertura del universo</span><b id="lv2Coverage">—</b></div>
     <div><span>Base técnica</span><b id="lv2BaseInfo">—</b></div>
     <div class="warn"><span>Duplicados exactos</span><b id="lv2DupInfo">—</b></div>
-    <div><span>Control</span><b id="lv2Control">La suma mensual debe reconciliar con RESUMEN</b></div>
+    <div><span>Control</span><b id="lv2Control">La suma mensual debe reconciliar con la hoja Pick Up</b></div>
   </div>
 </section>
 <section class="page" id="pesados">
@@ -5580,7 +5593,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 <script>
 const titles={
  resumen:'Resumen Ejecutivo',retailmes:'Retail del Mes',retail:'Retail Acumulado',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',
- ligeros:'Pick-ups y Furgonetas',pesados:'Mercado Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Mercado Remolques y Semirremolques',
+ ligeros:'Mercado de Pick-up C3',pesados:'Mercado Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Mercado Remolques y Semirremolques',
  concesionarios:'Departamento y Concesionarios Retail',carga:'Cargar Mes'
 };
 function go(page){
@@ -6025,9 +6038,9 @@ function lv2Val(r,monthOverride){const m=monthOverride===undefined?(lv2Els.month
 function lv2Set(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
 function lv2SetClass(id,v,cls){const e=document.getElementById(id);if(e){e.textContent=v;e.classList.remove('positive','negative');if(cls)e.classList.add(cls)}}
 function lv2Connect(title,sub,ok=false){lv2Set('lv2ConnectTitle',title);lv2Set('lv2ConnectSub',sub);const box=document.getElementById('lv2Connect');if(box){box.style.borderColor=ok?'#b9e4ce':'#f0d5e2';box.style.background=ok?'linear-gradient(135deg,#fff,#f1fbf6)':'linear-gradient(135deg,#fff,#fff9ed)'}}
-function lv2ResetDisplay(){['lv2HeroTotal','lv2Total','lv2MonthTotal','lv2Mom','lv2Yoy','lv2YtdYoy','lv2Peak','lv2SUV','lv2Pick','lv2TopBrand','lv2TopModel','lv2TopOffice','lv2Electrified','lv2DonutTotal','lv2OfficeLeader','lv2OfficeTop5','lv2BrandCount','lv2ModelCount'].forEach(x=>lv2Set(x,'—'));['lv2Brands','lv2Models','lv2Offices','lv2Origins','lv2Fuels','lv2TransDrive','lv2Years','lv2Bodies','lv2Executive','lv2ClassLegend'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='<div class="lv2-empty">Carga el Excel para generar este indicador.</div>'})}
+function lv2ResetDisplay(){['lv2HeroTotal','lv2Total','lv2MonthTotal','lv2Mom','lv2Yoy','lv2YtdYoy','lv2Peak','lv2Pick','lv2TopBrand','lv2TopModel','lv2TopOffice','lv2Electrified','lv2DonutTotal','lv2OfficeLeader','lv2OfficeTop5','lv2BrandCount','lv2ModelCount'].forEach(x=>lv2Set(x,'—'));['lv2Brands','lv2Models','lv2Offices','lv2Origins','lv2Fuels','lv2TransDrive','lv2Years','lv2Bodies','lv2Executive','lv2ClassLegend'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='<div class="lv2-empty">Carga el Excel para generar este indicador.</div>'})}
 function lv2FindSheet(wb){return wb.SheetNames.find(n=>lv2Head(n)==='BASE ESPECIFICACIONES TECNICAS')||wb.SheetNames.find(n=>lv2Head(n).includes('BASE')&&lv2Head(n).includes('ESPECIFICACIONES'))}
-function lv2ReadMeta(wb){try{const s=wb.Sheets['RESUMEN'];if(!s)return;const a=XLSX.utils.sheet_to_json(s,{header:1,defval:null});const row=a.find(r=>lv2Head(r?.[0])==='TOTAL GENERAL');if(row){LV2.meta.prevMonth=Number(row[18])||null;LV2.meta.prevYtd=Number(row[22])||null}}catch(e){console.warn('Meta 2025 no disponible',e)}}
+function lv2ReadMeta(wb){try{const s=wb.Sheets['Pick Up']||wb.Sheets[wb.SheetNames.find(n=>lv2Head(n)==='PICK UP')];if(!s)return;const a=XLSX.utils.sheet_to_json(s,{header:1,defval:null,raw:true});const row=a.find(r=>lv2Head(r?.[0])==='TOTAL GENERAL');if(row){LV2.meta.prevMonth=Number(row[17])||null;LV2.meta.prevYtd=Number(row[20])||null}}catch(e){console.warn('Comparativo Pick-up C3 2025 no disponible',e)}}
 function lv2LoadWorkbook(wb,fileName='Excel cargado'){
  const sn=lv2FindSheet(wb);if(!sn)throw new Error('No se encontró la hoja BASE ESPECIFICACIONES TÉCNICAS.');
  const sheet=wb.Sheets[sn];const data=XLSX.utils.sheet_to_json(sheet,{defval:'',raw:true});if(!data.length)throw new Error('La base técnica está vacía.');
@@ -6038,14 +6051,14 @@ function lv2LoadWorkbook(wb,fileName='Excel cargado'){
  LV2.months=keys.filter(k=>LV2_MONTH_NAMES.includes(lv2Head(k))).map(k=>lv2Head(k));
  if(!LV2.months.length)throw new Error('No se encontraron columnas mensuales.');
  LV2.rows=data.map(x=>({office:lv2Norm(x[f.office])||'SIN DATO',cls:lv2Norm(x[f.cls])||'SIN DATO',body:lv2Norm(x[f.body])||'SIN DATO',brand:lv2Norm(x[f.brand])||'SIN DATO',model:lv2Norm(x[f.model])||'SIN DATO',origin:lv2Norm(x[f.origin])||'SIN DATO',fuel:lv2Norm(x[f.fuel])||'SIN DATO',drive:lv2Norm(x[f.drive])||'SIN DATO',trans:lv2Norm(x[f.trans])||'SIN DATO',modelYear:lv2Norm(x[f.modelYear])||'SIN DATO',...Object.fromEntries(LV2.months.map(m=>[m,Number(x[normalized.get(m)]||0)]))}));
- LV2.file=fileName;lv2ReadMeta(wb);lv2PopulateMonth();lv2RefreshOptions();lv2Update(false);lv2Set('lv2HeroStatus',fileName+' · '+LV2.rows.length.toLocaleString('es-PE')+' registros útiles');lv2Connect('Excel conectado',fileName,true);return true;
+ LV2.file=fileName;lv2ReadMeta(wb);lv2PopulateMonth();lv2RefreshOptions();lv2Update(false);const bizRows=LV2.rows.filter(r=>lv2Head(r.cls)==='PICK UP Y FURGONETAS'&&lv2Head(r.body)==='PICK UP').length;lv2Set('lv2HeroStatus',fileName+' · '+bizRows.toLocaleString('es-PE')+' filas del universo Pick-up C3');lv2Connect('Archivo 08.2 conectado','Universo de negocio filtrado automáticamente · '+fileName,true);return true;
 }
 async function lv2ReadFile(file){if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel.');const buf=await file.arrayBuffer();const wb=XLSX.read(buf,{type:'array',cellDates:true});return lv2LoadWorkbook(wb,file.name)}
 function lv2PopulateMonth(){const e=lv2Els.month;if(!e)return;e.innerHTML='<option value="ALL">Acumulado</option>'+LV2.months.map(m=>'<option value="'+m+'">'+m[0]+m.slice(1).toLowerCase()+'</option>').join('')}
 function lv2Populate(sel,values,label){if(!sel)return;const cur=sel.value;sel.innerHTML='<option value="ALL">'+label+'</option>'+values.map(v=>'<option value="'+String(v).replace(/"/g,'&quot;')+'">'+v+'</option>').join('');sel.value=values.includes(cur)?cur:'ALL'}
 function lv2Matches(r,exclude){for(const [k,e] of Object.entries(lv2Els)){if(k===exclude||k==='month'||!e)continue;const v=e.value;if(v&&v!=='ALL'&&String(r[k])!==String(v))return false}return true}
-function lv2Filtered(exclude){return LV2.rows.filter(r=>lv2Head(r.cls)==='PICK UP Y FURGONETAS'&&lv2Matches(r,exclude))}
-function lv2RefreshOptions(){if(!lv2HasData())return;for(const [k,e,label] of [['cls',lv2Els.cls,'Pick Up / Furgonetas'],['brand',lv2Els.brand,'Todas'],['model',lv2Els.model,'Todos'],['office',lv2Els.office,'Todas'],['fuel',lv2Els.fuel,'Todos'],['body',lv2Els.body,'Todas'],['trans',lv2Els.trans,'Todas'],['drive',lv2Els.drive,'Todas'],['origin',lv2Els.origin,'Todos'],['year',lv2Els.year,'Todos']]){const vals=[...new Set(lv2Filtered(k).map(r=>r[k==='year'?'modelYear':k]))].filter(Boolean).sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true}));lv2Populate(e,vals,label)}}
+function lv2Filtered(exclude){return LV2.rows.filter(r=>lv2Head(r.cls)==='PICK UP Y FURGONETAS'&&lv2Head(r.body)==='PICK UP'&&lv2Matches(r,exclude))}
+function lv2RefreshOptions(){if(!lv2HasData())return;for(const [k,e,label] of [['brand',lv2Els.brand,'Todas'],['model',lv2Els.model,'Todos'],['office',lv2Els.office,'Todas'],['fuel',lv2Els.fuel,'Todos'],['body',lv2Els.body,'Todas'],['trans',lv2Els.trans,'Todas'],['drive',lv2Els.drive,'Todas'],['origin',lv2Els.origin,'Todos'],['year',lv2Els.year,'Todos']]){const vals=[...new Set(lv2Filtered(k).map(r=>r[k==='year'?'modelYear':k]))].filter(Boolean).sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true}));lv2Populate(e,vals,label)}}
 function lv2Agg(rows,key,monthOverride){const m=new Map();rows.forEach(r=>{const v=lv2Val(r,monthOverride);if(!v)return;const k=r[key]||'SIN DATO';m.set(k,(m.get(k)||0)+v)});return [...m.entries()].sort((a,b)=>b[1]-a[1])}
 function lv2Rank(id,arr,limit=10){const e=document.getElementById(id);if(!e)return;const top=arr.slice(0,limit),mx=top[0]?.[1]||1;e.innerHTML=top.map(([n,v],i)=>'<div class="lv2-rank-row" title="'+n+' · '+lv2Fmt(v)+'"><span class="name">'+(i+1)+'. '+n+'</span><div class="lv2-track"><div class="lv2-fill" style="width:'+((v/mx)*100).toFixed(1)+'%"></div></div><b>'+lv2Fmt(v)+'</b></div>').join('')||'<div class="lv2-empty">Sin datos</div>'}
 function lv2Bars(id,arr,total,limit=8){const e=document.getElementById(id);if(!e)return;const top=arr.slice(0,limit),mx=top[0]?.[1]||1;e.innerHTML=top.map(([n,v])=>'<div><div class="lv2-bar-head"><span>'+n+'</span><b>'+lv2Fmt(v)+' · '+lv2Pct(v,total)+'</b></div><div class="lv2-bar-track"><div class="lv2-bar-fill" style="width:'+((v/mx)*100).toFixed(1)+'%"></div></div></div>').join('')||'<div class="lv2-empty">Sin datos</div>'}
@@ -6106,18 +6119,26 @@ function lv2DrawDonut(parts,total){
  draw();
  const tip=document.getElementById('lv2Tip');function hit(e){const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-box/2,dy=y-box/2,rr=Math.hypot(dx,dy);let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;return canvas._parts.findIndex(p=>rr>=p.r&&rr<=p.R+5&&a>=p.start&&a<=p.end)}
  canvas.onmousemove=e=>{const idx=hit(e);draw(idx);if(idx>=0){const p=parts[idx];tip.style.display='block';tip.style.left=e.clientX+12+'px';tip.style.top=e.clientY+12+'px';tip.innerHTML='<b>'+p.name+'</b><br>'+lv2Fmt(p.value)+' unidades · '+lv2Pct(p.value,total)}else tip.style.display='none'};
- canvas.onmouseleave=()=>{tip.style.display='none';draw()};canvas.onclick=e=>{const idx=hit(e);if(idx>=0&&lv2Els.cls){lv2Els.cls.value=parts[idx].name;lv2Update(true)}}
+ canvas.onmouseleave=()=>{tip.style.display='none';draw()};canvas.onclick=e=>{const idx=hit(e);if(idx>=0&&lv2Els.body){lv2Els.body.value=parts[idx].name;lv2Update(true)}}
 }
-function lv2Update(refresh=true){if(!lv2HasData()){lv2ResetDisplay();return}if(refresh)lv2RefreshOptions();const rows=lv2Filtered(),selMonth=lv2Els.month?.value||'ALL',all=selMonth==='ALL',lastMonth=LV2.months.at(-1),m=all?lastMonth:selMonth,total=rows.reduce((s,r)=>s+lv2Val(r),0),monthTotal=rows.reduce((s,r)=>s+(Number(r[m])||0),0),mi=LV2.months.indexOf(m),prev=mi>0?rows.reduce((s,r)=>s+(Number(r[LV2.months[mi-1]])||0),0):null,mom=prev?((monthTotal-prev)/prev*100):null;const monthly=LV2.months.map(mm=>rows.reduce((s,r)=>s+(Number(r[mm])||0),0));let peak=0;monthly.forEach((v,i)=>{if(v>monthly[peak])peak=i});const classes=lv2Agg(rows,'cls'),brands=lv2Agg(rows,'brand'),models=lv2Agg(rows,'model'),offices=lv2Agg(rows,'office'),origins=lv2Agg(rows,'origin'),fuels=lv2Agg(rows,'fuel'),trans=lv2Agg(rows,'trans'),drives=lv2Agg(rows,'drive'),years=lv2Agg(rows,'modelYear'),bodies=lv2Agg(rows,'body');const classMap=new Map(classes),suv=classMap.get('SUV,TODOTERRENOS')||0,pick=classMap.get('PICK UP Y FURGONETAS')||0;lv2Set('lv2Total',lv2Fmt(total));lv2Set('lv2HeroTotal',lv2Fmt(total));lv2Set('lv2TotalSub',all?'Enero–'+(LV2_MONTH_SHORT[lastMonth]||lastMonth)+' 2026':m+' 2026');lv2Set('lv2MonthLabel',m[0]+m.slice(1).toLowerCase());lv2Set('lv2MonthTotal',lv2Fmt(monthTotal));lv2SetClass('lv2Mom',mom===null?'—':(mom>=0?'+':'')+mom.toFixed(1)+'%',mom===null?'':mom>=0?'positive':'negative');lv2Set('lv2MomSub',mi>0?'vs '+(LV2_MONTH_SHORT[LV2.months[mi-1]]||LV2.months[mi-1]):'sin mes anterior');lv2Set('lv2Peak',lv2Fmt(monthly[peak]||0));lv2Set('lv2PeakSub',(LV2_MONTH_SHORT[LV2.months[peak]]||'—')+' 2026');lv2Set('lv2SUV',lv2Fmt(suv));lv2Set('lv2SUVShare',lv2Pct(suv,total)+' del total');lv2Set('lv2Pick',lv2Fmt(pick));lv2Set('lv2PickShare',lv2Pct(pick,total)+' del total');
- const noFilters=['cls','brand','model','office','fuel','body','trans','drive','origin','year'].every(k=>(lv2Els[k]?.value||'ALL')==='ALL');if(noFilters&&m===lastMonth&&LV2.meta.prevMonth){const y=((monthTotal-LV2.meta.prevMonth)/LV2.meta.prevMonth)*100;lv2SetClass('lv2Yoy',(y>=0?'+':'')+y.toFixed(1)+'%',y>=0?'positive':'negative');lv2Set('lv2YoySub','vs '+lv2Fmt(LV2.meta.prevMonth)+' en '+(LV2_MONTH_SHORT[m]||m)+' 2025')}else{lv2Set('lv2Yoy','—');lv2Set('lv2YoySub','disponible para total del último mes')}if(noFilters&&all&&LV2.meta.prevYtd){const y=((total-LV2.meta.prevYtd)/LV2.meta.prevYtd)*100;lv2SetClass('lv2YtdYoy',(y>=0?'+':'')+y.toFixed(1)+'%',y>=0?'positive':'negative');lv2Set('lv2YtdYoySub','vs '+lv2Fmt(LV2.meta.prevYtd)+' acumulado 2025')}else{lv2Set('lv2YtdYoy','—');lv2Set('lv2YtdYoySub','disponible para acumulado total')}
- lv2Set('lv2TopBrand',brands[0]?.[0]||'—');lv2Set('lv2TopBrandSub',brands[0]?lv2Fmt(brands[0][1])+' · '+lv2Pct(brands[0][1],total):'—');lv2Set('lv2TopModel',models[0]?.[0]||'—');lv2Set('lv2TopModelSub',models[0]?lv2Fmt(models[0][1])+' · '+lv2Pct(models[0][1],total):'—');lv2Set('lv2TopOffice',offices[0]?.[0]||'—');lv2Set('lv2TopOfficeSub',offices[0]?lv2Fmt(offices[0][1])+' · '+lv2Pct(offices[0][1],total):'—');const electr=(new Map(fuels).get('HIBRIDO')||0)+(new Map(fuels).get('ELECTRICO')||0);lv2Set('lv2Electrified',lv2Fmt(electr));lv2Set('lv2ElectrifiedSub',lv2Pct(electr,total)+' del total');lv2Set('lv2DonutTotal',lv2Fmt(total));lv2Set('lv2BrandChip',brands[0]?brands[0][0]+' lidera':'Sin datos');lv2Set('lv2ModelChip',models[0]?models[0][0]+' lidera':'Sin datos');lv2Set('lv2BrandCount',String(brands.length));lv2Set('lv2ModelCount',String(models.length));
- lv2Rank('lv2Brands',brands);lv2Rank('lv2Models',models);lv2Offices(offices,total);lv2Bars('lv2Origins',origins,total);lv2Bars('lv2Fuels',fuels,total);lv2Bars('lv2Years',years,total);lv2Bars('lv2Bodies',bodies,total);const tech=[...trans.map(x=>['Trans. '+x[0],x[1]]),...drives.map(x=>['Tracción '+x[0],x[1]])].sort((a,b)=>b[1]-a[1]);lv2Bars('lv2TransDrive',tech,total,8);const executive=[['SUV / Todoterrenos',suv],['Pick Up / Furgonetas',pick],['Electrificados',electr],['Top 5 oficinas',offices.slice(0,5).reduce((s,x)=>s+x[1],0)],['Año modelo 2027',new Map(years).get('2027')||0]];lv2Bars('lv2Executive',executive,total,8);
- const classParts=classes.slice(0,6).map(([name,value],i)=>({name,value,color:LV2_COLORS[i%LV2_COLORS.length]}));lv2DrawDonut(classParts,total);const legend=document.getElementById('lv2ClassLegend');if(legend)legend.innerHTML=classParts.map(p=>'<button data-lvclass="'+p.name.replace(/"/g,'&quot;')+'"><span><i style="background:'+p.color+'"></i>'+p.name+'</span><b><span class="units">'+lv2Fmt(p.value)+'</span> · <span class="share">'+lv2Pct(p.value,total)+'</span></b></button>').join('');legend?.querySelectorAll('button').forEach(b=>b.onclick=()=>{lv2Els.cls.value=b.dataset.lvclass;lv2Update(true)});
- const series=classes.slice(0,4).map(([name],i)=>({name,color:LV2_COLORS[i%LV2_COLORS.length],data:LV2.months.map(mm=>rows.filter(r=>r.cls===name).reduce((s,r)=>s+(Number(r[mm])||0),0))}));lv2Trend(document.getElementById('lv2Trend'),series);const tleg=document.getElementById('lv2TrendLegend');if(tleg){tleg.innerHTML=series.map(s=>'<span data-lvseries="'+s.name.replace(/"/g,'&quot;')+'" class="'+(LV2_HIDDEN_SERIES.has(s.name)?'off':'')+'"><i style="background:'+s.color+'"></i>'+s.name+'</span>').join('');tleg.querySelectorAll('[data-lvseries]').forEach(el=>el.onclick=()=>{const n=el.dataset.lvseries;LV2_HIDDEN_SERIES.has(n)?LV2_HIDDEN_SERIES.delete(n):LV2_HIDDEN_SERIES.add(n);lv2Update(false)})}const insight=document.getElementById('lv2TrendInsight');if(insight){const ch=prev?((monthTotal-prev)/prev*100):0;insight.textContent=(LV2_MONTH_SHORT[m]||m)+': '+lv2Fmt(monthTotal)+' · '+(ch>=0?'+':'')+ch.toFixed(1)+'% vs mes anterior. Pico: '+(LV2_MONTH_SHORT[LV2.months[peak]]||'—')+' con '+lv2Fmt(monthly[peak])+'.'}
- const active=[];for(const [k,label] of [['cls','Clase'],['brand','Marca'],['model','Modelo'],['office','Oficina'],['fuel','Combustible'],['body','Carrocería'],['trans','Transmisión'],['drive','Tracción'],['origin','Origen'],['year','Año modelo']]){const v=lv2Els[k]?.value;if(v&&v!=='ALL')active.push(label+': '+v)}if(!all)active.unshift('Mes: '+m);lv2Set('lv2FilterNote',active.length?'Filtros activos · '+active.join(' · '):'Vista acumulada · '+LV2.rows.length.toLocaleString('es-PE')+' registros útiles');document.querySelectorAll('#ligeros select').forEach(s=>s.classList.toggle('lv-active',s.value!=='ALL'&&![''].includes(s.value)));lv2Set('lv2Coverage',lv2Fmt(total)+' unidades · '+rows.length.toLocaleString('es-PE')+' filas visibles');lv2Set('lv2Control',monthly.reduce((s,x)=>s+x,0)===total||!all?'Reconciliación mensual consistente':'Revisar reconciliación');
+function lv2Update(refresh=true){if(!lv2HasData()){lv2ResetDisplay();return}if(refresh)lv2RefreshOptions();const rows=lv2Filtered(),selMonth=lv2Els.month?.value||'ALL',all=selMonth==='ALL',lastMonth=LV2.months.at(-1),m=all?lastMonth:selMonth,total=rows.reduce((s,r)=>s+lv2Val(r),0),monthTotal=rows.reduce((s,r)=>s+(Number(r[m])||0),0),mi=LV2.months.indexOf(m),prev=mi>0?rows.reduce((s,r)=>s+(Number(r[LV2.months[mi-1]])||0),0):null,mom=prev?((monthTotal-prev)/prev*100):null;const monthly=LV2.months.map(mm=>rows.reduce((s,r)=>s+(Number(r[mm])||0),0));let peak=0;monthly.forEach((v,i)=>{if(v>monthly[peak])peak=i});const classes=lv2Agg(rows,'cls'),brands=lv2Agg(rows,'brand'),models=lv2Agg(rows,'model'),offices=lv2Agg(rows,'office'),origins=lv2Agg(rows,'origin'),fuels=lv2Agg(rows,'fuel'),trans=lv2Agg(rows,'trans'),drives=lv2Agg(rows,'drive'),years=lv2Agg(rows,'modelYear'),bodies=lv2Agg(rows,'body');const pick=total;lv2Set('lv2Total',lv2Fmt(total));lv2Set('lv2HeroTotal',lv2Fmt(total));lv2Set('lv2TotalSub',all?'Enero–'+(LV2_MONTH_SHORT[lastMonth]||lastMonth)+' 2026':m+' 2026');lv2Set('lv2MonthLabel',m[0]+m.slice(1).toLowerCase());lv2Set('lv2MonthTotal',lv2Fmt(monthTotal));lv2SetClass('lv2Mom',mom===null?'—':(mom>=0?'+':'')+mom.toFixed(1)+'%',mom===null?'':mom>=0?'positive':'negative');lv2Set('lv2MomSub',mi>0?'vs '+(LV2_MONTH_SHORT[LV2.months[mi-1]]||LV2.months[mi-1]):'sin mes anterior');lv2Set('lv2Peak',lv2Fmt(monthly[peak]||0));lv2Set('lv2PeakSub',(LV2_MONTH_SHORT[LV2.months[peak]]||'—')+' 2026');lv2Set('lv2Pick',lv2Fmt(pick));lv2Set('lv2PickShare','100% del universo visible');
+ const noFilters=['brand','model','office','fuel','body','trans','drive','origin','year'].every(k=>(lv2Els[k]?.value||'ALL')==='ALL');if(noFilters&&m===lastMonth&&LV2.meta.prevMonth){const y=((monthTotal-LV2.meta.prevMonth)/LV2.meta.prevMonth)*100;lv2SetClass('lv2Yoy',(y>=0?'+':'')+y.toFixed(1)+'%',y>=0?'positive':'negative');lv2Set('lv2YoySub','vs '+lv2Fmt(LV2.meta.prevMonth)+' en '+(LV2_MONTH_SHORT[m]||m)+' 2025')}else{lv2Set('lv2Yoy','—');lv2Set('lv2YoySub','disponible para total del último mes')}if(noFilters&&all&&LV2.meta.prevYtd){const y=((total-LV2.meta.prevYtd)/LV2.meta.prevYtd)*100;lv2SetClass('lv2YtdYoy',(y>=0?'+':'')+y.toFixed(1)+'%',y>=0?'positive':'negative');lv2Set('lv2YtdYoySub','vs '+lv2Fmt(LV2.meta.prevYtd)+' acumulado 2025')}else{lv2Set('lv2YtdYoy','—');lv2Set('lv2YtdYoySub','disponible para acumulado total')}
+ lv2Set('lv2TopBrand',brands[0]?.[0]||'—');lv2Set('lv2TopBrandSub',brands[0]?lv2Fmt(brands[0][1])+' · '+lv2Pct(brands[0][1],total)+' del negocio':'—');lv2Set('lv2TopModel',models[0]?.[0]||'—');lv2Set('lv2TopModelSub',models[0]?lv2Fmt(models[0][1])+' · '+lv2Pct(models[0][1],total)+' del negocio':'—');lv2Set('lv2TopOffice',origins[0]?.[0]||'—');lv2Set('lv2TopOfficeSub',origins[0]?lv2Fmt(origins[0][1])+' · '+lv2Pct(origins[0][1],total)+' del negocio':'—');const electr=(new Map(fuels).get('HIBRIDO')||0)+(new Map(fuels).get('ELECTRICO')||0);lv2Set('lv2Electrified',bodies[0]?.[0]||'—');lv2Set('lv2ElectrifiedSub',bodies[0]?lv2Fmt(bodies[0][1])+' · '+lv2Pct(bodies[0][1],total)+' del negocio':'—');lv2Set('lv2DonutTotal',lv2Fmt(total));lv2Set('lv2BrandChip',brands[0]?brands[0][0]+' lidera':'Sin datos');lv2Set('lv2ModelChip',models[0]?models[0][0]+' lidera':'Sin datos');lv2Set('lv2BrandCount',String(brands.length));lv2Set('lv2ModelCount',String(models.length));
+ lv2Rank('lv2Brands',brands);lv2Rank('lv2Models',models);lv2Offices(offices,total);lv2Bars('lv2Origins',origins,total);lv2Bars('lv2Fuels',fuels,total);lv2Bars('lv2Years',years,total);lv2Bars('lv2Bodies',bodies,total);const tech=[...trans.map(x=>['Trans. '+x[0],x[1]]),...drives.map(x=>['Tracción '+x[0],x[1]])].sort((a,b)=>b[1]-a[1]);lv2Bars('lv2TransDrive',tech,total,8);
+ const originLead=origins[0],bodyLead=bodies[0],fuelLead=fuels[0],driveLead=drives[0],officeLead=offices[0];
+ const exec=document.getElementById('lv2Executive');if(exec){exec.innerHTML=[
+  ['Origen líder',originLead?.[0]||'—',originLead?lv2Pct(originLead[1],total)+' · '+lv2Fmt(originLead[1])+' unidades':'Sin datos'],
+  ['Carrocería dominante',bodyLead?.[0]||'—',bodyLead?lv2Pct(bodyLead[1],total)+' del volumen':'Sin datos'],
+  ['Tracción preferida',driveLead?.[0]||'—',driveLead?lv2Pct(driveLead[1],total)+' del volumen':'Sin datos'],
+  ['Combustible dominante',fuelLead?.[0]||'—',fuelLead?lv2Pct(fuelLead[1],total)+' del volumen':'Sin datos'],
+  ['Concentración territorial',officeLead?.[0]||'—',officeLead?lv2Pct(officeLead[1],total)+' del volumen':'Sin datos']
+ ].map(x=>'<div class="lv2-business-read"><span>'+x[0]+'</span><b title="'+x[1]+'">'+x[1]+'</b><small>'+x[2]+'</small></div>').join('')}
+ const bodyParts=bodies.slice(0,6).map(([name,value],i)=>({name,value,color:LV2_COLORS[i%LV2_COLORS.length]}));lv2DrawDonut(bodyParts,total);const legend=document.getElementById('lv2ClassLegend');if(legend)legend.innerHTML=bodyParts.map(p=>'<button data-lvbody="'+p.name.replace(/"/g,'&quot;')+'"><span><i style="background:'+p.color+'"></i>'+p.name+'</span><b><span class="units">'+lv2Fmt(p.value)+'</span> · <span class="share">'+lv2Pct(p.value,total)+'</span></b></button>').join('');legend?.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(lv2Els.body){lv2Els.body.value=b.dataset.lvbody;lv2Update(true)}});
+ const series=[{name:'Pick-up C3',color:'#ee0b70',data:monthly}];lv2Trend(document.getElementById('lv2Trend'),series);const tleg=document.getElementById('lv2TrendLegend');if(tleg){tleg.innerHTML='<span><i style="background:#ee0b70"></i>Pick-up C3</span>'}const insight=document.getElementById('lv2TrendInsight');if(insight){const ch=prev?((monthTotal-prev)/prev*100):0;insight.textContent=(LV2_MONTH_SHORT[m]||m)+': '+lv2Fmt(monthTotal)+' unidades · '+(ch>=0?'+':'')+ch.toFixed(1)+'% vs '+(LV2_MONTH_SHORT[LV2.months[mi-1]]||'mes anterior')+'. Pico del periodo: '+(LV2_MONTH_SHORT[LV2.months[peak]]||'—')+' con '+lv2Fmt(monthly[peak])+' unidades.'}
+ const active=[];for(const [k,label] of [['brand','Marca'],['model','Modelo'],['office','Oficina'],['fuel','Combustible'],['body','Carrocería'],['trans','Transmisión'],['drive','Tracción'],['origin','Origen'],['year','Año modelo']]){const v=lv2Els[k]?.value;if(v&&v!=='ALL')active.push(label+': '+v)}if(!all)active.unshift('Mes: '+m);lv2Set('lv2FilterNote',active.length?'Filtros activos · '+active.join(' · '):'Vista acumulada C3 · '+rows.length.toLocaleString('es-PE')+' filas Pick-up visibles');document.querySelectorAll('#ligeros select').forEach(s=>s.classList.toggle('lv-active',s.value!=='ALL'&&![''].includes(s.value)));lv2Set('lv2Coverage',lv2Fmt(total)+' unidades · '+rows.length.toLocaleString('es-PE')+' filas visibles');lv2Set('lv2Control',monthly.reduce((s,x)=>s+x,0)===total||!all?'Reconciliación mensual consistente':'Revisar reconciliación');
 }
 async function lv2LoadUrl(url){if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel.');const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);const buf=await res.arrayBuffer(),wb=XLSX.read(buf,{type:'array',cellDates:true});return lv2LoadWorkbook(wb,decodeURIComponent(url.split('/').pop()))}
-async function lv2AutoLoad(){lv2Connect('Buscando Excel automáticamente…','Se intenta cargar el archivo desde la misma carpeta del HTML.');const candidates=['./vehiculos_livianos.xlsx','./data/vehiculos_livianos.xlsx','./08.2_Venta_e_Inmatriculación_de_Vehículos_Livianos_Agosto_2026(4).xlsx','./08.2_Venta_e_Inmatriculación_de_Vehículos_Livianos_Agosto_2026.xlsx'];for(const u of candidates){try{await lv2LoadUrl(u);return}catch(e){}}lv2Connect('Excel de Vehículos Livianos no encontrado','Sube “vehiculos_livianos.xlsx” junto al HTML o selecciónalo manualmente.');lv2Set('lv2HeroStatus','Selecciona el Excel para activar este módulo')}
+async function lv2AutoLoad(){lv2Connect('Buscando Excel automáticamente…','Se intenta cargar el archivo desde la misma carpeta del HTML.');const candidates=['./vehiculos_livianos.xlsx','./data/vehiculos_livianos.xlsx','./08.2_Venta_e_Inmatriculación_de_Vehículos_Livianos_Agosto_2026(4).xlsx','./08.2_Venta_e_Inmatriculación_de_Vehículos_Livianos_Agosto_2026.xlsx'];for(const u of candidates){try{await lv2LoadUrl(u);return}catch(e){}}lv2Connect('Excel 08.2 no encontrado','Sube “vehiculos_livianos.xlsx” junto al HTML o selecciónalo manualmente.');lv2Set('lv2HeroStatus','Selecciona el Archivo 08.2 para activar Pick-up C3')}
 function lv2Init(){Object.values(lv2Els).forEach(e=>e?.addEventListener('change',()=>lv2Update(true)));document.getElementById('lv2Reset')?.addEventListener('click',()=>{Object.values(lv2Els).forEach(e=>{if(e)e.value='ALL'});lv2Update(true)});document.getElementById('lv2More')?.addEventListener('click',()=>{const sh=document.getElementById('lv2FilterShell');sh?.classList.toggle('show-advanced');document.getElementById('lv2More').textContent=sh?.classList.contains('show-advanced')?'Menos filtros':'Más filtros'});document.getElementById('lv2LoadBtn')?.addEventListener('click',()=>document.getElementById('lv2ExcelInput')?.click());document.getElementById('lv2Retry')?.addEventListener('click',lv2AutoLoad);document.getElementById('lv2ExcelInput')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{lv2Connect('Procesando Excel…',f.name);await lv2ReadFile(f)}catch(err){lv2Connect('No se pudo leer el archivo',err.message||String(err));alert(err.message||String(err))}finally{e.target.value=''}});lv2ResetDisplay();/* V13: autocarga local desactivada (datos vía Power Automate) */let timer;window.addEventListener('resize',()=>{clearTimeout(timer);timer=setTimeout(()=>{if(document.getElementById('ligeros')?.classList.contains('active')&&lv2HasData())lv2Update(false)},140)})}
 lv2Init();
 
@@ -6480,94 +6501,114 @@ window.addEventListener('resize',()=>{if(RAC.rows.length&&document.getElementByI
 </script>
 
 
-<script>
-/* ===== V44 - Crossfilter temporal al pasar el mouse ===== */
+<script id="v87-bi-click-only">
+/* ===== V87 · INTERACCION BI ESTANDAR =====
+   Hover = informacion visual/tooltip. NO filtra.
+   Click = fija filtro.
+   Click fuera = restaura el estado anterior. */
 (function(){
-  const fine=window.matchMedia && window.matchMedia('(pointer:fine)').matches;
-  if(!fine) return;
-  const note=document.createElement('div');note.className='bi-preview-note';note.textContent='Vista previa · sal del gráfico para volver';document.body.appendChild(note);
   const states=new Map();
-  function showNote(){note.classList.add('show')} function hideNote(){if(![...states.values()].some(s=>s.active))note.classList.remove('show')}
-  function preview(key,get,set,render,value){
-    let s=states.get(key);if(!s){s={base:get(),active:false,last:null,locked:false,set,render};states.set(key,s)}
-    s.set=set;s.render=render;
-    if(s.locked)return;
-    if(!s.active){s.base=get();s.active=true}
-    if(s.last===value)return;s.last=value;set(value);showNote();requestAnimationFrame(()=>render(false));
+  let suppressOutsideUntil=0;
+
+  function remember(key,get,set,render){
+    let s=states.get(key);
+    if(!s){s={locked:false,base:null,get,set,render};states.set(key,s)}
+    s.get=get;s.set=set;s.render=render;
+    return s;
   }
-  function restore(key,set,render){const s=states.get(key);if(!s||!s.active||s.locked)return;const v=s.base;s.active=false;s.last=null;set(v);requestAnimationFrame(()=>render(false));setTimeout(hideNote,20)}
-  function clearLocked(exceptKey=null){states.forEach((s,k)=>{if(k===exceptKey||!s.locked)return;try{s.set(s.base);s.render(false)}catch(e){}s.locked=false;s.active=false;s.last=null});setTimeout(hideNote,20)}
-  function commit(key){const s=states.get(key);if(!s)return;clearLocked(key);s.locked=true;s.active=false;s.last=null;window.__biLastCommit=Date.now();note.textContent='Filtro fijado · clic fuera para limpiar';showNote()}
-  function hoverClass(container,selector){
-    if(!container)return;container.addEventListener('pointermove',e=>{const row=e.target.closest(selector);container.querySelectorAll('.bi-live-hover').forEach(x=>x!==row&&x.classList.remove('bi-live-hover'));if(row)row.classList.add('bi-live-hover')});container.addEventListener('pointerleave',()=>container.querySelectorAll('.bi-live-hover').forEach(x=>x.classList.remove('bi-live-hover')));
+  function commit(key,get,set,render,value){
+    if(value==null||value==='')return;
+    const s=remember(key,get,set,render);
+    if(!s.locked)s.base=get();
+    s.set(value);s.locked=true;
+    suppressOutsideUntil=Date.now()+120;
+    requestAnimationFrame(()=>s.render(false));
+    showLockNote();
   }
-  function delegate(container,selector,key,get,set,render,valueOf){
-    if(!container)return;let current=null;container.addEventListener('pointermove',e=>{const row=e.target.closest(selector);if(!row||!container.contains(row))return;const value=valueOf(row);if(value==null||value==='')return;if(current!==row){current=row;preview(key,get,set,render,value)}});container.addEventListener('pointerleave',()=>{current=null;restore(key,set,render)});container.addEventListener('click',()=>commit(key),true);hoverClass(container,selector);
+  function clearAll(){
+    let changed=false;
+    states.forEach(s=>{
+      if(!s.locked)return;
+      try{s.set(s.base);s.render(false)}catch(e){}
+      s.locked=false;s.base=null;changed=true;
+    });
+    if(changed)hideLockNote();
   }
-  function bindCanvas(canvas,key,get,set,render,hit){
-    if(!canvas)return;let last=null;canvas.addEventListener('pointermove',e=>{const v=hit(canvas,e);if(v==null){if(last!==null){last=null;restore(key,set,render)}return}if(last!==v){last=v;preview(key,get,set,render,v)}});canvas.addEventListener('pointerleave',()=>{last=null;restore(key,set,render)});canvas.addEventListener('click',()=>commit(key),true);
+
+  let note=document.getElementById('biClickNote');
+  if(!note){note=document.createElement('div');note.id='biClickNote';note.className='bi-preview-note';note.textContent='Filtro fijado · clic fuera para limpiar';document.body.appendChild(note)}
+  function showLockNote(){note.textContent='Filtro fijado · clic fuera para limpiar';note.classList.add('show')}
+  function hideLockNote(){note.classList.remove('show')}
+
+  function rankName(row){return (row.querySelector('.name')?.textContent||row.dataset.key||row.dataset.brand||'').replace(/^\s*\d+\.\s*/,'').trim()}
+  function hitDonut(c,e,field='name'){
+    const rect=c.getBoundingClientRect(),parts=c._parts||c._vmParts||c._slices||[];
+    if(!parts.length)return null;
+    const x=e.clientX-rect.left,y=e.clientY-rect.top;
+    for(const p of parts){
+      const cx=p.cx??rect.width/2,cy=p.cy??rect.height/2,rr=Math.hypot(x-cx,y-cy);
+      let a=Math.atan2(y-cy,x-cx);if(a< -Math.PI/2)a+=Math.PI*2;
+      const rin=p.r??p.inner??rect.width*.28,rout=p.R??rect.width*.43;
+      if(rr>=rin-2&&rr<=rout+7&&a>=p.start&&a<=p.end)return p[field]??p.name??p.f;
+    }
+    return null;
   }
-  function hitDonutParts(c,e,nameField='filter'){const rect=c.getBoundingClientRect(),parts=c._parts||c._vmParts||c._slices||[];if(!parts.length)return null;const box=rect.width,x=e.clientX-rect.left,y=e.clientY-rect.top,cx=parts[0].cx??box/2,cy=parts[0].cy??box/2,dx=x-cx,dy=y-cy,rr=Math.hypot(dx,dy);let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;for(const p of parts){const rin=p.r??p.inner??box*.28, rout=p.R??box*.43;if(rr>=rin-2&&rr<=rout+7&&a>=p.start&&a<=p.end)return p[nameField]??p.name??p.f}return null}
-  function rankName(row){let t=row.querySelector('.name')?.textContent||row.dataset.key||row.dataset.brand||'';return t.replace(/^\\s*\\d+\\.\\s*/,'').trim()}
-  function barName(row){return row.dataset.key||row.querySelector('.vm2-bar-head span,.r4-bar-head span,.lv2-bar-head span,.vp3-bar-head span')?.textContent?.trim()||''}
+  function bindRows(container,selector,key,get,set,render,valueOf){
+    if(!container||container.dataset.biClickBound)return;container.dataset.biClickBound='1';
+    container.addEventListener('click',e=>{
+      const row=e.target.closest(selector);if(!row||!container.contains(row))return;
+      const v=valueOf(row);if(v==null||v==='')return;
+      e.stopPropagation();commit(key,get,set,render,v);
+    });
+  }
+  function bindCanvas(canvas,key,get,set,render,valueOf){
+    if(!canvas||canvas.dataset.biClickBound)return;canvas.dataset.biClickBound='1';
+    canvas.addEventListener('click',e=>{
+      const v=valueOf(canvas,e);if(v==null||v==='')return;
+      e.stopPropagation();commit(key,get,set,render,v);
+    });
+  }
+
+  function bind(){
+    // Pick-up C3 (08.2)
+    if(window.lv2Update&&window.lv2Els){
+      bindCanvas(document.getElementById('lv2Donut'),'lv-body',()=>lv2Els.body.value,v=>lv2Els.body.value=v,lv2Update,(c,e)=>hitDonut(c,e,'name'));
+      bindCanvas(document.getElementById('lv2Trend'),'lv-month',()=>lv2Els.month.value,v=>lv2Els.month.value=v,lv2Update,(c,e)=>{const m=c._lvMeta;if(!m||!m.xs?.length)return null;const r=c.getBoundingClientRect(),x=e.clientX-r.left;let idx=0,b=Infinity;m.xs.forEach((xx,i)=>{const d=Math.abs(xx-x);if(d<b){b=d;idx=i}});return LV2.months[idx]});
+      bindRows(document.getElementById('lv2ClassLegend'),'button[data-lvbody]','lv-body-leg',()=>lv2Els.body.value,v=>lv2Els.body.value=v,lv2Update,r=>r.dataset.lvbody);
+      bindRows(document.getElementById('lv2Brands'),'.lv2-rank-row','lv-brand',()=>lv2Els.brand.value,v=>lv2Els.brand.value=v,lv2Update,rankName);
+      bindRows(document.getElementById('lv2Models'),'.lv2-rank-row','lv-model',()=>lv2Els.model.value,v=>lv2Els.model.value=v,lv2Update,rankName);
+      bindRows(document.getElementById('lv2Offices'),'.lv2-office-row','lv-office',()=>lv2Els.office.value,v=>lv2Els.office.value=v,lv2Update,r=>r.querySelector('.name')?.textContent.trim());
+    }
+    // Vehiculos Pesados
+    if(window.vp3Update&&window.vp3Els){
+      bindCanvas(document.getElementById('vp3Donut'),'vp-class',()=>vp3Els.subclass.value,v=>vp3Els.subclass.value=v,vp3Update,(c,e)=>hitDonut(c,e,'name'));
+      bindRows(document.getElementById('vp3Brands'),'.vp3-rank-row','vp-brand',()=>vp3Els.brand.value,v=>vp3Els.brand.value=v,vp3Update,rankName);
+      bindRows(document.getElementById('vp3Models'),'.vp3-rank-row','vp-model',()=>vp3Els.model.value,v=>vp3Els.model.value=v,vp3Update,rankName);
+      bindRows(document.getElementById('vp3Offices'),'.vp3-office-row','vp-office',()=>vp3Els.office.value,v=>vp3Els.office.value=v,vp3Update,r=>r.querySelector('.name')?.textContent.trim());
+    }
+    // Retail del mes
+    if(window.rtmRender&&typeof RTM!=='undefined'){
+      bindCanvas(document.getElementById('rtmDonut'),'rtm-family',()=>RTM.family,v=>{RTM.family=v;RTM.brand='ALL'},rtmRender,(c,e)=>hitDonut(c,e,'f'));
+      bindRows(document.getElementById('rtmLegend'),'button[data-family]','rtm-family-leg',()=>RTM.family,v=>{RTM.family=v;RTM.brand='ALL'},rtmRender,r=>r.dataset.family);
+      bindRows(document.getElementById('rtmRank'),'.rtm-rank-row[data-brand]','rtm-brand',()=>RTM.brand,v=>RTM.brand=v,rtmRender,r=>r.dataset.brand);
+    }
+    // Retail acumulado
+    const A=window.__RAC_API;
+    if(A){const {RAC,render}=A;
+      bindRows(document.getElementById('racLegend'),'.rac-leg[data-family]','rac-family',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);
+      bindRows(document.getElementById('racFamilyGrid'),'.rac-family[data-family]','rac-family-grid',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);
+      bindRows(document.getElementById('racRank'),'.rac-rank-row[data-brand]','rac-brand',()=>RAC.brand,v=>RAC.brand=v,render,r=>r.dataset.brand);
+      bindRows(document.getElementById('racSegments'),'.rac-seg[data-family]','rac-seg',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);
+    }
+  }
+
   document.addEventListener('click',e=>{
-    if(Date.now()-(window.__biLastCommit||0)<80)return;
-    const interactive=e.target.closest('canvas,.vm2-rank-row,.lv2-rank-row,.vp3-rank-row,.r4-rank-row,.vm2-bar-row,.r4-bar-row,.lv2-office-row,.vp3-office-row,.rtm-legend button,.rac-leg,.sx-leg');
-    if(interactive)return;
-    clearLocked();
+    if(Date.now()<suppressOutsideUntil)return;
+    if(e.target.closest('canvas,.lv2-rank-row,.lv2-office-row,#lv2ClassLegend button,.vp3-rank-row,.vp3-office-row,.rtm-rank-row,.rtm-legend button,.rac-leg,.rac-family,.rac-rank-row,.rac-seg,.sx-leg'))return;
+    clearAll();
   },true);
 
-  setTimeout(()=>{
-    // Menores
-    if(window.vm20Update&&window.vm20Els){
-      bindCanvas(document.getElementById('vm2Donut'),'vm-type',()=>vm20Els.type.value,v=>vm20Els.type.value=v,vm20Update,(c,e)=>hitDonutParts(c,e,'filter'));
-      bindCanvas(document.getElementById('vm2Trend'),'vm-month',()=>vm20Els.month.value,v=>vm20Els.month.value=v,vm20Update,(c,e)=>{const r=c.getBoundingClientRect(),p=46,w=r.width-60,n=(window.VM20_MONTHS||[]).length;if(!n)return null;const idx=Math.max(0,Math.min(n-1,Math.round(((e.clientX-r.left)-p)/Math.max(1,w)*(n-1))));return String(idx)});
-      delegate(document.getElementById('vm2Brands'),'.vm2-rank-row','vm-brand',()=>vm20Els.brand.value,v=>vm20Els.brand.value=v,vm20Update,rankName);
-      delegate(document.getElementById('vm2Models'),'.vm2-rank-row','vm-model',()=>vm20Els.model.value,v=>vm20Els.model.value=v,vm20Update,rankName);
-      delegate(document.getElementById('vm2Zones'),'.vm2-bar-row','vm-zone',()=>vm20Els.zone.value,v=>vm20Els.zone.value=v,vm20Update,barName);
-      delegate(document.getElementById('vm2Fuels'),'.vm2-bar-row','vm-fuel',()=>vm20Els.fuel.value,v=>vm20Els.fuel.value=v,vm20Update,barName);
-    }
-    // Livianos
-    if(window.lv2Update&&window.lv2Els){
-      bindCanvas(document.getElementById('lv2Donut'),'lv-class',()=>lv2Els.cls.value,v=>lv2Els.cls.value=v,lv2Update,(c,e)=>hitDonutParts(c,e,'name'));
-      bindCanvas(document.getElementById('lv2Trend'),'lv-month',()=>lv2Els.month.value,v=>lv2Els.month.value=v,lv2Update,(c,e)=>{const m=c._lvMeta;if(!m||!m.xs?.length)return null;const r=c.getBoundingClientRect(),x=e.clientX-r.left;let idx=0,b=1e9;m.xs.forEach((xx,i)=>{const d=Math.abs(xx-x);if(d<b){b=d;idx=i}});return LV2.months[idx]});
-      delegate(document.getElementById('lv2Brands'),'.lv2-rank-row','lv-brand',()=>lv2Els.brand.value,v=>lv2Els.brand.value=v,lv2Update,rankName);
-      delegate(document.getElementById('lv2Models'),'.lv2-rank-row','lv-model',()=>lv2Els.model.value,v=>lv2Els.model.value=v,lv2Update,rankName);
-      delegate(document.getElementById('lv2Offices'),'.lv2-office-row','lv-office',()=>lv2Els.office.value,v=>lv2Els.office.value=v,lv2Update,r=>r.querySelector('.name')?.textContent.trim());
-    }
-    // Pesados
-    if(window.vp3Update&&window.vp3Els){
-      bindCanvas(document.getElementById('vp3Donut'),'vp-class',()=>vp3Els.subclass.value,v=>vp3Els.subclass.value=v,vp3Update,(c,e)=>hitDonutParts(c,e,'name'));
-      bindCanvas(document.getElementById('vp3Trend'),'vp-month',()=>vp3Els.month.value,v=>vp3Els.month.value=v,vp3Update,(c,e)=>{const q=c._plot;if(!q)return null;const r=c.getBoundingClientRect(),idx=Math.max(0,Math.min((VP3.months?.length||1)-1,Math.round(((e.clientX-r.left)-q.p.l)/q.cw*q.den)));return String(idx)});
-      delegate(document.getElementById('vp3Brands'),'.vp3-rank-row','vp-brand',()=>vp3Els.brand.value,v=>vp3Els.brand.value=v,vp3Update,rankName);
-      delegate(document.getElementById('vp3Models'),'.vp3-rank-row','vp-model',()=>vp3Els.model.value,v=>vp3Els.model.value=v,vp3Update,rankName);
-      delegate(document.getElementById('vp3Offices'),'.vp3-office-row','vp-office',()=>vp3Els.office.value,v=>vp3Els.office.value=v,vp3Update,r=>r.querySelector('.name')?.textContent.trim());
-    }
-    // Remolques
-    if(window.r4Update&&window.r4Els){
-      bindCanvas(document.getElementById('r4Donut'),'r4-cat',()=>r4Els.cat.value,v=>r4Els.cat.value=v,r4Update,(c,e)=>hitDonutParts(c,e,'name'));
-      bindCanvas(document.getElementById('r4Trend'),'r4-month',()=>r4Els.month.value,v=>r4Els.month.value=v,r4Update,(c,e)=>{const q=c._plot;if(!q)return null;const r=c.getBoundingClientRect(),idx=Math.max(0,Math.min((R4.labels?.length||1)-1,Math.round(((e.clientX-r.left)-q.p.l)/q.cw*q.den)));return String(idx)});
-      delegate(document.getElementById('r4Brands'),'.r4-rank-row','r4-brand',()=>r4Els.brand.value,v=>r4Els.brand.value=v,r4Update,r=>r.dataset.key||rankName(r));
-      delegate(document.getElementById('r4Models'),'.r4-rank-row','r4-model',()=>r4Els.model.value,v=>r4Els.model.value=v,r4Update,r=>r.dataset.key||rankName(r));
-      delegate(document.getElementById('r4Depts'),'.r4-bar-row','r4-dept',()=>r4Els.dept.value,v=>r4Els.dept.value=v,r4Update,barName);
-      delegate(document.getElementById('r4Offices'),'.r4-bar-row','r4-office',()=>r4Els.office.value,v=>r4Els.office.value=v,r4Update,barName);
-      delegate(document.getElementById('r4Bodies'),'.r4-bar-row','r4-body',()=>r4Els.body.value,v=>r4Els.body.value=v,r4Update,barName);
-    }
-    // Retail del Mes
-    if(window.rtmRender&&typeof RTM!=='undefined'){
-      bindCanvas(document.getElementById('rtmDonut'),'rtm-family',()=>RTM.family,v=>{RTM.family=v;RTM.brand='ALL'},rtmRender,(c,e)=>hitDonutParts(c,e,'f'));
-      delegate(document.getElementById('rtmLegend'),'button[data-family]','rtm-family',()=>RTM.family,v=>{RTM.family=v;RTM.brand='ALL'},rtmRender,r=>r.dataset.family);
-      delegate(document.getElementById('rtmFamilyBars'),'.rtm-rank-row[data-family]','rtm-family2',()=>RTM.family,v=>{RTM.family=v;RTM.brand='ALL'},rtmRender,r=>r.dataset.family);
-      delegate(document.getElementById('rtmRank'),'.rtm-rank-row[data-brand]','rtm-brand',()=>RTM.brand,v=>RTM.brand=v,rtmRender,r=>r.dataset.brand);
-    }
-    // Retail Acumulado
-    const A=window.__RAC_API;if(A){const {RAC,render}=A;
-      delegate(document.getElementById('racLegend'),'.rac-leg[data-family]','rac-family',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);
-      delegate(document.getElementById('racFamilyGrid'),'.rac-family[data-family]','rac-family2',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);
-      delegate(document.getElementById('racRank'),'.rac-rank-row[data-brand]','rac-brand',()=>RAC.brand,v=>RAC.brand=v,render,r=>r.dataset.brand);
-      delegate(document.getElementById('racSegments'),'.rac-seg[data-family]','rac-seg-family',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);
-    }
-  },1400);
+  setTimeout(bind,1200);setInterval(bind,2200);
 })();
 </script>
 
@@ -7103,11 +7144,11 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
   }
   function sumLV2(){
     if(typeof LV2==='undefined'||!LV2.rows?.length)return 0;
-    return LV2.rows.filter(r=>lv2Head(r.cls)==='PICK UP Y FURGONETAS').reduce((s,r)=>s+(LV2.months||[]).reduce((a,m)=>a+(Number(r[m])||0),0),0);
+    return LV2.rows.filter(r=>lv2Head(r.cls)==='PICK UP Y FURGONETAS'&&lv2Head(r.body)==='PICK UP').reduce((s,r)=>s+(LV2.months||[]).reduce((a,m)=>a+(Number(r[m])||0),0),0);
   }
   function monthlyLV2(){
     if(typeof LV2==='undefined'||!LV2.rows?.length)return [];
-    return (LV2.months||[]).map(m=>LV2.rows.filter(r=>lv2Head(r.cls)==='PICK UP Y FURGONETAS').reduce((s,r)=>s+(Number(r[m])||0),0));
+    return (LV2.months||[]).map(m=>LV2.rows.filter(r=>lv2Head(r.cls)==='PICK UP Y FURGONETAS'&&lv2Head(r.body)==='PICK UP').reduce((s,r)=>s+(Number(r[m])||0),0));
   }
   function sumVP3(){
     if(typeof VP3==='undefined'||!VP3.rows?.length)return 0;
@@ -7218,7 +7259,7 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
     $('sxPeriod').textContent=count?('Consolidación dinámica · '+(periods[0]||periods[1]||'periodos cargados')):'Carga tus Excel para consolidar el mercado.';
 
     const inmatParts=[
-      {label:'Pick-ups / Furgonetas',value:sumLV2()},
+      {label:'Pick-up C3',value:sumLV2()},
       {label:'Vehículos Pesados',value:sumVP3()}
     ].filter(x=>x.value>0);
     const inmatTotal=inmatParts.reduce((s,x)=>s+x.value,0);
@@ -7614,9 +7655,9 @@ select option.tsf-seg-option{font-size:inherit}
     const out=[];
     if(typeof LV2!=='undefined'&&LV2.rows?.length){
       const v=LV2.rows
-        .filter(r=>typeof lv2Head==='function' ? lv2Head(r.cls)==='PICK UP Y FURGONETAS' : String(r.cls||'').toUpperCase().includes('PICK UP'))
+        .filter(r=>typeof lv2Head==='function' ? (lv2Head(r.cls)==='PICK UP Y FURGONETAS'&&lv2Head(r.body)==='PICK UP') : String(r.body||'').toUpperCase()==='PICK UP')
         .reduce((s,r)=>s+(LV2.months||[]).reduce((a,m)=>a+(Number(r[m])||0),0),0);
-      if(v) out.push({key:'PICKUPS',label:'Pick-ups / Furgonetas',value:v,color:'#ef0b70'});
+      if(v) out.push({key:'PICKUPS',label:'Pick-up C3',value:v,color:'#ef0b70'});
     }
     if(typeof VP3!=='undefined'&&VP3.rows?.length){
       const v=VP3.rows.reduce((s,r)=>s+(r.m||[]).reduce((a,x)=>a+(Number(x)||0),0),0);
@@ -8045,7 +8086,7 @@ select option.tsf-seg-option{font-size:inherit}
      if(typeof RTM!=='undefined'&&RTM.family==='LIGEROS'){RTM.family='TOTAL';RTM.brand='ALL';if(typeof rtmRender==='function')rtmRender()}
      const A=window.__RAC_API;if(A?.RAC?.family==='LIGEROS'){A.RAC.family='TOTAL';A.RAC.brand='ALL';A.render(true)}
      if(window.lv2Els?.cls){
-       const opt=[...lv2Els.cls.options].find(o=>String(o.value).toUpperCase().includes('PICK UP Y FURGONETAS'));
+       const opt=[...lv2Els.cls.options].find(o=>String(o.value).toUpperCase().includes('PICK UP'));
        if(opt){lv2Els.cls.value=opt.value;lv2Els.cls.disabled=true}
      }
    }catch(e){console.warn('Business focus guard',e)}
@@ -8054,5 +8095,91 @@ select option.tsf-seg-option{font-size:inherit}
 })();
 </script>
 
+
+<style id="v87-pickups-premium-style">
+/* ===== V87 · PICK-UPS Y FURGONETAS · LIMPIO / EJECUTIVO ===== */
+#ligeros{--lv-cream:#FFF5DD;--lv-cream2:#FFF9ED;--lv-gold:#F5A900;--lv-pink:#EE0B70;--lv-ink:#171A20;--lv-soft:#F7F8FA;--lv-line:#E8EAF0}
+#ligeros .lv2-hero{min-height:104px!important;padding:16px 20px!important;border-radius:16px!important;grid-template-columns:minmax(0,1fr) 235px!important;background:radial-gradient(circle at 91% 28%,rgba(245,169,0,.20),transparent 24%),linear-gradient(112deg,#171B24 0%,#2A303C 72%,#514742 100%)!important;margin-bottom:9px!important}
+#ligeros .lv2-hero:after{width:135px!important;height:135px!important;border-width:20px!important;right:-32px!important;top:-44px!important;opacity:.65}
+#ligeros .lv2-eyebrow{font-size:8px!important;margin-bottom:5px!important}
+#ligeros .lv2-hero h3{font-size:23px!important;line-height:1.05!important}
+#ligeros .lv2-hero p{font-size:10.5px!important;line-height:1.42!important;margin-top:6px!important;max-width:860px!important}
+#ligeros .lv2-hero-stat{padding:11px 13px!important;border-radius:12px!important;background:rgba(255,255,255,.075)!important}
+#ligeros .lv2-hero-stat b{font-size:24px!important}
+#ligeros .lv2-hero-stat span{font-size:8.8px!important;line-height:1.35!important;max-height:28px;overflow:hidden}
+#ligeros .lv2-connect{padding:8px 10px!important;border-radius:12px!important;margin-bottom:9px!important;box-shadow:none!important;background:linear-gradient(90deg,#fff,#fffaf0)!important}
+#ligeros .lv2-connect-ico{width:31px!important;height:31px!important;border-radius:9px!important;font-size:14px!important;background:var(--lv-cream)!important;color:#A56B00!important}
+#ligeros .lv2-connect b{font-size:10.5px!important}#ligeros .lv2-connect span{font-size:8.7px!important}
+#ligeros .lv2-connect button{padding:7px 9px!important;font-size:9px!important}
+#ligeros .lv2-connect .primary{background:linear-gradient(135deg,#252A34,#3C4351)!important;box-shadow:none!important}
+
+/* KPIs: una sola banda en escritorio grande */
+#ligeros .lv2-kpis{grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:8px!important;margin-bottom:8px!important}
+#ligeros .lv2-kpi{min-height:82px!important;padding:10px 11px!important;border-radius:13px!important;border-top:0!important;box-shadow:0 5px 18px rgba(17,19,24,.035)!important;background:#fff!important}
+#ligeros .lv2-kpi.primary{background:linear-gradient(135deg,var(--lv-cream),#FFF0C8)!important;border:1px solid #F1CE74!important}
+#ligeros .lv2-kpi.gold{background:linear-gradient(135deg,#FFF9EB,#FFFDF6)!important;border:1px solid #F2D694!important}
+#ligeros .lv2-kpi span{font-size:8.4px!important;color:#848C99!important}
+#ligeros .lv2-kpi b{font-size:21px!important;margin:5px 0 3px!important}
+#ligeros .lv2-kpi small{font-size:8.3px!important;color:#969DA8!important}
+
+#ligeros .lv2-insights{gap:8px!important;margin-bottom:8px!important}
+#ligeros .lv2-insight{padding:9px 10px!important;border-radius:12px!important;background:#fff!important;box-shadow:0 4px 16px rgba(17,19,24,.03)}
+#ligeros .lv2-insight span{font-size:8.5px!important}#ligeros .lv2-insight b{font-size:13px!important}#ligeros .lv2-insight small{font-size:8.4px!important}
+
+#ligeros .lv2-filter-shell{padding:9px 10px!important;border-radius:13px!important;background:#fff!important;box-shadow:0 5px 18px rgba(17,19,24,.03)!important}
+#ligeros .lv2-filters{grid-template-columns:105px 1fr 1fr 1fr 1fr auto!important;gap:7px!important}
+#ligeros .lv2-filter label{font-size:8.2px!important;color:#8D94A0!important}
+#ligeros .lv2-filter select{height:33px!important;font-size:9.7px!important;background:#FBFBFC!important}
+#ligeros .lv2-filter-actions button{height:33px!important;font-size:9px!important}
+#ligeros .lv2-filter-note{font-size:8.7px!important;margin-top:6px!important}
+
+#ligeros .lv2-grid{gap:9px!important;margin-bottom:9px!important}
+#ligeros .lv2-card{border-radius:14px!important;padding:11px!important;box-shadow:0 6px 22px rgba(17,19,24,.038)!important;border-color:#E8EAF0!important}
+#ligeros .lv2-card:hover{transform:none!important;box-shadow:0 10px 28px rgba(17,19,24,.06)!important}
+#ligeros .lv2-card-head{margin-bottom:7px!important}#ligeros .lv2-card-head h4{font-size:12.5px!important}#ligeros .lv2-card-head p{font-size:8.8px!important;line-height:1.35}
+#ligeros .lv2-chip{font-size:8px!important;background:var(--lv-cream)!important;color:#7A5200!important}
+#ligeros #lv2Trend{height:225px!important}
+#ligeros .lv2-donut-wrap{width:min(100%,205px)!important;margin:4px auto 9px!important}
+#ligeros .lv2-donut-center b{font-size:23px!important}
+#ligeros .lv2-class-legend button{padding:6px 7px!important;background:#FCFCFD!important;transition:.15s ease}
+#ligeros .lv2-class-legend button:hover{background:var(--lv-cream2)!important;border-color:#E7C878!important}
+#ligeros .lv2-rank-row,#ligeros .lv2-office-row{cursor:pointer;border-radius:8px;padding:3px 4px;transition:.14s ease}
+#ligeros .lv2-rank-row:hover,#ligeros .lv2-office-row:hover{background:#FFF8E9}
+#ligeros .lv2-bars>div{padding:3px 4px;border-radius:8px;transition:.14s ease}
+#ligeros .lv2-bars>div:hover{background:#FAF7EF}
+#ligeros .lv2-business-reading{background:linear-gradient(135deg,#FFFDF8,#FFF9ED)!important;border-color:#F0DEB1!important}
+#ligeros .lv2-business-read{background:#fff!important}
+
+/* Estado visual de seleccion BI */
+.bi-click-selected{outline:2px solid rgba(238,11,112,.35)!important;outline-offset:1px;background:#FFF3F8!important}
+#biHoverTip{position:fixed;z-index:999999;display:none;pointer-events:none;background:#171A20;color:#fff;border-radius:9px;padding:8px 10px;font:500 9.5px/1.4 'Segoe UI',Arial,sans-serif;box-shadow:0 10px 28px rgba(0,0,0,.22);max-width:260px}
+#biHoverTip b{display:block;font-size:10.5px;margin-bottom:2px}
+@media(max-width:1450px){#ligeros .lv2-kpis{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:980px){#ligeros .lv2-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}#ligeros .lv2-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}#ligeros .lv2-hero{grid-template-columns:1fr!important}}
+</style>
+
+
+<script id="v87-bi-hover-info">
+(function(){
+  let tip=document.getElementById('biHoverTip');if(!tip){tip=document.createElement('div');tip.id='biHoverTip';document.body.appendChild(tip)}
+  const selectors='.lv2-rank-row,.lv2-office-row,.lv2-class-legend button,.vp3-rank-row,.vp3-office-row,.rtm-rank-row,.rac-rank-row,.rac-family,.rac-seg';
+  function content(el){
+    if(el.matches('.lv2-rank-row,.vp3-rank-row,.rtm-rank-row,.rac-rank-row')){const n=el.querySelector('.name')?.textContent?.trim()||el.dataset.brand||'';const v=el.querySelector('b,strong')?.textContent?.trim()||'';return `<b>${n}</b>${v?`Volumen: ${v}<br>`:''}<span>Clic para filtrar · clic fuera para volver</span>`}
+    if(el.matches('.lv2-office-row,.vp3-office-row')){const n=el.querySelector('.name')?.textContent?.trim()||'';const bs=[...el.querySelectorAll('b,.pct')].map(x=>x.textContent.trim()).filter(Boolean);return `<b>${n}</b>${bs.join(' · ')}<br><span>Clic para filtrar · clic fuera para volver</span>`}
+    if(el.matches('.lv2-class-legend button')){const n=el.querySelector('span')?.textContent?.trim()||'';const v=el.querySelector('b')?.textContent?.trim()||'';return `<b>${n}</b>${v}<br><span>Clic para filtrar · clic fuera para volver</span>`}
+    return `<b>${el.textContent.trim().slice(0,80)}</b><span>Clic para filtrar · clic fuera para volver</span>`;
+  }
+  document.addEventListener('pointermove',e=>{const el=e.target.closest(selectors);if(!el){tip.style.display='none';return}tip.innerHTML=content(el);tip.style.display='block';let x=e.clientX+13,y=e.clientY+13;requestAnimationFrame(()=>{const r=tip.getBoundingClientRect();if(x+r.width>innerWidth-8)x=e.clientX-r.width-13;if(y+r.height>innerHeight-8)y=e.clientY-r.height-13;tip.style.left=x+'px';tip.style.top=y+'px'})});
+  document.addEventListener('pointerout',e=>{if(e.target.closest?.(selectors)&&!e.relatedTarget?.closest?.(selectors))tip.style.display='none'});
+})();
+</script>
+
 </body>
 </html>
+
+<style id="v88-c3-kpi-fix">
+#ligeros .lv2-business-kpis .lv2-kpi:nth-child(4),
+#ligeros .lv2-business-kpis .lv2-kpi:nth-child(5){display:none!important}
+#ligeros .lv2-business-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+#ligeros .lv2-advanced{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+</style>
