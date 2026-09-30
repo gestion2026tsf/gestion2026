@@ -5743,7 +5743,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
 <script>
 const titles={
- resumen:'Resumen Ejecutivo',retailmes:'Venta Retail · Universo Negocio',retail:'Retail Acumulado · Negocio C/O/P',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',
+ resumen:'Resumen Ejecutivo',retailmes:'Venta Retail · Universo Negocio',retail:'Retail Acumulado · Negocio C/O/P',retailComerciales:'Retail Comerciales C1–C4',retailOmnibus:'Retail Ómnibus',retailCamiones:'Retail Camiones y Remolcadores',
  ligeros:'Mercado de Pick-up C3',pesados:'Mercado Vehículos Pesados',menores:'Mercado de Vehículos Menores',remolques:'Mercado Remolques y Semirremolques',
  concesionarios:'Departamento y Concesionarios Retail',carga:'Cargar Mes'
 };
@@ -8749,6 +8749,96 @@ select option.tsf-seg-option{font-size:inherit}
 #sxLoaded{font-variant-numeric:tabular-nums;cursor:help}
 @media(max-width:1180px){#retailComerciales .rc96-kpis{grid-template-columns:repeat(3,minmax(0,1fr))!important}#retailComerciales .rc96-segments{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:650px){#retailComerciales .rc96-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}#retailComerciales .rc96-segments{grid-template-columns:1fr!important}}
+</style>
+
+
+<style id="v98-gerencial-bi-theme">
+/* V98 · Tema Gerencial BI. Solo presentación: los datos siguen saliendo de los Excel cargados. */
+:root{--bi-bg:#f4f6f9;--bi-card:#fff;--bi-text:#171a21;--bi-muted:#7d8694;--bi-line:#e8ecf2;--bi-pink:#ef0b70;--bi-gold:#f3ad00;--bi-dark:#181b22;--bi-green:#07845a}
+body{background:var(--bi-bg)!important;color:var(--bi-text)!important}
+.content{padding:16px 18px 26px!important;max-width:1760px;margin:0 auto;width:100%}
+.topbar{padding:10px 18px!important;min-height:62px!important;box-shadow:0 2px 14px rgba(20,24,35,.035)!important}
+.topbar-left h2{font-size:18px!important;letter-spacing:-.3px}.topbar-left small{font-size:10px!important}
+.btn{border-radius:12px!important;box-shadow:none!important}
+.card,.rac-card,.lv2-card,.vp3-card,.rl-card,.ro-card,.rc10-card,.dc11-card,.rc96-card{border:1px solid var(--bi-line)!important;border-radius:18px!important;box-shadow:0 8px 24px rgba(20,24,35,.035)!important;background:#fff!important}
+.section-title h4,.rac-head h4,.lv2-card-head h4,.vp3-head h4,.rl-head h4,.ro-head h4,.rc10-head h4,.dc11-head h4,.rc96-head h4{letter-spacing:-.2px!important;color:#20242b!important}
+
+/* HEROES: misma jerarquía en todas las vistas */
+.rac-hero,.lv2-hero,.vp3-hero,.rl-hero,.ro-hero,.rc10-hero,.dc11-hero,.rc96-hero{border-radius:20px!important;min-height:104px!important;padding:17px 20px!important;margin-bottom:10px!important;background:linear-gradient(115deg,#171a22 0%,#252a33 68%,#584c39 100%)!important;box-shadow:none!important}
+.rac-hero h3,.lv2-hero h3,.vp3-hero h3,.rl-hero h3,.ro-hero h3,.rc10-hero h3,.dc11-hero h3,.rc96-hero h3{font-size:24px!important;letter-spacing:-.5px!important;margin:3px 0 5px!important}
+.rac-hero p,.lv2-hero p,.vp3-hero p,.rl-hero p,.ro-hero p,.rc10-hero p,.dc11-hero p,.rc96-hero p{font-size:9.5px!important;line-height:1.55!important;max-width:850px!important}
+
+/* Conexión: barra fina, no una tarjeta protagonista */
+.rac-loader,.lv2-connect,.vp3-source,.rl-source,.ro-source,.rc10-source,.dc11-source,.rc96-source{min-height:52px!important;padding:8px 11px!important;border-radius:14px!important;border:1px solid var(--bi-line)!important;box-shadow:none!important;background:rgba(255,255,255,.92)!important;margin-bottom:10px!important}
+
+/* ===== RETAIL ACUMULADO ===== */
+#retail .rac-market-context{grid-template-columns:1.1fr 34px 1.1fr 1.1fr!important;gap:8px!important;margin:10px 0!important}
+#retail .rac-market-box{min-height:88px!important;padding:12px 14px!important;border-radius:16px!important;box-shadow:none!important;background:#fff!important;border:1px solid var(--bi-line)!important}
+#retail .rac-market-box.business{background:#fff7e6!important;border-color:#f0d28d!important}
+#retail .rac-market-box.pickup{background:#fff5f9!important;border-color:#f2bfd4!important}
+#retail .rac-market-box span{font-size:8px!important}#retail .rac-market-box b{font-size:25px!important}#retail .rac-market-box small{font-size:8px!important;line-height:1.35!important}
+#retail .rac-business-explainer{font-size:8.5px!important;padding:9px 12px!important;border-radius:12px!important;background:#fffaf0!important;margin:0 0 10px!important}
+#retail .rac-c3-compare{padding:14px!important;border-radius:18px!important;box-shadow:none!important;border:1px solid #eee6d7!important;background:linear-gradient(110deg,#fffdf8,#fff8ee)!important;margin-bottom:10px!important}
+#retail .rac-c3-compare-head{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:14px!important}.rac-c3-compare-head h4{font-size:17px!important;margin:4px 0!important}.rac-c3-compare-head p{font-size:8.5px!important;max-width:780px!important}
+#retail .rac-c3-compare-grid{display:grid!important;grid-template-columns:1fr 44px 1fr 1fr!important;gap:8px!important;align-items:stretch!important}
+#retail .rac-c3-metric{padding:11px 12px!important;min-height:82px!important;border-radius:14px!important;box-shadow:none!important}#retail .rac-c3-metric b{font-size:23px!important}.rac-c3-vs{font-size:10px!important}
+#retail .rac-c3-note{font-size:8px!important;padding:8px 10px!important;margin-top:8px!important}
+#retail .rac-business-kpis{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important;margin-bottom:10px!important}
+#retail .rac-kpi{min-height:82px!important;padding:11px 12px!important;border-radius:15px!important;box-shadow:none!important}.rac-kpi span{font-size:7.5px!important}.rac-kpi b{font-size:22px!important}.rac-kpi small{font-size:7.5px!important}
+#retail .rac-toolbar{border:0!important;background:transparent!important;padding:0!important;margin:3px 0 10px!important}.rac-tabs{gap:6px!important}.rac-tabs button{border-radius:999px!important;padding:7px 11px!important;font-size:8px!important}.rac-toolbar-right{gap:7px!important}
+#retail .rac-business-grid-top{grid-template-columns:.92fr 1.08fr!important;gap:10px!important;align-items:start!important}
+#retail .rac-business-grid-top>.rac-card:nth-child(3){grid-column:1/-1!important;padding:13px 15px!important}
+#retail .rac-donut-zone{display:grid!important;grid-template-columns:210px 1fr!important;gap:14px!important;align-items:center!important}.rac-donut-wrap{max-width:210px!important;margin:auto!important}.rac-donut-wrap canvas{max-width:210px!important;max-height:210px!important}
+#retail .rac-legend{display:grid!important;grid-template-columns:1fr!important;gap:6px!important}.rac-legend>*{min-height:auto!important;padding:8px 9px!important;border-radius:11px!important}
+#retail .rac-explain-note{font-size:8px!important;padding:7px 9px!important;margin-top:8px!important}
+#retail .rac-insights{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}.rac-insights>*{min-height:72px!important;padding:10px 11px!important;border-radius:12px!important}.rac-insights b{font-size:12px!important}
+#retail .rac-family-card{margin-top:10px!important}.rac-family-grid{gap:8px!important}.rac-family-grid>*{border:0!important;background:#f8fafc!important;border-radius:12px!important}
+#retail .rac-grid-mid{gap:10px!important;grid-template-columns:1.2fr .9fr .9fr!important}
+#retail .rac-quality-card{display:none!important}
+
+/* ===== COMERCIALES ===== */
+#retailComerciales .rc96-guide{padding:8px 11px!important;border-radius:12px!important;margin-bottom:8px!important;grid-template-columns:1.5fr 1fr!important;background:#fffaf1!important}
+#retailComerciales .rc96-guide-tags{display:flex!important;gap:5px!important;justify-content:flex-end!important;flex-wrap:wrap!important}#retailComerciales .rc96-guide-tags span{padding:5px 8px!important;border-radius:999px!important;font-size:7px!important}
+#retailComerciales .rc96-kpis{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important;margin-bottom:9px!important}
+#retailComerciales .rc96-kpi.main{display:none!important}
+#retailComerciales .rc96-kpi{min-height:78px!important;padding:10px 12px!important;border-radius:15px!important;box-shadow:none!important}.rc96-kpi b{font-size:20px!important}.rc96-kpi span{font-size:7px!important}.rc96-kpi small{font-size:7px!important}
+#retailComerciales .rc96-segments{gap:7px!important;margin-bottom:9px!important}#retailComerciales .rc96-segments button{min-height:68px!important;padding:8px 10px!important;border-radius:14px!important;box-shadow:none!important;background:#fff!important}.rc96-segments button>span{width:38px!important;height:38px!important;border-radius:10px!important}.rc96-segments strong{font-size:18px!important}
+#retailComerciales .rc96-filterbar,#retailComerciales .rc96-advanced{border-radius:14px!important;padding:8px 9px!important;box-shadow:none!important;background:#fff!important}#retailComerciales .rc96-filter-note{margin:4px 2px 8px!important}
+#retailComerciales .rc96-grid-main{grid-template-columns:1.42fr .78fr!important;gap:10px!important}.rc96-chart{height:235px!important}
+#retailComerciales .rc96-grid-secondary{grid-template-columns:1.15fr .85fr .85fr!important;gap:10px!important}
+#retailComerciales .rc96-card{padding:12px 13px!important}.rc96-head{margin-bottom:8px!important}.rc96-head h4{font-size:11.5px!important}.rc96-head p{font-size:7.8px!important}
+#retailComerciales .rc96-exec{grid-template-columns:190px 1fr!important;padding:10px 12px!important;border-radius:16px!important;background:linear-gradient(105deg,#fffdf8,#fff8eb)!important}.rc96-exec-grid>div{border:0!important;background:rgba(255,255,255,.82)!important}
+
+/* ===== resto de módulos: acabado consistente ===== */
+.lv2-kpis,.vp3-kpis,.rl-kpis,.ro-kpis,.rc10-kpis,.dc11-kpis{gap:8px!important}.lv2-kpi,.vp3-kpi,.rl-kpi,.ro-kpi,.rc10-kpi,.dc11-kpi{border-radius:15px!important;box-shadow:none!important;border-color:var(--bi-line)!important;min-height:78px!important}
+.lv2-grid,.vp3-grid,.rl-grid,.ro-grid,.rc10-grid,.dc11-grid-a,.dc11-grid-b,.dc11-grid-c,.dc11-grid-d{gap:10px!important}
+.lv2-filter-shell,.vp3-filterbox,.rl-filterbox,.ro-filterbox,.rc10-filterbar,.dc11-filterbar{border-radius:15px!important;box-shadow:none!important;border-color:var(--bi-line)!important}
+
+/* Scrollbars discretas */
+*{scrollbar-width:thin;scrollbar-color:#c9ced7 transparent}*::-webkit-scrollbar{width:7px;height:7px}*::-webkit-scrollbar-thumb{background:#c9ced7;border-radius:999px}*::-webkit-scrollbar-track{background:transparent}
+
+@media(max-width:1250px){
+ #retail .rac-business-kpis{grid-template-columns:repeat(3,1fr)!important}
+ #retail .rac-business-grid-top{grid-template-columns:1fr!important}
+ #retail .rac-business-grid-top>.rac-card:nth-child(3){grid-column:auto!important}
+ #retail .rac-insights{grid-template-columns:repeat(2,1fr)!important}
+ #retailComerciales .rc96-kpis{grid-template-columns:repeat(3,1fr)!important}
+ #retailComerciales .rc96-grid-secondary{grid-template-columns:1fr 1fr!important}
+ #retailComerciales .rc96-grid-secondary>.rc96-card:last-child{grid-column:1/-1!important}
+}
+@media(max-width:820px){
+ .content{padding:10px!important}
+ #retail .rac-market-context{grid-template-columns:1fr!important}.rac-context-arrow{display:none!important}
+ #retail .rac-c3-compare-grid{grid-template-columns:1fr!important}.rac-c3-vs{display:none!important}
+ #retail .rac-business-kpis{grid-template-columns:1fr 1fr!important}
+ #retail .rac-donut-zone{grid-template-columns:1fr!important}.rac-donut-wrap{max-width:220px!important}
+ #retail .rac-insights{grid-template-columns:1fr!important}
+ #retail .rac-grid-mid{grid-template-columns:1fr!important}
+ #retailComerciales .rc96-kpis{grid-template-columns:1fr 1fr!important}
+ #retailComerciales .rc96-grid-main,#retailComerciales .rc96-grid-secondary{grid-template-columns:1fr!important}
+ #retailComerciales .rc96-guide{grid-template-columns:1fr!important}
+ #retailComerciales .rc96-guide-tags{justify-content:flex-start!important}
+}
 </style>
 
 </body>
