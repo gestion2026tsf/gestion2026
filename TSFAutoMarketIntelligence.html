@@ -4696,6 +4696,32 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 @media(max-width:560px){#retail .rac-market-context,#retail .rac-business-kpis{grid-template-columns:1fr!important}}
 </style>
 
+
+<style id="v93-c3-retail-inmat-style">
+#retail .rac-c3-compare{margin:12px 0 14px;background:#fff;border:1px solid #e4e8ef;border-radius:16px;padding:15px 16px;box-shadow:0 8px 24px rgba(26,31,43,.045)}
+#retail .rac-c3-compare-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:12px}
+#retail .rac-c3-compare-head .eyebrow{font-size:8px;font-weight:900;letter-spacing:.12em;color:#a47600}
+#retail .rac-c3-compare-head h4{font-size:16px;margin:3px 0 4px;color:#181b22}
+#retail .rac-c3-compare-head p{font-size:10px;line-height:1.5;color:#7a8494;max-width:760px;margin:0}
+#retail .rac-c3-status{white-space:nowrap;background:#fff5d9;color:#805900;border:1px solid #f3d27a;border-radius:999px;padding:6px 10px;font-size:8.5px;font-weight:800}
+#retail .rac-c3-compare-grid{display:grid;grid-template-columns:minmax(0,1fr) 42px minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:stretch}
+#retail .rac-c3-metric{border:1px solid #e6e9ef;border-radius:13px;padding:12px 14px;background:#fbfcfe;display:flex;flex-direction:column;justify-content:center;min-height:86px}
+#retail .rac-c3-metric span{font-size:8.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:800;color:#8c95a4}
+#retail .rac-c3-metric b{font-size:24px;line-height:1.05;margin:5px 0;color:#161a21}
+#retail .rac-c3-metric small{font-size:8.5px;color:#929bab}
+#retail .rac-c3-metric.retail{background:#fff6fa;border-color:#f5b5d2}
+#retail .rac-c3-metric.retail b{color:#d90a66}
+#retail .rac-c3-metric.inmat{background:#fff9e9;border-color:#f1d07a}
+#retail .rac-c3-metric.inmat b{color:#8a6200}
+#retail .rac-c3-metric.diff{background:#f7f9fc}
+#retail .rac-c3-metric.diff.positive b{color:#0a8d53}
+#retail .rac-c3-metric.diff.negative b{color:#cf2a2a}
+#retail .rac-c3-vs{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#9aa3b1}
+#retail .rac-c3-note{margin-top:10px;padding:9px 11px;border-radius:10px;background:#f8fafc;color:#667183;font-size:9px;line-height:1.45;border-left:3px solid #f5a900}
+#retail .rac-c3-note b{color:#242a33}
+@media(max-width:900px){#retail .rac-c3-compare-grid{grid-template-columns:1fr 1fr}.rac-c3-vs{display:none}#retail .rac-c3-compare-head{flex-direction:column;gap:8px}}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -4806,7 +4832,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
     </div>
 
     <div class="sx-card sx-segments-card">
-      <div class="sx-card-head"><div><h4>Segmentos prioritarios del negocio</h4><p>C1-C4, O1-O2 y P2-P5. Autos, station wagon y SUV no se muestran.</p></div></div>
+      <div class="sx-card-head"><div><h4>Detalle por segmento C / O / P</h4><p>C1-C4, O1-O2 y P2-P5. Autos, station wagon y SUV no se muestran.</p></div></div>
       <div class="sx-segments" id="sxSegments"></div>
     </div>
 
@@ -4839,9 +4865,9 @@ canvas{transition:filter .14s ease,opacity .14s ease}
   </div>
 
   <div class="rtm-market-context">
-    <div><span>Mercado Retail total del archivo</span><b id="rtmMarketTotal">—</b><small>Incluye L1–L3 + universo negocio</small></div>
+    <div><span>Mercado Retail total del archivo</span><b id="rtmMarketTotal">—</b><small>176,170 = todo el mercado Retail acumulado</small></div>
     <i>→</i>
-    <div class="focus"><span>Universo negocio analizado</span><b id="rtmKTotal">—</b><small id="rtmKTotalSub">C1–C4 · O1–O2 · P2–P5</small></div>
+    <div class="focus"><span>Negocio priorizado por Oliver</span><b id="rtmKTotal">—</b><small id="rtmKTotalSub">C1–C4 + O1–O2 + P2–P5</small></div>
   </div>
 
   <div class="rtm-kpis rtm-kpis-business">
@@ -4904,18 +4930,54 @@ canvas{transition:filter .14s ease,opacity .14s ease}
   </div>
 
   <div class="rac-market-context">
-    <div class="rac-market-box total"><span>Mercado Retail acumulado total</span><b id="racMarketTotal">—</b><small>Incluye L1–L3 + universo negocio</small></div>
+    <div class="rac-market-box total"><span>Mercado Retail total (referencia)</span><b id="racMarketTotal">—</b><small>176,170 = todo el mercado Retail acumulado</small></div>
     <div class="rac-context-arrow">→</div>
-    <div class="rac-market-box business"><span>Universo negocio analizado</span><b id="racBusinessBase">—</b><small id="racBusinessBaseSub">C1–C4 · O1–O2 · P2–P5</small></div>
-    <div class="rac-market-box pickup"><span>Foco estratégico · Pick-up C3</span><b id="racPickBase">—</b><small id="racPickBaseSub">Incluido dentro de Comerciales C1–C4</small></div>
+    <div class="rac-market-box business"><span>Negocio priorizado por Oliver</span><b id="racBusinessBase">—</b><small id="racBusinessBaseSub">C1–C4 + O1–O2 + P2–P5</small></div>
+    <div class="rac-market-box pickup"><span>Pick-up C3 dentro del negocio</span><b id="racPickBase">—</b><small id="racPickBaseSub">Está incluido en Comerciales C1–C4; no se suma aparte</small></div>
+  </div>
+
+  <div class="rac-business-explainer" id="racBusinessExplainer">
+    <b>Cómo leer esta hoja:</b> del mercado Retail acumulado total, esta vista separa únicamente los segmentos priorizados por Oliver. Pick-up C3 forma parte de Comerciales C1–C4, por eso no se suma otra vez.
+  </div>
+
+  <div class="rac-c3-compare" id="racC3Compare">
+    <div class="rac-c3-compare-head">
+      <div>
+        <span class="eyebrow">PICK-UP C3 · DOS MOMENTOS DEL MISMO NEGOCIO</span>
+        <h4>Retail vs Inmatriculaciones</h4>
+        <p>Retail registra la venta comercial; Inmatriculaciones registra el vehículo cuando queda inscrito. Por eso ambas cifras pueden diferir dentro del mismo periodo.</p>
+      </div>
+      <span class="rac-c3-status" id="racC3Status">Esperando 08.2 y 08.6</span>
+    </div>
+    <div class="rac-c3-compare-grid">
+      <div class="rac-c3-metric retail">
+        <span>Ventas Retail acumuladas C3</span>
+        <b id="racC3Retail">—</b>
+        <small>Fuente: 08.6 · C3 CAMIONETA PICK-UP</small>
+      </div>
+      <div class="rac-c3-vs">VS</div>
+      <div class="rac-c3-metric inmat">
+        <span>Inmatriculaciones acumuladas C3</span>
+        <b id="racC3Inmat">—</b>
+        <small>Fuente: 08.2 · carrocería PICK UP</small>
+      </div>
+      <div class="rac-c3-metric diff">
+        <span>Diferencia temporal del periodo</span>
+        <b id="racC3Diff">—</b>
+        <small id="racC3DiffSub">Retail menos inmatriculaciones</small>
+      </div>
+    </div>
+    <div class="rac-c3-note">
+      <b>Cómo interpretarlo:</b> una venta puede registrarse antes de que el vehículo sea inmatriculado. Esta diferencia sirve para comparar el ritmo comercial con el ritmo de inscripción; <strong>no significa automáticamente que sean unidades pendientes de matricular.</strong>
+    </div>
   </div>
 
   <div class="rac-kpis rac-business-kpis">
-    <div class="rac-kpi hero"><span>Selección acumulada</span><b id="racTotal">—</b><small id="racTotalSub">Universo negocio</small></div>
-    <div class="rac-kpi"><span>Mismo periodo 2025</span><b id="racPrev">—</b><small>Base comparable de la selección</small></div>
+    <div class="rac-kpi hero"><span>Volumen de la vista actual</span><b id="racTotal">—</b><small id="racTotalSub">Universo negocio</small></div>
+    <div class="rac-kpi"><span>Mismo periodo 2025</span><b id="racPrev">—</b><small>Mismo universo y filtro, año anterior</small></div>
     <div class="rac-kpi"><span>Crecimiento YoY</span><b id="racGrowth">—</b><small id="racGrowthSub">—</small></div>
     <div class="rac-kpi cream"><span>Pick-up C3</span><b id="racPickTotal">—</b><small id="racPickSub">C3 · CAMIONETA PICK-UP</small></div>
-    <div class="rac-kpi"><span>Marca líder</span><b id="racLeader">—</b><small id="racLeaderSub">—</small></div>
+    <div class="rac-kpi"><span>Marca líder de la vista</span><b id="racLeader">—</b><small id="racLeaderSub">—</small></div>
   </div>
 
   <div class="rac-toolbar">
@@ -4934,7 +4996,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 
   <div class="rac-grid-top rac-business-grid-top">
     <div class="rac-card">
-      <div class="rac-head"><div><h4>Composición del negocio acumulado</h4><p>Hover = detalle · clic = fija filtro · clic fuera = limpia.</p></div><span class="rac-chip" id="racShareChip">100% universo negocio</span></div>
+      <div class="rac-head"><div><h4>¿Cómo se compone el negocio priorizado?</h4><p>Pasa el cursor para ver detalle. Haz clic para filtrar; clic fuera para volver al total.</p></div><span class="rac-chip" id="racShareChip">100% universo negocio</span></div>
       <div class="rac-donut-zone">
         <div class="rac-donut-wrap"><canvas id="racDonut" width="360" height="360"></canvas><div class="rac-donut-center"><b id="racDonutTotal">—</b><span>unidades</span></div></div>
         <div class="rac-legend" id="racLegend"></div>
@@ -4942,28 +5004,28 @@ canvas{transition:filter .14s ease,opacity .14s ease}
       <div class="rac-explain-note"><b>Importante:</b> Pick-up C3 está incluido dentro de Comerciales C1–C4; no se suma como una familia adicional.</div>
     </div>
     <div class="rac-card">
-      <div class="rac-head"><div><h4 id="racRankTitle">Top marcas · Universo negocio</h4><p>Volumen 2026, referencia 2025 y variación.</p></div><span class="rac-chip">Top 10</span></div>
+      <div class="rac-head"><div><h4 id="racRankTitle">Marcas líderes del negocio</h4><p>Volumen acumulado, comparación 2025 y crecimiento.</p></div><span class="rac-chip">Top 10</span></div>
       <div class="rac-rank" id="racRank"></div>
     </div>
     <div class="rac-card">
-      <div class="rac-head"><div><h4>Lectura ejecutiva para negocio</h4><p>Qué está ocurriendo y por qué importa.</p></div></div>
+      <div class="rac-head"><div><h4>Qué está pasando en el negocio</h4><p>Lectura automática de los principales resultados.</p></div></div>
       <div class="rac-insights" id="racInsights"></div>
     </div>
   </div>
 
   <div class="rac-card rac-family-card">
-    <div class="rac-head"><div><h4>Crecimiento por familia · 2026 vs 2025</h4><p>Mismo universo contra mismo universo. L1–L3 no intervienen en este comparativo.</p></div><span class="rac-chip">YoY acumulado</span></div>
+    <div class="rac-head"><div><h4>Crecimiento del negocio por familia</h4><p>Comparación acumulada 2026 vs 2025 usando exactamente los mismos segmentos C/O/P.</p></div><span class="rac-chip">YoY acumulado</span></div>
     <div class="rac-family-grid" id="racFamilyGrid"></div>
   </div>
 
   <div class="rac-grid-mid">
-    <div class="rac-card"><div class="rac-head"><div><h4>Segmentos prioritarios del negocio</h4><p>C1–C4, O1–O2 y P2–P5. C3 se destaca por ser el principal segmento.</p></div><span class="rac-chip" id="racSegChip">10 segmentos negocio</span></div><div class="rac-segments" id="racSegments"></div></div>
-    <div class="rac-card"><div class="rac-head"><div><h4>Marcas que impulsan el crecimiento</h4><p>Mayor incremento absoluto frente al mismo periodo de 2025.</p></div></div><div class="rac-movers" id="racWinners"></div></div>
-    <div class="rac-card"><div class="rac-head"><div><h4>Marcas a vigilar</h4><p>Mayor contracción absoluta dentro del universo seleccionado.</p></div></div><div class="rac-movers" id="racLosers"></div></div>
+    <div class="rac-card"><div class="rac-head"><div><h4>Detalle por segmento C / O / P</h4><p>C1–C4, O1–O2 y P2–P5. Cada tarjeta explica qué representa el código.</p></div><span class="rac-chip" id="racSegChip">10 segmentos negocio</span></div><div class="rac-segments" id="racSegments"></div></div>
+    <div class="rac-card"><div class="rac-head"><div><h4>Marcas que más crecen</h4><p>Mayor incremento absoluto frente al mismo periodo de 2025.</p></div></div><div class="rac-movers" id="racWinners"></div></div>
+    <div class="rac-card"><div class="rac-head"><div><h4>Marcas con caída</h4><p>Mayor contracción absoluta dentro del universo seleccionado.</p></div></div><div class="rac-movers" id="racLosers"></div></div>
   </div>
 
   <div class="rac-card rac-quality-card">
-    <div class="rac-head"><div><h4>Conciliación y calidad</h4><p>El mercado total se conserva para control, aunque el análisis visible se centra en C/O/P.</p></div></div>
+    <div class="rac-head"><div><h4>Control de datos</h4><p>El total de mercado se mantiene como referencia; el análisis visible usa únicamente el negocio priorizado.</p></div></div>
     <div class="rac-quality" id="racQuality"></div>
   </div>
 
@@ -5044,7 +5106,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
   </div>
 
   <div class="lv2-card lv2-business-reading" style="margin-bottom:10px">
-    <div class="lv2-card-head"><div><h4>Lectura ejecutiva para negocio</h4><p>Conclusiones calculadas automáticamente con la selección actual.</p></div><span class="lv2-chip">Dinámico</span></div>
+    <div class="lv2-card-head"><div><h4>Qué está pasando en el negocio</h4><p>Conclusiones calculadas automáticamente con la selección actual.</p></div><span class="lv2-chip">Dinámico</span></div>
     <div class="lv2-business-reading-grid" id="lv2Executive"></div>
   </div>
 
@@ -6114,7 +6176,7 @@ function lv2LoadWorkbook(wb,fileName='Excel cargado'){
  LV2.months=keys.filter(k=>LV2_MONTH_NAMES.includes(lv2Head(k))).map(k=>lv2Head(k));
  if(!LV2.months.length)throw new Error('No se encontraron columnas mensuales.');
  LV2.rows=data.map(x=>({office:lv2Norm(x[f.office])||'SIN DATO',cls:lv2Norm(x[f.cls])||'SIN DATO',body:lv2Norm(x[f.body])||'SIN DATO',brand:lv2Norm(x[f.brand])||'SIN DATO',model:lv2Norm(x[f.model])||'SIN DATO',origin:lv2Norm(x[f.origin])||'SIN DATO',fuel:lv2Norm(x[f.fuel])||'SIN DATO',drive:lv2Norm(x[f.drive])||'SIN DATO',trans:lv2Norm(x[f.trans])||'SIN DATO',modelYear:lv2Norm(x[f.modelYear])||'SIN DATO',...Object.fromEntries(LV2.months.map(m=>[m,Number(x[normalized.get(m)]||0)]))}));
- LV2.file=fileName;lv2ReadMeta(wb);lv2PopulateMonth();lv2RefreshOptions();lv2Update(false);const bizRows=LV2.rows.filter(r=>lv2Head(r.cls)==='PICK UP Y FURGONETAS'&&lv2Head(r.body)==='PICK UP').length;lv2Set('lv2HeroStatus',fileName+' · '+bizRows.toLocaleString('es-PE')+' filas del universo Pick-up C3');lv2Connect('Archivo 08.2 conectado','Universo de negocio filtrado automáticamente · '+fileName,true);return true;
+ LV2.file=fileName;lv2ReadMeta(wb);lv2PopulateMonth();lv2RefreshOptions();lv2Update(false);const bizRows=LV2.rows.filter(r=>lv2Head(r.cls)==='PICK UP Y FURGONETAS'&&lv2Head(r.body)==='PICK UP').length;lv2Set('lv2HeroStatus',fileName+' · '+bizRows.toLocaleString('es-PE')+' filas del universo Pick-up C3');lv2Connect('Archivo 08.2 conectado','Universo de negocio filtrado automáticamente · '+fileName,true);try{window.__RAC_API?.render?.(false)}catch(e){}return true;
 }
 async function lv2ReadFile(file){if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel.');const buf=await file.arrayBuffer();const wb=XLSX.read(buf,{type:'array',cellDates:true});return lv2LoadWorkbook(wb,file.name)}
 function lv2PopulateMonth(){const e=lv2Els.month;if(!e)return;e.innerHTML='<option value="ALL">Acumulado</option>'+LV2.months.map(m=>'<option value="'+m+'">'+m[0]+m.slice(1).toLowerCase()+'</option>').join('')}
@@ -6253,7 +6315,7 @@ function rtmRender(){
  const k=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
  k('rtmMarketTotal',rtmFmt(market));
  k('rtmKTotal',rtmFmt(total));
- k('rtmKTotalSub',rtmPct(total,market)+' del mercado total · C1–C4 · O1–O2 · P2–P5');
+ k('rtmKTotalSub',rtmPct(total,market)+' del mercado total · C1–C4 + O1–O2 + P2–P5');
  k('rtmHeroBusinessTotal',rtmFmt(total)+' unidades negocio · '+rtmPct(total,market)+' del mercado Retail');
  k('rtmKCom',rtmFmt(RTM.families.COMERCIALES));
  k('rtmKCam',rtmFmt(RTM.families.CAMION));
@@ -6566,6 +6628,7 @@ const CFG={
  CAMION:{sheet:'CAMION-REMOLC',label:'Camiones / Remolcadores P2–P5',segments:['P2','P3','P4','P5'],prev:7}
 };
 const COLORS=['#ef0b70','#f5ae00','#2f7de1','#8e97a5'];
+const RAC_FAMILY_DESC={COMERCIALES:'Microbuses, minibuses, pick-ups y panel/furgón',OMNIBUS:'Ómnibus O1 y O2',CAMION:'Camiones y remolcadores P2 a P5'};
 const $=id=>document.getElementById(id); const fmt=n=>(Number(n)||0).toLocaleString('es-PE'); const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'0.0%';
 function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
 function normBrand(v){let s=String(v||'').trim().toUpperCase().replace(/\s+/g,' ');if(s==='FOTON 1')s='FOTON';return s}
@@ -6585,28 +6648,58 @@ function refreshBrands(){const sel=$('racBrand');const old=RAC.brand;const brand
 function renderRank(brands,total){
  const max=Math.max(brands[0]?.cur||0,1);
  $('racRank').innerHTML=brands.slice(0,10).map((x,i)=>{const w=x.cur/max*100;const y=x.prev?((x.cur/x.prev-1)*100):null;const ytxt=y===null?'s/d':(y>=0?'+':'')+y.toFixed(1)+'%';const ycolor=y===null?'#9097a3':y>=0?'#067647':'#b42318';return `<div class="rac-rank-row" data-brand="${x.brand}"><span class="n">${i+1}</span><span class="name">${x.brand}</span><div class="rac-track"><div class="rac-fill" style="width:${w}%"></div></div><div class="rac-rank-metric"><strong>${fmt(x.cur)}</strong><small style="color:${ycolor}">${ytxt}</small></div></div>`}).join('')||'<div style="color:#999;font-size:10px">Sin datos para la selección.</div>';
- document.querySelectorAll('#racRank .rac-rank-row').forEach(el=>{el.onclick=()=>{RAC.brand=el.dataset.brand;$('racBrand').value=RAC.brand;render(false)};el.onmousemove=e=>{const x=brands.find(b=>b.brand===el.dataset.brand);const y=x.prev?((x.cur/x.prev-1)*100):null;showTip(e,`<b>${x.brand}</b><br>2026: ${fmt(x.cur)} unidades<br>2025: ${fmt(x.prev)} unidades<br>Participación: ${pct(x.cur,total)}<br>Variación: ${y===null?'s/d':(y>=0?'+':'')+y.toFixed(1)+'%'}`)};el.onmouseleave=hideTip})
+ document.querySelectorAll('#racRank .rac-rank-row').forEach(el=>{el.onclick=e=>{e.stopPropagation();RAC.brand=el.dataset.brand;$('racBrand').value=RAC.brand;render(false)};el.onmousemove=e=>{const x=brands.find(b=>b.brand===el.dataset.brand);const y=x.prev?((x.cur/x.prev-1)*100):null;showTip(e,`<b>${x.brand}</b><br>2026: ${fmt(x.cur)} unidades<br>2025: ${fmt(x.prev)} unidades<br>Participación en la vista: ${pct(x.cur,total)}<br>Variación vs 2025: ${y===null?'s/d':(y>=0?'+':'')+y.toFixed(1)+'%'}`)};el.onmouseleave=hideTip})
 }
-function drawDonut(fams,total){const c=$('racDonut'),ctx=c.getContext('2d');const dpr=Math.max(1,devicePixelRatio||1),cssW=c.clientWidth||280,cssH=c.clientHeight||280;c.width=cssW*dpr;c.height=cssH*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cssW,cssH);const cx=cssW/2,cy=cssH/2,r=Math.min(cssW,cssH)*.37,inner=r*.60;let a=-Math.PI/2;const arcs=[];fams.forEach((f,i)=>{const da=total?f.cur/total*Math.PI*2:0;ctx.beginPath();ctx.arc(cx,cy,r,a,a+da);ctx.arc(cx,cy,inner,a+da,a,true);ctx.closePath();ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();arcs.push({a0:a,a1:a+da,f});a+=da});c._parts=arcs.map(z=>({start:z.a0,end:z.a1,cx,cy,r:inner,R:r,name:z.f.key,f:z.f.key}));ctx.beginPath();ctx.arc(cx,cy,inner-1,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();$('racDonutTotal').textContent=fmt(total);$('racLegend').innerHTML=fams.map((f,i)=>`<div class="rac-leg" data-family="${f.key}"><i class="rac-dot" style="background:${COLORS[i]}"></i><span>${f.label}</span><b>${fmt(f.cur)} · ${pct(f.cur,total)}</b></div>`).join('');document.querySelectorAll('#racLegend .rac-leg').forEach(el=>el.onclick=()=>{RAC.family=el.dataset.family;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RAC.family));refreshBrands();render(false)});c.onmousemove=e=>{const rect=c.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-cssW/2,dy=y-cssH/2,rr=Math.hypot(dx,dy);if(rr<inner||rr>r){hideTip();return}let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;const hit=arcs.find(z=>ang>=z.a0&&ang<=z.a1);if(hit)showTip(e,`<b>${hit.f.label}</b><br>${fmt(hit.f.cur)} unidades<br>${pct(hit.f.cur,total)} de la selección`)};c.onmouseleave=hideTip;c.onclick=e=>{const rect=c.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-cssW/2,dy=y-cssH/2,rr=Math.hypot(dx,dy);if(rr<inner||rr>r)return;let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;const hit=arcs.find(z=>ang>=z.a0&&ang<=z.a1);if(hit){RAC.family=hit.f.key;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RAC.family));refreshBrands();render(false)}}}
+function drawDonut(fams,total){const c=$('racDonut'),ctx=c.getContext('2d');const dpr=Math.max(1,devicePixelRatio||1),cssW=c.clientWidth||280,cssH=c.clientHeight||280;c.width=cssW*dpr;c.height=cssH*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cssW,cssH);const cx=cssW/2,cy=cssH/2,r=Math.min(cssW,cssH)*.37,inner=r*.60;let a=-Math.PI/2;const arcs=[];fams.forEach((f,i)=>{const da=total?f.cur/total*Math.PI*2:0;ctx.beginPath();ctx.arc(cx,cy,r,a,a+da);ctx.arc(cx,cy,inner,a+da,a,true);ctx.closePath();ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();arcs.push({a0:a,a1:a+da,f});a+=da});c._parts=arcs.map(z=>({start:z.a0,end:z.a1,cx,cy,r:inner,R:r,name:z.f.key,f:z.f.key}));ctx.beginPath();ctx.arc(cx,cy,inner-1,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();$('racDonutTotal').textContent=fmt(total);$('racLegend').innerHTML=fams.map((f,i)=>`<div class="rac-leg" data-family="${f.key}"><i class="rac-dot" style="background:${COLORS[i]}"></i><span>${f.label}</span><b>${fmt(f.cur)} · ${pct(f.cur,total)}</b><small>${RAC_FAMILY_DESC[f.key]||''}</small></div>`).join('');document.querySelectorAll('#racLegend .rac-leg').forEach(el=>el.onclick=e=>{e.stopPropagation();RAC.family=el.dataset.family;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RAC.family));refreshBrands();render(false)});c.onmousemove=e=>{const rect=c.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-cssW/2,dy=y-cssH/2,rr=Math.hypot(dx,dy);if(rr<inner||rr>r){hideTip();return}let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;const hit=arcs.find(z=>ang>=z.a0&&ang<=z.a1);if(hit)showTip(e,`<b>${hit.f.label}</b><br>${RAC_FAMILY_DESC[hit.f.key]||''}<br><strong>${fmt(hit.f.cur)} unidades</strong> · ${pct(hit.f.cur,total)}<br><small>Clic para filtrar esta familia</small>`)};c.onmouseleave=hideTip;c.onclick=e=>{e.stopPropagation();const rect=c.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,dx=x-cssW/2,dy=y-cssH/2,rr=Math.hypot(dx,dy);if(rr<inner||rr>r)return;let ang=Math.atan2(dy,dx);if(ang< -Math.PI/2)ang+=Math.PI*2;const hit=arcs.find(z=>ang>=z.a0&&ang<=z.a1);if(hit){RAC.family=hit.f.key;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RAC.family));refreshBrands();render(false)}}}
 function renderFamilies(fams){
  const max=Math.max(...fams.map(f=>f.cur),1);
  $('racFamilyGrid').innerHTML=fams.map((f,i)=>{const y=f.prev?((f.cur/f.prev-1)*100):null;const delta=f.cur-f.prev;return `<div class="rac-family" data-family="${f.key}"><div class="top"><h5>${f.label}</h5><span class="yoy" style="color:${y===null?'#777':y>=0?'#067647':'#b42318'}">${y===null?'s/d':(y>=0?'+':'')+y.toFixed(1)+'%'}</span></div><div class="vals"><b>${fmt(f.cur)}</b><span>${pct(f.cur,fams.reduce((s,z)=>s+z.cur,0))} del universo negocio</span></div><div class="bar"><i style="width:${f.cur/max*100}%"></i></div><div class="compare"><div><span>2025</span><b>${fmt(f.prev)}</b></div><div><span>Variación abs.</span><b style="color:${delta>=0?'#067647':'#b42318'}">${delta>=0?'+':''}${fmt(delta)}</b></div></div></div>`}).join('');
- document.querySelectorAll('#racFamilyGrid .rac-family').forEach(el=>{const key=el.dataset.family;el.onclick=()=>{RAC.family=key;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RAC.family));refreshBrands();render(false)};el.onmousemove=e=>{const f=fams.find(x=>x.key===key);const y=f.prev?((f.cur/f.prev-1)*100):null;showTip(e,`<b>${f.label}</b><br>2026: ${fmt(f.cur)}<br>2025: ${fmt(f.prev)}<br>YoY: ${y===null?'s/d':(y>=0?'+':'')+y.toFixed(1)+'%'}`)};el.onmouseleave=hideTip})
+ document.querySelectorAll('#racFamilyGrid .rac-family').forEach(el=>{const key=el.dataset.family;el.onclick=e=>{e.stopPropagation();RAC.family=key;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RAC.family));refreshBrands();render(false)};el.onmousemove=e=>{const f=fams.find(x=>x.key===key);const y=f.prev?((f.cur/f.prev-1)*100):null;showTip(e,`<b>${f.label}</b><br>2026: ${fmt(f.cur)}<br>2025: ${fmt(f.prev)}<br>YoY: ${y===null?'s/d':(y>=0?'+':'')+y.toFixed(1)+'%'}`)};el.onmouseleave=hideTip})
 }
 function segFamily(seg){if(/^L/.test(seg))return 'LIGEROS';if(/^C/.test(seg))return 'COMERCIALES';if(/^O/.test(seg))return 'OMNIBUS';if(/^P/.test(seg))return 'CAMION';return 'TOTAL'}
 function renderSegments(segs,total){
  const visible=segs.filter(s=>window.TSF_BUSINESS_SEGMENTS.includes(s.seg));
  $('racSegments').innerHTML=visible.map(s=>{const fk=segFamily(s.seg),m=window.tsfBusinessMeta(s.seg),hot=s.seg==='C3'?' hot':'';return `<div class="rac-seg${hot}" data-family="${fk}" data-seg="${s.seg}" title="${m.criterio} · ${m.uso} · Riesgo ${m.riesgo}"><span class="seg-family">${m.categoria}</span><b>${fmt(s.value)}</b><span>${s.seg} · ${m.descripcion}</span><small>${pct(s.value,total)} del universo negocio</small></div>`}).join('');
  $('racSegChip').textContent=visible.length+' segmentos negocio';
- document.querySelectorAll('#racSegments .rac-seg').forEach(el=>{el.onmousemove=e=>{const s=visible.find(x=>x.seg===el.dataset.seg),m=window.tsfBusinessMeta(el.dataset.seg);showTip(e,`<b>${el.dataset.seg} · ${m.descripcion}</b><br>${fmt(s?.value||0)} unidades · ${pct(s?.value||0,total)}<br>${m.criterio}<br>${m.uso}<br>Riesgo relativo: ${m.riesgo}<br><small>Clic para explorar su familia</small>`)};el.onmouseleave=hideTip})
+ document.querySelectorAll('#racSegments .rac-seg').forEach(el=>{el.onmousemove=e=>{const s=visible.find(x=>x.seg===el.dataset.seg),m=window.tsfBusinessMeta(el.dataset.seg);showTip(e,`<b>${el.dataset.seg} · ${m.descripcion}</b><br><strong>${fmt(s?.value||0)} unidades</strong> · ${pct(s?.value||0,total)}<br>${m.criterio}<br>${m.uso}<br>Riesgo relativo: ${m.riesgo}<br><small>Clic para filtrar su familia</small>`)};el.onmouseleave=hideTip;el.onclick=e=>{e.stopPropagation();RAC.family=el.dataset.family;RAC.brand='ALL';document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family===RAC.family));refreshBrands();render(false)}})
 }
 function renderMovers(brands){
  const pos=brands.filter(x=>x.delta>0).sort((a,b)=>b.delta-a.delta).slice(0,6),neg=brands.filter(x=>x.delta<0).sort((a,b)=>a.delta-b.delta).slice(0,6);
  const row=(x,cls)=>{const y=x.prev?((x.cur/x.prev-1)*100):null;return `<div class="rac-move ${cls}" data-brand="${x.brand}"><span>${x.brand}<small>${fmt(x.prev)} → ${fmt(x.cur)}</small></span><b>${x.delta>0?'+':''}${fmt(x.delta)}</b></div>`};
  $('racWinners').innerHTML=pos.map(x=>row(x,'up')).join('')||'<span style="font-size:10px;color:#999">Sin incrementos.</span>';$('racLosers').innerHTML=neg.map(x=>row(x,'down')).join('')||'<span style="font-size:10px;color:#999">Sin caídas.</span>';
- document.querySelectorAll('#racWinners .rac-move,#racLosers .rac-move').forEach(el=>{el.onclick=()=>{RAC.brand=el.dataset.brand;$('racBrand').value=RAC.brand;render(false)}})
+ document.querySelectorAll('#racWinners .rac-move,#racLosers .rac-move').forEach(el=>{el.onclick=e=>{e.stopPropagation();RAC.brand=el.dataset.brand;$('racBrand').value=RAC.brand;render(false)}})
 }
 function renderQuality(total){let control=null;try{const a=XLSX.utils.sheet_to_json(RAC.wb.Sheets['VTA ACUM'],{header:1,defval:null,raw:true});for(const row of a){if(String(row?.[0]||'').toUpperCase().includes('TOTALES')){control=num(row?.[30]);break}}}catch(e){}const diff=control===null?null:total-control;const ligeros=RAC.families.LIGEROS?.cur||0;const q=[['Total hojas detalle',fmt(total),'ok'],['VTA ACUM',control===null?'No leído':fmt(control),control===total?'ok':'bad'],['Diferencia',diff===null?'—':fmt(diff),diff===0?'ok':'bad'],['FOTON 1','Homologado a FOTON','warn'],['LIGEROS B:D','Se recalcula desde detalle','warn']];$('racQuality').innerHTML=q.map(x=>`<div class="rac-q ${x[2]}"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('')}
+
+function racC3InmatTotal(){
+ try{
+   if(typeof LV2==='undefined'||!LV2.rows?.length)return null;
+   const months=LV2.months||[];
+   return LV2.rows
+     .filter(r=>{
+       const cls=typeof lv2Head==='function'?lv2Head(r.cls):String(r.cls||'').trim().toUpperCase();
+       const body=typeof lv2Head==='function'?lv2Head(r.body):String(r.body||'').trim().toUpperCase();
+       return cls==='PICK UP Y FURGONETAS'&&body==='PICK UP';
+     })
+     .reduce((s,r)=>s+months.reduce((a,m)=>a+(Number(r[m])||0),0),0);
+ }catch(e){return null}
+}
+function renderRacC3Compare(retailC3){
+ const inmat=racC3InmatTotal();
+ const er=$('racC3Retail'),ei=$('racC3Inmat'),ed=$('racC3Diff'),es=$('racC3Status'),eds=$('racC3DiffSub');
+ if(er)er.textContent=fmt(retailC3||0);
+ if(inmat==null){
+   if(ei)ei.textContent='—';if(ed)ed.textContent='—';if(es)es.textContent='Esperando Archivo 08.2';
+   if(eds)eds.textContent='Carga 08.2 para comparar Retail vs Inmatriculaciones';
+   return;
+ }
+ if(ei)ei.textContent=fmt(inmat);
+ const diff=(Number(retailC3)||0)-inmat;
+ if(ed){ed.textContent=(diff>0?'+':'')+fmt(diff);ed.parentElement?.classList.toggle('positive',diff>0);ed.parentElement?.classList.toggle('negative',diff<0)}
+ if(es)es.textContent='Comparación disponible';
+ if(eds)eds.textContent=diff===0?'Mismo volumen en ambas fuentes':diff>0?'Retail por encima de inmatriculaciones en el periodo':'Inmatriculaciones por encima de Retail en el periodo';
+}
+
 function render(refresh=true){
  if(!RAC.rows.length)return;
  if(refresh)refreshBrands();
@@ -6627,9 +6720,11 @@ function render(refresh=true){
  $('racHeroText').textContent='Retail acumulado del negocio a '+RAC.period+' · C1–C4, O1–O2 y P2–P5. L1–L3 se usan únicamente para conciliación del mercado total.';
  $('racMarketTotal').textContent=fmt(allMarket);
  $('racBusinessBase').textContent=fmt(businessBase);
- $('racBusinessBaseSub').textContent=`${businessShare.toFixed(1)}% del mercado total · C1–C4 · O1–O2 · P2–P5`;
+ $('racBusinessBaseSub').textContent=`${businessShare.toFixed(1)}% del mercado total · C1–C4 + O1–O2 + P2–P5`;
  $('racPickBase').textContent=fmt(c3Base);
- $('racPickBaseSub').textContent=`${c3Share.toFixed(1)}% del universo negocio · incluido en Comerciales C1–C4`;
+ $('racPickBaseSub').textContent=`${c3Share.toFixed(1)}% del negocio priorizado · incluido dentro de Comerciales C1–C4`;
+ renderRacC3Compare(c3Base);
+ const expl=$('racBusinessExplainer');if(expl)expl.innerHTML=`<b>Cómo leer esta hoja:</b> el mercado Retail acumulado total es <strong>${fmt(allMarket)}</strong>. Oliver prioriza <strong>${fmt(businessBase)}</strong> unidades de C/O/P (${businessShare.toFixed(1)}% del mercado). Dentro de ese negocio, Pick-up C3 aporta <strong>${fmt(c3Base)}</strong> unidades (${c3Share.toFixed(1)}%) y ya está incluido en Comerciales C1–C4.`;
 
  $('racTotal').textContent=fmt(total);
  $('racTotalSub').textContent=RAC.family==='TOTAL'?'Universo negocio C / O / P':CFG[RAC.family].label;
@@ -6649,7 +6744,7 @@ function render(refresh=true){
  const leadSeg=segs.filter(s=>window.TSF_BUSINESS_SEGMENTS.includes(s.seg))[0];
  const leadBrand=brands[0];
  $('racInsights').innerHTML=`
-   <div class="rac-insight"><span>Segmento dominante</span><b>${leadSeg?.seg||'—'}</b><small>${leadSeg?`${fmt(leadSeg.value)} unidades · ${pct(leadSeg.value,total)}`:'Sin datos'}</small></div>
+   <div class="rac-insight"><span>Segmento dominante</span><b>${leadSeg?`${leadSeg.seg} · ${window.tsfBusinessMeta(leadSeg.seg).descripcion}`:'—'}</b><small>${leadSeg?`${fmt(leadSeg.value)} unidades · ${pct(leadSeg.value,total)} de la vista`:'Sin datos'}</small></div>
    <div class="rac-insight"><span>Crecimiento del negocio</span><b>${baseGrowth===null?'—':(baseGrowth>=0?'+':'')+baseGrowth.toFixed(1)+'%'}</b><small>${fmt(businessBase)} vs ${fmt(businessPrev)} en 2025</small></div>
    <div class="rac-insight"><span>Familia con mayor crecimiento</span><b>${growthLeader?.label||'—'}</b><small>${growthLeader?`${growthLeader.y>=0?'+':''}${growthLeader.y.toFixed(1)}% interanual`:'Sin base comparable'}</small></div>
    <div class="rac-insight"><span>Marca líder de la selección</span><b>${leadBrand?.brand||'—'}</b><small>${leadBrand?`${fmt(leadBrand.cur)} unidades · ${pct(leadBrand.cur,total)}`:'Sin datos'}</small></div>`;
@@ -6760,15 +6855,7 @@ window.addEventListener('resize',()=>{if(RAC.rows.length&&document.getElementByI
       bindRows(document.getElementById('rtmLegend'),'button[data-family]','rtm-family-leg',()=>RTM.family,v=>{RTM.family=v;RTM.brand='ALL'},rtmRender,r=>r.dataset.family);
       bindRows(document.getElementById('rtmRank'),'.rtm-rank-row[data-brand]','rtm-brand',()=>RTM.brand,v=>RTM.brand=v,rtmRender,r=>r.dataset.brand);
     }
-    // Retail acumulado
-    const A=window.__RAC_API;
-    if(A){const {RAC,render}=A;
-      bindCanvas(document.getElementById('racDonut'),'rac-family-canvas',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,(c,e)=>hitDonut(c,e,'name'));
-      bindRows(document.getElementById('racLegend'),'.rac-leg[data-family]','rac-family',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);
-      bindRows(document.getElementById('racFamilyGrid'),'.rac-family[data-family]','rac-family-grid',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);
-      bindRows(document.getElementById('racRank'),'.rac-rank-row[data-brand]','rac-brand',()=>RAC.brand,v=>RAC.brand=v,render,r=>r.dataset.brand);
-      bindRows(document.getElementById('racSegments'),'.rac-seg[data-family]','rac-seg',()=>RAC.family,v=>{RAC.family=v;RAC.brand='ALL'},render,r=>r.dataset.family);
-    }
+    // Retail acumulado usa su propio motor de interacción (V92) para evitar eventos duplicados.
   }
 
   document.addEventListener('click',e=>{
@@ -6957,7 +7044,7 @@ function setOptions(id,vals,all){const el=$(id);if(!el)return;const old=el.value
 function refreshOptions(){setOptions('rlSegmentFilter',[...new Set(RL.rows.map(r=>segCode(r.Segmento)))].sort(),'Todos');setOptions('rlBrandFilter',[...new Set(RL.rows.map(r=>norm(r.Marca)).filter(Boolean))].sort(),'Todas');setOptions('rlModelFilter',[...new Set(RL.rows.map(r=>norm(r.Modelo)).filter(Boolean))].sort(),'Todos');setOptions('rlOriginFilter',[...new Set(RL.rows.map(r=>norm(r.Origen)).filter(Boolean))].sort(),'Todos');setOptions('rlFuelFilter',[...new Set(RL.rows.map(r=>norm(r.Combustible)).filter(Boolean))].sort(),'Todos');setOptions('rlBodyFilter',[...new Set(RL.rows.map(r=>norm(r.Carroceria)).filter(Boolean))].sort(),'Todas');setOptions('rlTransFilter',[...new Set(RL.rows.map(r=>norm(r['Tipo de Transmision'])).filter(Boolean))].sort(),'Todas');setOptions('rlDriveFilter',[...new Set(RL.rows.map(r=>norm(r['Fórmula rodante'])).filter(Boolean))].sort(),'Todas');setOptions('rlVersionFilter',[...new Set(RL.rows.map(r=>norm(r['Versión'])).filter(Boolean))].sort(),'Todas');setOptions('rlCatFilter',[...new Set(RL.rows.map(r=>norm(r['Categoría RENAV'])).filter(Boolean))].sort(),'Todas');const m=$('rlMonthFilter');m.innerHTML='<option value="ALL">Acumulado</option>'+RL.months.map(x=>`<option value="${x}">${x}</option>`).join('')}
 function tip(html,e){const t=$('rlTip');t.innerHTML=html;t.style.display='block';moveTip(e)}function moveTip(e){const t=$('rlTip');if(!t||t.style.display==='none')return;const r=t.getBoundingClientRect(),g=12;let x=e.clientX+g,y=e.clientY-r.height/2;if(x+r.width>innerWidth-10)x=e.clientX-r.width-g;y=Math.max(10,Math.min(innerHeight-r.height-10,y));t.style.left=x+'px';t.style.top=y+'px'}function hideTip(){$('rlTip').style.display='none'}
 function canvasSetup(c,h){const d=devicePixelRatio||1,w=c.clientWidth||c.parentElement.clientWidth;c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return{x,w,h}}
-function drawTrend(){const c=$('rlTrend');if(!c)return;const {x:ctx,w,h}=canvasSetup(c,280),pad={l:42,r:16,t:16,b:32};ctx.clearRect(0,0,w,h);const base=filtered();const series=['L1','L2','L3'];const colors={L1:'AUTO/STWGN/VAN/MULT -1500CC',L2:'AUTO/STWGN/VAN/MULT +1500CC',L3:'SUV'};let data={};series.forEach(s=>data[s]=RL.months.map(m=>base.filter(r=>segCode(r.Segmento)===s).reduce((a,r)=>a+num(r[m]),0)));const max=Math.max(1,...series.filter(s=>!RL.hidden.has(s)).flatMap(s=>data[s]));ctx.strokeStyle='#edf0f4';ctx.fillStyle='#969daa';ctx.font='9px Arial';for(let i=0;i<4;i++){const y=pad.t+(h-pad.t-pad.b)*i/3;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(fmt(max*(1-i/3)),4,y+3)}RL.months.forEach((m,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(RL.months.length===1?.5:i/(RL.months.length-1));ctx.fillText(m.slice(0,3),xx-8,h-8)});series.forEach(s=>{if(RL.hidden.has(s))return;ctx.strokeStyle=colors[s];ctx.lineWidth=2.5;ctx.beginPath();data[s].forEach((v,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(RL.months.length===1?.5:i/(RL.months.length-1)),yy=pad.t+(h-pad.t-pad.b)*(1-v/max);i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)});ctx.stroke();data[s].forEach((v,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(RL.months.length===1?.5:i/(RL.months.length-1)),yy=pad.t+(h-pad.t-pad.b)*(1-v/max);ctx.fillStyle='#fff';ctx.strokeStyle=colors[s];ctx.lineWidth=2;ctx.beginPath();ctx.arc(xx,yy,3.5,0,Math.PI*2);ctx.fill();ctx.stroke()})});c.onmousemove=e=>{const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left,plot=w-pad.l-pad.r,idx=Math.max(0,Math.min(RL.months.length-1,Math.round((mx-pad.l)/plot*(RL.months.length-1))));let lines=series.filter(s=>!RL.hidden.has(s)).map(s=>`${s}: <b>${fmt(data[s][idx])}</b>`).join('<br>');tip(`<b>${RL.months[idx]}</b><br>${lines}`,e)};c.onmouseleave=hideTip;c.onclick=e=>{const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left,idx=Math.max(0,Math.min(RL.months.length-1,Math.round((mx-pad.l)/(w-pad.l-pad.r)*(RL.months.length-1))));$('rlMonthFilter').value=RL.months[idx];update()}}
+function drawTrend(){const c=$('rlTrend');if(!c)return;const {x:ctx,w,h}=canvasSetup(c,280),pad={l:42,r:16,t:16,b:32};ctx.clearRect(0,0,w,h);const base=filtered();const series=['L1','L2','L3'];const colors={L1:'AUTO/STWGN/VAN/MULT -1500CC',L2:'AUTO/STWGN/VAN/MULT +1500CC',L3:'SUV'};let data={};series.forEach(s=>data[s]=RL.months.map(m=>base.filter(r=>segCode(r.Segmento)===s).reduce((a,r)=>a+num(r[m]),0)));const max=Math.max(1,...series.filter(s=>!RL.hidden.has(s)).flatMap(s=>data[s]));ctx.strokeStyle='#edf0f4';ctx.fillStyle='#969daa';ctx.font='9px Arial';for(let i=0;i<4;i++){const y=pad.t+(h-pad.t-pad.b)*i/3;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(fmt(max*(1-i/3)),4,y+3)}RL.months.forEach((m,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(RL.months.length===1?.5:i/(RL.months.length-1));ctx.fillText(m.slice(0,3),xx-8,h-8)});series.forEach(s=>{if(RL.hidden.has(s))return;ctx.strokeStyle=colors[s];ctx.lineWidth=2.5;ctx.beginPath();data[s].forEach((v,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(RL.months.length===1?.5:i/(RL.months.length-1)),yy=pad.t+(h-pad.t-pad.b)*(1-v/max);i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)});ctx.stroke();data[s].forEach((v,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(RL.months.length===1?.5:i/(RL.months.length-1)),yy=pad.t+(h-pad.t-pad.b)*(1-v/max);ctx.fillStyle='#fff';ctx.strokeStyle=colors[s];ctx.lineWidth=2;ctx.beginPath();ctx.arc(xx,yy,3.5,0,Math.PI*2);ctx.fill();ctx.stroke()})});c.onmousemove=e=>{const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left,plot=w-pad.l-pad.r,idx=Math.max(0,Math.min(RL.months.length-1,Math.round((mx-pad.l)/plot*(RL.months.length-1))));let lines=series.filter(s=>!RL.hidden.has(s)).map(s=>`${s}: <b>${fmt(data[s][idx])}</b>`).join('<br>');tip(`<b>${RL.months[idx]}</b><br>${lines}`,e)};c.onmouseleave=hideTip;c.onclick=e=>{e.stopPropagation();const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left,idx=Math.max(0,Math.min(RL.months.length-1,Math.round((mx-pad.l)/(w-pad.l-pad.r)*(RL.months.length-1))));$('rlMonthFilter').value=RL.months[idx];update()}}
 function drawDonut(rows){const c=$('rlDonut');const {x:ctx,w,h}=canvasSetup(c,215);const agg=aggregate(rows,'Segmento').filter(([k])=>['L1','L2','L3'].includes(k));const total=agg.reduce((s,a)=>s+a[1],0);const colors={L1:'AUTO/STWGN/VAN/MULT -1500CC',L2:'AUTO/STWGN/VAN/MULT +1500CC',L3:'SUV'};ctx.clearRect(0,0,w,h);let a=-Math.PI/2;RL.slices=[];if(!total){ctx.strokeStyle='#edf0f4';ctx.lineWidth=35;ctx.beginPath();ctx.arc(w/2,h/2,72,0,Math.PI*2);ctx.stroke()}else agg.forEach(([k,v])=>{const end=a+Math.PI*2*v/total;ctx.beginPath();ctx.moveTo(w/2,h/2);ctx.arc(w/2,h/2,91,a,end);ctx.closePath();ctx.fillStyle=colors[k];ctx.fill();RL.slices.push({k,v,a,end});a=end});ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(w/2,h/2,58,0,Math.PI*2);ctx.fill();ctx.globalCompositeOperation='source-over';$('rlDonutTotal').textContent=fmt(total);$('rlDonutLegend').innerHTML=agg.map(([k,v])=>`<button data-v="${k}"><i style="background:${colors[k]}"></i><span>${k}<b>${fmt(v)}</b><small>${pct(v,total)} del mercado</small></span></button>`).join('');$('rlDonutLegend').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('rlSegmentFilter').value=b.dataset.v;update()});c.onmousemove=e=>{const r=c.getBoundingClientRect(),x=e.clientX-r.left-w/2,y=e.clientY-r.top-h/2,rad=Math.sqrt(x*x+y*y);if(rad<58||rad>95){hideTip();return}let ang=Math.atan2(y,x);if(ang< -Math.PI/2)ang+=Math.PI*2;const sl=RL.slices.find(s=>ang>=s.a&&ang<=s.end);if(sl)tip(`<b>${sl.k}</b><br>${fmt(sl.v)} unidades<br>${pct(sl.v,total)}`,e);else hideTip()};c.onmouseleave=hideTip;c.onclick=e=>{const r=c.getBoundingClientRect(),x=e.clientX-r.left-w/2,y=e.clientY-r.top-h/2,rad=Math.sqrt(x*x+y*y);if(rad<58||rad>95)return;let ang=Math.atan2(y,x);if(ang< -Math.PI/2)ang+=Math.PI*2;const sl=RL.slices.find(s=>ang>=s.a&&ang<=s.end);if(sl){$('rlSegmentFilter').value=sl.k;update()}}}
 function renderRank(id,rows,field,filterId){const a=aggregate(rows,field).slice(0,10),max=a[0]?.[1]||1,total=sum(rows);$(id).innerHTML=a.map(([k,v],i)=>`<div class="rl-row" data-v="${k.replace(/"/g,'&quot;')}"><div class="rl-pos">${i+1}</div><div class="rl-name">${k}</div><div class="rl-bar"><i style="width:${v/max*100}%"></i></div><div class="rl-val">${fmt(v)}<small>${pct(v,total)}</small></div></div>`).join('');$(id).querySelectorAll('.rl-row').forEach(el=>{el.onclick=()=>{$(filterId).value=el.dataset.v;update()};el.onmousemove=e=>tip(`<b>${el.dataset.v}</b><br>${el.querySelector('.rl-val').innerText.replace(/\n/g,' · ')}`,e);el.onmouseleave=hideTip})}
 function renderBars(id,rows,field,filterId){const a=aggregate(rows,field).slice(0,8),max=a[0]?.[1]||1,total=sum(rows);$(id).innerHTML=a.map(([k,v])=>`<div class="rl-barrow" data-v="${k.replace(/"/g,'&quot;')}"><span>${k}</span><div class="track"><i style="width:${v/max*100}%"></i></div><b>${pct(v,total)}</b></div>`).join('');$(id).querySelectorAll('.rl-barrow').forEach(el=>{if(filterId)el.onclick=()=>{$(filterId).value=el.dataset.v;update()};el.onmousemove=e=>tip(`<b>${el.dataset.v}</b><br>${fmt(a.find(x=>x[0]===el.dataset.v)?.[1]||0)} unidades`,e);el.onmouseleave=hideTip})}
@@ -6985,7 +7072,7 @@ function filtered(ignore){const get=id=>id===ignore?'ALL':($(id)?.value||'ALL');
 function aggregate(rows,field,month){const d=new Map();rows.forEach(r=>{let k=field==='Segmento'?segCode(r[field]):norm(r[field]);if(!k)k='SIN DATO';d.set(k,(d.get(k)||0)+val(r,month))});return [...d].sort((a,b)=>b[1]-a[1])}
 function tip(html,e){const t=$('rcTooltip');t.innerHTML=html;t.style.display='block';moveTip(e)}function moveTip(e){const t=$('rcTooltip');if(!t||t.style.display==='none')return;const r=t.getBoundingClientRect(),g=12,p=10;let x=e.clientX+g,y=e.clientY-r.height/2;if(x+r.width>innerWidth-p)x=e.clientX-r.width-g;if(y<p)y=p;if(y+r.height>innerHeight-p)y=innerHeight-r.height-p;t.style.left=Math.max(p,x)+'px';t.style.top=Math.max(p,y)+'px'}function hideTip(){$('rcTooltip').style.display='none'}
 function canvasSetup(c,hcss){const dpr=devicePixelRatio||1,w=Math.max(280,c.clientWidth||420),h=hcss;c.width=w*dpr;c.height=h*dpr;c.style.height=h+'px';const x=c.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);return{x,w,h}}
-function drawTrend(){const c=$('rcTrend'),base=filtered('rcMonthFilter'),{x:ctx,w,h}=canvasSetup(c,280),pad={l:38,r:15,t:22,b:34},series=['C1','C2','C3','C4'],colors={C1:'MICROBUS +10 ASIT',C2:'MINIBUS +17 ASIT',C3:'CAMIONETA PICK-UP',C4:'CAMIONETA PANEL/FURGÓN'},data={};series.forEach(s=>data[s]=RC.months.map(m=>base.reduce((z,r)=>z+(segCode(r.Segmento)===s?num(r[m]):0),0)));const ymax=Math.max(1,...series.flatMap(s=>data[s]));ctx.clearRect(0,0,w,h);ctx.font='9px Arial';ctx.strokeStyle='#edf0f4';ctx.fillStyle='#9aa1ad';for(let i=0;i<4;i++){let y=pad.t+(h-pad.t-pad.b)*i/3;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(fmt(ymax*(1-i/3)),2,y+3)}RC.months.forEach((m,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(i/(Math.max(1,RC.months.length-1)));ctx.fillText(m.slice(0,3),xx-8,h-10)});series.forEach(s=>{if(RC.hidden.has(s))return;ctx.strokeStyle=colors[s];ctx.lineWidth=2.3;ctx.beginPath();data[s].forEach((v,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(i/Math.max(1,RC.months.length-1)),yy=pad.t+(h-pad.t-pad.b)*(1-v/ymax);i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)});ctx.stroke();data[s].forEach((v,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(i/Math.max(1,RC.months.length-1)),yy=pad.t+(h-pad.t-pad.b)*(1-v/ymax);ctx.fillStyle='#fff';ctx.strokeStyle=colors[s];ctx.lineWidth=2;ctx.beginPath();ctx.arc(xx,yy,3.2,0,Math.PI*2);ctx.fill();ctx.stroke()})});const latest=RC.months.at(-1),prev=RC.months.at(-2),lt=base.reduce((s,r)=>s+num(r[latest]),0),pv=base.reduce((s,r)=>s+num(r[prev]),0);$('rcTrendInsight').textContent=latest?`${latest}: ${fmt(lt)}${pv?` · ${((lt/pv-1)*100).toFixed(1)}% vs mes anterior`:''}`:'Sin datos';c.onmousemove=e=>{const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left,idx=Math.max(0,Math.min(RC.months.length-1,Math.round((mx-pad.l)/(w-pad.l-pad.r)*(RC.months.length-1))));tip(`<b>${RC.months[idx]}</b><br>`+series.filter(s=>!RC.hidden.has(s)).map(s=>`${s}: <b>${fmt(data[s][idx])}</b>`).join('<br>'),e)};c.onmouseleave=hideTip;c.onclick=e=>{const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left,idx=Math.max(0,Math.min(RC.months.length-1,Math.round((mx-pad.l)/(w-pad.l-pad.r)*(RC.months.length-1))));$('rcMonthFilter').value=RC.months[idx];update()}}
+function drawTrend(){const c=$('rcTrend'),base=filtered('rcMonthFilter'),{x:ctx,w,h}=canvasSetup(c,280),pad={l:38,r:15,t:22,b:34},series=['C1','C2','C3','C4'],colors={C1:'MICROBUS +10 ASIT',C2:'MINIBUS +17 ASIT',C3:'CAMIONETA PICK-UP',C4:'CAMIONETA PANEL/FURGÓN'},data={};series.forEach(s=>data[s]=RC.months.map(m=>base.reduce((z,r)=>z+(segCode(r.Segmento)===s?num(r[m]):0),0)));const ymax=Math.max(1,...series.flatMap(s=>data[s]));ctx.clearRect(0,0,w,h);ctx.font='9px Arial';ctx.strokeStyle='#edf0f4';ctx.fillStyle='#9aa1ad';for(let i=0;i<4;i++){let y=pad.t+(h-pad.t-pad.b)*i/3;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(fmt(ymax*(1-i/3)),2,y+3)}RC.months.forEach((m,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(i/(Math.max(1,RC.months.length-1)));ctx.fillText(m.slice(0,3),xx-8,h-10)});series.forEach(s=>{if(RC.hidden.has(s))return;ctx.strokeStyle=colors[s];ctx.lineWidth=2.3;ctx.beginPath();data[s].forEach((v,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(i/Math.max(1,RC.months.length-1)),yy=pad.t+(h-pad.t-pad.b)*(1-v/ymax);i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)});ctx.stroke();data[s].forEach((v,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(i/Math.max(1,RC.months.length-1)),yy=pad.t+(h-pad.t-pad.b)*(1-v/ymax);ctx.fillStyle='#fff';ctx.strokeStyle=colors[s];ctx.lineWidth=2;ctx.beginPath();ctx.arc(xx,yy,3.2,0,Math.PI*2);ctx.fill();ctx.stroke()})});const latest=RC.months.at(-1),prev=RC.months.at(-2),lt=base.reduce((s,r)=>s+num(r[latest]),0),pv=base.reduce((s,r)=>s+num(r[prev]),0);$('rcTrendInsight').textContent=latest?`${latest}: ${fmt(lt)}${pv?` · ${((lt/pv-1)*100).toFixed(1)}% vs mes anterior`:''}`:'Sin datos';c.onmousemove=e=>{const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left,idx=Math.max(0,Math.min(RC.months.length-1,Math.round((mx-pad.l)/(w-pad.l-pad.r)*(RC.months.length-1))));tip(`<b>${RC.months[idx]}</b><br>`+series.filter(s=>!RC.hidden.has(s)).map(s=>`${s}: <b>${fmt(data[s][idx])}</b>`).join('<br>'),e)};c.onmouseleave=hideTip;c.onclick=e=>{e.stopPropagation();const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left,idx=Math.max(0,Math.min(RC.months.length-1,Math.round((mx-pad.l)/(w-pad.l-pad.r)*(RC.months.length-1))));$('rcMonthFilter').value=RC.months[idx];update()}}
 function drawDonut(rows){const c=$('rcDonut'),{x:ctx,w,h}=canvasSetup(c,215),agg=aggregate(rows,'Segmento').filter(([k])=>['C1','C2','C3','C4'].includes(k)),total=agg.reduce((s,a)=>s+a[1],0),colors={C1:'MICROBUS +10 ASIT',C2:'MINIBUS +17 ASIT',C3:'CAMIONETA PICK-UP',C4:'CAMIONETA PANEL/FURGÓN'};ctx.clearRect(0,0,w,h);let a=-Math.PI/2;RC.slices=[];if(!total){ctx.strokeStyle='#edf0f4';ctx.lineWidth=35;ctx.beginPath();ctx.arc(w/2,h/2,72,0,Math.PI*2);ctx.stroke()}else agg.forEach(([k,v])=>{const end=a+Math.PI*2*v/total;ctx.beginPath();ctx.moveTo(w/2,h/2);ctx.arc(w/2,h/2,91,a,end);ctx.closePath();ctx.fillStyle=colors[k];ctx.fill();RC.slices.push({k,v,a,end});a=end});ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(w/2,h/2,58,0,Math.PI*2);ctx.fill();ctx.globalCompositeOperation='source-over';$('rcDonutTotal').textContent=fmt(total);$('rcDonutLegend').innerHTML=agg.map(([k,v])=>`<button data-v="${k}"><i style="background:${colors[k]}"></i><span>${k}<b>${fmt(v)}</b><small>${pct(v,total)} del mercado</small></span></button>`).join('');$('rcDonutLegend').querySelectorAll('button').forEach(b=>{b.onclick=()=>{$('rcSegmentFilter').value=b.dataset.v;update()};b.onmousemove=e=>tip(`<b>${b.dataset.v}</b><br>${b.querySelector('b').textContent} unidades`,e);b.onmouseleave=hideTip});c.onmousemove=e=>{const r=c.getBoundingClientRect(),x=e.clientX-r.left-w/2,y=e.clientY-r.top-h/2,rad=Math.sqrt(x*x+y*y);if(rad<58||rad>95){hideTip();return}let ang=Math.atan2(y,x);if(ang< -Math.PI/2)ang+=Math.PI*2;const sl=RC.slices.find(s=>ang>=s.a&&ang<=s.end);sl?tip(`<b>${sl.k}</b><br>${fmt(sl.v)} unidades<br>${pct(sl.v,total)}`,e):hideTip()};c.onmouseleave=hideTip;c.onclick=e=>{const r=c.getBoundingClientRect(),x=e.clientX-r.left-w/2,y=e.clientY-r.top-h/2,rad=Math.sqrt(x*x+y*y);if(rad<58||rad>95)return;let ang=Math.atan2(y,x);if(ang< -Math.PI/2)ang+=Math.PI*2;const sl=RC.slices.find(s=>ang>=s.a&&ang<=s.end);if(sl){$('rcSegmentFilter').value=sl.k;update()}}}
 function renderRank(id,rows,field,filterId){const m=$('rcMonthFilter').value,a=aggregate(rows,field,m).slice(0,10),max=a[0]?.[1]||1,total=sum(rows,m)||1;$(id).innerHTML=a.map(([k,v],i)=>`<div class="rc-row" data-v="${k.replace(/"/g,'&quot;')}"><div class="rc-pos">${i+1}</div><div class="rc-name">${k}</div><div class="rc-bar"><i style="width:${v/max*100}%"></i></div><div class="rc-val">${fmt(v)}<small>${pct(v,total)}</small></div></div>`).join('');$(id).querySelectorAll('.rc-row').forEach(el=>{el.onclick=()=>{$(filterId).value=el.dataset.v;update()};el.onmousemove=e=>tip(`<b>${el.dataset.v}</b><br>${el.querySelector('.rc-val').innerText.replace(/\n/g,' · ')}`,e);el.onmouseleave=hideTip})}
 function renderBars(id,rows,field,filterId){const m=$('rcMonthFilter').value,a=aggregate(rows,field,m).slice(0,8),max=a[0]?.[1]||1,total=sum(rows,m)||1;$(id).innerHTML=a.map(([k,v])=>`<div class="rc-barrow" data-v="${k.replace(/"/g,'&quot;')}"><span>${k}</span><div class="track"><i style="width:${v/max*100}%"></i></div><b>${pct(v,total)}</b></div>`).join('');$(id).querySelectorAll('.rc-barrow').forEach(el=>{if(filterId)el.onclick=()=>{$(filterId).value=el.dataset.v;update()};el.onmousemove=e=>{const v=a.find(x=>x[0]===el.dataset.v)?.[1]||0;tip(`<b>${el.dataset.v}</b><br>${fmt(v)} unidades<br>${pct(v,total)}`,e)};el.onmouseleave=hideTip})}
@@ -7015,7 +7102,7 @@ function tip(html,e){const t=$('roTooltip');if(!t)return;t.innerHTML=html;t.styl
 function moveTip(e){const t=$('roTooltip');if(!t||t.style.display==='none')return;const r=t.getBoundingClientRect(),g=12,p=10;let x=e.clientX+g,y=e.clientY-r.height/2;if(x+r.width>innerWidth-p)x=e.clientX-r.width-g;if(y<p)y=p;if(y+r.height>innerHeight-p)y=innerHeight-r.height-p;t.style.left=Math.max(p,x)+'px';t.style.top=Math.max(p,y)+'px'}
 function hideTip(){const t=$('roTooltip');if(t)t.style.display='none'}
 function canvasSetup(c,hcss){const dpr=devicePixelRatio||1,w=Math.max(280,c.clientWidth||420),h=hcss;c.width=w*dpr;c.height=h*dpr;c.style.height=h+'px';const x=c.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);return{x,w,h}}
-function drawTrend(){const c=$('roTrend'),base=filtered('roMonthFilter');if(!c||!RO.months.length)return;const {x:ctx,w,h}=canvasSetup(c,270),pad={l:38,r:15,t:22,b:34},series=['O1','O2'],colors={O1:'OMNIBUS +7 ASIT',O2:'OMNIBUS +16 ASIT'},data={};series.forEach(s=>data[s]=RO.months.map(m=>base.reduce((z,r)=>z+(segCode(r.Segmento)===s?num(r[m]):0),0)));const ymax=Math.max(1,...series.flatMap(s=>data[s]));ctx.clearRect(0,0,w,h);ctx.font='9px Arial';ctx.strokeStyle='#edf0f4';ctx.fillStyle='#9aa1ad';for(let i=0;i<4;i++){let y=pad.t+(h-pad.t-pad.b)*i/3;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(fmt(ymax*(1-i/3)),2,y+3)}RO.months.forEach((m,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(i/Math.max(1,RO.months.length-1));ctx.fillText(m.slice(0,3),xx-8,h-10)});series.forEach(s=>{if(RO.hidden.has(s))return;ctx.strokeStyle=colors[s];ctx.lineWidth=2.5;ctx.beginPath();data[s].forEach((v,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(i/Math.max(1,RO.months.length-1)),yy=pad.t+(h-pad.t-pad.b)*(1-v/ymax);i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)});ctx.stroke();data[s].forEach((v,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(i/Math.max(1,RO.months.length-1)),yy=pad.t+(h-pad.t-pad.b)*(1-v/ymax);ctx.fillStyle='#fff';ctx.strokeStyle=colors[s];ctx.lineWidth=2;ctx.beginPath();ctx.arc(xx,yy,3.3,0,Math.PI*2);ctx.fill();ctx.stroke()})});const latest=RO.months.at(-1),prev=RO.months.at(-2),lt=sum(base,latest),pv=sum(base,prev);$('roTrendInsight').textContent=latest?`${latest}: ${fmt(lt)}${pv?` · ${((lt/pv-1)*100).toFixed(1)}% vs ${prev}`:''}`:'Sin datos';c.onmousemove=e=>{const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left,idx=Math.max(0,Math.min(RO.months.length-1,Math.round((mx-pad.l)/(w-pad.l-pad.r)*(RO.months.length-1))));tip(`<b>${RO.months[idx]}</b><br>`+series.filter(s=>!RO.hidden.has(s)).map(s=>`${s}: <b>${fmt(data[s][idx])}</b>`).join('<br>')+`<br>Total: <b>${fmt(series.reduce((z,s)=>z+data[s][idx],0))}</b>`,e)};c.onmouseleave=hideTip;c.onclick=e=>{const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left,idx=Math.max(0,Math.min(RO.months.length-1,Math.round((mx-pad.l)/(w-pad.l-pad.r)*(RO.months.length-1))));$('roMonthFilter').value=RO.months[idx];update()}}
+function drawTrend(){const c=$('roTrend'),base=filtered('roMonthFilter');if(!c||!RO.months.length)return;const {x:ctx,w,h}=canvasSetup(c,270),pad={l:38,r:15,t:22,b:34},series=['O1','O2'],colors={O1:'OMNIBUS +7 ASIT',O2:'OMNIBUS +16 ASIT'},data={};series.forEach(s=>data[s]=RO.months.map(m=>base.reduce((z,r)=>z+(segCode(r.Segmento)===s?num(r[m]):0),0)));const ymax=Math.max(1,...series.flatMap(s=>data[s]));ctx.clearRect(0,0,w,h);ctx.font='9px Arial';ctx.strokeStyle='#edf0f4';ctx.fillStyle='#9aa1ad';for(let i=0;i<4;i++){let y=pad.t+(h-pad.t-pad.b)*i/3;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(fmt(ymax*(1-i/3)),2,y+3)}RO.months.forEach((m,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(i/Math.max(1,RO.months.length-1));ctx.fillText(m.slice(0,3),xx-8,h-10)});series.forEach(s=>{if(RO.hidden.has(s))return;ctx.strokeStyle=colors[s];ctx.lineWidth=2.5;ctx.beginPath();data[s].forEach((v,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(i/Math.max(1,RO.months.length-1)),yy=pad.t+(h-pad.t-pad.b)*(1-v/ymax);i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)});ctx.stroke();data[s].forEach((v,i)=>{const xx=pad.l+(w-pad.l-pad.r)*(i/Math.max(1,RO.months.length-1)),yy=pad.t+(h-pad.t-pad.b)*(1-v/ymax);ctx.fillStyle='#fff';ctx.strokeStyle=colors[s];ctx.lineWidth=2;ctx.beginPath();ctx.arc(xx,yy,3.3,0,Math.PI*2);ctx.fill();ctx.stroke()})});const latest=RO.months.at(-1),prev=RO.months.at(-2),lt=sum(base,latest),pv=sum(base,prev);$('roTrendInsight').textContent=latest?`${latest}: ${fmt(lt)}${pv?` · ${((lt/pv-1)*100).toFixed(1)}% vs ${prev}`:''}`:'Sin datos';c.onmousemove=e=>{const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left,idx=Math.max(0,Math.min(RO.months.length-1,Math.round((mx-pad.l)/(w-pad.l-pad.r)*(RO.months.length-1))));tip(`<b>${RO.months[idx]}</b><br>`+series.filter(s=>!RO.hidden.has(s)).map(s=>`${s}: <b>${fmt(data[s][idx])}</b>`).join('<br>')+`<br>Total: <b>${fmt(series.reduce((z,s)=>z+data[s][idx],0))}</b>`,e)};c.onmouseleave=hideTip;c.onclick=e=>{e.stopPropagation();const rect=c.getBoundingClientRect(),mx=e.clientX-rect.left,idx=Math.max(0,Math.min(RO.months.length-1,Math.round((mx-pad.l)/(w-pad.l-pad.r)*(RO.months.length-1))));$('roMonthFilter').value=RO.months[idx];update()}}
 function drawDonut(rows){const c=$('roDonut');if(!c)return;const {x:ctx,w,h}=canvasSetup(c,215),agg=aggregate(rows,'Segmento',$('roMonthFilter').value).filter(([k])=>['O1','O2'].includes(k)),total=agg.reduce((s,a)=>s+a[1],0),colors={O1:'OMNIBUS +7 ASIT',O2:'OMNIBUS +16 ASIT'};ctx.clearRect(0,0,w,h);let a=-Math.PI/2;RO.slices=[];if(!total){ctx.strokeStyle='#edf0f4';ctx.lineWidth=34;ctx.beginPath();ctx.arc(w/2,h/2,72,0,Math.PI*2);ctx.stroke()}else agg.forEach(([k,v])=>{const end=a+Math.PI*2*v/total;ctx.beginPath();ctx.moveTo(w/2,h/2);ctx.arc(w/2,h/2,91,a,end);ctx.closePath();ctx.fillStyle=colors[k];ctx.fill();RO.slices.push({k,v,a,end});a=end});ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(w/2,h/2,58,0,Math.PI*2);ctx.fill();ctx.globalCompositeOperation='source-over';$('roDonutTotal').textContent=fmt(total);$('roDonutLegend').innerHTML=agg.map(([k,v])=>`<button data-v="${k}"><i style="background:${colors[k]}"></i><span>${k}<b>${fmt(v)}</b><small>${pct(v,total)} del mercado</small></span></button>`).join('');$('roDonutLegend').querySelectorAll('button').forEach(b=>{b.onclick=()=>{$('roSegmentFilter').value=b.dataset.v;update()};b.onmousemove=e=>tip(`<b>${b.dataset.v}</b><br>${b.querySelector('b').textContent} unidades<br>${b.querySelector('small').textContent}`,e);b.onmouseleave=hideTip});c.onmousemove=e=>{const r=c.getBoundingClientRect(),x=e.clientX-r.left-w/2,y=e.clientY-r.top-h/2,rad=Math.sqrt(x*x+y*y);if(rad<58||rad>96){hideTip();return}let ang=Math.atan2(y,x);if(ang< -Math.PI/2)ang+=Math.PI*2;const sl=RO.slices.find(s=>ang>=s.a&&ang<=s.end);sl?tip(`<b>${sl.k}</b><br>${fmt(sl.v)} unidades<br>${pct(sl.v,total)}`,e):hideTip()};c.onmouseleave=hideTip;c.onclick=e=>{const r=c.getBoundingClientRect(),x=e.clientX-r.left-w/2,y=e.clientY-r.top-h/2,rad=Math.sqrt(x*x+y*y);if(rad<58||rad>96)return;let ang=Math.atan2(y,x);if(ang< -Math.PI/2)ang+=Math.PI*2;const sl=RO.slices.find(s=>ang>=s.a&&ang<=s.end);if(sl){$('roSegmentFilter').value=sl.k;update()}}}
 function renderRank(id,rows,field,filterId){const m=$('roMonthFilter').value,a=aggregate(rows,field,m).slice(0,10),max=a[0]?.[1]||1,total=sum(rows,m)||1;$(id).innerHTML=a.map(([k,v],i)=>`<div class="ro-row" data-v="${k.replace(/"/g,'&quot;')}"><div class="ro-pos">${i+1}</div><div class="ro-name">${k}</div><div class="ro-bar"><i style="width:${v/max*100}%"></i></div><div class="ro-val">${fmt(v)}<small>${pct(v,total)}</small></div></div>`).join('');$(id).querySelectorAll('.ro-row').forEach(el=>{el.onclick=()=>{$(filterId).value=el.dataset.v;update()};el.onmousemove=e=>tip(`<b>${el.dataset.v}</b><br>${el.querySelector('.ro-val').innerText.replace(/\n/g,' · ')}`,e);el.onmouseleave=hideTip})}
 function renderBars(id,rows,field,filterId){const m=$('roMonthFilter').value,a=aggregate(rows,field,m).slice(0,8),max=a[0]?.[1]||1,total=sum(rows,m)||1;$(id).innerHTML=a.map(([k,v])=>`<div class="ro-barrow" data-v="${k.replace(/"/g,'&quot;')}"><span>${k}</span><div class="track"><i style="width:${v/max*100}%"></i></div><b>${pct(v,total)}</b></div>`).join('');$(id).querySelectorAll('.ro-barrow').forEach(el=>{if(filterId)el.onclick=()=>{$(filterId).value=el.dataset.v;update()};el.onmousemove=e=>{const v=a.find(x=>x[0]===el.dataset.v)?.[1]||0;tip(`<b>${el.dataset.v}</b><br>${fmt(v)} unidades<br>${pct(v,total)}`,e)};el.onmouseleave=hideTip})}
@@ -8331,9 +8418,9 @@ select option.tsf-seg-option{font-size:inherit}
 <script id="v87-bi-hover-info">
 (function(){
   let tip=document.getElementById('biHoverTip');if(!tip){tip=document.createElement('div');tip.id='biHoverTip';document.body.appendChild(tip)}
-  const selectors='.lv2-rank-row,.lv2-office-row,.lv2-class-legend button,.vp3-rank-row,.vp3-office-row,.rtm-rank-row,.rac-rank-row,.rac-family,.rac-seg';
+  const selectors='.lv2-rank-row,.lv2-office-row,.lv2-class-legend button,.vp3-rank-row,.vp3-office-row,.rtm-rank-row';
   function content(el){
-    if(el.matches('.lv2-rank-row,.vp3-rank-row,.rtm-rank-row,.rac-rank-row')){const n=el.querySelector('.name')?.textContent?.trim()||el.dataset.brand||'';const v=el.querySelector('b,strong')?.textContent?.trim()||'';return `<b>${n}</b>${v?`Volumen: ${v}<br>`:''}<span>Clic para filtrar · clic fuera para volver</span>`}
+    if(el.matches('.lv2-rank-row,.vp3-rank-row,.rtm-rank-row')){const n=el.querySelector('.name')?.textContent?.trim()||el.dataset.brand||'';const v=el.querySelector('b,strong')?.textContent?.trim()||'';return `<b>${n}</b>${v?`Volumen: ${v}<br>`:''}<span>Clic para filtrar · clic fuera para volver</span>`}
     if(el.matches('.lv2-office-row,.vp3-office-row')){const n=el.querySelector('.name')?.textContent?.trim()||'';const bs=[...el.querySelectorAll('b,.pct')].map(x=>x.textContent.trim()).filter(Boolean);return `<b>${n}</b>${bs.join(' · ')}<br><span>Clic para filtrar · clic fuera para volver</span>`}
     if(el.matches('.lv2-class-legend button')){const n=el.querySelector('span')?.textContent?.trim()||'';const v=el.querySelector('b')?.textContent?.trim()||'';return `<b>${n}</b>${v}<br><span>Clic para filtrar · clic fuera para volver</span>`}
     return `<b>${el.textContent.trim().slice(0,80)}</b><span>Clic para filtrar · clic fuera para volver</span>`;
@@ -8430,6 +8517,24 @@ select option.tsf-seg-option{font-size:inherit}
 @media(max-width:1200px){#retailmes .rtm-kpis-business{grid-template-columns:repeat(3,minmax(0,1fr))!important}#retailmes .rtm-grid-a{grid-template-columns:1fr 1fr!important}#retailmes .rtm-segments{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 </style>
 
+
+<script id="v92-rac-bi-engine">
+(function(){
+  function resetRac(){
+    const A=window.__RAC_API;if(!A)return;const {RAC,render,refreshBrands}=A;
+    if(RAC.family==='TOTAL'&&RAC.brand==='ALL')return;
+    RAC.family='TOTAL';RAC.brand='ALL';
+    document.querySelectorAll('#racTabs button').forEach(b=>b.classList.toggle('active',b.dataset.family==='TOTAL'));
+    try{refreshBrands()}catch(e){};try{render(false)}catch(e){}
+  }
+  document.addEventListener('click',e=>{
+    if(!document.getElementById('retail')?.classList.contains('active'))return;
+    if(e.target.closest('#racDonut,#racLegend .rac-leg,#racTabs button,#racBrand,#racReset,#racRank .rac-rank-row,#racFamilyGrid .rac-family,#racSegments .rac-seg,#racWinners .rac-move,#racLosers .rac-move'))return;
+    resetRac();
+  });
+})();
+</script>
+
 </body>
 </html>
 
@@ -8438,4 +8543,39 @@ select option.tsf-seg-option{font-size:inherit}
 #ligeros .lv2-business-kpis .lv2-kpi:nth-child(5){display:none!important}
 #ligeros .lv2-business-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 #ligeros .lv2-advanced{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+</style>
+
+<style id="v92-retail-acum-clarity">
+#retail .rac-business-kpis .rac-kpi.cream{display:none!important}
+#retail .rac-business-kpis{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}
+#retail .rac-business-explainer{margin:-1px 0 9px;padding:9px 12px;border:1px solid #eadfbf;border-radius:12px;background:#fffdf6;color:#5f5642;font-size:9.5px;line-height:1.45}
+#retail .rac-business-explainer b{color:#2b2d32}
+#retail .rac-market-context{grid-template-columns:1fr 28px 1.12fr 1.08fr!important;gap:8px!important}
+#retail .rac-market-box{padding:11px 13px!important;border-radius:14px!important;box-shadow:0 4px 14px rgba(20,24,35,.035)!important}
+#retail .rac-market-box b{font-size:21px!important}
+#retail .rac-market-box.business{background:#fff8e6!important;border-color:#eacb71!important}
+#retail .rac-market-box.pickup{background:#fff!important;border-color:#eadfc5!important}
+#retail .rac-business-grid-top{grid-template-columns:.88fr 1.22fr .9fr!important;gap:9px!important;align-items:stretch}
+#retail .rac-business-grid-top>.rac-card{min-height:360px!important;overflow:visible!important}
+#retail .rac-donut-zone{display:grid!important;grid-template-columns:190px minmax(0,1fr)!important;gap:12px!important;align-items:center!important;min-height:245px!important}
+#retail .rac-donut-wrap{width:180px!important;max-width:180px!important;height:180px!important;aspect-ratio:1!important;margin:0 auto!important}
+#retail .rac-donut-wrap canvas{width:180px!important;height:180px!important}
+#retail .rac-donut-center b{font-size:23px!important}
+#retail .rac-legend{display:flex!important;flex-direction:column!important;gap:7px!important;min-width:0}
+#retail .rac-leg{grid-template-columns:9px minmax(0,1fr)!important;padding:9px 10px!important;position:relative!important}
+#retail .rac-leg span{font-size:9.5px!important;font-weight:750!important;color:#30343b!important;white-space:normal!important;line-height:1.25}
+#retail .rac-leg b{grid-column:2;font-size:10px!important;margin-top:2px;color:#171a20}
+#retail .rac-leg small{grid-column:2;display:block;font-size:8.2px;color:#8a92a0;line-height:1.25;margin-top:2px}
+#retail .rac-explain-note{position:static!important;margin:7px 0 0!important;padding:7px 9px!important;font-size:8.3px!important;background:#fffaf0!important}
+#retail .rac-rank-row{min-height:34px!important;padding:5px 6px!important}
+#retail .rac-rank-row:hover{transform:none!important;background:#fff8ec!important}
+#retail .rac-insight{min-height:72px!important;padding:10px!important}
+#retail .rac-insight b{font-size:15px!important;margin-top:6px!important}
+#retail .rac-card{overflow:visible!important}
+#retail .rac-tooltip{z-index:9999999!important;max-width:260px!important;padding:9px 11px!important;font-size:9.5px!important;line-height:1.45!important}
+#retail .rac-family-card{margin-bottom:9px!important}
+#retail .rac-family-grid{gap:8px!important}
+#retail .rac-seg{min-height:88px!important;padding:9px!important}
+@media(max-width:1300px){#retail .rac-business-grid-top{grid-template-columns:1fr 1fr!important}#retail .rac-business-grid-top>.rac-card:last-child{grid-column:1/-1}#retail .rac-donut-zone{grid-template-columns:170px 1fr!important}}
+@media(max-width:900px){#retail .rac-business-grid-top{grid-template-columns:1fr!important}#retail .rac-business-grid-top>.rac-card:last-child{grid-column:auto}#retail .rac-business-kpis{grid-template-columns:repeat(2,1fr)!important}#retail .rac-donut-zone{grid-template-columns:1fr!important}}
 </style>
