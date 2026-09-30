@@ -7118,9 +7118,9 @@ function update(){if(!RC.rows.length)return;const rows=filtered(),m=$('rcMonthFi
  drawTrend(baseNoMonth);rank('rcBrands',rows,'Marca','rcBrandFilter');rank('rcModels',rows,'Modelo','rcModelFilter');bars('rcOrigins',rows,'Origen','rcOriginFilter',6);tech(rows);
  const dominant=segs[0]||['—',0];$('rcExecSegment').textContent=dominant[0]==='—'?'—':dominant[0]+' · '+META[dominant[0]];$('rcExecSegmentSub').textContent=dominant[1]?fmt(dominant[1])+' · '+pct(dominant[1],t):'—';$('rcExecBrand').textContent=brand[0];$('rcExecBrandSub').textContent=brand[1]?fmt(brand[1])+' · '+pct(brand[1],t):'—';$('rcExecModel').textContent=model[0];$('rcExecModelSub').textContent=model[1]?fmt(model[1])+' · '+pct(model[1],t):'—';$('rcExecOrigin').textContent=origin[0];$('rcExecOriginSub').textContent=origin[1]?fmt(origin[1])+' · '+pct(origin[1],t):'—';
 }
-function parseWorkbook(wb,name){const ws=wb.Sheets['COMERCIALES']||wb.Sheets[wb.SheetNames[0]],raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});let hi=raw.findIndex(r=>r.some(v=>norm(v)==='Marca')&&r.some(v=>norm(v)==='Modelo'));if(hi<0)throw new Error('No se encontró la cabecera de COMERCIALES.');const headers=raw[hi].map(norm),months=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].filter(m=>headers.includes(m)),rows=raw.slice(hi+1).map(a=>Object.fromEntries(headers.map((h,i)=>[h,a[i]]))).filter(r=>norm(r.Marca)&&norm(r.Modelo)&&months.some(m=>num(r[m])!==0));let period='';for(const rr of raw.slice(0,hi)){for(const v of rr){const z=norm(v);if(/MES\/AÑO/i.test(z)){period=z.replace(/^.*?:\s*/,'');break}}if(period)break}RC.rows=rows;RC.months=months;RC.period=period||months.at(-1)||'—';refreshOptions();$('rcHeroPeriod').textContent=(months[0]?.slice(0,3)||'Ene')+'–'+(months.at(-1)?.slice(0,3)||'Ago')+' 2026 · C1–C4';$('rcSourceTitle').textContent='Archivo 08.8 conectado';$('rcSourceSub').textContent=name+' · '+rows.length.toLocaleString('es-PE')+' filas técnicas · '+months.length+' meses';update()}
+function parseWorkbook(wb,name){const ws=wb.Sheets['COMERCIALES']||wb.Sheets[wb.SheetNames[0]],raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});let hi=raw.findIndex(r=>r.some(v=>norm(v)==='Marca')&&r.some(v=>norm(v)==='Modelo'));if(hi<0)throw new Error('No se encontró la cabecera de COMERCIALES.');const headers=raw[hi].map(norm),months=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].filter(m=>headers.includes(m)),rows=raw.slice(hi+1).map(a=>Object.fromEntries(headers.map((h,i)=>[h,a[i]]))).filter(r=>norm(r.Marca)&&norm(r.Modelo)&&months.some(m=>num(r[m])!==0));let period='';for(const rr of raw.slice(0,hi)){for(const v of rr){const z=norm(v);if(/MES\/AÑO/i.test(z)){period=z.replace(/^.*?:\s*/,'');break}}if(period)break}RC.rows=rows;RC.months=months;RC.period=period||months.at(-1)||'—';refreshOptions();fids.forEach(id=>{if($(id))$(id).value='ALL'});RC.locked=false;$('rcHeroPeriod').textContent=(months[0]?.slice(0,3)||'Ene')+'–'+(months.at(-1)?.slice(0,3)||'Ago')+' 2026 · C1–C4';$('rcSourceTitle').textContent='Archivo 08.8 conectado';$('rcSourceSub').textContent=name+' · '+rows.length.toLocaleString('es-PE')+' filas técnicas · '+months.length+' meses · fuente Excel';update();try{window.refreshExecutiveSummary?.()}catch(e){}}
 window.__LOAD_08_8=(wb,name)=>parseWorkbook(wb,name);async function readFile(f){parseWorkbook(XLSX.read(await f.arrayBuffer(),{type:'array'}),f.name)}
-async function autoLoad(){const names=['./data/retail_comerciales.xlsx','./retail_comerciales.xlsx','./08.8_Comerciales Retail Agosto 2026.xlsx'];for(const u of names){try{const r=await fetch(u,{cache:'no-store'});if(!r.ok)continue;parseWorkbook(XLSX.read(await r.arrayBuffer(),{type:'array'}),u.split('/').pop());return}catch(e){}}$('rcSourceTitle').textContent='Esperando Archivo 08.8';$('rcSourceSub').textContent='Power Automate aún no ha entregado el archivo. Puedes seleccionarlo manualmente.'}
+async function autoLoad(){$('rcSourceTitle').textContent='Solicitando nuevamente los Excel…';$('rcSourceSub').textContent='La recarga se hace desde Power Automate; no se usan datos guardados.';if(typeof window.__TSF_RELOAD_ALL==='function'){await window.__TSF_RELOAD_ALL()}else{$('spConnectBtn')?.click()}}
 fids.forEach(id=>$(id)?.addEventListener('change',()=>{RC.locked=false;update()}));$('rcReset')?.addEventListener('click',reset);$('rcMore')?.addEventListener('click',()=>{const a=$('rcAdvanced');a.hidden=!a.hidden;$('rcMore').textContent=a.hidden?'Más filtros':'Menos filtros'});$('rcLoad')?.addEventListener('click',()=>$('rcFile').click());$('rcRetry')?.addEventListener('click',autoLoad);$('rcFile')?.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{await readFile(f)}catch(err){alert(err.message||String(err))}finally{e.target.value=''}});document.querySelectorAll('#rcSegmentCards [data-seg]').forEach(b=>b.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();setFilter('rcSegmentFilter',b.dataset.seg)}));document.querySelectorAll('#nav button[data-page="retailComerciales"]').forEach(b=>b.addEventListener('click',()=>setTimeout(()=>{if(RC.rows.length)update()},100)));window.addEventListener('resize',()=>{if($('#retailComerciales')?.classList.contains('active')&&RC.rows.length){clearTimeout(window.__rc96r);window.__rc96r=setTimeout(update,160)}});document.addEventListener('pointerdown',e=>{if(!RC.locked)return;if(e.target.closest('#retailComerciales .rc96-card,#retailComerciales .rc96-filterbar,#retailComerciales .rc96-advanced,#retailComerciales .rc96-segments,#retailComerciales .rc96-source'))return;reset()},true);
 })();
 </script>
@@ -7550,7 +7550,7 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
 
   function render(){
     const loaded=loadedList(),count=loaded.filter(Boolean).length;
-    $('sxLoaded').textContent=`${count} / 9`;$('sxState').textContent=count===9?'Base completa':count?'Carga parcial':'Esperando archivos';
+    $('sxLoaded').textContent=`${count} / 9`;$('sxLoaded').title=['08.2 Livianos','08.3 Pesados','08.5 Retail Mes','08.6 Retail Acum.','08.7 Retail Ligeros','08.8 Comerciales','08.9 Ómnibus','08.10 Camiones','08.11 Dpto./Conces.'].map((n,i)=>`${loaded[i]?'✓':'○'} ${n}`).join('\n');$('sxState').textContent=count===9?'Base completa':count?'Carga parcial':'Esperando archivos';
     const periods=[typeof RTM!=='undefined'?RTM.period:'',window.__RAC_STATE?.period||'',window.__DC11_API?.fileName?'Archivo 11 cargado':''].filter(Boolean);
     $('sxPeriod').textContent=count?('Consolidación dinámica · '+(periods[0]||periods[1]||'periodos cargados')):'Carga tus Excel para consolidar el mercado.';
 
@@ -7649,7 +7649,7 @@ window.__LOAD_08_5 = (wb,name) => {
      y queda guardada solo en su navegador (localStorage). Opcionalmente se envía una "clave de acceso"
      en el cuerpo del POST ({periodo, archivo, clave}) para que el flujo la valide con una condición.
    - Periodos generados dinámicamente: solo se habilitan meses ya cerrados.
-   - Descarga en paralelo (3 a la vez) y aplicación ordenada de los 9 archivos.
+   - Descarga secuencial: un Excel por vez para evitar 504 y cruces de carga.
    - Autocarga opcional al abrir la página. */
 (function(){
   const $ = id => document.getElementById(id);
@@ -7718,22 +7718,56 @@ window.__LOAD_08_5 = (wb,name) => {
   function flowUrl(){return (LS.get(K_URL)||'').trim()}
   function validUrl(u){try{const x=new URL(u);return x.protocol==='https:'&&/(\.powerplatform\.com|\.logic\.azure\.com)$/i.test(x.hostname)}catch(e){return false}}
 
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   async function requestOne(periodo, archivo){
     const body={periodo, archivo};const clave=LS.get(K_KEY);if(clave)body.clave=clave;
-    const res=await fetch(flowUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const text=await res.text();
-    if(res.status===401||res.status===403) throw new Error('Acceso denegado por el flujo (revisa URL o clave en ⚙ Conexión).');
-    if(!res.ok) throw new Error(`Power Automate respondió ${res.status}. ${text.slice(0,200)}`);
-    let payload;try{payload=text?JSON.parse(text):{}}catch(e){throw new Error('respuesta no es JSON válido.')}
-    if(!payload.contenido) throw new Error('el flujo no devolvió "contenido" (¿archivo aún no publicado?).');
-    return payload;
+    const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),65000);
+    try{
+      const res=await fetch(flowUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:ctrl.signal,cache:'no-store'});
+      const text=await res.text();
+      if(res.status===401||res.status===403) throw new Error('Acceso denegado por el flujo (revisa URL o clave en Conexión).');
+      if(!res.ok) throw new Error(`Power Automate respondió ${res.status}. ${text.slice(0,180)}`);
+      let payload;try{payload=text?JSON.parse(text):{}}catch(e){throw new Error('La respuesta del flujo no es JSON válido.');}
+      if(!payload.contenido) throw new Error('El flujo no devolvió contenido para este Excel.');
+      return payload;
+    }catch(e){
+      if(e?.name==='AbortError')throw new Error('Tiempo de espera agotado al descargar el Excel.');
+      throw e;
+    }finally{clearTimeout(timer)}
   }
   async function fetchSpec(spec){
-    try{return await requestOne(currentPeriod, spec.match||spec.key)}
-    catch(firstErr){if((spec.match||spec.key)!==spec.key)return await requestOne(currentPeriod, spec.key);throw firstErr}
+    const candidates=[spec.match||spec.key];
+    if((spec.match||spec.key)!==spec.key)candidates.push(spec.key);
+    let lastErr;
+    for(const archivo of candidates){
+      for(let attempt=1;attempt<=2;attempt++){
+        try{return await requestOne(currentPeriod,archivo)}catch(e){lastErr=e;if(attempt<2)await sleep(900)}
+      }
+    }
+    throw lastErr||new Error('No se pudo descargar '+spec.key);
   }
 
   let busy=false;
+  const FILE_STATE=window.__TSF_FILE_STATE=window.__TSF_FILE_STATE||{};
+  function setFileState(key,status,msg=''){
+    FILE_STATE[key]={status,msg,at:Date.now()};
+    const ok=FILES.filter(f=>FILE_STATE[f.key]?.status==='ok').length;
+    document.querySelectorAll('[data-exec-loaded-count]').forEach(el=>{el.textContent=`${ok} / ${FILES.length}`});
+    if($('sxLoaded'))$('sxLoaded').textContent=`${ok} / ${FILES.length}`;
+  }
+  function clearLoadedData(){
+    try{if(typeof LV2!=='undefined'){LV2.rows=[];LV2.months=[]}}catch(e){}
+    try{if(typeof VP3!=='undefined'){VP3.rows=[];VP3.months=[]}}catch(e){}
+    try{if(typeof RTM!=='undefined'){RTM.rows=[];RTM.families={};RTM.segments={}}}catch(e){}
+    try{if(window.__RAC_STATE){Object.assign(window.__RAC_STATE,{rows:[],families:{},segments:{},period:'',fileName:'',wb:null})}}catch(e){}
+    try{if(window.__RL_STATE){window.__RL_STATE.rows=[];window.__RL_STATE.months=[]}}catch(e){}
+    try{if(window.__RC8_STATE){window.__RC8_STATE.rows=[];window.__RC8_STATE.months=[]}}catch(e){}
+    try{if(window.__RO9_STATE){window.__RO9_STATE.rows=[];window.__RO9_STATE.months=[]}}catch(e){}
+    try{if(window.__RC10_STATE){window.__RC10_STATE.rows=[];window.__RC10_STATE.months=[]}}catch(e){}
+    try{if(window.__DC11_API){window.__DC11_API.rows=[]}}catch(e){}
+    FILES.forEach(f=>setFileState(f.key,'waiting',''));
+    try{window.refreshExecutiveSummary?.()}catch(e){}
+  }
   async function loadPowerAutomatePeriod(){
     if(busy)return;
     if(!validUrl(flowUrl())){openConfig('Registra la URL del flujo de Power Automate para cargar datos.');return}
@@ -7742,36 +7776,46 @@ window.__LOAD_08_5 = (wb,name) => {
     currentPeriod=sel?.value||currentPeriod;
     const periodLabel=(PERIODS.find(p=>p.value===currentPeriod)||{}).label||currentPeriod;
     if(btn){btn.disabled=true;btn.style.opacity='.7'}
-    let done=0,loaded=0;const errors=[];
-    ui('Cargando '+periodLabel+'…',`Descargando archivos · 0/${FILES.length}`);
-    // Descarga en paralelo (3 simultáneos); los loaders se aplican en orden fijo.
-    const results=new Array(FILES.length);let next=0;
-    async function worker(){while(next<FILES.length){const i=next++;try{results[i]={ok:true,payload:await fetchSpec(FILES[i])}}catch(e){results[i]={ok:false,err:e}}done++;ui('Cargando '+periodLabel+'…',`Descargando archivos · ${done}/${FILES.length}`)}}
-    await Promise.all([worker(),worker(),worker()]);
+    clearLoadedData();
+    let loaded=0;const errors=[];
+    ui('Cargando '+periodLabel+'…',`0/${FILES.length} archivos · carga segura uno por uno`);
+
+    // IMPORTANTE: carga SECUENCIAL. El flujo recibe un Excel por vez para evitar 504,
+    // cruces entre respuestas y conteos falsos.
     for(let i=0;i<FILES.length;i++){
-      const spec=FILES[i],r=results[i];
+      const spec=FILES[i];
+      setFileState(spec.key,'loading','Descargando');
+      ui('Cargando '+periodLabel+'…',`${i}/${FILES.length} completados · ahora ${spec.key}`);
       try{
-        if(!r.ok) throw r.err;
-        const wb=XLSX.read(base64ToArrayBuffer(r.payload.contenido),{type:'array',cellDates:true});
+        const payload=await fetchSpec(spec);
+        const wb=XLSX.read(base64ToArrayBuffer(payload.contenido),{type:'array',cellDates:true});
         const loader=window[spec.loader];
-        if(typeof loader!=='function') throw new Error('No está disponible '+spec.loader);
-        await loader(wb, r.payload.nombre||(spec.key+'.xlsx'));
+        if(typeof loader!=='function')throw new Error('No está disponible '+spec.loader);
+        await loader(wb,payload.nombre||(spec.key+'.xlsx'));
+        setFileState(spec.key,'ok',payload.nombre||spec.key);
         loaded++;
-        document.querySelectorAll('[data-exec-loaded-count]').forEach(el=>{el.textContent=`${loaded} / ${FILES.length}`});
-      }catch(e){console.error(spec.key,e);errors.push(spec.key+': '+(e.message||e))}
+      }catch(e){
+        console.error(spec.key,e);
+        setFileState(spec.key,'error',e.message||String(e));
+        errors.push(spec.key+': '+(e.message||e));
+      }
+      try{window.refreshExecutiveSummary?.()}catch(e){}
+      await sleep(180);
     }
-    if($('periodText')) $('periodText').textContent='Periodo analizado: '+periodLabel;
-    if(window.refreshExecutiveSummary){try{window.refreshExecutiveSummary()}catch(e){}}
+
+    if($('periodText'))$('periodText').textContent='Periodo analizado: '+periodLabel;
     if(btn){btn.textContent='↻ Actualizar datos';btn.disabled=false;btn.style.opacity=''}
     const nlog=(window.__TSF_NORMALIZATION_LOG||[]).reduce((s,x)=>s+x.brandMerges.length+x.modelMerges.length,0);
-    const normTxt=nlog?` · ${nlog} variantes de marca/modelo normalizadas`:'';
+    const normTxt=nlog?` · ${nlog} variantes normalizadas`:'';
     if(errors.length){
-      ui(loaded?`Carga parcial: ${loaded}/${FILES.length} archivos`:'No se pudieron cargar los datos',errors.slice(0,3).join(' · '),loaded?'warn':'error');
+      ui(loaded?`Carga parcial: ${loaded}/${FILES.length} archivos`:'No se pudieron cargar los datos',`${errors.slice(0,2).join(' · ')}${errors.length>2?' · revisa el detalle de conexión':''}`,loaded?'warn':'error');
     }else{
-      ui('Datos actualizados correctamente',`${periodLabel} · ${FILES.length}/${FILES.length} archivos cargados${normTxt}.`,'ok');
+      ui('Datos actualizados correctamente',`${periodLabel} · ${loaded}/${FILES.length} Excel cargados desde Power Automate${normTxt}.`,'ok');
     }
     busy=false;
   }
+
+  window.__TSF_RELOAD_ALL=loadPowerAutomatePeriod;
 
   /* ---------- Modal de conexión ---------- */
   function buildConfig(){
@@ -7896,6 +7940,8 @@ select option.tsf-seg-option{font-size:inherit}
     const nodes=[];let n;while(n=walker.nextNode())nodes.push(n);
     nodes.forEach(t=>{
       const p=t.parentElement;if(!p||['SCRIPT','STYLE','OPTION'].includes(p.tagName))return;
+      // Keep compact segment badges short inside the Comerciales dashboard.
+      if(p.closest?.('#retailComerciales .rc96-segments'))return;
       // Do not duplicate cards that already carry a separate description next to the code.
       if(p.classList.contains('code')&&p.parentElement?.querySelector('.desc'))return;
       const raw=t.nodeValue,trim=raw.trim();
@@ -8664,31 +8710,6 @@ select option.tsf-seg-option{font-size:inherit}
   #retail .rac-business-kpis{grid-template-columns:1fr!important}
 }
 </style>
-<script id="v95-rac-aug-fallback">
-(function(){
-  const SNAP={"rows":[{"family":"LIGEROS","brand":"AUDI","cur":461.0,"prev":421.0,"segments":{"L1":44.0,"L2":36.0,"L3":381.0}},{"family":"LIGEROS","brand":"BMW","cur":961.0,"prev":753.0,"segments":{"L1":106.0,"L2":161.0,"L3":694.0}},{"family":"LIGEROS","brand":"BYD","cur":599.0,"prev":198.0,"segments":{"L1":50.0,"L2":0.0,"L3":549.0}},{"family":"LIGEROS","brand":"CHANGAN","cur":7589.0,"prev":4589.0,"segments":{"L1":1396.0,"L2":0.0,"L3":6193.0}},{"family":"LIGEROS","brand":"CHERY","cur":5702.0,"prev":2996.0,"segments":{"L1":1169.0,"L2":0.0,"L3":4533.0}},{"family":"LIGEROS","brand":"CHEVROLET","cur":6780.0,"prev":4458.0,"segments":{"L1":3941.0,"L2":0.0,"L3":2839.0}},{"family":"LIGEROS","brand":"CITROEN","cur":45.0,"prev":87.0,"segments":{"L1":0.0,"L2":9.0,"L3":36.0}},{"family":"LIGEROS","brand":"CUPRA","cur":168.0,"prev":65.0,"segments":{"L1":16.0,"L2":8.0,"L3":144.0}},{"family":"LIGEROS","brand":"DFSK","cur":2599.0,"prev":4102.0,"segments":{"L1":366.0,"L2":0.0,"L3":2233.0}},{"family":"LIGEROS","brand":"DODGE","cur":0.0,"prev":6.0,"segments":{"L1":0.0,"L2":0.0,"L3":0.0}},{"family":"LIGEROS","brand":"FIAT","cur":60.0,"prev":49.0,"segments":{"L1":0.0,"L2":0.0,"L3":60.0}},{"family":"LIGEROS","brand":"FORD","cur":4322.0,"prev":2467.0,"segments":{"L1":0.0,"L2":55.0,"L3":4267.0}},{"family":"LIGEROS","brand":"GAC MOTOR","cur":0.0,"prev":345.0,"segments":{"L1":0.0,"L2":0.0,"L3":0.0}},{"family":"LIGEROS","brand":"GEELY","cur":7798.0,"prev":3951.0,"segments":{"L1":378.0,"L2":0.0,"L3":7420.0}},{"family":"LIGEROS","brand":"GWM","cur":1347.0,"prev":762.0,"segments":{"L1":0.0,"L2":0.0,"L3":1347.0}},{"family":"LIGEROS","brand":"HONDA","cur":1890.0,"prev":1497.0,"segments":{"L1":6.0,"L2":6.0,"L3":1878.0}},{"family":"LIGEROS","brand":"HYUNDAI","cur":12797.0,"prev":8997.0,"segments":{"L1":5468.0,"L2":3.0,"L3":7326.0}},{"family":"LIGEROS","brand":"JAC","cur":2955.0,"prev":2241.0,"segments":{"L1":0.0,"L2":0.0,"L3":2955.0}},{"family":"LIGEROS","brand":"JEEP","cur":591.0,"prev":477.0,"segments":{"L1":0.0,"L2":0.0,"L3":591.0}},{"family":"LIGEROS","brand":"JETOUR","cur":10182.0,"prev":3994.0,"segments":{"L1":0.0,"L2":0.0,"L3":10182.0}},{"family":"LIGEROS","brand":"JMEV","cur":2.0,"prev":0.0,"segments":{"L1":1.0,"L2":0.0,"L3":1.0}},{"family":"LIGEROS","brand":"KAIYI","cur":3.0,"prev":5.0,"segments":{"L1":0.0,"L2":0.0,"L3":3.0}},{"family":"LIGEROS","brand":"KIA","cur":15514.0,"prev":9777.0,"segments":{"L1":7373.0,"L2":13.0,"L3":8128.0}},{"family":"LIGEROS","brand":"KYC","cur":142.0,"prev":86.0,"segments":{"L1":142.0,"L2":0.0,"L3":0.0}},{"family":"LIGEROS","brand":"LAND ROVER","cur":82.0,"prev":90.0,"segments":{"L1":0.0,"L2":0.0,"L3":82.0}},{"family":"LIGEROS","brand":"LEXUS","cur":374.0,"prev":214.0,"segments":{"L1":0.0,"L2":3.0,"L3":371.0}},{"family":"LIGEROS","brand":"MAZDA","cur":1934.0,"prev":1619.0,"segments":{"L1":1.0,"L2":101.0,"L3":1832.0}},{"family":"LIGEROS","brand":"MAXUS","cur":6.0,"prev":19.0,"segments":{"L1":0.0,"L2":0.0,"L3":6.0}},{"family":"LIGEROS","brand":"MERCEDES BENZ","cur":604.0,"prev":443.0,"segments":{"L1":0.0,"L2":111.0,"L3":493.0}},{"family":"LIGEROS","brand":"MG","cur":0.0,"prev":1251.0,"segments":{"L1":0.0,"L2":0.0,"L3":0.0}},{"family":"LIGEROS","brand":"MINI","cur":176.0,"prev":153.0,"segments":{"L1":48.0,"L2":41.0,"L3":87.0}},{"family":"LIGEROS","brand":"MITSUBISHI","cur":2362.0,"prev":1658.0,"segments":{"L1":1147.0,"L2":0.0,"L3":1215.0}},{"family":"LIGEROS","brand":"NISSAN","cur":1276.0,"prev":1888.0,"segments":{"L1":0.0,"L2":315.0,"L3":961.0}},{"family":"LIGEROS","brand":"PEUGEOT","cur":166.0,"prev":153.0,"segments":{"L1":0.0,"L2":0.0,"L3":166.0}},{"family":"LIGEROS","brand":"OMODA | JAECOO","cur":1108.0,"prev":0.0,"segments":{"L1":0.0,"L2":0.0,"L3":1108.0}},{"family":"LIGEROS","brand":"PORSCHE","cur":142.0,"prev":115.0,"segments":{"L1":0.0,"L2":24.0,"L3":118.0}},{"family":"LIGEROS","brand":"RENAULT","cur":667.0,"prev":560.0,"segments":{"L1":246.0,"L2":0.0,"L3":421.0}},{"family":"LIGEROS","brand":"SEAT","cur":13.0,"prev":27.0,"segments":{"L1":0.0,"L2":4.0,"L3":9.0}},{"family":"LIGEROS","brand":"SSANGYONG","cur":0.0,"prev":23.0,"segments":{"L1":0.0,"L2":0.0,"L3":0.0}},{"family":"LIGEROS","brand":"SHINERAY","cur":542.0,"prev":369.0,"segments":{"L1":542.0,"L2":0.0,"L3":0.0}},{"family":"LIGEROS","brand":"SOUEAST","cur":732.0,"prev":28.0,"segments":{"L1":0.0,"L2":0.0,"L3":732.0}},{"family":"LIGEROS","brand":"SUBARU","cur":1992.0,"prev":1745.0,"segments":{"L1":0.0,"L2":122.0,"L3":1870.0}},{"family":"LIGEROS","brand":"SUZUKI","cur":5628.0,"prev":3304.0,"segments":{"L1":2147.0,"L2":370.0,"L3":3111.0}},{"family":"LIGEROS","brand":"SWM","cur":951.0,"prev":500.0,"segments":{"L1":407.0,"L2":0.0,"L3":544.0}},{"family":"LIGEROS","brand":"TOYOTA","cur":21733.0,"prev":14986.0,"segments":{"L1":7377.0,"L2":111.0,"L3":14245.0}},{"family":"LIGEROS","brand":"VOLKSWAGEN","cur":2765.0,"prev":2232.0,"segments":{"L1":310.0,"L2":36.0,"L3":2419.0}},{"family":"LIGEROS","brand":"VOLVO","cur":310.0,"prev":264.0,"segments":{"L1":0.0,"L2":0.0,"L3":310.0}},{"family":"COMERCIALES","brand":"BYD","cur":113.0,"prev":32.0,"segments":{"C1":0.0,"C2":0.0,"C3":113.0,"C4":0.0}},{"family":"COMERCIALES","brand":"CHANGAN","cur":3089.0,"prev":2711.0,"segments":{"C1":2852.0,"C2":0.0,"C3":177.0,"C4":60.0}},{"family":"COMERCIALES","brand":"CHERY","cur":638.0,"prev":0.0,"segments":{"C1":0.0,"C2":0.0,"C3":638.0,"C4":0.0}},{"family":"COMERCIALES","brand":"CHEVROLET","cur":844.0,"prev":832.0,"segments":{"C1":0.0,"C2":0.0,"C3":304.0,"C4":540.0}},{"family":"COMERCIALES","brand":"CITROEN","cur":6.0,"prev":20.0,"segments":{"C1":2.0,"C2":0.0,"C3":0.0,"C4":4.0}},{"family":"COMERCIALES","brand":"DFSK","cur":140.0,"prev":553.0,"segments":{"C1":54.0,"C2":0.0,"C3":16.0,"C4":70.0}},{"family":"COMERCIALES","brand":"DONGFENG","cur":15.0,"prev":0.0,"segments":{"C1":0.0,"C2":0.0,"C3":15.0,"C4":0.0}},{"family":"COMERCIALES","brand":"FIAT","cur":178.0,"prev":0.0,"segments":{"C1":0.0,"C2":0.0,"C3":0.0,"C4":178.0}},{"family":"COMERCIALES","brand":"FORD","cur":2790.0,"prev":1993.0,"segments":{"C1":0.0,"C2":0.0,"C3":2790.0,"C4":0.0}},{"family":"COMERCIALES","brand":"FORLAND","cur":560.0,"prev":407.0,"segments":{"C1":0.0,"C2":0.0,"C3":364.0,"C4":196.0}},{"family":"COMERCIALES","brand":"FOTON","cur":2529.0,"prev":1610.0,"segments":{"C1":552.0,"C2":450.0,"C3":1099.0,"C4":428.0}},{"family":"COMERCIALES","brand":"FUSO","cur":0.0,"prev":165.0,"segments":{"C1":0.0,"C2":0.0,"C3":0.0,"C4":0.0}},{"family":"COMERCIALES","brand":"GWM","cur":2929.0,"prev":1710.0,"segments":{"C1":0.0,"C2":0.0,"C3":2929.0,"C4":0.0}},{"family":"COMERCIALES","brand":"HYUNDAI","cur":2088.0,"prev":1569.0,"segments":{"C1":213.0,"C2":313.0,"C3":1529.0,"C4":33.0}},{"family":"COMERCIALES","brand":"IVECO","cur":12.0,"prev":24.0,"segments":{"C1":0.0,"C2":12.0,"C3":0.0,"C4":0.0}},{"family":"COMERCIALES","brand":"JAC","cur":3005.0,"prev":1907.0,"segments":{"C1":505.0,"C2":245.0,"C3":2255.0,"C4":0.0}},{"family":"COMERCIALES","brand":"JEEP","cur":4.0,"prev":2.0,"segments":{"C1":0.0,"C2":0.0,"C3":4.0,"C4":0.0}},{"family":"COMERCIALES","brand":"JIM","cur":98.0,"prev":80.0,"segments":{"C1":0.0,"C2":0.0,"C3":98.0,"C4":0.0}},{"family":"COMERCIALES","brand":"JMC","cur":2372.0,"prev":1368.0,"segments":{"C1":55.0,"C2":0.0,"C3":2274.0,"C4":43.0}},{"family":"COMERCIALES","brand":"KARRY","cur":52.0,"prev":26.0,"segments":{"C1":52.0,"C2":0.0,"C3":0.0,"C4":0.0}},{"family":"COMERCIALES","brand":"KIA","cur":1441.0,"prev":718.0,"segments":{"C1":0.0,"C2":0.0,"C3":1441.0,"C4":0.0}},{"family":"COMERCIALES","brand":"KING LONG","cur":341.0,"prev":254.0,"segments":{"C1":130.0,"C2":211.0,"C3":0.0,"C4":0.0}},{"family":"COMERCIALES","brand":"KYC","cur":622.0,"prev":455.0,"segments":{"C1":332.0,"C2":0.0,"C3":189.0,"C4":101.0}},{"family":"COMERCIALES","brand":"MAHINDRA","cur":0.0,"prev":8.0,"segments":{"C1":0.0,"C2":0.0,"C3":0.0,"C4":0.0}},{"family":"COMERCIALES","brand":"MAXUS","cur":455.0,"prev":209.0,"segments":{"C1":72.0,"C2":0.0,"C3":383.0,"C4":0.0}},{"family":"COMERCIALES","brand":"MAZDA","cur":284.0,"prev":228.0,"segments":{"C1":0.0,"C2":0.0,"C3":284.0,"C4":0.0}},{"family":"COMERCIALES","brand":"MERCEDES BENZ","cur":537.0,"prev":359.0,"segments":{"C1":166.0,"C2":290.0,"C3":0.0,"C4":81.0}},{"family":"COMERCIALES","brand":"MITSUBISHI","cur":1666.0,"prev":1557.0,"segments":{"C1":0.0,"C2":0.0,"C3":1666.0,"C4":0.0}},{"family":"COMERCIALES","brand":"NISSAN","cur":59.0,"prev":962.0,"segments":{"C1":20.0,"C2":0.0,"C3":39.0,"C4":0.0}},{"family":"COMERCIALES","brand":"PEUGEOT","cur":473.0,"prev":498.0,"segments":{"C1":0.0,"C2":0.0,"C3":241.0,"C4":232.0}},{"family":"COMERCIALES","brand":"RAM","cur":250.0,"prev":365.0,"segments":{"C1":0.0,"C2":0.0,"C3":240.0,"C4":10.0}},{"family":"COMERCIALES","brand":"RELY","cur":169.0,"prev":0.0,"segments":{"C1":0.0,"C2":0.0,"C3":169.0,"C4":0.0}},{"family":"COMERCIALES","brand":"RENAULT","cur":903.0,"prev":736.0,"segments":{"C1":458.0,"C2":0.0,"C3":420.0,"C4":25.0}},{"family":"COMERCIALES","brand":"SSANGYONG","cur":0.0,"prev":24.0,"segments":{"C1":0.0,"C2":0.0,"C3":0.0,"C4":0.0}},{"family":"COMERCIALES","brand":"SHINERAY","cur":720.0,"prev":486.0,"segments":{"C1":379.0,"C2":0.0,"C3":120.0,"C4":221.0}},{"family":"COMERCIALES","brand":"SUZUKI","cur":104.0,"prev":60.0,"segments":{"C1":0.0,"C2":0.0,"C3":0.0,"C4":104.0}},{"family":"COMERCIALES","brand":"SWM","cur":14.0,"prev":0.0,"segments":{"C1":0.0,"C2":0.0,"C3":0.0,"C4":14.0}},{"family":"COMERCIALES","brand":"TOYOTA","cur":9912.0,"prev":9646.0,"segments":{"C1":1011.0,"C2":0.0,"C3":8893.0,"C4":8.0}},{"family":"COMERCIALES","brand":"VOLKSWAGEN","cur":160.0,"prev":253.0,"segments":{"C1":0.0,"C2":0.0,"C3":160.0,"C4":0.0}},{"family":"COMERCIALES","brand":"YUEJIN","cur":2.0,"prev":0.0,"segments":{"C1":0.0,"C2":0.0,"C3":2.0,"C4":0.0}},{"family":"COMERCIALES","brand":"YUTONG","cur":1.0,"prev":0.0,"segments":{"C1":1.0,"C2":0.0,"C3":0.0,"C4":0.0}},{"family":"OMNIBUS","brand":"DONGFENG","cur":1.0,"prev":0.0,"segments":{"O1":1.0,"O2":0.0}},{"family":"OMNIBUS","brand":"FOTON","cur":42.0,"prev":19.0,"segments":{"O1":42.0,"O2":0.0}},{"family":"OMNIBUS","brand":"FUSO","cur":39.0,"prev":40.0,"segments":{"O1":39.0,"O2":0.0}},{"family":"OMNIBUS","brand":"GOLDEN DRAGON","cur":67.0,"prev":46.0,"segments":{"O1":29.0,"O2":38.0}},{"family":"OMNIBUS","brand":"HINO","cur":72.0,"prev":48.0,"segments":{"O1":72.0,"O2":0.0}},{"family":"OMNIBUS","brand":"HYUNDAI","cur":66.0,"prev":60.0,"segments":{"O1":66.0,"O2":0.0}},{"family":"OMNIBUS","brand":"IVECO","cur":3.0,"prev":9.0,"segments":{"O1":1.0,"O2":2.0}},{"family":"OMNIBUS","brand":"MERCEDES BENZ","cur":300.0,"prev":304.0,"segments":{"O1":113.0,"O2":187.0}},{"family":"OMNIBUS","brand":"VOLARE","cur":0.0,"prev":1.0,"segments":{"O1":0.0,"O2":0.0}},{"family":"OMNIBUS","brand":"VOLKSWAGEN","cur":106.0,"prev":134.0,"segments":{"O1":28.0,"O2":78.0}},{"family":"OMNIBUS","brand":"YUTONG","cur":34.0,"prev":14.0,"segments":{"O1":34.0,"O2":0.0}},{"family":"CAMION","brand":"CAMC","cur":123.0,"prev":136.0,"segments":{"P2":0.0,"P3":0.0,"P4":96.0,"P5":27.0}},{"family":"CAMION","brand":"DONGFENG","cur":495.0,"prev":344.0,"segments":{"P2":167.0,"P3":147.0,"P4":142.0,"P5":39.0}},{"family":"CAMION","brand":"FAW","cur":287.0,"prev":222.0,"segments":{"P2":46.0,"P3":16.0,"P4":105.0,"P5":120.0}},{"family":"CAMION","brand":"FORLAND","cur":429.0,"prev":276.0,"segments":{"P2":184.0,"P3":132.0,"P4":113.0,"P5":0.0}},{"family":"CAMION","brand":"FOTON","cur":1683.0,"prev":1215.0,"segments":{"P2":487.0,"P3":313.0,"P4":298.0,"P5":585.0}},{"family":"CAMION","brand":"FUSO","cur":978.0,"prev":820.0,"segments":{"P2":703.0,"P3":219.0,"P4":56.0,"P5":0.0}},{"family":"CAMION","brand":"HINO","cur":1023.0,"prev":713.0,"segments":{"P2":578.0,"P3":230.0,"P4":215.0,"P5":0.0}},{"family":"CAMION","brand":"HYUNDAI","cur":431.0,"prev":443.0,"segments":{"P2":320.0,"P3":96.0,"P4":15.0,"P5":0.0}},{"family":"CAMION","brand":"INTERNATIONAL","cur":340.0,"prev":290.0,"segments":{"P2":0.0,"P3":0.0,"P4":61.0,"P5":279.0}},{"family":"CAMION","brand":"ISUZU","cur":2833.0,"prev":1691.0,"segments":{"P2":1641.0,"P3":874.0,"P4":318.0,"P5":0.0}},{"family":"CAMION","brand":"JMC","cur":295.0,"prev":218.0,"segments":{"P2":240.0,"P3":55.0,"P4":0.0,"P5":0.0}},{"family":"CAMION","brand":"SHACMAN","cur":558.0,"prev":286.0,"segments":{"P2":0.0,"P3":0.0,"P4":368.0,"P5":190.0}},{"family":"CAMION","brand":"VOLKSWAGEN","cur":319.0,"prev":253.0,"segments":{"P2":20.0,"P3":116.0,"P4":180.0,"P5":3.0}},{"family":"CAMION","brand":"YUEJIN","cur":1.0,"prev":1.0,"segments":{"P2":0.0,"P3":1.0,"P4":0.0,"P5":0.0}}],"families":{"LIGEROS":{"key":"LIGEROS","label":"Ligeros","cur":126070.0,"prev":83964.0},"COMERCIALES":{"key":"COMERCIALES","label":"Comerciales C1–C4","cur":39575.0,"prev":31827.0},"OMNIBUS":{"key":"OMNIBUS","label":"Ómnibus O1–O2","cur":730.0,"prev":675.0},"CAMION":{"key":"CAMION","label":"Camiones / Remolcadores P2–P5","cur":9795.0,"prev":6908.0}},"segments":{"L1":32681.0,"L2":1529.0,"L3":91860.0,"C1":6854.0,"C2":1521.0,"C3":28852.0,"C4":2348.0,"O1":425.0,"O2":305.0,"P2":4386.0,"P3":2199.0,"P4":1967.0,"P5":1243.0},"period":"Agosto 2026"};
-  function useSnapshotIfNeeded(){
-    try{
-      const api=window.__RAC_API;
-      if(!api||!api.RAC||api.RAC.rows?.length)return;
-      const sel=document.getElementById('spPeriodSelect');
-      const period=sel?.value||'2026/08_AGOSTO';
-      if(period!=='2026/08_AGOSTO')return;
-      const R=api.RAC;
-      R.rows=SNAP.rows;R.families=SNAP.families;R.segments=SNAP.segments;R.period=SNAP.period;R.fileName='08.6 · respaldo local Agosto 2026';R.wb=null;R.family='TOTAL';R.brand='ALL';
-      api.refreshBrands();api.render(false);
-      const t=document.getElementById('racLoadTitle'),s=document.getElementById('racLoadSub'),src=document.getElementById('racSource'),audit=document.getElementById('racAudit');
-      if(t){t.textContent='Retail Acumulado visible · respaldo Agosto 2026';t.style.color='#7a5a00'}
-      if(s)s.textContent='La vista usa el respaldo validado del Archivo 08.6 mientras se restablece la carga automática.';
-      if(src)src.textContent='Fuente: Archivo 08.6 · respaldo Agosto 2026';
-      if(audit)audit.textContent='Datos visibles · conexión automática pendiente';
-    }catch(e){console.error('V95 RAC fallback',e)}
-  }
-  setTimeout(useSnapshotIfNeeded,1800);
-  setTimeout(useSnapshotIfNeeded,4200);
-})();
-</script>
-
 <style id="v96-retail-comerciales-style">
 #retailComerciales{--p:#ee0b70;--gold:#f6ae00;--ink:#171a22;--muted:#8a93a2;--line:#e7ebf1}
 #retailComerciales .rc96-hero{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:18px 22px;border-radius:20px;background:linear-gradient(115deg,#171a22 0%,#232831 66%,#5b4d36 100%);color:#fff;margin-bottom:10px;position:relative;overflow:hidden;min-height:112px}
@@ -8710,5 +8731,25 @@ select option.tsf-seg-option{font-size:inherit}
 @media(max-width:900px){#retailComerciales .rc96-hero,#retailComerciales .rc96-source{flex-direction:column;align-items:stretch}#retailComerciales .rc96-hero-kpi{min-width:0}#retailComerciales .rc96-guide{grid-template-columns:1fr}#retailComerciales .rc96-kpis{grid-template-columns:repeat(2,1fr)}#retailComerciales .rc96-segments{grid-template-columns:1fr 1fr}#retailComerciales .rc96-filterbar{grid-template-columns:1fr 1fr 1fr}#retailComerciales .rc96-advanced{grid-template-columns:1fr 1fr 1fr}#retailComerciales .rc96-grid-main,#retailComerciales .rc96-grid-secondary{grid-template-columns:1fr}#retailComerciales .rc96-grid-secondary>.rc96-card:last-child{grid-column:auto}#retailComerciales .rc96-exec{grid-template-columns:1fr}#retailComerciales .rc96-exec-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){#retailComerciales .rc96-hero{padding:15px 16px;min-height:auto}#retailComerciales .rc96-hero:after{display:none}#retailComerciales .rc96-hero h3{font-size:21px!important}#retailComerciales .rc96-actions{display:grid;grid-template-columns:1fr 1fr}#retailComerciales .rc96-guide-tags{grid-template-columns:1fr 1fr}#retailComerciales .rc96-kpis{grid-template-columns:1fr 1fr}#retailComerciales .rc96-kpi b{font-size:17px}#retailComerciales .rc96-segments{grid-template-columns:1fr}#retailComerciales .rc96-filterbar,#retailComerciales .rc96-advanced{grid-template-columns:1fr 1fr}#retailComerciales .rc96-filterbar button{width:100%}#retailComerciales .rc96-exec-grid{grid-template-columns:1fr}#retailComerciales .rc96-source-left small{white-space:normal}#retailComerciales .rc96-rank-row{grid-template-columns:21px minmax(80px,1fr) 60px}#retailComerciales .rc96-rank-row .bar{display:none}}
 </style>
+
+<style id="v97-loader-commercial-fixes">
+/* V97: compact segment cards; short code badge must never be expanded by global decorators. */
+#retailComerciales .rc96-segments button{grid-template-columns:50px minmax(0,1fr)!important;min-height:78px!important;padding:10px 12px!important;overflow:hidden!important}
+#retailComerciales .rc96-segments button>span{width:44px!important;height:44px!important;white-space:nowrap!important;overflow:hidden!important;font-size:11px!important;line-height:1!important}
+#retailComerciales .rc96-segments button>div{min-width:0!important}
+#retailComerciales .rc96-segments b{font-size:9px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;line-height:1.25!important}
+#retailComerciales .rc96-segments strong{font-size:20px!important;line-height:1.05!important;margin-top:4px!important}
+#retailComerciales .rc96-segments small{font-size:7.7px!important}
+#retailComerciales .rc96-kpis{align-items:stretch!important}
+#retailComerciales .rc96-kpi{min-height:82px!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
+#retailComerciales .rc96-guide-tags span{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#retailComerciales .rc96-filterbar{position:relative!important;z-index:4!important}
+#retailComerciales .rc96-advanced{position:relative!important;z-index:3!important}
+/* Count card: this number is a live count of successfully parsed workbooks, not requests sent. */
+#sxLoaded{font-variant-numeric:tabular-nums;cursor:help}
+@media(max-width:1180px){#retailComerciales .rc96-kpis{grid-template-columns:repeat(3,minmax(0,1fr))!important}#retailComerciales .rc96-segments{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:650px){#retailComerciales .rc96-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}#retailComerciales .rc96-segments{grid-template-columns:1fr!important}}
+</style>
+
 </body>
 </html>
