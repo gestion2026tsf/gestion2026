@@ -4360,6 +4360,292 @@ canvas{transition:filter .14s ease,opacity .14s ease}
 @media(max-width:520px){#resumen .sx-segments{grid-template-columns:1fr!important}}
 </style>
 
+
+<style id="v85-unified-headers-cream-kpis">
+/* ==========================================================
+   V85 · CABECERAS UNIFICADAS + KPI PRINCIPAL CREMA
+   Todas las hojas comparten la misma altura, fondo y jerarquía.
+   ========================================================== */
+
+:root{
+  --v85-hero-bg:linear-gradient(112deg,#171C26 0%,#2D3441 68%,#6E5A4C 100%);
+  --v85-hero-text:#FFFFFF;
+  --v85-hero-muted:#E4E7EC;
+  --v85-hero-gold:#FFD05A;
+  --v85-cream:#FFF4D6;
+  --v85-cream-2:#FFE9B0;
+  --v85-cream-border:#EBCB7E;
+  --v85-cream-text:#4A3813;
+  --v85-cream-muted:#7C6636;
+}
+
+/* --- Cabeceras: misma forma y altura en TODAS las hojas --- */
+#resumen .sx-hero,
+#retailmes .rtm-hero,
+#retail .rac-hero,
+#ligeros .lv2-hero,
+#pesados .vp3-hero,
+#menores .vm2-hero,
+#remolques .r4-hero,
+#concesionarios .dc11-hero,
+#retailLigeros .rl-hero,
+#retailComerciales .rc-hero,
+#retailOmnibus .ro-hero,
+#retailCamiones .rc10-hero,
+#carga .hero{
+  min-height:96px!important;
+  height:auto!important;
+  padding:14px 18px!important;
+  margin:0 0 10px!important;
+  border-radius:16px!important;
+  background:var(--v85-hero-bg)!important;
+  color:var(--v85-hero-text)!important;
+  border:0!important;
+  box-shadow:0 10px 24px rgba(17,19,24,.10)!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  position:relative!important;
+}
+
+/* Layout interno: mismo balance, sin volverlas altas */
+#retail .rac-hero,
+#ligeros .lv2-hero,
+#pesados .vp3-hero,
+#menores .vm2-hero,
+#remolques .r4-hero,
+#concesionarios .dc11-hero,
+#retailLigeros .rl-hero,
+#retailComerciales .rc-hero,
+#retailOmnibus .ro-hero,
+#retailCamiones .rc10-hero{
+  align-items:center!important;
+  gap:14px!important;
+}
+
+/* Títulos uniformes */
+#resumen .sx-hero h4,
+#retailmes .rtm-hero h3,
+#retail .rac-hero h3,
+#ligeros .lv2-hero h3,
+#pesados .vp3-hero h3,
+#menores .vm2-hero h3,
+#remolques .r4-hero h3,
+#concesionarios .dc11-hero h3,
+#retailLigeros .rl-hero h3,
+#retailComerciales .rc-hero h3,
+#retailOmnibus .ro-hero h3,
+#retailCamiones .rc10-hero h3,
+#carga .hero h3{
+  margin:0 0 4px!important;
+  font-size:23px!important;
+  line-height:1.08!important;
+  letter-spacing:-.02em!important;
+  color:#fff!important;
+}
+
+/* Texto de apoyo uniforme */
+#resumen .sx-hero p,
+#retailmes .rtm-hero p,
+#retail .rac-hero p,
+#ligeros .lv2-hero p,
+#pesados .vp3-hero p,
+#menores .vm2-hero p,
+#remolques .r4-hero p,
+#concesionarios .dc11-hero p,
+#retailLigeros .rl-hero p,
+#retailComerciales .rc-hero p,
+#retailOmnibus .ro-hero p,
+#retailCamiones .rc10-hero p,
+#carga .hero p{
+  margin:4px 0 0!important;
+  font-size:11px!important;
+  line-height:1.38!important;
+  color:var(--v85-hero-muted)!important;
+  max-width:820px!important;
+}
+
+/* Eyebrows / rótulos superiores */
+#retailmes .rtm-eyebrow,
+#retail .rac-eyebrow,
+#ligeros .lv2-eyebrow,
+#pesados .vp3-eyebrow,
+#menores .vm2-eyebrow,
+#remolques .r4-eyebrow,
+#concesionarios .dc11-eyebrow,
+#retailLigeros .rl-eyebrow,
+#retailComerciales .rc-eyebrow,
+#retailOmnibus .ro-eyebrow,
+#retailCamiones .rc10-eyebrow,
+#resumen .sx-eyebrow{
+  color:var(--v85-hero-gold)!important;
+  font-size:9px!important;
+  line-height:1.1!important;
+  letter-spacing:.14em!important;
+  margin-bottom:5px!important;
+  font-weight:850!important;
+}
+
+/* Bloques de periodo/total en el costado derecho */
+#retailmes .rtm-month-pill,
+#retail .rac-period,
+#ligeros .lv2-hero-stat,
+#pesados .vp3-hero-badge,
+#menores .vm2-hero-badge,
+#remolques .r4-hero-badge,
+#concesionarios .dc11-period,
+#retailLigeros .rl-period,
+#retailComerciales .rc-period,
+#retailOmnibus .ro-period,
+#retailCamiones .rc10-period{
+  min-width:165px!important;
+  max-width:34%!important;
+  padding:10px 13px!important;
+  border-radius:13px!important;
+  background:rgba(255,255,255,.10)!important;
+  border:1px solid rgba(255,255,255,.17)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(7px);
+}
+
+#retail .rac-period b,
+#ligeros .lv2-hero-stat b,
+#pesados .vp3-hero-badge b,
+#menores .vm2-hero-badge b,
+#remolques .r4-hero-badge b,
+#concesionarios .dc11-period b,
+#retailLigeros .rl-period b,
+#retailComerciales .rc-period b,
+#retailOmnibus .ro-period b,
+#retailCamiones .rc10-period b{
+  font-size:21px!important;
+  line-height:1.05!important;
+  color:#fff!important;
+}
+
+/* Quitar marcas decorativas gigantes para que todas se vean iguales */
+#resumen .sx-hero:after,
+#retailmes .rtm-hero:after,
+#retail .rac-hero:after,
+#ligeros .lv2-hero:after,
+#pesados .vp3-hero:after,
+#menores .vm2-hero:after,
+#remolques .r4-hero:after,
+#concesionarios .dc11-hero:after,
+#retailLigeros .rl-hero:after,
+#retailComerciales .rc-hero:after,
+#retailOmnibus .ro-hero:after,
+#retailCamiones .rc10-hero:after{
+  display:none!important;
+}
+
+/* --- KPI principal: crema en vez de rosado, en TODAS las hojas --- */
+#resumen .sx-kpi.hot,
+#retailmes .rtm-kpi.primary,
+#retail .rac-kpi.hero,
+#ligeros .lv2-kpi.primary,
+#pesados .vp3-kpi.primary,
+#menores .vm22-kpi.primary,
+#remolques .r4-kpi.primary,
+#concesionarios .dc11-kpi.primary,
+#retailLigeros .rl-kpi.primary,
+#retailComerciales .rc-kpi.primary,
+#retailOmnibus .ro-kpi.primary,
+#retailCamiones .rc10-kpi.primary{
+  background:linear-gradient(135deg,var(--v85-cream) 0%,var(--v85-cream-2) 100%)!important;
+  color:var(--v85-cream-text)!important;
+  border:1px solid var(--v85-cream-border)!important;
+  border-top:3px solid #D5A73E!important;
+  box-shadow:0 8px 20px rgba(137,104,31,.08)!important;
+}
+
+#resumen .sx-kpi.hot span,
+#resumen .sx-kpi.hot b,
+#resumen .sx-kpi.hot small,
+#retailmes .rtm-kpi.primary .label,
+#retailmes .rtm-kpi.primary .num,
+#retailmes .rtm-kpi.primary .tiny,
+#retail .rac-kpi.hero span,
+#retail .rac-kpi.hero b,
+#retail .rac-kpi.hero small,
+#ligeros .lv2-kpi.primary span,
+#ligeros .lv2-kpi.primary b,
+#ligeros .lv2-kpi.primary small,
+#pesados .vp3-kpi.primary span,
+#pesados .vp3-kpi.primary b,
+#pesados .vp3-kpi.primary small,
+#menores .vm22-kpi.primary span,
+#menores .vm22-kpi.primary b,
+#menores .vm22-kpi.primary small,
+#remolques .r4-kpi.primary span,
+#remolques .r4-kpi.primary b,
+#remolques .r4-kpi.primary small,
+#concesionarios .dc11-kpi.primary span,
+#concesionarios .dc11-kpi.primary b,
+#concesionarios .dc11-kpi.primary small,
+#retailLigeros .rl-kpi.primary span,
+#retailLigeros .rl-kpi.primary b,
+#retailLigeros .rl-kpi.primary small,
+#retailComerciales .rc-kpi.primary span,
+#retailComerciales .rc-kpi.primary b,
+#retailComerciales .rc-kpi.primary small,
+#retailOmnibus .ro-kpi.primary span,
+#retailOmnibus .ro-kpi.primary b,
+#retailOmnibus .ro-kpi.primary small,
+#retailCamiones .rc10-kpi.primary span,
+#retailCamiones .rc10-kpi.primary b,
+#retailCamiones .rc10-kpi.primary small{
+  color:var(--v85-cream-text)!important;
+}
+
+#resumen .sx-kpi.hot span,
+#resumen .sx-kpi.hot small,
+#retailmes .rtm-kpi.primary .label,
+#retailmes .rtm-kpi.primary .tiny,
+#retail .rac-kpi.hero span,
+#retail .rac-kpi.hero small,
+#ligeros .lv2-kpi.primary span,
+#ligeros .lv2-kpi.primary small,
+#pesados .vp3-kpi.primary span,
+#pesados .vp3-kpi.primary small,
+#concesionarios .dc11-kpi.primary span,
+#concesionarios .dc11-kpi.primary small,
+#retailComerciales .rc-kpi.primary span,
+#retailComerciales .rc-kpi.primary small,
+#retailOmnibus .ro-kpi.primary span,
+#retailOmnibus .ro-kpi.primary small,
+#retailCamiones .rc10-kpi.primary span,
+#retailCamiones .rc10-kpi.primary small{
+  color:var(--v85-cream-muted)!important;
+}
+
+/* Eliminar círculos/efectos decorativos dentro del KPI principal */
+#retailmes .rtm-kpi.primary:after,
+#retail .rac-kpi.hero:after{
+  display:none!important;
+}
+
+/* Responsive sin cambiar la identidad visual */
+@media(max-width:820px){
+  #resumen .sx-hero,
+  #retailmes .rtm-hero,
+  #retail .rac-hero,
+  #ligeros .lv2-hero,
+  #pesados .vp3-hero,
+  #menores .vm2-hero,
+  #remolques .r4-hero,
+  #concesionarios .dc11-hero,
+  #retailLigeros .rl-hero,
+  #retailComerciales .rc-hero,
+  #retailOmnibus .ro-hero,
+  #retailCamiones .rc10-hero,
+  #carga .hero{
+    min-height:88px!important;
+    padding:13px 14px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -6945,7 +7231,7 @@ $('dc11File').onchange=async e=>{const f=e.target.files[0];if(!f)return;$('dc11S
     const RAC6=window.__RAC_STATE;
     if(RAC6?.rows?.length){
       retailYtd=RAC6.rows.filter(r=>r.family!=='LIGEROS').reduce((s,r)=>s+(Number(r.cur)||0),0);
-      retailFamilies=Object.values(RAC6.families||{}).filter(f=>f.key!=='LIGEROS').map(f=>({label:f.label||f.key,value:Number(f.cur)||0})).filter(x=>x.value>0)
+      retailFamilies=Object.values(RAC6.families||{}).filter(f=>f.key!=='LIGEROS').map(f=>({label:f.key==='COMERCIALES'?'Comerciales C1–C4':f.key==='OMNIBUS'?'Ómnibus O1–O2':f.key==='CAMION'?'Camiones / Remolcadores P2–P5':(f.label||f.key),value:Number(f.cur)||0})).filter(x=>x.value>0)
     }
     $('sxRetailYtd').textContent=retailYtd?fmt(retailYtd):'—';$('sxRetailYtdSub').textContent=retailYtd?(RAC6?.period||'08.6 Retail acumulado'):'08.6 Retail acumulado';$('sxRetailChip').textContent=retailFamilies.length?'100% universo negocio':'08.6 Retail acumulado';donut('sxRetailDonut','sxRetailDonutTotal','sxRetailLegend',retailFamilies);
 
@@ -7426,8 +7712,10 @@ select option.tsf-seg-option{font-size:inherit}
   }
 
   function showTip(e,z,tot){
+    const desc=z.key==='COMERCIALES'?'Microbuses, minibuses, pick-ups y panel/furgón':z.key==='OMNIBUS'?'Ómnibus O1 y O2':z.key==='CAMION'?'Camiones P2–P4 y remolcadores P5':'';
     tip.innerHTML=`<b>${z.label}</b> · ${fmt(z.value)}
-      <small>${pct(z.value,tot)} del total · clic para filtrar</small>`;
+      ${desc?`<small>${desc}</small>`:''}
+      <small>${pct(z.value,tot)} del universo negocio · clic para filtrar</small>`;
     tip.style.left=(e.clientX+12)+'px';
     tip.style.top=(e.clientY+12)+'px';
     tip.style.display='block';
