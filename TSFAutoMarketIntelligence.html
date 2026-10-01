@@ -9528,5 +9528,280 @@ body{background:var(--bi-bg)!important;color:var(--bi-text)!important}
 })();
 </script>
 
+
+
+<!-- =========================================================
+     V104 FINAL · INTERACCION BI UNIFICADA
+     Retail Acumulado -> Comerciales -> Omnibus -> Camiones -> Departamento/Concesionarios
+     - Tooltip SIEMPRE pegado al cursor
+     - Hover consistente
+     - Click = filtro/cross-filter usando la logica nativa de cada modulo
+     - Seleccion visual consistente
+     ========================================================= -->
+<style id="v104-bi-final-style">
+:root{
+  --v104-pink:#ee0b70;
+  --v104-gold:#f5ae00;
+  --v104-dark:#171a20;
+  --v104-line:#e7eaf0;
+}
+
+/* ===== TOOLTIP: SIEMPRE JUNTO AL PUNTERO ===== */
+#retail .rac-tooltip,
+#retailComerciales .rc96-tooltip,
+#retailOmnibus .ro-tooltip,
+#retailCamiones .rc10-tip,
+#concesionarios .dc11-tooltip,
+#retailLigeros .rl-tooltip,
+#sxBiTip,
+#tsfV104Tip{
+  position:fixed!important;
+  inset:auto!important;
+  z-index:2147483640!important;
+  pointer-events:none!important;
+  transform:none!important;
+  margin:0!important;
+  min-width:120px;
+  max-width:275px!important;
+  padding:10px 12px!important;
+  border:0!important;
+  border-radius:11px!important;
+  background:rgba(23,26,32,.985)!important;
+  color:#fff!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.26)!important;
+  font-family:Inter,"Segoe UI",Arial,sans-serif!important;
+  font-size:10px!important;
+  line-height:1.45!important;
+  text-align:left!important;
+  white-space:normal!important;
+  transition:opacity .06s ease!important;
+  will-change:left,top;
+}
+#retail .rac-tooltip b,
+#retailComerciales .rc96-tooltip b,
+#retailOmnibus .ro-tooltip b,
+#retailCamiones .rc10-tip b,
+#concesionarios .dc11-tooltip b,
+#retailLigeros .rl-tooltip b,
+#sxBiTip b,#tsfV104Tip b{color:#fff!important;font-weight:850!important}
+#retail .rac-tooltip small,
+#retailComerciales .rc96-tooltip small,
+#retailOmnibus .ro-tooltip small,
+#retailCamiones .rc10-tip small,
+#concesionarios .dc11-tooltip small,
+#retailLigeros .rl-tooltip small,
+#sxBiTip small,#tsfV104Tip small{display:block!important;color:#d7dbe2!important;font-size:8.5px!important;margin-top:4px!important}
+
+/* ===== ELEMENTOS INTERACTIVOS ===== */
+#retail .rac-leg,#retail .rac-rank-row,#retail .rac-family,#retail .rac-seg,#retail .rac-move,#retail canvas,
+#retailComerciales .rc96-rank-row,#retailComerciales .rc96-bar-row,#retailComerciales #rcSegmentCards button,#retailComerciales canvas,
+#retailOmnibus .ro-row,#retailOmnibus .ro-barrow,#retailOmnibus .ro-donut-legend button,#retailOmnibus .ro-legend button,#retailOmnibus canvas,
+#retailCamiones .rc10-row,#retailCamiones .rc10-barrow,#retailCamiones .rc10-donut-legend button,#retailCamiones .rc10-legend button,#retailCamiones canvas,
+#concesionarios .dc11-rank-row,#concesionarios .dc11-bar,#concesionarios .dc11-donut-legend button,#concesionarios .dc11-heat-tile,#concesionarios canvas{
+  cursor:pointer!important;
+}
+
+/* Hover suave tipo BI */
+#retail .rac-leg,#retail .rac-rank-row,#retail .rac-family,#retail .rac-seg,#retail .rac-move,
+#retailComerciales .rc96-rank-row,#retailComerciales .rc96-bar-row,#retailComerciales #rcSegmentCards button,
+#retailOmnibus .ro-row,#retailOmnibus .ro-barrow,#retailOmnibus .ro-donut-legend button,
+#retailCamiones .rc10-row,#retailCamiones .rc10-barrow,#retailCamiones .rc10-donut-legend button,
+#concesionarios .dc11-rank-row,#concesionarios .dc11-bar,#concesionarios .dc11-donut-legend button,#concesionarios .dc11-heat-tile{
+  transition:background .14s ease,border-color .14s ease,box-shadow .14s ease,transform .14s ease,opacity .14s ease!important;
+}
+#retail .rac-leg:hover,#retail .rac-rank-row:hover,#retail .rac-family:hover,#retail .rac-seg:hover,#retail .rac-move:hover,
+#retailComerciales .rc96-rank-row:hover,#retailComerciales .rc96-bar-row:hover,#retailComerciales #rcSegmentCards button:hover,
+#retailOmnibus .ro-row:hover,#retailOmnibus .ro-barrow:hover,#retailOmnibus .ro-donut-legend button:hover,
+#retailCamiones .rc10-row:hover,#retailCamiones .rc10-barrow:hover,#retailCamiones .rc10-donut-legend button:hover,
+#concesionarios .dc11-rank-row:hover,#concesionarios .dc11-bar:hover,#concesionarios .dc11-donut-legend button:hover,#concesionarios .dc11-heat-tile:hover{
+  background:#fff2f7!important;
+  border-color:#ffc6dc!important;
+  box-shadow:0 6px 16px rgba(238,11,112,.08)!important;
+  transform:translateY(-1px)!important;
+}
+
+/* Seleccion visual despues del clic */
+.v104-bi-selected{
+  background:#fff0f6!important;
+  border-color:#ee0b70!important;
+  box-shadow:0 0 0 2px rgba(238,11,112,.10),0 8px 18px rgba(238,11,112,.10)!important;
+  opacity:1!important;
+}
+.v104-bi-muted{opacity:.48!important}
+
+/* Guia vertical mensual */
+.v104-bi-guide{
+  position:absolute;
+  top:12px;
+  bottom:28px;
+  width:1px;
+  border-left:1.5px dashed rgba(238,11,112,.48);
+  pointer-events:none;
+  z-index:35;
+  opacity:0;
+  transition:opacity .05s ease;
+}
+.v104-bi-guide.show{opacity:1}
+
+#retailComerciales .rc96-chart,
+#retailOmnibus .ro-trend-wrap,
+#retailCamiones .rc10-trend-wrap,
+#concesionarios .dc11-canvas-wrap{position:relative!important;overflow:visible!important}
+</style>
+
+<script id="v104-bi-final-js">
+(function(){
+  const PAGE_IDS=['retail','retailComerciales','retailOmnibus','retailCamiones','concesionarios'];
+  const TIP_IDS=['racTooltip','sxBiTip','rcTooltip','roTooltip','rc10Tip','dc11TrendTip','dc11DonutTip','rlTip'];
+  let pointerX=0,pointerY=0,raf=0;
+
+  function activePage(){
+    return PAGE_IDS.map(id=>document.getElementById(id)).find(p=>p&&p.classList.contains('active'))||null;
+  }
+
+  function isVisible(el){
+    if(!el)return false;
+    const cs=getComputedStyle(el);
+    return cs.display!=='none'&&cs.visibility!=='hidden'&&parseFloat(cs.opacity||'1')>0;
+  }
+
+  /* Posicion final: 14 px a la derecha y 14 px debajo del puntero.
+     Solo cambia de lado si no entra en pantalla. */
+  function placeTip(el,cx,cy){
+    if(!el||!isVisible(el))return;
+    const gap=14,edge=10;
+    el.style.position='fixed';
+    el.style.transform='none';
+    const r=el.getBoundingClientRect();
+    let x=cx+gap;
+    let y=cy+gap;
+    if(x+r.width>innerWidth-edge)x=cx-r.width-gap;
+    if(y+r.height>innerHeight-edge)y=cy-r.height-gap;
+    x=Math.max(edge,Math.min(x,innerWidth-r.width-edge));
+    y=Math.max(edge,Math.min(y,innerHeight-r.height-edge));
+    el.style.left=Math.round(x)+'px';
+    el.style.top=Math.round(y)+'px';
+  }
+
+  window.__tsfMoveTip=placeTip;
+
+  function visibleTips(){
+    const p=activePage();
+    const out=[];
+    TIP_IDS.forEach(id=>{const t=document.getElementById(id);if(t&&isVisible(t))out.push(t)});
+    if(p){
+      p.querySelectorAll('[class*="tooltip"],[id*="Tooltip"],[id$="Tip"]').forEach(t=>{if(isVisible(t)&&!out.includes(t))out.push(t)});
+    }
+    return out;
+  }
+
+  function queuePosition(e){
+    pointerX=e.clientX;pointerY=e.clientY;
+    if(raf)return;
+    raf=requestAnimationFrame(()=>{
+      raf=0;
+      visibleTips().forEach(t=>placeTip(t,pointerX,pointerY));
+    });
+  }
+
+  /* IMPORTANTE: se escucha en bubble para ejecutarse DESPUES del tooltip nativo.
+     Asi ningun modulo puede volver a mandarlo arriba. */
+  document.addEventListener('pointermove',queuePosition,false);
+  document.addEventListener('mousemove',queuePosition,false);
+  document.addEventListener('pointerdown',queuePosition,false);
+
+  function hideTips(){
+    TIP_IDS.forEach(id=>{const t=document.getElementById(id);if(t)t.style.display='none'});
+    const p=activePage();if(p)p.querySelectorAll('[class*="tooltip"],[id*="Tooltip"],[id$="Tip"]').forEach(t=>t.style.display='none');
+  }
+  addEventListener('scroll',hideTips,true);
+  addEventListener('blur',hideTips);
+
+  /* ===== GUIAS VERTICALES ===== */
+  const trendDefs=[
+    ['rcTrend','.rc96-chart'],
+    ['roTrend','.ro-trend-wrap'],
+    ['rc10Trend','.rc10-trend-wrap'],
+    ['dc11Trend','.dc11-canvas-wrap']
+  ];
+  function installGuide(id,wrapSel){
+    const c=document.getElementById(id);if(!c||c.dataset.v104Guide==='1')return;
+    const wrap=c.closest(wrapSel)||c.parentElement;if(!wrap)return;
+    c.dataset.v104Guide='1';
+    let g=wrap.querySelector(':scope > .v104-bi-guide');
+    if(!g){g=document.createElement('div');g.className='v104-bi-guide';wrap.appendChild(g)}
+    const move=e=>{
+      const cr=c.getBoundingClientRect(),wr=wrap.getBoundingClientRect();
+      const x=Math.max(0,Math.min(cr.width,e.clientX-cr.left));
+      g.style.left=(cr.left-wr.left+x)+'px';g.classList.add('show');
+    };
+    const leave=()=>g.classList.remove('show');
+    c.addEventListener('pointermove',move);c.addEventListener('mousemove',move);
+    c.addEventListener('pointerleave',leave);c.addEventListener('mouseleave',leave);
+  }
+  function installGuides(){trendDefs.forEach(x=>installGuide(...x))}
+
+  /* ===== ESTADO VISUAL DE FILTROS ===== */
+  function clearVisual(page){
+    page?.querySelectorAll('.v104-bi-selected,.v104-bi-muted').forEach(el=>el.classList.remove('v104-bi-selected','v104-bi-muted'));
+  }
+  function markGroup(clicked,selector){
+    const page=clicked.closest('.page');if(!page)return;
+    const group=clicked.parentElement?.querySelectorAll(selector)||[];
+    group.forEach(el=>{el.classList.toggle('v104-bi-selected',el===clicked);el.classList.toggle('v104-bi-muted',el!==clicked)});
+  }
+
+  /* El filtro real lo ejecutan los handlers nativos ya existentes.
+     Esta capa solo normaliza la respuesta visual para que todas las hojas se sientan igual. */
+  const interactiveSelectors=[
+    '#retail .rac-leg','#retail .rac-rank-row','#retail .rac-family','#retail .rac-seg','#retail .rac-move',
+    '#retailComerciales .rc96-rank-row','#retailComerciales .rc96-bar-row','#retailComerciales #rcSegmentCards button',
+    '#retailOmnibus .ro-row','#retailOmnibus .ro-barrow','#retailOmnibus .ro-donut-legend button',
+    '#retailCamiones .rc10-row','#retailCamiones .rc10-barrow','#retailCamiones .rc10-donut-legend button',
+    '#concesionarios .dc11-rank-row','#concesionarios .dc11-bar','#concesionarios .dc11-donut-legend button','#concesionarios .dc11-heat-tile'
+  ].join(',');
+
+  document.addEventListener('pointerdown',e=>{
+    const el=e.target.closest?.(interactiveSelectors);if(!el)return;
+    const parent=el.parentElement;if(!parent)return;
+    [...parent.children].forEach(ch=>{
+      if(ch===el){ch.classList.add('v104-bi-selected');ch.classList.remove('v104-bi-muted')}
+      else if(ch.matches?.('button,.rac-leg,.rac-rank-row,.rac-family,.rac-seg,.rac-move,.rc96-rank-row,.rc96-bar-row,.ro-row,.ro-barrow,.rc10-row,.rc10-barrow,.dc11-rank-row,.dc11-bar,.dc11-heat-tile')){ch.classList.add('v104-bi-muted');ch.classList.remove('v104-bi-selected')}
+    });
+    requestAnimationFrame(()=>visibleTips().forEach(t=>placeTip(t,pointerX,pointerY)));
+  },true);
+
+  /* Limpiar visual cuando se usa el boton Limpiar o se cambia manualmente un select. */
+  document.addEventListener('click',e=>{
+    if(e.target.closest?.('#racReset,#rcReset,#roReset,#rc10Reset,#dc11Reset')){
+      setTimeout(()=>clearVisual(activePage()),20);
+    }
+  },true);
+  document.addEventListener('change',e=>{
+    if(e.target.matches?.('#retail select,#retailComerciales select,#retailOmnibus select,#retailCamiones select,#concesionarios select')){
+      setTimeout(()=>clearVisual(activePage()),20);
+    }
+  },true);
+
+  /* Re-medicion al cambiar de pestaña: evita canvas deformados. */
+  let resizeTimer=0;
+  function pulse(){
+    clearTimeout(resizeTimer);
+    [40,140,320].forEach(ms=>setTimeout(()=>{
+      installGuides();
+      try{dispatchEvent(new Event('resize'))}catch(_){}
+    },ms));
+  }
+  document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>{hideTips();clearVisual(activePage());pulse()}));
+
+  const mo=new MutationObserver(()=>installGuides());
+  mo.observe(document.body,{childList:true,subtree:true});
+  addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(installGuides,90)});
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pulse,{once:true});else pulse();
+  addEventListener('load',()=>setTimeout(pulse,220));
+})();
+</script>
+
 </body>
 </html>
