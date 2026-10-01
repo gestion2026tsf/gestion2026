@@ -425,264 +425,6 @@ svg text{font-family:Inter,Segoe UI,Arial,sans-serif}
 @media(max-width:700px){.dc-kpis,.dc-dept-grid{grid-template-columns:1fr}.dc-months{grid-template-columns:repeat(2,1fr)}}
 
 
-/* ===== TSF CORPORATE THEME V11 ===== */
-:root{
-  --tsf-primary:#EC0A6D;
-  --tsf-primary-dark:#C90059;
-  --tsf-primary-soft:#FDE7F1;
-  --tsf-secondary:#F2A900;
-  --tsf-secondary-soft:#FFF3CC;
-
-  --tsf-bg:#F5F5F7;
-  --tsf-card:#FFFFFF;
-  --tsf-border:#E7E7EA;
-  --tsf-text:#111111;
-  --tsf-text-soft:#4B4B55;
-  --tsf-muted:#8D8D96;
-  --tsf-sidebar:#111111;
-  --tsf-sidebar-soft:#1B1B1F;
-
-  --tsf-success:#0F9D58;
-  --tsf-warning:#F2A900;
-  --tsf-danger:#D92D20;
-
-  --yellow:#F2A900;
-  --dark:#111111;
-  --ink:#111111;
-  --muted:#8D8D96;
-  --line:#E7E7EA;
-  --panel:#FFFFFF;
-  --bg:#F5F5F7;
-}
-
-/* App shell */
-body{
-  background:
-    radial-gradient(circle at 85% 0%, rgba(236,10,109,.055), transparent 25%),
-    radial-gradient(circle at 15% 100%, rgba(242,169,0,.055), transparent 25%),
-    var(--tsf-bg) !important;
-  color:var(--tsf-text);
-}
-
-/* Sidebar */
-.sidebar{
-  background:
-    linear-gradient(180deg,#0E0E10 0%,#151518 55%,#0B0B0D 100%) !important;
-  box-shadow:10px 0 30px rgba(17,17,17,.08);
-}
-.brand{
-  border-bottom:1px solid rgba(255,255,255,.08);
-}
-.brand strong{
-  color:#fff !important;
-}
-.brand .dot,
-.brand-accent{
-  background:linear-gradient(135deg,var(--tsf-secondary),var(--tsf-primary)) !important;
-}
-.nav button{
-  color:rgba(255,255,255,.78) !important;
-  border:1px solid transparent !important;
-  transition:.2s ease;
-}
-.nav button:hover{
-  background:rgba(236,10,109,.10) !important;
-  color:#fff !important;
-  border-color:rgba(236,10,109,.16) !important;
-  transform:translateX(2px);
-}
-.nav button.active{
-  background:linear-gradient(135deg,var(--tsf-primary),#FF2E86) !important;
-  color:#fff !important;
-  box-shadow:0 8px 22px rgba(236,10,109,.25);
-  border-color:rgba(255,255,255,.08) !important;
-}
-.nav button.active:before{
-  background:var(--tsf-secondary) !important;
-}
-
-/* Header */
-.topbar{
-  background:rgba(255,255,255,.94) !important;
-  border-bottom:1px solid var(--tsf-border) !important;
-  box-shadow:0 6px 18px rgba(17,17,17,.035);
-  backdrop-filter:blur(12px);
-}
-.topbar h1,
-.topbar h2,
-.page h2,
-.page h3{
-  color:var(--tsf-text) !important;
-}
-
-/* Generic cards / panels */
-.card,.box,.panel,.kpi,.metric,.ra-box,.ra-kpi,.vm-box,.vm-kpi{
-  background:var(--tsf-card) !important;
-  border-color:var(--tsf-border) !important;
-  box-shadow:0 8px 26px rgba(17,17,17,.045);
-}
-.card:hover,.kpi:hover,.ra-kpi:hover,.vm-kpi:hover{
-  box-shadow:0 12px 30px rgba(17,17,17,.075);
-}
-
-/* Buttons */
-button,.btn{
-  font-family:inherit;
-}
-.btn-primary,.primary,.upload-btn,#btnUpload,.cta{
-  background:linear-gradient(135deg,var(--tsf-primary),#FF2E86) !important;
-  color:#fff !important;
-  border-color:transparent !important;
-  box-shadow:0 8px 18px rgba(236,10,109,.20);
-}
-.btn-primary:hover,.primary:hover,.upload-btn:hover,#btnUpload:hover,.cta:hover{
-  background:linear-gradient(135deg,var(--tsf-primary-dark),var(--tsf-primary)) !important;
-}
-.btn-secondary,.secondary,.vm-reset{
-  background:linear-gradient(135deg,#F2A900,#FFBE24) !important;
-  color:#111 !important;
-  border-color:transparent !important;
-}
-
-/* Filters */
-select,input[type="text"],input[type="search"],input[type="number"]{
-  border-color:var(--tsf-border) !important;
-  background:#fff !important;
-  color:var(--tsf-text) !important;
-}
-select:focus,input:focus{
-  outline:none;
-  border-color:var(--tsf-primary) !important;
-  box-shadow:0 0 0 3px rgba(236,10,109,.10) !important;
-}
-
-/* Tables */
-table thead th{
-  background:#161618 !important;
-  color:#fff !important;
-}
-table tbody tr:hover{
-  background:#FFF8E6 !important;
-}
-table td,table th{
-  border-color:var(--tsf-border) !important;
-}
-
-/* Pills and states */
-.pill.ok{
-  background:#EAF7EF !important;
-  color:#087A43 !important;
-}
-.pill.warn{
-  background:var(--tsf-secondary-soft) !important;
-  color:#7A5500 !important;
-}
-.pill.bad{
-  background:#FDECEC !important;
-  color:var(--tsf-danger) !important;
-}
-
-/* TSF accent helpers */
-.tsf-accent,.accent{
-  color:var(--tsf-primary) !important;
-}
-.tsf-gold{
-  color:var(--tsf-secondary) !important;
-}
-.progress .bar,.fill{
-  background:linear-gradient(90deg,var(--tsf-primary),var(--tsf-secondary)) !important;
-}
-
-/* Dashboard hero sections */
-.vm-hero,.ra-hero{
-  background:
-    linear-gradient(112deg,#151518 0%,#2A2A30 44%,rgba(236,10,109,.92) 100%) !important;
-  box-shadow:0 12px 32px rgba(17,17,17,.12);
-}
-.vm-hero:before,.ra-hero:before{
-  content:"";
-  position:absolute;
-  width:230px;height:230px;
-  border:32px solid rgba(242,169,0,.72);
-  border-radius:50%;
-  right:-72px;top:-92px;
-  pointer-events:none;
-}
-.vm-hero h3,.ra-hero h3,
-.vm-hero .sub,.ra-hero .sub{
-  color:#fff !important;
-}
-.vm-hero p,.ra-hero p{
-  color:rgba(255,255,255,.84) !important;
-}
-
-/* Brand stripe */
-.page:before{
-  content:"";
-  display:block;
-  width:54px;
-  height:4px;
-  border-radius:999px;
-  background:linear-gradient(90deg,var(--tsf-primary),var(--tsf-secondary));
-  margin-bottom:12px;
-}
-
-/* KPI emphasis */
-.kpi .value,.metric .value,.ra-kpi .num,.vm-kpi .num{
-  color:var(--tsf-text) !important;
-}
-.kpi.primary-kpi,.ra-kpi:first-child,.vm-kpi:first-child{
-  border-top:4px solid var(--tsf-primary) !important;
-}
-.ra-kpi:nth-child(3),.vm-kpi:nth-child(2){
-  border-top:4px solid var(--tsf-secondary) !important;
-}
-
-/* Charts / rank bars */
-.ra-rank-row .fill,
-.vm-rank-row .fill,
-.vm-zone-row .fill,
-.vm-stat-bars .fill{
-  background:linear-gradient(90deg,var(--tsf-primary),var(--tsf-secondary)) !important;
-}
-.ra-donut{
-  background:conic-gradient(
-    var(--tsf-primary) 0 71.56%,
-    var(--tsf-secondary) 71.56% 94.02%,
-    #303038 94.02% 99.59%,
-    #D8D8DE 99.59% 100%
-  ) !important;
-}
-.vm-donut{
-  background:conic-gradient(var(--tsf-primary) 0 71.8%,var(--tsf-secondary) 71.8% 100%) !important;
-}
-.vm-fuel-pie{
-  background:conic-gradient(var(--tsf-primary) 0 86.8%,#D8D8DE 86.8% 96.2%,var(--tsf-secondary) 96.2% 99.3%,#111 99.3% 100%) !important;
-}
-
-/* Notes */
-.note{
-  background:linear-gradient(135deg,#FFF9E8,#FFF2F8) !important;
-  border-left:4px solid var(--tsf-secondary) !important;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar{width:10px;height:10px}
-::-webkit-scrollbar-track{background:#F1F1F3}
-::-webkit-scrollbar-thumb{
-  background:linear-gradient(var(--tsf-primary),var(--tsf-secondary));
-  border-radius:999px;
-  border:2px solid #F1F1F3;
-}
-
-/* Responsive polish */
-@media(max-width:900px){
-  .sidebar{
-    box-shadow:none;
-  }
-}
-
-
 /* ==========================================================
    TSF AUTOMARKET INTELLIGENCE - V12 PREMIUM REDESIGN
    ========================================================== */
@@ -1190,188 +932,6 @@ table tbody tr:hover{
   .main{
     margin-left:0 !important;
     width:100% !important;
-  }
-}
-
-
-/* ==========================================================
-   FIX V14 - LAYOUT ESTABLE + SOLO LOGO FIJO
-   ========================================================== */
-
-/* Restaurar layout base estable */
-.app{
-  display:grid !important;
-  grid-template-columns:224px minmax(0,1fr) !important;
-  min-height:100vh !important;
-  width:100% !important;
-}
-
-/* Sidebar fijo completo, pero solo el brand queda sticky dentro */
-.sidebar{
-  position:fixed !important;
-  top:0 !important;
-  left:0 !important;
-  width:224px !important;
-  height:100vh !important;
-  overflow-y:auto !important;
-  overflow-x:hidden !important;
-  z-index:1000 !important;
-  box-sizing:border-box !important;
-}
-
-/* SOLO logo/cabecera queda pegado arriba al hacer scroll dentro del menú */
-.brand{
-  position:sticky !important;
-  top:0 !important;
-  z-index:1200 !important;
-  background:
-    radial-gradient(circle at 0 0, rgba(238,11,112,.13), transparent 34%),
-    linear-gradient(180deg,#101116 0%,#121319 100%) !important;
-  padding:10px 8px 14px !important;
-  margin:0 !important;
-  border-bottom:1px solid rgba(255,255,255,.08) !important;
-  box-shadow:0 10px 20px rgba(8,9,12,.16) !important;
-}
-
-/* Main ocupa TODO el resto */
-.main{
-  grid-column:2 !important;
-  margin-left:224px !important;
-  width:calc(100vw - 224px) !important;
-  min-width:0 !important;
-  max-width:none !important;
-  box-sizing:border-box !important;
-  overflow-x:hidden !important;
-}
-
-/* Header superior correcto */
-.topbar{
-  position:sticky !important;
-  top:0 !important;
-  z-index:900 !important;
-  width:100% !important;
-  box-sizing:border-box !important;
-}
-
-/* Contenido nunca debe quedar angosto */
-.content{
-  width:100% !important;
-  max-width:none !important;
-  min-width:0 !important;
-  box-sizing:border-box !important;
-  padding:16px 18px 28px !important;
-}
-
-/* Todas las páginas deben ocupar el ancho disponible */
-.page{
-  width:100% !important;
-  max-width:none !important;
-  min-width:0 !important;
-  box-sizing:border-box !important;
-}
-.page.active{
-  display:block !important;
-  width:100% !important;
-}
-
-/* Evitar que grids hereden anchos absurdos */
-.grid,
-.vm-kpis,.vl-kpis,.vp-kpis,.rm-kpis,.rt-kpis,.ra-kpis,.ob-kpis,.cr-kpis,.dc-kpis,
-.vm-grid-top,.vl-grid-top,.vp-grid-top,.rm-grid-top,.rt-grid-top,.ra-grid-1,.ob-grid-top,.cr-grid-top,.dc-grid-top,
-.vm-grid-bottom,.vl-grid-bottom,.vp-grid-bottom,.rm-grid-bottom,.rt-grid-bottom,.ra-grid-2,.ob-grid-bottom,.cr-grid-bottom,.dc-grid-bottom,
-.filters,.vm-filters,.vl-filters,.vp-filters,.rm-filters,.rt-filters,.ob-filters,.cr-filters,.dc-filters{
-  width:100% !important;
-  max-width:100% !important;
-  min-width:0 !important;
-  box-sizing:border-box !important;
-}
-
-/* Cards jamás fuerzan la página */
-.card,.kpi,
-.vm-box,.vl-box,.vp-box,.rm-box,.rt-box,.ra-box,.ob-box,.cr-box,.dc-box,
-.vm-kpi,.vl-kpi,.vp-kpi,.rm-kpi,.rt-kpi,.ra-kpi,.ob-kpi,.cr-kpi,.dc-kpi{
-  min-width:0 !important;
-  max-width:100% !important;
-  box-sizing:border-box !important;
-}
-
-/* Acciones del header en línea, no columna */
-.topbar{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:space-between !important;
-  gap:16px !important;
-}
-.topbar-left{
-  min-width:0 !important;
-}
-.actions{
-  display:flex !important;
-  align-items:center !important;
-  flex-wrap:nowrap !important;
-  width:auto !important;
-  max-width:none !important;
-  gap:8px !important;
-}
-.actions .btn{
-  width:auto !important;
-  min-width:auto !important;
-  white-space:nowrap !important;
-}
-
-/* Hero normal, nunca comprimido */
-.vm-hero,.vl-hero,.vp-hero,.rm-hero,.rt-hero,.ra-hero,.ob-hero,.cr-hero,.dc-hero{
-  width:100% !important;
-  max-width:none !important;
-  box-sizing:border-box !important;
-}
-
-/* Corrección escritorio medio */
-@media (max-width:1250px) and (min-width:901px){
-  .app{
-    grid-template-columns:205px minmax(0,1fr) !important;
-  }
-  .sidebar{
-    width:205px !important;
-  }
-  .main{
-    margin-left:205px !important;
-    width:calc(100vw - 205px) !important;
-  }
-}
-
-/* Tablet / móvil: vuelve a flujo normal */
-@media(max-width:900px){
-  .app{
-    display:block !important;
-    width:100% !important;
-  }
-  .sidebar{
-    position:relative !important;
-    width:100% !important;
-    height:auto !important;
-    overflow:visible !important;
-  }
-  .brand{
-    position:relative !important;
-    top:auto !important;
-  }
-  .main{
-    margin-left:0 !important;
-    width:100% !important;
-    grid-column:auto !important;
-  }
-  .topbar{
-    position:relative !important;
-    flex-direction:column !important;
-    align-items:flex-start !important;
-  }
-  .actions{
-    width:100% !important;
-    flex-wrap:wrap !important;
-  }
-  .content{
-    padding:12px !important;
   }
 }
 
@@ -4736,10 +4296,10 @@ canvas{transition:filter .14s ease,opacity .14s ease}
   <div class="nav-title">Dashboard</div>
   <div class="nav" id="nav">
     <button class="active" data-page="resumen"><span class="nav-ico">⌂</span>Resumen Ejecutivo</button>
-    
+
     <button data-page="ligeros"><span class="nav-ico">◆</span>Pick-up C3</button>
     <button data-page="pesados"><span class="nav-ico">▮</span>Mercado Vehículos Pesados</button>
-    
+
     <button data-page="retailmes"><span class="nav-ico">◫</span>Retail del Mes</button>
     <button data-page="retail"><span class="nav-ico">▥</span>Retail Acumulado</button>
 <button data-page="retailComerciales"><span class="nav-ico">▱</span>Retail Comerciales</button>
@@ -5074,7 +4634,7 @@ canvas{transition:filter .14s ease,opacity .14s ease}
       <div class="lv2-filter-actions"><button class="lv2-more" id="lv2More">Más filtros</button><button class="lv2-reset" id="lv2Reset">↻ Limpiar</button></div>
     </div>
     <div class="lv2-advanced">
-      
+
       <div class="lv2-filter"><label>Combustible</label><select id="lv2Fuel"><option value="ALL">Todos</option></select></div>
       <div class="lv2-filter"><label>Transmisión</label><select id="lv2Trans"><option value="ALL">Todas</option></select></div>
       <div class="lv2-filter"><label>Tracción</label><select id="lv2Drive"><option value="ALL">Todas</option></select></div>
@@ -6300,7 +5860,6 @@ function lv2Init(){Object.values(lv2Els).forEach(e=>e?.addEventListener('change'
 lv2Init();
 
 
-
 /* Enfoque de negocio aprobado: excluir L1/L2/L3 de visuales ejecutivos.
    Universo visible: C1-C4, O1-O2, P2-P5. La data L permanece cargada solo para control/reconciliación. */
 window.TSF_BUSINESS_SEGMENTS=['C1','C2','C3','C4','O1','O2','P2','P3','P4','P5'];
@@ -6465,7 +6024,6 @@ rtmInit();
     }
   });
 })();
-
 
 
 // ===== V32 - REFUERZO DE NAVEGACION Y BOTONES =====
@@ -7645,10 +7203,6 @@ window.__LOAD_08_5 = (wb,name) => {
 </style>
 
 
-
-
-
-
 <script id="v62-power-automate-loader">
 /* V13 · Cargador Power Automate
    - La URL firmada del flujo YA NO está en el HTML: cada usuario la registra una vez en "⚙ Conexión"
@@ -7911,8 +7465,6 @@ window.__LOAD_08_5 = (wb,name) => {
 </style>
 
 
-
-
 <style id="v64-segment-label-style">
 .tsf-seg-label{line-height:1.15!important;white-space:normal!important}
 select option.tsf-seg-option{font-size:inherit}
@@ -7963,7 +7515,6 @@ select option.tsf-seg-option{font-size:inherit}
   mo.observe(document.documentElement,{childList:true,subtree:true});
 })();
 </script>
-
 
 
 <script id="v69-summary-bi-interactions">
@@ -8219,7 +7770,6 @@ select option.tsf-seg-option{font-size:inherit}
   },1500);
 })();
 </script>
-
 
 
 <style id="v69-summary-trend-tooltip-style">
@@ -8628,10 +8178,6 @@ select option.tsf-seg-option{font-size:inherit}
 </script>
 
 
-
-
-
-
 <style id="v88-c3-kpi-fix">
 #ligeros .lv2-business-kpis .lv2-kpi:nth-child(4),
 #ligeros .lv2-business-kpis .lv2-kpi:nth-child(5){display:none!important}
@@ -9013,26 +8559,6 @@ body{background:var(--bi-bg)!important;color:var(--bi-text)!important}
   window.addEventListener('load',()=>{setTimeout(()=>{pulseResize();renderHeat();ensureRetailMonthLegend()},250)});
 })();
 </script>
-<!-- =========================================================
-     V103 · NORMALIZACIÓN BI GLOBAL
-     Desde Negocio acumulado hasta Departamento y Concesionarios
-     - mismo lenguaje visual
-     - tooltips pegados al cursor
-     - guía vertical en series mensuales
-     - hover/click coherente
-     - donuts/leyendas legibles
-     - re-render al cambiar de pestaña o tamaño
-     ========================================================= -->
-<!-- =========================================================
-     V104 FINAL · INTERACCION BI UNIFICADA
-     Retail Acumulado -> Comerciales -> Omnibus -> Camiones -> Departamento/Concesionarios
-     - Tooltip SIEMPRE pegado al cursor
-     - Hover consistente
-     - Click = filtro/cross-filter usando la logica nativa de cada modulo
-     - Seleccion visual consistente
-     ========================================================= -->
-
-
 <!-- =========================================================
      V105 · INTERACCION BI LIMPIA Y ESTABLE
      Sustituye V102/V103/V104. Mantiene los handlers nativos de
