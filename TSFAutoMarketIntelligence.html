@@ -8713,5 +8713,549 @@ body{background:var(--bi-bg)!important;color:var(--bi-text)!important}
 })();
 </script>
 
+
+<!-- =========================================================
+     V106 · LIMPIEZA VISUAL FINAL (RETIAL 8–11)
+     Rehace el look & feel de las ultimas hojas y corrige hover
+     y clic de lineas para que se comporten como las hojas buenas.
+     ========================================================= -->
+<style id="v106-retail-clean-ui">
+:root{
+  --v106-bg:#f5f7fb;
+  --v106-card:#ffffff;
+  --v106-ink:#161b22;
+  --v106-muted:#6f7785;
+  --v106-line:#e7ebf2;
+  --v106-pink:#ee0b70;
+  --v106-gold:#f5a900;
+  --v106-soft:#fbfcfe;
+  --v106-shadow:0 14px 34px rgba(18,38,63,.08);
+}
+
+#retailComerciales,#retailOmnibus,#retailCamiones,#concesionarios{background:var(--v106-bg)!important}
+#retailComerciales .rc96-hero,#retailOmnibus .ro-hero,#retailCamiones .rc10-hero,#concesionarios .dc11-hero{
+  background:linear-gradient(135deg,#0d1322 0%,#111a2f 52%,#1d1430 100%)!important;
+  color:#fff!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:22px!important;
+  padding:20px 22px!important;box-shadow:0 18px 40px rgba(12,17,29,.20)!important;margin-bottom:14px!important;
+}
+#retailComerciales .rc96-hero h3,#retailOmnibus .ro-hero h3,#retailCamiones .rc10-hero h3,#concesionarios .dc11-hero h3{
+  font-size:28px!important;line-height:1.1!important;margin:6px 0 8px!important;letter-spacing:-.02em!important;
+}
+#retailComerciales .rc96-hero p,#retailOmnibus .ro-hero p,#retailCamiones .rc10-hero p,#concesionarios .dc11-hero p{
+  color:rgba(255,255,255,.82)!important;max-width:980px!important;font-size:13px!important;line-height:1.5!important;
+}
+#retailComerciales .rc96-eyebrow,#retailOmnibus .ro-eyebrow,#retailCamiones .rc10-eyebrow,#concesionarios .dc11-eyebrow{
+  color:#f6b8d5!important;font-size:10px!important;letter-spacing:.16em!important;font-weight:800!important;
+}
+#retailComerciales .rc96-period,#retailOmnibus .ro-period,#retailCamiones .rc10-period,#concesionarios .dc11-period{
+  background:rgba(255,255,255,.06)!important;border:1px solid rgba(255,255,255,.12)!important;border-radius:18px!important;
+  padding:14px 16px!important;min-width:170px!important;backdrop-filter:blur(10px)!important;
+}
+#retailComerciales .rc96-period span,#retailOmnibus .ro-period span,#retailCamiones .rc10-period span,#concesionarios .dc11-period span{
+  color:rgba(255,255,255,.64)!important;font-size:10px!important;letter-spacing:.14em!important;
+}
+#retailComerciales .rc96-period b,#retailOmnibus .ro-period b,#retailCamiones .rc10-period b,#concesionarios .dc11-period b{
+  color:#fff!important;font-size:20px!important;margin-top:4px!important;display:block!important;
+}
+
+#retailComerciales .rc96-source,#retailOmnibus .ro-source,#retailCamiones .rc10-source,#concesionarios .dc11-source{
+  background:var(--v106-card)!important;border:1px solid var(--v106-line)!important;border-radius:18px!important;
+  box-shadow:var(--v106-shadow)!important;padding:14px 16px!important;margin-bottom:14px!important;
+}
+#retailComerciales .rc96-source b,#retailOmnibus .ro-source b,#retailCamiones .rc10-source b,#concesionarios .dc11-source b{
+  color:var(--v106-ink)!important;font-size:14px!important;
+}
+#retailComerciales .rc96-source span,#retailOmnibus .ro-source span,#retailCamiones .rc10-source span,#concesionarios .dc11-source span{
+  color:var(--v106-muted)!important;font-size:11px!important;line-height:1.45!important;
+}
+
+#retailComerciales .rc96-kpis,#retailOmnibus .ro-kpis,#retailCamiones .rc10-kpis,#concesionarios .dc11-kpis{
+  gap:10px!important;margin-bottom:14px!important;
+}
+#retailComerciales .rc96-kpi,#retailOmnibus .ro-kpi,#retailCamiones .rc10-kpi,#concesionarios .dc11-kpi{
+  background:var(--v106-card)!important;border:1px solid var(--v106-line)!important;border-radius:18px!important;
+  box-shadow:var(--v106-shadow)!important;padding:13px 14px!important;min-height:96px!important;
+}
+#retailComerciales .rc96-kpi.primary,#retailOmnibus .ro-kpi.primary,#retailCamiones .rc10-kpi.primary,#concesionarios .dc11-kpi.primary{
+  background:linear-gradient(135deg,#fff8dc 0%,#fff 32%,#fff4f9 100%)!important;border-color:#efdcc3!important;
+}
+#retailComerciales .rc96-kpi span,#retailOmnibus .ro-kpi span,#retailCamiones .rc10-kpi span,#concesionarios .dc11-kpi span{
+  color:#768092!important;font-size:10px!important;font-weight:800!important;letter-spacing:.02em!important;
+}
+#retailComerciales .rc96-kpi b,#retailOmnibus .ro-kpi b,#retailCamiones .rc10-kpi b,#concesionarios .dc11-kpi b{
+  color:var(--v106-ink)!important;font-size:24px!important;line-height:1.05!important;margin:7px 0 6px!important;display:block!important;
+}
+#retailComerciales .rc96-kpi small,#retailOmnibus .ro-kpi small,#retailCamiones .rc10-kpi small,#concesionarios .dc11-kpi small{
+  color:#8b93a0!important;font-size:10px!important;line-height:1.35!important;
+}
+
+#retailComerciales .rc96-filterbar,#retailComerciales .rc96-advanced,
+#retailOmnibus .ro-filterbar,#retailOmnibus .ro-advanced,
+#retailCamiones .rc10-filterbar,#retailCamiones .rc10-advanced,
+#concesionarios .dc11-filterbar,#concesionarios .dc11-morepanel{
+  background:var(--v106-card)!important;border:1px solid var(--v106-line)!important;border-radius:18px!important;
+  box-shadow:var(--v106-shadow)!important;padding:12px!important;gap:10px!important;margin-bottom:12px!important;
+}
+#retailComerciales .rc96-filter label,#retailOmnibus .ro-filter label,#retailCamiones .rc10-filter label,#concesionarios .dc11-filter label{
+  display:block!important;color:#6f7785!important;font-size:10px!important;font-weight:800!important;margin-bottom:5px!important;
+}
+#retailComerciales .rc96-filter select,#retailOmnibus .ro-filter select,#retailCamiones .rc10-filter select,#concesionarios .dc11-filter select{
+  min-height:40px!important;border-radius:12px!important;border:1px solid #dde3ec!important;background:#fbfcff!important;
+  color:#1d2430!important;padding:8px 11px!important;box-shadow:none!important;
+}
+#retailComerciales .rc96-reset,#retailComerciales .rc96-more,
+#retailOmnibus .ro-reset,#retailOmnibus .ro-more,
+#retailCamiones .rc10-reset,#retailCamiones .rc10-more,
+#concesionarios .dc11-reset,#concesionarios .dc11-more{
+  border-radius:12px!important;border:1px solid #dae0ea!important;background:#f9fbff!important;height:40px!important;
+  color:#364152!important;font-weight:700!important;padding:0 14px!important;
+}
+#retailComerciales .rc96-filter-note,#retailOmnibus .ro-filter-note,#retailCamiones .rc10-note,#concesionarios .dc11-filter-note{
+  background:#ffffff!important;border:1px solid var(--v106-line)!important;border-radius:14px!important;padding:9px 12px!important;
+  color:#707887!important;font-size:11px!important;margin-bottom:12px!important;
+}
+
+#retailComerciales .rc96-card,#retailOmnibus .ro-card,#retailCamiones .rc10-card,#concesionarios .dc11-card{
+  background:var(--v106-card)!important;border:1px solid var(--v106-line)!important;border-radius:20px!important;
+  box-shadow:var(--v106-shadow)!important;padding:14px!important;overflow:visible!important;
+}
+#retailComerciales .rc96-head,#retailOmnibus .ro-head,#retailCamiones .rc10-head,#concesionarios .dc11-head,
+#retailComerciales .rc96-card-head,#retailOmnibus .ro-card-head,#retailCamiones .rc10-card-head,#concesionarios .dc11-card-head{
+  margin-bottom:10px!important;gap:10px!important;align-items:flex-start!important;
+}
+#retailComerciales .rc96-card h4,#retailOmnibus .ro-card h4,#retailCamiones .rc10-card h4,#concesionarios .dc11-card h4{
+  color:#111827!important;font-size:15px!important;line-height:1.2!important;margin:0 0 3px!important;
+}
+#retailComerciales .rc96-card p,#retailOmnibus .ro-card p,#retailCamiones .rc10-card p,#concesionarios .dc11-card p{
+  color:#7a8391!important;font-size:10.5px!important;line-height:1.45!important;margin:0!important;
+}
+#retailComerciales .rc96-chip,#retailOmnibus .ro-chip,#retailCamiones .rc10-chip,#concesionarios .dc11-chip{
+  background:#fff7e8!important;border:1px solid #f3dfad!important;color:#8a6111!important;border-radius:999px!important;
+  padding:6px 10px!important;font-size:10px!important;font-weight:800!important;white-space:nowrap!important;
+}
+
+#retailComerciales .rc96-grid-a,#retailOmnibus .ro-grid-a,#retailCamiones .rc10-grid-a,#concesionarios .dc11-grid-a{
+  display:grid!important;grid-template-columns:minmax(0,1.45fr) minmax(340px,.95fr)!important;gap:12px!important;margin-bottom:12px!important;
+}
+#retailComerciales .rc96-grid-b,#retailOmnibus .ro-grid-b,#retailCamiones .rc10-grid-b,#concesionarios .dc11-grid-b,
+#retailComerciales .rc96-grid-c,#retailOmnibus .ro-grid-c,#retailCamiones .rc10-grid-c,#concesionarios .dc11-grid-c{
+  gap:12px!important;margin-bottom:12px!important;
+}
+#concesionarios .dc11-grid-c{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+
+#retailComerciales .rc96-chart,#retailOmnibus .ro-trend-wrap,#retailCamiones .rc10-trend-wrap,#concesionarios .dc11-canvas-wrap{
+  position:relative!important;height:280px!important;min-height:280px!important;max-height:280px!important;border-radius:16px!important;
+  background:linear-gradient(180deg,#fff 0%,#fcfdff 100%)!important;border:1px solid #eff2f6!important;padding:4px 4px 0!important;
+}
+#retailComerciales #rcTrend,#retailOmnibus #roTrend,#retailCamiones #rc10Trend,#concesionarios #dc11Trend{
+  width:100%!important;height:280px!important;display:block!important;
+}
+#retailComerciales .rc96-trend-card,#retailOmnibus .ro-grid-a>.ro-card:first-child,#retailCamiones .rc10-grid-a>.rc10-card:first-child,#concesionarios .dc11-trend-card{
+  min-height:346px!important;
+}
+
+#retailOmnibus .ro-donut-zone,#retailCamiones .rc10-grid-a>.rc10-card:nth-child(2),#concesionarios .dc11-grid-a>.dc11-card:nth-child(2){
+  min-height:346px!important;
+}
+#retailOmnibus .ro-donut-zone{
+  display:grid!important;grid-template-columns:220px minmax(150px,1fr)!important;align-items:center!important;gap:14px!important;
+}
+#retailOmnibus .ro-donut-wrap,#retailCamiones .rc10-donut-wrap,#concesionarios .dc11-donut-wrap{
+  width:220px!important;height:220px!important;max-width:220px!important;margin:4px auto 12px!important;
+}
+#retailOmnibus #roDonut,#retailCamiones #rc10Donut,#concesionarios #dc11Donut{width:220px!important;height:220px!important;display:block!important}
+#retailOmnibus .ro-donut-legend,#retailCamiones .rc10-donut-legend,#concesionarios .dc11-donut-legend{
+  display:grid!important;grid-template-columns:1fr!important;gap:8px!important;
+}
+#retailOmnibus .ro-donut-legend button,#retailCamiones .rc10-donut-legend button,#concesionarios .dc11-donut-legend button{
+  min-height:54px!important;padding:9px 10px!important;border-radius:14px!important;border:1px solid #e8ecf3!important;background:#fbfcfe!important;
+}
+
+#retailComerciales .rc96-segments{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:9px!important}
+#retailComerciales .rc96-segments [data-seg],#retailComerciales .rc96-segments .selected,
+#retailComerciales #rcSegmentCards>[data-seg]{
+  min-height:88px!important;border-radius:16px!important;border:1px solid #e8ecf3!important;background:#fbfcfe!important;
+  box-shadow:none!important;padding:10px!important;
+}
+#retailComerciales #rcSegmentCards [data-seg].selected{background:#fff6fb!important;border-color:#f2b5d0!important;box-shadow:0 0 0 2px rgba(238,11,112,.08) inset!important}
+
+#retailComerciales .rc96-rank-row,#retailOmnibus .ro-row,#retailCamiones .rc10-row,#concesionarios .dc11-rank-row,
+#retailComerciales .rc96-bar-row,#retailOmnibus .ro-barrow,#retailCamiones .rc10-barrow,#concesionarios .dc11-bar,
+#concesionarios .dc11-heat-tile{
+  border-radius:12px!important;transition:background .15s ease, transform .15s ease, border-color .15s ease!important;
+}
+#retailComerciales .rc96-rank-row:hover,#retailOmnibus .ro-row:hover,#retailCamiones .rc10-row:hover,#concesionarios .dc11-rank-row:hover,
+#retailComerciales .rc96-bar-row:hover,#retailOmnibus .ro-barrow:hover,#retailCamiones .rc10-barrow:hover,#concesionarios .dc11-bar:hover,
+#concesionarios .dc11-heat-tile:hover{
+  background:#fff7fb!important;transform:translateY(-1px)!important;border-color:#f0bdd4!important;
+}
+
+#retailComerciales .rc96-tooltip,#retailOmnibus .ro-tooltip,#retailCamiones .rc10-tip,#concesionarios .dc11-tooltip{
+  position:fixed!important;z-index:2147483000!important;display:none;pointer-events:none!important;
+  background:rgba(22,27,34,.98)!important;color:#fff!important;border-radius:10px!important;padding:8px 10px!important;
+  font-size:9.5px!important;line-height:1.42!important;box-shadow:0 14px 30px rgba(0,0,0,.22)!important;max-width:250px!important;
+}
+#retailComerciales .rc96-tooltip small,#retailOmnibus .ro-tooltip small,#retailCamiones .rc10-tip small,#concesionarios .dc11-tooltip small{
+  display:block!important;color:#d3d7de!important;margin-top:4px!important;font-size:8.5px!important;
+}
+
+#retailComerciales canvas,#retailOmnibus canvas,#retailCamiones canvas,#concesionarios canvas,
+#retailComerciales button,#retailOmnibus button,#retailCamiones button,#concesionarios button,
+#retailComerciales [data-seg],#retailOmnibus .ro-barrow,#retailCamiones .rc10-barrow,#concesionarios .dc11-heat-tile{
+  cursor:pointer!important;
+}
+
+@media(max-width:1200px){
+  #retailComerciales .rc96-grid-a,#retailOmnibus .ro-grid-a,#retailCamiones .rc10-grid-a,#concesionarios .dc11-grid-a{grid-template-columns:1fr!important}
+  #retailOmnibus .ro-donut-zone{grid-template-columns:220px minmax(0,1fr)!important}
+  #concesionarios .dc11-grid-c{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:760px){
+  #retailComerciales .rc96-segments{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #retailOmnibus .ro-donut-zone{grid-template-columns:1fr!important}
+  #retailOmnibus .ro-donut-wrap,#retailCamiones .rc10-donut-wrap,#concesionarios .dc11-donut-wrap{width:210px!important;height:210px!important}
+  #retailOmnibus #roDonut,#retailCamiones #rc10Donut,#concesionarios #dc11Donut{width:210px!important;height:210px!important}
+  #concesionarios .dc11-grid-c{grid-template-columns:1fr!important}
+}
+</style>
+
+<script id="v106-retail-pointer-fix">
+(function(){
+  'use strict';
+
+  const norm=v=>String(v??'').trim();
+  const up=v=>norm(v).toUpperCase();
+  const num=v=>{const n=Number(v);return Number.isFinite(n)?n:0};
+  const fmt=n=>Math.round(Number(n)||0).toLocaleString('es-PE');
+
+  function placeTip(t,e){
+    if(!t)return;
+    const gap=12,edge=10;
+    t.style.left='0px';t.style.top='0px';
+    const r=t.getBoundingClientRect();
+    let x=e.clientX+gap,y=e.clientY-r.height/2;
+    if(x+r.width>innerWidth-edge)x=e.clientX-r.width-gap;
+    if(y<edge)y=edge;
+    if(y+r.height>innerHeight-edge)y=innerHeight-r.height-edge;
+    if(x<edge)x=edge;
+    t.style.left=Math.round(x)+'px';
+    t.style.top=Math.round(y)+'px';
+  }
+  function showTip(id,html,e){
+    const t=document.getElementById(id);if(!t)return;
+    t.innerHTML=html;t.style.display='block';placeTip(t,e);
+  }
+  function hideTip(id){const t=document.getElementById(id);if(t)t.style.display='none'}
+  function idxFromEvent(canvas,e,left,right,count){
+    const r=canvas.getBoundingClientRect();
+    const cssW=r.width||canvas.clientWidth||1;
+    const plot=Math.max(1,cssW-left-right);
+    const x=Math.max(0,Math.min(cssW,e.clientX-r.left));
+    return Math.max(0,Math.min(count-1,Math.round((x-left)/plot*(count-1))));
+  }
+  function dispatchSelect(id,value){
+    const el=document.getElementById(id);if(!el)return;
+    el.value=value;
+    el.dispatchEvent(new Event('change',{bubbles:true}));
+  }
+
+  function patchRC8(){
+    const S=window.__RC8_STATE,c=document.getElementById('rcTrend');
+    if(!S||!c||!S.rows?.length||!S.months?.length||c.dataset.v106Bind==='1')return;
+    const filtered=(ignore)=>S.rows.filter(r=>(ignore==='rcSegmentFilter'||document.getElementById('rcSegmentFilter')?.value==='ALL'||((up(r.Segmento).match(/\b(C[1-4])\b/)||[])[1]||'')===document.getElementById('rcSegmentFilter').value)&&
+      (ignore==='rcBrandFilter'||document.getElementById('rcBrandFilter')?.value==='ALL'||up(r.Marca)===document.getElementById('rcBrandFilter').value)&&
+      (ignore==='rcModelFilter'||document.getElementById('rcModelFilter')?.value==='ALL'||up(r.Modelo)===document.getElementById('rcModelFilter').value)&&
+      (ignore==='rcOriginFilter'||document.getElementById('rcOriginFilter')?.value==='ALL'||up(r.Origen)===document.getElementById('rcOriginFilter').value)&&
+      (ignore==='rcFuelFilter'||document.getElementById('rcFuelFilter')?.value==='ALL'||(up(r.Combustible)||'SIN DATO')===document.getElementById('rcFuelFilter').value)&&
+      (ignore==='rcTransFilter'||document.getElementById('rcTransFilter')?.value==='ALL'||(up(r['Tipo de Transmision'])||'SIN DATO')===document.getElementById('rcTransFilter').value)&&
+      (ignore==='rcDriveFilter'||document.getElementById('rcDriveFilter')?.value==='ALL'||(up(r['Fórmula rodante'])||'SIN DATO')===document.getElementById('rcDriveFilter').value)&&
+      (ignore==='rcBodyFilter'||document.getElementById('rcBodyFilter')?.value==='ALL'||(up(r.Carroceria)||'SIN DATO')===document.getElementById('rcBodyFilter').value)&&
+      (ignore==='rcCatFilter'||document.getElementById('rcCatFilter')?.value==='ALL'||(up(r['Categoría RENAV'])||'SIN DATO')===document.getElementById('rcCatFilter').value)&&
+      (ignore==='rcVersionFilter'||document.getElementById('rcVersionFilter')?.value==='ALL'||(norm(r['Versión'])||'SIN DATO')===document.getElementById('rcVersionFilter').value)
+    );
+    const total=(rows,m)=>rows.reduce((a,r)=>a+(m&&m!=='ALL'?num(r[m]):S.months.reduce((z,k)=>z+num(r[k]),0)),0);
+    const move=e=>{const rows=filtered('rcMonthFilter');const vals=S.months.map(m=>total(rows,m));const i=idxFromEvent(c,e,38,16,S.months.length);showTip('rcTooltip',`<b>${S.months[i]}</b><br>${fmt(vals[i])} unidades<small>Clic para fijar el mes</small>`,e)};
+    c.onpointermove=move;c.onmousemove=move;c.onmouseleave=()=>hideTip('rcTooltip');
+    c.onclick=e=>{e.preventDefault();e.stopPropagation();const i=idxFromEvent(c,e,38,16,S.months.length);dispatchSelect('rcMonthFilter',S.months[i])};
+    c.dataset.v106Bind='1';
+  }
+
+  function patchRO9(){
+    const S=window.__RO9_STATE,c=document.getElementById('roTrend');
+    if(!S||!c||!S.rows?.length||!S.months?.length||c.dataset.v106Bind==='1')return;
+    const get=id=>document.getElementById(id)?.value||'ALL';
+    const segCode=v=>{const m=up(v).match(/\b(O[12])\b/);return m?m[1]:up(v)};
+    const filtered=(ignore)=>S.rows.filter(r=>(ignore==='roSegmentFilter'||get('roSegmentFilter')==='ALL'||segCode(r.Segmento)===get('roSegmentFilter'))&&
+      (ignore==='roBrandFilter'||get('roBrandFilter')==='ALL'||norm(r.Marca)===get('roBrandFilter'))&&
+      (ignore==='roModelFilter'||get('roModelFilter')==='ALL'||norm(r.Modelo)===get('roModelFilter'))&&
+      (ignore==='roOriginFilter'||get('roOriginFilter')==='ALL'||norm(r.Origen)===get('roOriginFilter'))&&
+      (ignore==='roFuelFilter'||get('roFuelFilter')==='ALL'||(norm(r.Combustible)||'SIN DATO')===get('roFuelFilter'))&&
+      (ignore==='roTransFilter'||get('roTransFilter')==='ALL'||(norm(r['Tipo de Transmision'])||'SIN DATO')===get('roTransFilter'))&&
+      (ignore==='roDriveFilter'||get('roDriveFilter')==='ALL'||(norm(r['Fórmula rodante'])||'SIN DATO')===get('roDriveFilter'))&&
+      (ignore==='roCatFilter'||get('roCatFilter')==='ALL'||(norm(r['Categoría RENAV'])||'SIN DATO')===get('roCatFilter'))&&
+      (ignore==='roBodyFilter'||get('roBodyFilter')==='ALL'||(norm(r.Carroceria)||'SIN DATO')===get('roBodyFilter'))&&
+      (ignore==='roVersionFilter'||get('roVersionFilter')==='ALL'||(norm(r['Versión'])||'SIN DATO')===get('roVersionFilter'))
+    );
+    const val=(r,m)=>m&&m!=='ALL'?num(r[m]):S.months.reduce((z,k)=>z+num(r[k]),0);
+    const move=e=>{
+      const rows=filtered('roMonthFilter');
+      const data={O1:S.months.map(m=>rows.reduce((z,r)=>z+(segCode(r.Segmento)==='O1'?num(r[m]):0),0)),O2:S.months.map(m=>rows.reduce((z,r)=>z+(segCode(r.Segmento)==='O2'?num(r[m]):0),0))};
+      const i=idxFromEvent(c,e,38,15,S.months.length);const totalV=(data.O1[i]||0)+(data.O2[i]||0);
+      showTip('roTooltip',`<b>${S.months[i]}</b><br>O1: <b>${fmt(data.O1[i]||0)}</b><br>O2: <b>${fmt(data.O2[i]||0)}</b><br>Total: <b>${fmt(totalV)}</b>`,e)
+    };
+    c.onpointermove=move;c.onmousemove=move;c.onmouseleave=()=>hideTip('roTooltip');
+    c.onclick=e=>{e.preventDefault();e.stopPropagation();const i=idxFromEvent(c,e,38,15,S.months.length);dispatchSelect('roMonthFilter',S.months[i])};
+    c.dataset.v106Bind='1';
+  }
+
+  function patchRC10(){
+    const S=window.__RC10_STATE,c=document.getElementById('rc10Trend');
+    if(!S||!c||!S.rows?.length||!S.months?.length||c.dataset.v106Bind==='1')return;
+    const get=id=>document.getElementById(id)?.value||'ALL';
+    const seg=v=>{const m=up(v).match(/\b(P[2-5])\b/);return m?m[1]:up(v)};
+    const filtered=(ignore)=>S.rows.filter(r=>(ignore==='rc10SegmentFilter'||get('rc10SegmentFilter')==='ALL'||seg(r.Segmento)===get('rc10SegmentFilter'))&&
+      (ignore==='rc10BrandFilter'||get('rc10BrandFilter')==='ALL'||norm(r.Marca)===get('rc10BrandFilter'))&&
+      (ignore==='rc10ModelFilter'||get('rc10ModelFilter')==='ALL'||norm(r.Modelo)===get('rc10ModelFilter'))&&
+      (ignore==='rc10OriginFilter'||get('rc10OriginFilter')==='ALL'||norm(r.Origen)===get('rc10OriginFilter'))&&
+      (ignore==='rc10FuelFilter'||get('rc10FuelFilter')==='ALL'||(norm(r.Combustible)||'SIN DATO')===get('rc10FuelFilter'))&&
+      (ignore==='rc10TransFilter'||get('rc10TransFilter')==='ALL'||(norm(r['Tipo de Transmision'])||'SIN DATO')===get('rc10TransFilter'))&&
+      (ignore==='rc10DriveFilter'||get('rc10DriveFilter')==='ALL'||(norm(r['Fórmula rodante'])||'SIN DATO')===get('rc10DriveFilter'))&&
+      (ignore==='rc10BodyFilter'||get('rc10BodyFilter')==='ALL'||(norm(r.Carroceria)||'SIN DATO')===get('rc10BodyFilter'))&&
+      (ignore==='rc10CatFilter'||get('rc10CatFilter')==='ALL'||(norm(r['Categoría RENAV'])||'SIN DATO')===get('rc10CatFilter'))&&
+      (ignore==='rc10VersionFilter'||get('rc10VersionFilter')==='ALL'||(norm(r['Versión'])||'SIN DATO')===get('rc10VersionFilter'))
+    );
+    const move=e=>{
+      const rows=filtered('rc10MonthFilter');const series=['P2','P3','P4','P5'];
+      const data={};series.forEach(s=>data[s]=S.months.map(m=>rows.filter(r=>seg(r.Segmento)===s).reduce((a,r)=>a+num(r[m]),0)));
+      const i=idxFromEvent(c,e,42,16,S.months.length);
+      showTip('rc10Tip',`<b>${S.months[i]}</b><br>`+series.map(s=>`${s}: <b>${fmt(data[s][i]||0)}</b>`).join('<br>')+`<small>Clic para fijar el mes</small>`,e)
+    };
+    c.onpointermove=move;c.onmousemove=move;c.onmouseleave=()=>hideTip('rc10Tip');
+    c.onclick=e=>{e.preventDefault();e.stopPropagation();const i=idxFromEvent(c,e,42,16,S.months.length);dispatchSelect('rc10MonthFilter',S.months[i])};
+    c.dataset.v106Bind='1';
+  }
+
+  function pulse(){
+    // permitir rebind después de cada redraw / navegación
+    ['rcTrend','roTrend','rc10Trend'].forEach(id=>{const el=document.getElementById(id);if(el)el.dataset.v106Bind=''});
+    patchRC8();patchRO9();patchRC10();
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pulse,{once:true});else pulse();
+  window.addEventListener('load',()=>setTimeout(pulse,120));
+  window.addEventListener('resize',()=>setTimeout(pulse,180));
+  document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>setTimeout(pulse,140)));
+  document.addEventListener('change',e=>{
+    if(e.target && e.target.closest('#retailComerciales,#retailOmnibus,#retailCamiones,#concesionarios'))setTimeout(pulse,80);
+  },true);
+})();
+</script>
+
+
+<!-- =========================================================
+     V107 · HIT TEST REAL + TOOLTIP ANCLADO AL PUNTO
+     Replica el comportamiento de las hojas que ya funcionan bien.
+     ========================================================= -->
+<style id="v107-chart-interaction">
+.v107-trend-guide{
+  position:absolute; width:0; border-left:2px dashed rgba(238,11,112,.28);
+  pointer-events:none; z-index:8; display:none;
+}
+.v107-trend-guide.show{display:block}
+#retailComerciales .rc96-chart,
+#retailOmnibus .ro-trend-wrap,
+#retailCamiones .rc10-trend-wrap,
+#concesionarios .dc11-canvas-wrap{position:relative!important;overflow:visible!important}
+
+/* Tooltips exactamente como el patrón correcto */
+#retail .rac-tooltip,
+#retailComerciales .rc96-tooltip,
+#retailOmnibus .ro-tooltip,
+#retailCamiones .rc10-tip,
+#concesionarios .dc11-tooltip{
+  position:fixed!important; right:auto!important; bottom:auto!important;
+  transform:none!important; pointer-events:none!important; z-index:2147483640!important;
+  background:#1b1f27!important; color:#fff!important; border:0!important;
+  border-radius:12px!important; padding:10px 12px!important;
+  box-shadow:0 18px 40px rgba(0,0,0,.28)!important;
+  font-size:11px!important; line-height:1.42!important; max-width:250px!important;
+}
+#retail .rac-tooltip b,
+#retailComerciales .rc96-tooltip b,
+#retailOmnibus .ro-tooltip b,
+#retailCamiones .rc10-tip b,
+#concesionarios .dc11-tooltip b{font-weight:800!important}
+#retailComerciales .rc96-tooltip small,
+#retailOmnibus .ro-tooltip small,
+#retailCamiones .rc10-tip small,
+#concesionarios .dc11-tooltip small{color:#d7dce4!important;font-size:9px!important;margin-top:4px!important}
+</style>
+
+<script id="v107-chart-interaction-js">
+(function(){
+'use strict';
+const fmt=n=>Math.round(Number(n)||0).toLocaleString('es-PE');
+const num=v=>{const n=Number(v);return Number.isFinite(n)?n:0};
+const norm=v=>String(v??'').trim();
+const up=v=>norm(v).toUpperCase();
+
+function positionTipAtPoint(t,clientX,clientY){
+  if(!t)return;
+  const gap=14, edge=10;
+  t.style.left='0px'; t.style.top='0px';
+  const r=t.getBoundingClientRect();
+  let x=clientX+gap, y=clientY-r.height/2;
+  if(x+r.width>innerWidth-edge) x=clientX-r.width-gap;
+  if(y<edge) y=edge;
+  if(y+r.height>innerHeight-edge) y=innerHeight-r.height-edge;
+  x=Math.max(edge,Math.min(x,innerWidth-r.width-edge));
+  t.style.left=Math.round(x)+'px';
+  t.style.top=Math.round(y)+'px';
+}
+function showTip(id,html,clientX,clientY){
+  const t=document.getElementById(id); if(!t)return;
+  t.innerHTML=html; t.style.display='block'; positionTipAtPoint(t,clientX,clientY);
+}
+function hideTip(id){const t=document.getElementById(id);if(t)t.style.display='none'}
+function getGuide(canvas){
+  const wrap=canvas.parentElement;
+  if(!wrap)return null;
+  if(getComputedStyle(wrap).position==='static')wrap.style.position='relative';
+  let g=wrap.querySelector(':scope > .v107-trend-guide');
+  if(!g){g=document.createElement('div');g.className='v107-trend-guide';wrap.appendChild(g)}
+  return g;
+}
+function placeGuide(canvas,x,padTop,padBottom){
+  const wrap=canvas.parentElement,g=getGuide(canvas);if(!wrap||!g)return;
+  const cr=canvas.getBoundingClientRect(),wr=wrap.getBoundingClientRect();
+  g.style.left=Math.round(cr.left-wr.left+x)+'px';
+  g.style.top=Math.round(cr.top-wr.top+padTop)+'px';
+  g.style.height=Math.max(0,Math.round(cr.height-padTop-padBottom))+'px';
+  g.classList.add('show');
+}
+function hideGuide(canvas){getGuide(canvas)?.classList.remove('show')}
+function snapIndex(canvas,e,padL,padR,count){
+  const r=canvas.getBoundingClientRect();
+  const plot=Math.max(1,r.width-padL-padR);
+  const x=Math.max(padL,Math.min(r.width-padR,e.clientX-r.left));
+  const idx=count<=1?0:Math.max(0,Math.min(count-1,Math.round((x-padL)/plot*(count-1))));
+  const px=count<=1?padL+plot/2:padL+plot*idx/(count-1);
+  return {idx,px,rect:r};
+}
+function yFor(v,max,h,padT,padB){return padT+(h-padT-padB)*(1-(max?Number(v)/max:0))}
+function nearestY(mouseY,ys){let best=ys[0]||0,d=Infinity;ys.forEach(y=>{const z=Math.abs(y-mouseY);if(z<d){d=z;best=y}});return best}
+function dispatchSelect(id,value){const el=document.getElementById(id);if(!el)return;el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}))}
+
+function patchCommercial(){
+  const S=window.__RC8_STATE,c=document.getElementById('rcTrend');
+  if(!S?.rows?.length||!S.months?.length||!c)return;
+  const get=id=>document.getElementById(id)?.value||'ALL';
+  const seg=v=>((up(v).match(/\b(C[1-4])\b/)||[])[1]||'');
+  const filtered=()=>S.rows.filter(r=>(get('rcSegmentFilter')==='ALL'||seg(r.Segmento)===get('rcSegmentFilter'))&&(get('rcBrandFilter')==='ALL'||up(r.Marca)===get('rcBrandFilter'))&&(get('rcModelFilter')==='ALL'||up(r.Modelo)===get('rcModelFilter'))&&(get('rcOriginFilter')==='ALL'||up(r.Origen)===get('rcOriginFilter'))&&(get('rcFuelFilter')==='ALL'||(up(r.Combustible)||'SIN DATO')===get('rcFuelFilter'))&&(get('rcTransFilter')==='ALL'||(up(r['Tipo de Transmision'])||'SIN DATO')===get('rcTransFilter'))&&(get('rcDriveFilter')==='ALL'||(up(r['Fórmula rodante'])||'SIN DATO')===get('rcDriveFilter'))&&(get('rcBodyFilter')==='ALL'||(up(r.Carroceria)||'SIN DATO')===get('rcBodyFilter'))&&(get('rcCatFilter')==='ALL'||(up(r['Categoría RENAV'])||'SIN DATO')===get('rcCatFilter'))&&(get('rcVersionFilter')==='ALL'||(norm(r['Versión'])||'SIN DATO')===get('rcVersionFilter')));
+  const vals=()=>{const rows=filtered();return S.months.map(m=>rows.reduce((a,r)=>a+num(r[m]),0))};
+  const move=e=>{
+    const data=vals(),p={l:38,r:16,t:20,b:32},z=snapIndex(c,e,p.l,p.r,S.months.length),max=Math.max(1,...data),h=c.getBoundingClientRect().height;
+    const py=yFor(data[z.idx],max,h,p.t,p.b),clientX=z.rect.left+z.px,clientY=z.rect.top+py;
+    placeGuide(c,z.px,p.t,p.b);
+    showTip('rcTooltip',`<b>${S.months[z.idx]}</b><br><span style="color:#ff2c83">●</span> Comerciales C1–C4: <b>${fmt(data[z.idx])}</b><small>Clic para fijar este mes</small>`,clientX,clientY);
+  };
+  c.onpointermove=move;c.onmousemove=move;
+  c.onpointerleave=c.onmouseleave=()=>{hideGuide(c);hideTip('rcTooltip')};
+  c.onpointerdown=null;
+  c.onclick=e=>{e.preventDefault();e.stopPropagation();const z=snapIndex(c,e,38,16,S.months.length);dispatchSelect('rcMonthFilter',S.months[z.idx])};
+}
+
+function patchOmnibus(){
+  const S=window.__RO9_STATE,c=document.getElementById('roTrend');
+  if(!S?.rows?.length||!S.months?.length||!c)return;
+  const get=id=>document.getElementById(id)?.value||'ALL';
+  const seg=v=>{const m=up(v).match(/\b(O[12])\b/);return m?m[1]:up(v)};
+  const filtered=()=>S.rows.filter(r=>(get('roSegmentFilter')==='ALL'||seg(r.Segmento)===get('roSegmentFilter'))&&(get('roBrandFilter')==='ALL'||norm(r.Marca)===get('roBrandFilter'))&&(get('roModelFilter')==='ALL'||norm(r.Modelo)===get('roModelFilter'))&&(get('roOriginFilter')==='ALL'||norm(r.Origen)===get('roOriginFilter'))&&(get('roFuelFilter')==='ALL'||(norm(r.Combustible)||'SIN DATO')===get('roFuelFilter'))&&(get('roTransFilter')==='ALL'||(norm(r['Tipo de Transmision'])||'SIN DATO')===get('roTransFilter'))&&(get('roDriveFilter')==='ALL'||(norm(r['Fórmula rodante'])||'SIN DATO')===get('roDriveFilter'))&&(get('roCatFilter')==='ALL'||(norm(r['Categoría RENAV'])||'SIN DATO')===get('roCatFilter'))&&(get('roBodyFilter')==='ALL'||(norm(r.Carroceria)||'SIN DATO')===get('roBodyFilter'))&&(get('roVersionFilter')==='ALL'||(norm(r['Versión'])||'SIN DATO')===get('roVersionFilter')));
+  const move=e=>{
+    const rows=filtered(),series=['O1','O2'],data={};series.forEach(s=>data[s]=S.months.map(m=>rows.reduce((a,r)=>a+(seg(r.Segmento)===s?num(r[m]):0),0)));
+    const p={l:38,r:15,t:22,b:34},z=snapIndex(c,e,p.l,p.r,S.months.length),max=Math.max(1,...series.flatMap(s=>data[s])),h=c.getBoundingClientRect().height;
+    const mouseY=e.clientY-z.rect.top,ys=series.map(s=>yFor(data[s][z.idx],max,h,p.t,p.b)),py=nearestY(mouseY,ys),clientX=z.rect.left+z.px,clientY=z.rect.top+py;
+    placeGuide(c,z.px,p.t,p.b);
+    showTip('roTooltip',`<b>${S.months[z.idx]}</b><br><span style="color:#f5a900">●</span> O1: <b>${fmt(data.O1[z.idx])}</b><br><span style="color:#ee0b70">●</span> O2: <b>${fmt(data.O2[z.idx])}</b><br><b>Total: ${fmt((data.O1[z.idx]||0)+(data.O2[z.idx]||0))}</b><small>Clic para fijar este mes</small>`,clientX,clientY);
+  };
+  c.onpointermove=move;c.onmousemove=move;c.onpointerleave=c.onmouseleave=()=>{hideGuide(c);hideTip('roTooltip')};
+  c.onclick=e=>{e.preventDefault();e.stopPropagation();const z=snapIndex(c,e,38,15,S.months.length);dispatchSelect('roMonthFilter',S.months[z.idx])};
+}
+
+function patchCamiones(){
+  const S=window.__RC10_STATE,c=document.getElementById('rc10Trend');
+  if(!S?.rows?.length||!S.months?.length||!c)return;
+  const get=id=>document.getElementById(id)?.value||'ALL';
+  const seg=v=>{const m=up(v).match(/\b(P[2-5])\b/);return m?m[1]:up(v)};
+  const filtered=()=>S.rows.filter(r=>(get('rc10SegmentFilter')==='ALL'||seg(r.Segmento)===get('rc10SegmentFilter'))&&(get('rc10BrandFilter')==='ALL'||norm(r.Marca)===get('rc10BrandFilter'))&&(get('rc10ModelFilter')==='ALL'||norm(r.Modelo)===get('rc10ModelFilter'))&&(get('rc10OriginFilter')==='ALL'||norm(r.Origen)===get('rc10OriginFilter'))&&(get('rc10FuelFilter')==='ALL'||(norm(r.Combustible)||'SIN DATO')===get('rc10FuelFilter'))&&(get('rc10TransFilter')==='ALL'||(norm(r['Tipo de Transmision'])||'SIN DATO')===get('rc10TransFilter'))&&(get('rc10DriveFilter')==='ALL'||(norm(r['Fórmula rodante'])||'SIN DATO')===get('rc10DriveFilter'))&&(get('rc10BodyFilter')==='ALL'||(norm(r.Carroceria)||'SIN DATO')===get('rc10BodyFilter'))&&(get('rc10CatFilter')==='ALL'||(norm(r['Categoría RENAV'])||'SIN DATO')===get('rc10CatFilter'))&&(get('rc10VersionFilter')==='ALL'||(norm(r['Versión'])||'SIN DATO')===get('rc10VersionFilter')));
+  const move=e=>{
+    const rows=filtered(),series=['P2','P3','P4','P5'],colors={P2:'#f5a900',P3:'#252a34',P4:'#ee0b70',P5:'#8f98a6'},data={};series.forEach(s=>data[s]=S.months.map(m=>rows.reduce((a,r)=>a+(seg(r.Segmento)===s?num(r[m]):0),0)));
+    const p={l:42,r:16,t:15,b:30},z=snapIndex(c,e,p.l,p.r,S.months.length),max=Math.max(1,...series.flatMap(s=>data[s])),h=c.getBoundingClientRect().height;
+    const mouseY=e.clientY-z.rect.top,ys=series.map(s=>yFor(data[s][z.idx],max,h,p.t,p.b)),py=nearestY(mouseY,ys),clientX=z.rect.left+z.px,clientY=z.rect.top+py;
+    placeGuide(c,z.px,p.t,p.b);
+    showTip('rc10Tip',`<b>${S.months[z.idx]}</b><br>`+series.map(s=>`<span style="color:${colors[s]}">●</span> ${s}: <b>${fmt(data[s][z.idx])}</b>`).join('<br>')+`<br><b>Total: ${fmt(series.reduce((a,s)=>a+(data[s][z.idx]||0),0))}</b><small>Clic para fijar este mes</small>`,clientX,clientY);
+  };
+  c.onpointermove=move;c.onmousemove=move;c.onpointerleave=c.onmouseleave=()=>{hideGuide(c);hideTip('rc10Tip')};
+  c.onclick=e=>{e.preventDefault();e.stopPropagation();const z=snapIndex(c,e,42,16,S.months.length);dispatchSelect('rc10MonthFilter',S.months[z.idx])};
+}
+
+function patchDepartamento(){
+  const api=window.__DC11_API,c=document.getElementById('dc11Trend');
+  if(!api?.rows?.length||!api.monthCols?.length||!c||!c._pts?.length)return;
+  const move=e=>{
+    const r=c.getBoundingClientRect(),scaleX=r.width/(c._box?.w||r.width),scaleY=r.height/(c._box?.h||r.height),mouseX=(e.clientX-r.left)/scaleX;
+    const q=c._pts.reduce((a,b)=>Math.abs(b.x-mouseX)<Math.abs(a.x-mouseX)?b:a),px=q.x*scaleX,py=q.y*scaleY;
+    placeGuide(c,px,18,30);
+    showTip('dc11TrendTip',`<b>${api.monthCols[q.i]?.label||''}</b><br><span style="color:#f5a900">●</span> Retail: <b>${fmt(q.v)}</b><small>Clic para fijar este mes</small>`,r.left+px,r.top+py);
+  };
+  c.onmousemove=move;c.onpointermove=move;c.onmouseleave=c.onpointerleave=()=>{hideGuide(c);hideTip('dc11TrendTip')};
+  c.onclick=e=>{e.preventDefault();e.stopPropagation();const r=c.getBoundingClientRect(),scaleX=r.width/(c._box?.w||r.width),mouseX=(e.clientX-r.left)/scaleX,q=c._pts.reduce((a,b)=>Math.abs(b.x-mouseX)<Math.abs(a.x-mouseX)?b:a);const sel=document.getElementById('dc11Month');if(sel){sel.value=String(q.i);sel.dispatchEvent(new Event('change',{bubbles:true}))}};
+}
+
+function patchRacDonut(){
+  const c=document.getElementById('racDonut'),S=window.__RAC_STATE;if(!c||!S?.rows?.length)return;
+  const hit=e=>{const r=c.getBoundingClientRect(),parts=c._parts||[];if(!parts.length)return null;const p0=parts[0],sx=(p0.cx*2)/r.width,sy=(p0.cy*2)/r.height,x=(e.clientX-r.left)*sx,y=(e.clientY-r.top)*sy,dx=x-p0.cx,dy=y-p0.cy,rad=Math.hypot(dx,dy);if(rad<p0.r||rad>p0.R)return null;let a=Math.atan2(dy,dx);if(a< -Math.PI/2)a+=Math.PI*2;return parts.find(z=>a>=z.start&&a<=z.end)||null};
+  const move=e=>{const z=hit(e);if(!z){hideTip('racTooltip');return}const fam=S.families?.[z.f];if(!fam)return;const businessTotal=Object.values(S.families||{}).filter(x=>x?.key!=='LIGEROS').reduce((a,x)=>a+(x.cur||0),0)||1;showTip('racTooltip',`<b>${fam.label}</b><br><strong>${fmt(fam.cur)} unidades</strong><br>${(fam.cur/businessTotal*100).toFixed(1)}% del universo negocio<small>Clic para filtrar esta familia</small>`,e.clientX,e.clientY)};
+  c.onmousemove=move;c.onpointermove=move;c.onmouseleave=c.onpointerleave=()=>hideTip('racTooltip');
+}
+
+function patchSegmentDonut(canvasId,tipId,state,innerR,outerR,filterId){
+  const c=document.getElementById(canvasId);if(!c||!state?.slices?.length)return;
+  const hit=e=>{const r=c.getBoundingClientRect(),logicalW=c.width/(devicePixelRatio||1),logicalH=c.height/(devicePixelRatio||1),x=(e.clientX-r.left)*logicalW/r.width-logicalW/2,y=(e.clientY-r.top)*logicalH/r.height-logicalH/2,rad=Math.hypot(x,y);if(rad<innerR||rad>outerR)return null;let a=Math.atan2(y,x);if(a< -Math.PI/2)a+=Math.PI*2;return state.slices.find(s=>a>=s.a&&a<=s.end)||null};
+  const move=e=>{const s=hit(e);if(!s){hideTip(tipId);return}const total=state.slices.reduce((a,x)=>a+(x.v||0),0)||1;showTip(tipId,`<b>${s.k}</b><br><strong>${fmt(s.v)} unidades</strong><br>${(s.v/total*100).toFixed(1)}% del mercado<small>Clic para filtrar</small>`,e.clientX,e.clientY)};
+  c.onmousemove=move;c.onpointermove=move;c.onmouseleave=c.onpointerleave=()=>hideTip(tipId);
+  c.onclick=e=>{const s=hit(e);if(s)dispatchSelect(filterId,s.k)};
+}
+function patchDcDonut(){
+  const c=document.getElementById('dc11Donut');if(!c||!c._slices?.length)return;
+  const hit=e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)*240/r.width-120,y=(e.clientY-r.top)*240/r.height-120,rad=Math.hypot(x,y);if(rad<58||rad>92)return null;let a=Math.atan2(y,x);if(a< -Math.PI/2)a+=Math.PI*2;return c._slices.find(s=>a>=s.a0&&a<=s.a1)||null};
+  const move=e=>{const s=hit(e);if(!s){hideTip('dc11DonutTip');return}showTip('dc11DonutTip',`<b>${s.label}</b><br><strong>${fmt(s.value)} unidades</strong>${s.label==='Otros'?'':'<small>Clic para filtrar este departamento</small>'}`,e.clientX,e.clientY)};
+  c.onmousemove=move;c.onpointermove=move;c.onmouseleave=c.onpointerleave=()=>hideTip('dc11DonutTip');
+  c.onclick=e=>{const s=hit(e);if(s&&s.label!=='Otros')dispatchSelect('dc11Dept',s.label)};
+}
+
+function patchAll(){
+  try{patchCommercial()}catch(e){console.warn('V107 Comercial',e)}
+  try{patchOmnibus()}catch(e){console.warn('V107 Omnibus',e)}
+  try{patchCamiones()}catch(e){console.warn('V107 Camiones',e)}
+  try{patchDepartamento()}catch(e){console.warn('V107 Departamento',e)}
+  try{patchRacDonut()}catch(e){console.warn('V107 RAC donut',e)}
+  try{patchSegmentDonut('roDonut','roTooltip',window.__RO9_STATE,58,96,'roSegmentFilter')}catch(e){}
+  try{patchSegmentDonut('rc10Donut','rc10Tip',window.__RC10_STATE,60,98,'rc10SegmentFilter')}catch(e){}
+  try{patchDcDonut()}catch(e){}
+}
+
+let timer;
+function schedule(ms=30){clearTimeout(timer);timer=setTimeout(patchAll,ms)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>schedule(80),{once:true});else schedule(30);
+window.addEventListener('load',()=>schedule(180));
+window.addEventListener('resize',()=>schedule(220));
+document.addEventListener('change',e=>{if(e.target?.closest?.('#retailComerciales,#retailOmnibus,#retailCamiones,#concesionarios,#retail'))schedule(40)},true);
+document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>schedule(180)));
+/* Los renders de cada modulo reemplazan handlers. Reaplicamos el motor final de forma liviana. */
+setInterval(()=>{const p=document.querySelector('.page.active')?.id;if(['retail','retailComerciales','retailOmnibus','retailCamiones','concesionarios'].includes(p))patchAll()},700);
+})();
+</script>
+
 </body>
 </html>
