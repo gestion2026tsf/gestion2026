@@ -9014,5 +9014,243 @@ body{background:var(--bi-bg)!important;color:var(--bi-text)!important}
 })();
 </script>
 
+
+<style id="v102-tooltip-bi-unificado">
+/* =========================================================
+   V102 · PUNTERO / TOOLTIP BI UNIFICADO
+   Desde Retail Acumulado en adelante usa el mismo lenguaje
+   visual de Pick-up C3 / Mercado de Vehículos Pesados.
+   ========================================================= */
+
+/* Tooltips de las hojas que Flor señaló */
+#retail .rac-tooltip,
+#retailComerciales .rc96-tooltip,
+#retailOmnibus .ro-tooltip,
+#retailCamiones .rc10-tip,
+#concesionarios .dc11-tooltip{
+  position:fixed !important;
+  z-index:2147483000 !important;
+  display:none;
+  pointer-events:none !important;
+  margin:0 !important;
+  transform:none !important;
+  transition:opacity .08s ease !important;
+  min-width:118px;
+  max-width:260px !important;
+  padding:9px 11px !important;
+  border:0 !important;
+  border-radius:10px !important;
+  background:rgba(23,26,32,.98) !important;
+  color:#fff !important;
+  box-shadow:0 10px 28px rgba(0,0,0,.24) !important;
+  font-family:Inter,"Segoe UI",Arial,sans-serif !important;
+  font-size:10px !important;
+  line-height:1.42 !important;
+  white-space:normal !important;
+  text-align:left !important;
+  will-change:left,top,opacity;
+}
+#retail .rac-tooltip b,
+#retailComerciales .rc96-tooltip b,
+#retailOmnibus .ro-tooltip b,
+#retailCamiones .rc10-tip b,
+#concesionarios .dc11-tooltip b{
+  color:#fff !important;
+  font-weight:800 !important;
+}
+#retail .rac-tooltip small,
+#retailComerciales .rc96-tooltip small,
+#retailOmnibus .ro-tooltip small,
+#retailCamiones .rc10-tip small,
+#concesionarios .dc11-tooltip small{
+  display:block !important;
+  margin-top:4px !important;
+  color:#d2d6dd !important;
+  font-size:8.5px !important;
+}
+
+/* Línea vertical tipo BI para gráficos mensuales */
+#retailComerciales .rc96-chart,
+#retailOmnibus .ro-trend-wrap,
+#retailCamiones .rc10-trend-wrap,
+#concesionarios .dc11-canvas-wrap{
+  position:relative !important;
+  overflow:visible !important;
+}
+.tsf-bi-hover-guide{
+  position:absolute;
+  top:12px;
+  bottom:28px;
+  width:1px;
+  border-left:1.5px dashed rgba(238,11,112,.38);
+  pointer-events:none;
+  z-index:20;
+  opacity:0;
+  transition:opacity .08s ease;
+}
+.tsf-bi-hover-guide.show{opacity:1}
+
+/* Evita que el cursor gráfico parezca "muerto" */
+#retail canvas,
+#retailComerciales canvas,
+#retailOmnibus canvas,
+#retailCamiones canvas,
+#concesionarios canvas{
+  cursor:crosshair;
+}
+#retail .rac-rank-row,
+#retail .rac-leg,
+#retail .rac-family,
+#retail .rac-seg,
+#retailComerciales .rc96-rank-row,
+#retailComerciales .rc96-bar-row,
+#retailOmnibus .ro-row,
+#retailOmnibus .ro-barrow,
+#retailCamiones .rc10-row,
+#retailCamiones .rc10-barrow,
+#concesionarios [data-dept]{
+  cursor:pointer;
+}
+</style>
+
+<script id="v102-tooltip-bi-unificado-js">
+(function(){
+  /* ---------------------------------------------------------
+     Posición igual a Pick-up/Pesados:
+     tooltip 12px a la derecha y 12px debajo del cursor;
+     solo cambia de lado si no entra en el viewport.
+     --------------------------------------------------------- */
+  const TOOLTIP_SELECTORS = [
+    '#retail .rac-tooltip',
+    '#retailComerciales .rc96-tooltip',
+    '#retailOmnibus .ro-tooltip',
+    '#retailCamiones .rc10-tip',
+    '#concesionarios .dc11-tooltip'
+  ];
+
+  function visible(el){
+    if(!el) return false;
+    const cs=getComputedStyle(el);
+    return cs.display!=='none' && cs.visibility!=='hidden' && parseFloat(cs.opacity||'1')>0;
+  }
+
+  function placeTip(el,cx,cy){
+    if(!visible(el)) return;
+    const gap=12, edge=10;
+    const rect=el.getBoundingClientRect();
+
+    let left=cx+gap;
+    let top=cy+gap;
+
+    if(left+rect.width>innerWidth-edge){
+      left=cx-rect.width-gap;
+    }
+    if(top+rect.height>innerHeight-edge){
+      top=cy-rect.height-gap;
+    }
+
+    left=Math.max(edge,Math.min(left,innerWidth-rect.width-edge));
+    top=Math.max(edge,Math.min(top,innerHeight-rect.height-edge));
+
+    el.style.left=Math.round(left)+'px';
+    el.style.top=Math.round(top)+'px';
+  }
+
+  /* Sustituye el posicionador anterior para Retail Acumulado. */
+  window.__tsfMoveTip=placeTip;
+
+  let lastX=0,lastY=0,raf=0;
+  function moveAll(e){
+    lastX=e.clientX; lastY=e.clientY;
+    if(raf) return;
+    raf=requestAnimationFrame(()=>{
+      raf=0;
+      TOOLTIP_SELECTORS.forEach(sel=>{
+        document.querySelectorAll(sel).forEach(t=>placeTip(t,lastX,lastY));
+      });
+    });
+  }
+  document.addEventListener('pointermove',moveAll,true);
+  document.addEventListener('mousemove',moveAll,true);
+
+  function hideAll(){
+    TOOLTIP_SELECTORS.forEach(sel=>{
+      document.querySelectorAll(sel).forEach(t=>t.style.display='none');
+    });
+  }
+  window.addEventListener('scroll',hideAll,true);
+  window.addEventListener('blur',hideAll);
+  document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',hideAll));
+
+  /* ---------------------------------------------------------
+     Guía vertical para los gráficos mensuales.
+     No toca sus cálculos ni filtros: solo replica la dinámica
+     visual del gráfico de Vehículos Pesados.
+     --------------------------------------------------------- */
+  const CHARTS = [
+    {canvas:'rcTrend', wrap:'.rc96-chart'},
+    {canvas:'roTrend', wrap:'.ro-trend-wrap'},
+    {canvas:'rc10Trend', wrap:'.rc10-trend-wrap'},
+    {canvas:'dc11Trend', wrap:'.dc11-canvas-wrap'}
+  ];
+
+  function installGuide(cfg){
+    const canvas=document.getElementById(cfg.canvas);
+    if(!canvas || canvas.dataset.tsfGuideInstalled==='1') return;
+    const wrap=canvas.closest(cfg.wrap) || canvas.parentElement;
+    if(!wrap) return;
+
+    canvas.dataset.tsfGuideInstalled='1';
+    let guide=wrap.querySelector(':scope > .tsf-bi-hover-guide');
+    if(!guide){
+      guide=document.createElement('div');
+      guide.className='tsf-bi-hover-guide';
+      wrap.appendChild(guide);
+    }
+
+    const move=e=>{
+      const cr=canvas.getBoundingClientRect();
+      const wr=wrap.getBoundingClientRect();
+      let x=e.clientX-cr.left;
+      x=Math.max(0,Math.min(cr.width,x));
+      guide.style.left=(cr.left-wr.left+x)+'px';
+      guide.classList.add('show');
+    };
+    const leave=()=>guide.classList.remove('show');
+
+    canvas.addEventListener('pointermove',move);
+    canvas.addEventListener('mousemove',move);
+    canvas.addEventListener('pointerleave',leave);
+    canvas.addEventListener('mouseleave',leave);
+  }
+
+  function installAll(){
+    CHARTS.forEach(installGuide);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',installAll,{once:true});
+  }else{
+    installAll();
+  }
+  setTimeout(installAll,300);
+  setTimeout(installAll,1200);
+
+  /* Si una página se vuelve a construir/cargar, reinstala sin duplicar. */
+  const mo=new MutationObserver(()=>installAll());
+  mo.observe(document.documentElement,{childList:true,subtree:true});
+
+  /* Cuando cambia de pestaña, el canvas necesita medir con la página visible. */
+  document.querySelectorAll('#nav button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      [40,140,320].forEach(ms=>setTimeout(()=>{
+        installAll();
+        try{window.dispatchEvent(new Event('resize'))}catch(_){}
+      },ms));
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
