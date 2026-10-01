@@ -9013,247 +9013,6 @@ body{background:var(--bi-bg)!important;color:var(--bi-text)!important}
   window.addEventListener('load',()=>{setTimeout(()=>{pulseResize();renderHeat();ensureRetailMonthLegend()},250)});
 })();
 </script>
-
-
-<style id="v102-tooltip-bi-unificado">
-/* =========================================================
-   V102 · PUNTERO / TOOLTIP BI UNIFICADO
-   Desde Retail Acumulado en adelante usa el mismo lenguaje
-   visual de Pick-up C3 / Mercado de Vehículos Pesados.
-   ========================================================= */
-
-/* Tooltips de las hojas que Flor señaló */
-#retail .rac-tooltip,
-#retailComerciales .rc96-tooltip,
-#retailOmnibus .ro-tooltip,
-#retailCamiones .rc10-tip,
-#concesionarios .dc11-tooltip{
-  position:fixed !important;
-  z-index:2147483000 !important;
-  display:none;
-  pointer-events:none !important;
-  margin:0 !important;
-  transform:none !important;
-  transition:opacity .08s ease !important;
-  min-width:118px;
-  max-width:260px !important;
-  padding:9px 11px !important;
-  border:0 !important;
-  border-radius:10px !important;
-  background:rgba(23,26,32,.98) !important;
-  color:#fff !important;
-  box-shadow:0 10px 28px rgba(0,0,0,.24) !important;
-  font-family:Inter,"Segoe UI",Arial,sans-serif !important;
-  font-size:10px !important;
-  line-height:1.42 !important;
-  white-space:normal !important;
-  text-align:left !important;
-  will-change:left,top,opacity;
-}
-#retail .rac-tooltip b,
-#retailComerciales .rc96-tooltip b,
-#retailOmnibus .ro-tooltip b,
-#retailCamiones .rc10-tip b,
-#concesionarios .dc11-tooltip b{
-  color:#fff !important;
-  font-weight:800 !important;
-}
-#retail .rac-tooltip small,
-#retailComerciales .rc96-tooltip small,
-#retailOmnibus .ro-tooltip small,
-#retailCamiones .rc10-tip small,
-#concesionarios .dc11-tooltip small{
-  display:block !important;
-  margin-top:4px !important;
-  color:#d2d6dd !important;
-  font-size:8.5px !important;
-}
-
-/* Línea vertical tipo BI para gráficos mensuales */
-#retailComerciales .rc96-chart,
-#retailOmnibus .ro-trend-wrap,
-#retailCamiones .rc10-trend-wrap,
-#concesionarios .dc11-canvas-wrap{
-  position:relative !important;
-  overflow:visible !important;
-}
-.tsf-bi-hover-guide{
-  position:absolute;
-  top:12px;
-  bottom:28px;
-  width:1px;
-  border-left:1.5px dashed rgba(238,11,112,.38);
-  pointer-events:none;
-  z-index:20;
-  opacity:0;
-  transition:opacity .08s ease;
-}
-.tsf-bi-hover-guide.show{opacity:1}
-
-/* Evita que el cursor gráfico parezca "muerto" */
-#retail canvas,
-#retailComerciales canvas,
-#retailOmnibus canvas,
-#retailCamiones canvas,
-#concesionarios canvas{
-  cursor:crosshair;
-}
-#retail .rac-rank-row,
-#retail .rac-leg,
-#retail .rac-family,
-#retail .rac-seg,
-#retailComerciales .rc96-rank-row,
-#retailComerciales .rc96-bar-row,
-#retailOmnibus .ro-row,
-#retailOmnibus .ro-barrow,
-#retailCamiones .rc10-row,
-#retailCamiones .rc10-barrow,
-#concesionarios [data-dept]{
-  cursor:pointer;
-}
-</style>
-
-<script id="v102-tooltip-bi-unificado-js">
-(function(){
-  /* ---------------------------------------------------------
-     Posición igual a Pick-up/Pesados:
-     tooltip 12px a la derecha y 12px debajo del cursor;
-     solo cambia de lado si no entra en el viewport.
-     --------------------------------------------------------- */
-  const TOOLTIP_SELECTORS = [
-    '#retail .rac-tooltip',
-    '#retailComerciales .rc96-tooltip',
-    '#retailOmnibus .ro-tooltip',
-    '#retailCamiones .rc10-tip',
-    '#concesionarios .dc11-tooltip'
-  ];
-
-  function visible(el){
-    if(!el) return false;
-    const cs=getComputedStyle(el);
-    return cs.display!=='none' && cs.visibility!=='hidden' && parseFloat(cs.opacity||'1')>0;
-  }
-
-  function placeTip(el,cx,cy){
-    if(!visible(el)) return;
-    const gap=12, edge=10;
-    const rect=el.getBoundingClientRect();
-
-    let left=cx+gap;
-    let top=cy+gap;
-
-    if(left+rect.width>innerWidth-edge){
-      left=cx-rect.width-gap;
-    }
-    if(top+rect.height>innerHeight-edge){
-      top=cy-rect.height-gap;
-    }
-
-    left=Math.max(edge,Math.min(left,innerWidth-rect.width-edge));
-    top=Math.max(edge,Math.min(top,innerHeight-rect.height-edge));
-
-    el.style.left=Math.round(left)+'px';
-    el.style.top=Math.round(top)+'px';
-  }
-
-  /* Sustituye el posicionador anterior para Retail Acumulado. */
-  window.__tsfMoveTip=placeTip;
-
-  let lastX=0,lastY=0,raf=0;
-  function moveAll(e){
-    lastX=e.clientX; lastY=e.clientY;
-    if(raf) return;
-    raf=requestAnimationFrame(()=>{
-      raf=0;
-      TOOLTIP_SELECTORS.forEach(sel=>{
-        document.querySelectorAll(sel).forEach(t=>placeTip(t,lastX,lastY));
-      });
-    });
-  }
-  document.addEventListener('pointermove',moveAll,true);
-  document.addEventListener('mousemove',moveAll,true);
-
-  function hideAll(){
-    TOOLTIP_SELECTORS.forEach(sel=>{
-      document.querySelectorAll(sel).forEach(t=>t.style.display='none');
-    });
-  }
-  window.addEventListener('scroll',hideAll,true);
-  window.addEventListener('blur',hideAll);
-  document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',hideAll));
-
-  /* ---------------------------------------------------------
-     Guía vertical para los gráficos mensuales.
-     No toca sus cálculos ni filtros: solo replica la dinámica
-     visual del gráfico de Vehículos Pesados.
-     --------------------------------------------------------- */
-  const CHARTS = [
-    {canvas:'rcTrend', wrap:'.rc96-chart'},
-    {canvas:'roTrend', wrap:'.ro-trend-wrap'},
-    {canvas:'rc10Trend', wrap:'.rc10-trend-wrap'},
-    {canvas:'dc11Trend', wrap:'.dc11-canvas-wrap'}
-  ];
-
-  function installGuide(cfg){
-    const canvas=document.getElementById(cfg.canvas);
-    if(!canvas || canvas.dataset.tsfGuideInstalled==='1') return;
-    const wrap=canvas.closest(cfg.wrap) || canvas.parentElement;
-    if(!wrap) return;
-
-    canvas.dataset.tsfGuideInstalled='1';
-    let guide=wrap.querySelector(':scope > .tsf-bi-hover-guide');
-    if(!guide){
-      guide=document.createElement('div');
-      guide.className='tsf-bi-hover-guide';
-      wrap.appendChild(guide);
-    }
-
-    const move=e=>{
-      const cr=canvas.getBoundingClientRect();
-      const wr=wrap.getBoundingClientRect();
-      let x=e.clientX-cr.left;
-      x=Math.max(0,Math.min(cr.width,x));
-      guide.style.left=(cr.left-wr.left+x)+'px';
-      guide.classList.add('show');
-    };
-    const leave=()=>guide.classList.remove('show');
-
-    canvas.addEventListener('pointermove',move);
-    canvas.addEventListener('mousemove',move);
-    canvas.addEventListener('pointerleave',leave);
-    canvas.addEventListener('mouseleave',leave);
-  }
-
-  function installAll(){
-    CHARTS.forEach(installGuide);
-  }
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',installAll,{once:true});
-  }else{
-    installAll();
-  }
-  setTimeout(installAll,300);
-  setTimeout(installAll,1200);
-
-  /* Si una página se vuelve a construir/cargar, reinstala sin duplicar. */
-  const mo=new MutationObserver(()=>installAll());
-  mo.observe(document.documentElement,{childList:true,subtree:true});
-
-  /* Cuando cambia de pestaña, el canvas necesita medir con la página visible. */
-  document.querySelectorAll('#nav button').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      [40,140,320].forEach(ms=>setTimeout(()=>{
-        installAll();
-        try{window.dispatchEvent(new Event('resize'))}catch(_){}
-      },ms));
-    });
-  });
-})();
-</script>
-
-
-
 <!-- =========================================================
      V103 · NORMALIZACIÓN BI GLOBAL
      Desde Negocio acumulado hasta Departamento y Concesionarios
@@ -9264,272 +9023,6 @@ body{background:var(--bi-bg)!important;color:var(--bi-text)!important}
      - donuts/leyendas legibles
      - re-render al cambiar de pestaña o tamaño
      ========================================================= -->
-<style id="v103-bi-global-normalizer">
-:root{
-  --bi-pink:#ee0b70;
-  --bi-gold:#f5ae00;
-  --bi-ink:#171a20;
-  --bi-muted:#8e96a3;
-  --bi-line:#e7eaf0;
-  --bi-soft:#fafbfc;
-}
-
-/* Alcance solicitado: Negocio acumulado -> Departamento y Concesionarios */
-#retail,#ligeros,#menores,#pesados,#remolques,
-#retailLigeros,#retailComerciales,#retailOmnibus,#retailCamiones,#concesionarios{
-  --bi-card-radius:17px;
-}
-
-/* Tarjetas: misma elevación y respuesta visual */
-#retail .rac-card,
-#ligeros [class*="lv2-"][class*="card"],
-#menores [class*="vm2-"][class*="card"],
-#pesados [class*="vp3-"][class*="card"],
-#remolques [class*="r4-"][class*="card"],
-#retailLigeros [class*="rl-"][class*="card"],
-#retailComerciales [class*="rc96-"][class*="card"],
-#retailOmnibus .ro-card,
-#retailCamiones .rc10-card,
-#concesionarios .dc11-card{
-  border:1px solid var(--bi-line)!important;
-  border-radius:var(--bi-card-radius)!important;
-  background:#fff!important;
-  box-shadow:0 8px 24px rgba(17,19,24,.045)!important;
-  transition:box-shadow .16s ease,transform .16s ease,border-color .16s ease!important;
-}
-#retail .rac-card:hover,
-#ligeros [class*="lv2-"][class*="card"]:hover,
-#menores [class*="vm2-"][class*="card"]:hover,
-#pesados [class*="vp3-"][class*="card"]:hover,
-#remolques [class*="r4-"][class*="card"]:hover,
-#retailLigeros [class*="rl-"][class*="card"]:hover,
-#retailComerciales [class*="rc96-"][class*="card"]:hover,
-#retailOmnibus .ro-card:hover,
-#retailCamiones .rc10-card:hover,
-#concesionarios .dc11-card:hover{
-  box-shadow:0 12px 30px rgba(17,19,24,.075)!important;
-  border-color:#dfe3ea!important;
-}
-
-/* Canvas interactivo: mismo cursor y sin recortes de tooltip/guía */
-#retail canvas,#ligeros canvas,#menores canvas,#pesados canvas,#remolques canvas,
-#retailLigeros canvas,#retailComerciales canvas,#retailOmnibus canvas,
-#retailCamiones canvas,#concesionarios canvas{
-  cursor:crosshair!important;
-  touch-action:none;
-}
-#retail .rac-donut-wrap,
-#ligeros [class*="canvas"],#ligeros [class*="trend-wrap"],#ligeros [class*="donut-wrap"],
-#menores [class*="canvas"],#menores [class*="trend-wrap"],#menores [class*="donut-wrap"],
-#pesados [class*="canvas"],#pesados [class*="trend-wrap"],#pesados [class*="donut-wrap"],
-#remolques [class*="canvas"],#remolques [class*="trend-wrap"],#remolques [class*="donut-wrap"],
-#retailLigeros [class*="trend-wrap"],#retailLigeros [class*="donut-wrap"],
-#retailComerciales [class*="chart"],#retailComerciales [class*="donut-wrap"],
-#retailOmnibus [class*="trend-wrap"],#retailOmnibus [class*="donut-wrap"],
-#retailCamiones [class*="trend-wrap"],#retailCamiones [class*="donut-wrap"],
-#concesionarios .dc11-canvas-wrap,#concesionarios .dc11-donut-wrap{
-  position:relative!important;
-  overflow:visible!important;
-}
-
-/* Tooltip BI único */
-.tsf-v103-tip,
-#retail .rac-tooltip,
-#ligeros [class*="tooltip"],#menores [class*="tooltip"],#pesados [class*="tooltip"],#remolques [class*="tooltip"],
-#retailLigeros [class*="tooltip"],#retailComerciales [class*="tooltip"],
-#retailOmnibus [class*="tooltip"],#retailCamiones [class*="tip"],#concesionarios .dc11-tooltip{
-  position:fixed!important;
-  z-index:2147483000!important;
-  pointer-events:none!important;
-  min-width:118px!important;
-  max-width:270px!important;
-  padding:9px 11px!important;
-  margin:0!important;
-  border:0!important;
-  border-radius:10px!important;
-  background:rgba(23,26,32,.985)!important;
-  color:#fff!important;
-  box-shadow:0 12px 30px rgba(0,0,0,.25)!important;
-  font:500 10px/1.45 Inter,"Segoe UI",Arial,sans-serif!important;
-  white-space:normal!important;
-  text-align:left!important;
-  transform:none!important;
-}
-.tsf-v103-tip b,
-#retail .rac-tooltip b,#ligeros [class*="tooltip"] b,#menores [class*="tooltip"] b,
-#pesados [class*="tooltip"] b,#remolques [class*="tooltip"] b,
-#retailLigeros [class*="tooltip"] b,#retailComerciales [class*="tooltip"] b,
-#retailOmnibus [class*="tooltip"] b,#retailCamiones [class*="tip"] b,#concesionarios .dc11-tooltip b{
-  color:#fff!important;font-weight:850!important
-}
-
-/* Guía vertical: idéntica en todos los gráficos mensuales */
-.tsf-v103-guide{
-  position:absolute!important;
-  top:12px!important;
-  bottom:28px!important;
-  width:0!important;
-  border-left:1.5px dashed rgba(238,11,112,.42)!important;
-  pointer-events:none!important;
-  z-index:30!important;
-  opacity:0!important;
-  transition:opacity .07s ease!important;
-}
-.tsf-v103-guide.show{opacity:1!important}
-
-/* Filas clicables y leyendas: lenguaje BI consistente */
-#retail .rac-leg,#retail .rac-rank-row,#retail .rac-family,#retail .rac-seg,#retail .rac-move,
-#ligeros [class*="rank-row"],#ligeros [class*="bar-row"],#ligeros [class*="legend"] button,
-#menores [class*="rank-row"],#menores [class*="bar-row"],#menores [class*="legend"] button,
-#pesados [class*="rank-row"],#pesados [class*="bar-row"],#pesados [class*="legend"] button,
-#remolques [class*="rank-row"],#remolques [class*="bar-row"],#remolques [class*="legend"] button,
-#retailLigeros .rl-row,#retailLigeros .rl-barrow,#retailLigeros .rl-donut-legend button,#retailLigeros .rl-legend button,
-#retailComerciales [class*="rank-row"],#retailComerciales [class*="bar-row"],#retailComerciales [class*="legend"] button,
-#retailOmnibus .ro-row,#retailOmnibus .ro-barrow,#retailOmnibus [class*="legend"] button,
-#retailCamiones .rc10-row,#retailCamiones .rc10-barrow,#retailCamiones [class*="legend"] button,
-#concesionarios .dc11-rank-row,#concesionarios .dc11-bar,#concesionarios .dc11-donut-legend button,#concesionarios .dc11-heat-tile{
-  cursor:pointer!important;
-  transition:transform .14s ease,background .14s ease,border-color .14s ease,box-shadow .14s ease!important;
-}
-#retail .rac-leg:hover,#retail .rac-rank-row:hover,#retail .rac-family:hover,#retail .rac-seg:hover,#retail .rac-move:hover,
-#retailLigeros .rl-row:hover,#retailLigeros .rl-barrow:hover,#retailLigeros .rl-donut-legend button:hover,
-#retailOmnibus .ro-row:hover,#retailOmnibus .ro-barrow:hover,
-#retailCamiones .rc10-row:hover,#retailCamiones .rc10-barrow:hover,
-#concesionarios .dc11-rank-row:hover,#concesionarios .dc11-bar:hover,#concesionarios .dc11-donut-legend button:hover{
-  background:#fff3f8!important;
-  border-color:#ffd2e3!important;
-  transform:translateY(-1px)!important;
-}
-
-/* Donuts: leyenda completa y legible, sin esconder categorías */
-#retail .rac-legend,
-#ligeros [class*="donut-legend"],#menores [class*="donut-legend"],#pesados [class*="donut-legend"],
-#remolques [class*="donut-legend"],#retailLigeros .rl-donut-legend,
-#retailComerciales [class*="donut-legend"],#retailOmnibus [class*="donut-legend"],
-#retailCamiones [class*="donut-legend"],#concesionarios .dc11-donut-legend{
-  overflow:visible!important;
-  max-height:none!important;
-  align-content:start!important;
-}
-#retail .rac-leg{display:grid!important;visibility:visible!important;opacity:1!important}
-
-/* Charts: alturas consistentes tipo BI */
-#retailComerciales [class*="chart"],
-#retailOmnibus .ro-trend-wrap,
-#retailCamiones .rc10-trend-wrap,
-#concesionarios .dc11-canvas-wrap,
-#retailLigeros .rl-trend-wrap{
-  min-height:280px!important;
-  height:300px!important;
-}
-
-/* Departamento/Concesionarios: evita sensación de piezas sueltas */
-#concesionarios .dc11-grid-a{grid-template-columns:minmax(0,1.55fr) minmax(300px,.72fr)!important;gap:12px!important}
-#concesionarios .dc11-grid-b{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
-#concesionarios .dc11-grid-c{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
-#concesionarios .dc11-grid-d{grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr)!important;gap:12px!important}
-#concesionarios .dc11-donut-wrap{width:min(100%,220px)!important}
-
-@media(max-width:1100px){
-  #concesionarios .dc11-grid-a,#concesionarios .dc11-grid-b,#concesionarios .dc11-grid-d{grid-template-columns:1fr!important}
-  #concesionarios .dc11-grid-c{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-}
-@media(max-width:650px){
-  #concesionarios .dc11-grid-c{grid-template-columns:1fr!important}
-}
-</style>
-
-<script id="v103-bi-global-normalizer-js">
-(function(){
-  const PAGES=['retail','ligeros','menores','pesados','remolques','retailLigeros','retailComerciales','retailOmnibus','retailCamiones','concesionarios'];
-  const pageSel=PAGES.map(x=>'#'+x).join(',');
-
-  function activePage(){return PAGES.map(id=>document.getElementById(id)).find(p=>p&&p.classList.contains('active'))||null}
-  function clampTip(t,x,y){
-    if(!t)return;const cs=getComputedStyle(t);if(cs.display==='none'||cs.visibility==='hidden')return;
-    const gap=12,edge=10,r=t.getBoundingClientRect();let l=x+gap,tt=y+gap;
-    if(l+r.width>innerWidth-edge)l=x-r.width-gap;
-    if(tt+r.height>innerHeight-edge)tt=y-r.height-gap;
-    l=Math.max(edge,Math.min(l,innerWidth-r.width-edge));tt=Math.max(edge,Math.min(tt,innerHeight-r.height-edge));
-    t.style.left=Math.round(l)+'px';t.style.top=Math.round(tt)+'px';
-  }
-  window.__tsfMoveTip=clampTip;
-
-  function tooltipNodes(){
-    const p=activePage();if(!p)return[];
-    return [...p.querySelectorAll('[id*="Tooltip"],[id*="Tip"],[class*="tooltip"]')].filter(Boolean);
-  }
-  let lx=0,ly=0,raf=0;
-  document.addEventListener('pointermove',e=>{
-    lx=e.clientX;ly=e.clientY;if(raf)return;
-    raf=requestAnimationFrame(()=>{raf=0;const p=activePage();if(!p)return;
-      p.querySelectorAll('[id*="Tooltip"],[id*="Tip"],[class*="tooltip"]').forEach(t=>clampTip(t,lx,ly));
-    });
-  },true);
-
-  function hideTips(){
-    const p=activePage();if(!p)return;
-    p.querySelectorAll('[id*="Tooltip"],[id*="Tip"],[class*="tooltip"]').forEach(t=>{if(t instanceof HTMLElement)t.style.display='none'});
-  }
-  addEventListener('scroll',hideTips,true);addEventListener('blur',hideTips);
-
-  /* Guía vertical automática: solo canvases suficientemente anchos que se comportan como serie temporal. */
-  function looksLikeTrend(c){
-    const id=(c.id||'').toLowerCase(),cl=(c.className||'').toString().toLowerCase();
-    return /trend|line|evol|monthly|month/.test(id+' '+cl) || ['rcTrend','roTrend','rc10Trend','dc11Trend','rlTrend','vp3Trend','lv2Trend','vm2Trend','r4Trend'].includes(c.id);
-  }
-  function installGuide(c){
-    if(!c||c.dataset.v103Guide==='1'||!looksLikeTrend(c))return;
-    const wrap=c.parentElement;if(!wrap)return;c.dataset.v103Guide='1';
-    const pos=getComputedStyle(wrap).position;if(pos==='static')wrap.style.position='relative';wrap.style.overflow='visible';
-    const g=document.createElement('div');g.className='tsf-v103-guide';wrap.appendChild(g);
-    const move=e=>{const cr=c.getBoundingClientRect(),wr=wrap.getBoundingClientRect();if(cr.width<160)return;let x=Math.max(0,Math.min(cr.width,e.clientX-cr.left));g.style.left=(cr.left-wr.left+x)+'px';g.classList.add('show')};
-    const leave=()=>g.classList.remove('show');
-    c.addEventListener('pointermove',move);c.addEventListener('mousemove',move);c.addEventListener('pointerleave',leave);c.addEventListener('mouseleave',leave);
-  }
-  function installGuides(){const p=activePage();if(p)p.querySelectorAll('canvas').forEach(installGuide)}
-
-  /* Tooltip genérico para rankings/barras que no tenían hover propio. No reemplaza los tooltips nativos. */
-  let generic=document.getElementById('tsfV103GenericTip');
-  if(!generic){generic=document.createElement('div');generic.id='tsfV103GenericTip';generic.className='tsf-v103-tip';generic.style.display='none';document.body.appendChild(generic)}
-  const clickableSel='.rac-rank-row,.rac-leg,.rac-family,.rac-seg,.rac-move,.lv2-rank-row,.lv2-bar-row,.vm2-rank-row,.vm2-bar-row,.vp3-rank-row,.vp3-bar-row,.r4-rank-row,.r4-bar-row,.rl-row,.rl-barrow,.rc96-rank-row,.rc96-bar-row,.ro-row,.ro-barrow,.rc10-row,.rc10-barrow,.dc11-rank-row,.dc11-bar,.dc11-heat-tile';
-  document.addEventListener('pointerover',e=>{
-    const p=activePage();if(!p||!p.contains(e.target))return;const row=e.target.closest(clickableSel);if(!row)return;
-    /* Si esta pieza ya controla un tooltip específico, no competir. */
-    if(row.onmousemove||row.getAttribute('title'))return;
-    const txt=row.innerText.trim().split(/\n+/).filter(Boolean).slice(0,4);
-    if(!txt.length)return;generic.innerHTML='<b>'+txt[0]+'</b>'+(txt.slice(1).map(x=>'<br>'+x).join(''))+'<br><small>Clic para filtrar</small>';generic.style.display='block';clampTip(generic,lx,ly);
-  },true);
-  document.addEventListener('pointerout',e=>{const row=e.target.closest?.(clickableSel);if(row&&!row.contains(e.relatedTarget))generic.style.display='none'},true);
-
-  /* Departamento y Concesionarios: el donut ahora también filtra al hacer clic. */
-  function installDcDonutClick(){
-    const c=document.getElementById('dc11Donut');if(!c||c.dataset.v103Click==='1')return;c.dataset.v103Click='1';
-    c.addEventListener('click',e=>{
-      const rect=c.getBoundingClientRect(),x=(e.clientX-rect.left)*240/rect.width-120,y=(e.clientY-rect.top)*240/rect.height-120,rad=Math.hypot(x,y);
-      if(rad<58||rad>92)return;let a=Math.atan2(y,x);if(a< -Math.PI/2)a+=Math.PI*2;
-      const s=(c._slices||[]).find(z=>a>=z.a0&&a<=z.a1);if(!s||s.label==='Otros')return;
-      const sel=document.getElementById('dc11Dept');if(!sel)return;sel.value=s.label;sel.dispatchEvent(new Event('change',{bubbles:true}));
-    },true);
-  }
-
-  /* Recalcula los canvases cuando una pestaña se vuelve visible; evita gráficos deformados. */
-  let resizeTimer=0;
-  function pulse(){clearTimeout(resizeTimer);[40,140,320].forEach(ms=>setTimeout(()=>{installGuides();installDcDonutClick();try{dispatchEvent(new Event('resize'))}catch(_){}},ms))}
-  document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',pulse));
-  addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{installGuides();installDcDonutClick()},100)});
-
-  /* MutationObserver: rankings y canvases se reconstruyen cada vez que cambian filtros. */
-  const mo=new MutationObserver(()=>{installGuides();installDcDonutClick()});
-  mo.observe(document.body,{childList:true,subtree:true});
-
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pulse,{once:true});else pulse();
-  addEventListener('load',()=>setTimeout(pulse,250));
-})();
-</script>
-
-
-
 <!-- =========================================================
      V104 FINAL · INTERACCION BI UNIFICADA
      Retail Acumulado -> Comerciales -> Omnibus -> Camiones -> Departamento/Concesionarios
@@ -9538,268 +9031,159 @@ body{background:var(--bi-bg)!important;color:var(--bi-text)!important}
      - Click = filtro/cross-filter usando la logica nativa de cada modulo
      - Seleccion visual consistente
      ========================================================= -->
-<style id="v104-bi-final-style">
-:root{
-  --v104-pink:#ee0b70;
-  --v104-gold:#f5ae00;
-  --v104-dark:#171a20;
-  --v104-line:#e7eaf0;
+
+
+<!-- =========================================================
+     V105 · INTERACCION BI LIMPIA Y ESTABLE
+     Sustituye V102/V103/V104. Mantiene los handlers nativos de
+     cada modulo y solo corrige layout, tooltip y guia visual.
+     ========================================================= -->
+<style id="v105-bi-clean-fix">
+:root{--v105-pink:#EE0B70;--v105-gold:#F5A900;--v105-ink:#171A20;--v105-line:#E7EAF0}
+
+/* 1) El bitmap y el tamano CSS del canvas deben coincidir.
+   Evita que el grafico se estire y que el hit-test apunte a otra zona. */
+#retailComerciales .rc96-chart{height:260px!important;min-height:260px!important;max-height:260px!important;position:relative!important}
+#retailComerciales #rcTrend{width:100%!important;height:260px!important;display:block!important}
+#retailOmnibus .ro-trend-wrap{height:270px!important;min-height:270px!important;max-height:270px!important;position:relative!important}
+#retailOmnibus #roTrend{width:100%!important;height:270px!important;display:block!important}
+#retailCamiones .rc10-trend-wrap{height:280px!important;min-height:280px!important;max-height:280px!important;position:relative!important}
+#retailCamiones #rc10Trend{width:100%!important;height:280px!important;display:block!important}
+#concesionarios .dc11-canvas-wrap{height:285px!important;min-height:285px!important;max-height:285px!important;position:relative!important}
+#concesionarios #dc11Trend{width:100%!important;height:285px!important;display:block!important}
+
+/* 2) Tooltips: un solo criterio, siempre junto al puntero. */
+#retail .rac-tooltip,#retailComerciales .rc96-tooltip,#retailOmnibus .ro-tooltip,
+#retailCamiones .rc10-tip,#concesionarios .dc11-tooltip{
+  position:fixed!important;inset:auto!important;transform:none!important;margin:0!important;
+  z-index:2147483000!important;pointer-events:none!important;max-width:270px!important;
+  border-radius:10px!important;background:#171A20!important;color:#fff!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.22)!important;
 }
 
-/* ===== TOOLTIP: SIEMPRE JUNTO AL PUNTERO ===== */
-#retail .rac-tooltip,
-#retailComerciales .rc96-tooltip,
-#retailOmnibus .ro-tooltip,
-#retailCamiones .rc10-tip,
-#concesionarios .dc11-tooltip,
-#retailLigeros .rl-tooltip,
-#sxBiTip,
-#tsfV104Tip{
-  position:fixed!important;
-  inset:auto!important;
-  z-index:2147483640!important;
-  pointer-events:none!important;
-  transform:none!important;
-  margin:0!important;
-  min-width:120px;
-  max-width:275px!important;
-  padding:10px 12px!important;
-  border:0!important;
-  border-radius:11px!important;
-  background:rgba(23,26,32,.985)!important;
-  color:#fff!important;
-  box-shadow:0 12px 30px rgba(0,0,0,.26)!important;
-  font-family:Inter,"Segoe UI",Arial,sans-serif!important;
-  font-size:10px!important;
-  line-height:1.45!important;
-  text-align:left!important;
-  white-space:normal!important;
-  transition:opacity .06s ease!important;
-  will-change:left,top;
-}
-#retail .rac-tooltip b,
-#retailComerciales .rc96-tooltip b,
-#retailOmnibus .ro-tooltip b,
-#retailCamiones .rc10-tip b,
-#concesionarios .dc11-tooltip b,
-#retailLigeros .rl-tooltip b,
-#sxBiTip b,#tsfV104Tip b{color:#fff!important;font-weight:850!important}
-#retail .rac-tooltip small,
-#retailComerciales .rc96-tooltip small,
-#retailOmnibus .ro-tooltip small,
-#retailCamiones .rc10-tip small,
-#concesionarios .dc11-tooltip small,
-#retailLigeros .rl-tooltip small,
-#sxBiTip small,#tsfV104Tip small{display:block!important;color:#d7dbe2!important;font-size:8.5px!important;margin-top:4px!important}
-
-/* ===== ELEMENTOS INTERACTIVOS ===== */
-#retail .rac-leg,#retail .rac-rank-row,#retail .rac-family,#retail .rac-seg,#retail .rac-move,#retail canvas,
-#retailComerciales .rc96-rank-row,#retailComerciales .rc96-bar-row,#retailComerciales #rcSegmentCards button,#retailComerciales canvas,
-#retailOmnibus .ro-row,#retailOmnibus .ro-barrow,#retailOmnibus .ro-donut-legend button,#retailOmnibus .ro-legend button,#retailOmnibus canvas,
-#retailCamiones .rc10-row,#retailCamiones .rc10-barrow,#retailCamiones .rc10-donut-legend button,#retailCamiones .rc10-legend button,#retailCamiones canvas,
-#concesionarios .dc11-rank-row,#concesionarios .dc11-bar,#concesionarios .dc11-donut-legend button,#concesionarios .dc11-heat-tile,#concesionarios canvas{
-  cursor:pointer!important;
+/* 3) Evoluciones con proporcion y espacio equivalentes a los modulos buenos. */
+#retailComerciales .rc96-trend-card,#retailOmnibus .ro-grid-a>.ro-card:first-child,
+#retailCamiones .rc10-grid-a>.rc10-card:first-child,#concesionarios .dc11-trend-card{
+  min-height:335px!important;overflow:visible!important;
 }
 
-/* Hover suave tipo BI */
-#retail .rac-leg,#retail .rac-rank-row,#retail .rac-family,#retail .rac-seg,#retail .rac-move,
-#retailComerciales .rc96-rank-row,#retailComerciales .rc96-bar-row,#retailComerciales #rcSegmentCards button,
+/* 4) Omnibus: composicion por segmento deja de verse aplastada. */
+#retailOmnibus .ro-grid-a{grid-template-columns:minmax(0,1.35fr) minmax(350px,.85fr)!important;align-items:stretch!important}
+#retailOmnibus .ro-grid-a>.ro-card:nth-child(2){min-width:350px!important;overflow:visible!important}
+#retailOmnibus .ro-donut-zone{min-height:300px!important;display:grid!important;grid-template-columns:230px minmax(150px,1fr)!important;gap:14px!important;align-items:center!important}
+#retailOmnibus .ro-donut-wrap{width:230px!important;height:230px!important;max-width:230px!important;margin:0 auto!important}
+#retailOmnibus #roDonut{width:230px!important;height:230px!important;display:block!important}
+#retailOmnibus .ro-donut-legend{grid-template-columns:1fr!important;align-content:center!important;gap:8px!important}
+#retailOmnibus .ro-donut-legend button{min-height:55px!important;padding:9px 10px!important}
+
+/* 5) Cursor e interaccion visual coherentes. */
+#retail canvas,#retailComerciales canvas,#retailOmnibus canvas,#retailCamiones canvas,#concesionarios canvas,
+#retail .rac-leg,#retail .rac-rank-row,#retail .rac-family,#retail .rac-seg,
+#retailComerciales .rc96-rank-row,#retailComerciales .rc96-bar-row,
 #retailOmnibus .ro-row,#retailOmnibus .ro-barrow,#retailOmnibus .ro-donut-legend button,
 #retailCamiones .rc10-row,#retailCamiones .rc10-barrow,#retailCamiones .rc10-donut-legend button,
-#concesionarios .dc11-rank-row,#concesionarios .dc11-bar,#concesionarios .dc11-donut-legend button,#concesionarios .dc11-heat-tile{
-  transition:background .14s ease,border-color .14s ease,box-shadow .14s ease,transform .14s ease,opacity .14s ease!important;
-}
-#retail .rac-leg:hover,#retail .rac-rank-row:hover,#retail .rac-family:hover,#retail .rac-seg:hover,#retail .rac-move:hover,
-#retailComerciales .rc96-rank-row:hover,#retailComerciales .rc96-bar-row:hover,#retailComerciales #rcSegmentCards button:hover,
-#retailOmnibus .ro-row:hover,#retailOmnibus .ro-barrow:hover,#retailOmnibus .ro-donut-legend button:hover,
-#retailCamiones .rc10-row:hover,#retailCamiones .rc10-barrow:hover,#retailCamiones .rc10-donut-legend button:hover,
-#concesionarios .dc11-rank-row:hover,#concesionarios .dc11-bar:hover,#concesionarios .dc11-donut-legend button:hover,#concesionarios .dc11-heat-tile:hover{
-  background:#fff2f7!important;
-  border-color:#ffc6dc!important;
-  box-shadow:0 6px 16px rgba(238,11,112,.08)!important;
-  transform:translateY(-1px)!important;
-}
+#concesionarios .dc11-rank-row,#concesionarios .dc11-bar,#concesionarios .dc11-donut-legend button,#concesionarios .dc11-heat-tile{cursor:pointer!important}
 
-/* Seleccion visual despues del clic */
-.v104-bi-selected{
-  background:#fff0f6!important;
-  border-color:#ee0b70!important;
-  box-shadow:0 0 0 2px rgba(238,11,112,.10),0 8px 18px rgba(238,11,112,.10)!important;
-  opacity:1!important;
-}
-.v104-bi-muted{opacity:.48!important}
+/* 6) Guia vertical solamente visual; no captura clicks ni mueve el tooltip. */
+.v105-hover-guide{position:absolute;top:18px;bottom:30px;width:1px;background:rgba(238,11,112,.26);border-left:1px dashed rgba(238,11,112,.34);pointer-events:none;opacity:0;z-index:3;transition:opacity .06s linear}
+.v105-hover-guide.show{opacity:1}
 
-/* Guia vertical mensual */
-.v104-bi-guide{
-  position:absolute;
-  top:12px;
-  bottom:28px;
-  width:1px;
-  border-left:1.5px dashed rgba(238,11,112,.48);
-  pointer-events:none;
-  z-index:35;
-  opacity:0;
-  transition:opacity .05s ease;
+@media(max-width:1100px){
+ #retailOmnibus .ro-grid-a{grid-template-columns:1fr!important}
+ #retailOmnibus .ro-grid-a>.ro-card:nth-child(2){min-width:0!important}
+ #retailOmnibus .ro-donut-zone{grid-template-columns:230px minmax(180px,1fr)!important}
 }
-.v104-bi-guide.show{opacity:1}
-
-#retailComerciales .rc96-chart,
-#retailOmnibus .ro-trend-wrap,
-#retailCamiones .rc10-trend-wrap,
-#concesionarios .dc11-canvas-wrap{position:relative!important;overflow:visible!important}
+@media(max-width:650px){
+ #retailOmnibus .ro-donut-zone{grid-template-columns:1fr!important}
+ #retailOmnibus .ro-donut-wrap{width:210px!important;height:210px!important}
+ #retailOmnibus #roDonut{width:210px!important;height:210px!important}
+}
 </style>
 
-<script id="v104-bi-final-js">
+<script id="v105-bi-clean-fix-js">
 (function(){
-  const PAGE_IDS=['retail','retailComerciales','retailOmnibus','retailCamiones','concesionarios'];
-  const TIP_IDS=['racTooltip','sxBiTip','rcTooltip','roTooltip','rc10Tip','dc11TrendTip','dc11DonutTip','rlTip'];
-  let pointerX=0,pointerY=0,raf=0;
+  'use strict';
 
-  function activePage(){
-    return PAGE_IDS.map(id=>document.getElementById(id)).find(p=>p&&p.classList.contains('active'))||null;
-  }
+  /* Posicionador unico usado por Retail Acumulado. Los demas modulos conservan
+     sus handlers nativos, que ya calculan correctamente el dato clicado. */
+  window.__tsfMoveTip=function(t,x,y){
+    if(!t)return;
+    const gap=12,edge=10;
+    t.style.left='0px';t.style.top='0px';
+    const r=t.getBoundingClientRect();
+    let left=x+gap,top=y+gap;
+    if(left+r.width>innerWidth-edge)left=x-r.width-gap;
+    if(top+r.height>innerHeight-edge)top=y-r.height-gap;
+    left=Math.max(edge,Math.min(left,innerWidth-r.width-edge));
+    top=Math.max(edge,Math.min(top,innerHeight-r.height-edge));
+    t.style.left=Math.round(left)+'px';
+    t.style.top=Math.round(top)+'px';
+  };
 
-  function isVisible(el){
-    if(!el)return false;
-    const cs=getComputedStyle(el);
-    return cs.display!=='none'&&cs.visibility!=='hidden'&&parseFloat(cs.opacity||'1')>0;
-  }
-
-  /* Posicion final: 14 px a la derecha y 14 px debajo del puntero.
-     Solo cambia de lado si no entra en pantalla. */
-  function placeTip(el,cx,cy){
-    if(!el||!isVisible(el))return;
-    const gap=14,edge=10;
-    el.style.position='fixed';
-    el.style.transform='none';
-    const r=el.getBoundingClientRect();
-    let x=cx+gap;
-    let y=cy+gap;
-    if(x+r.width>innerWidth-edge)x=cx-r.width-gap;
-    if(y+r.height>innerHeight-edge)y=cy-r.height-gap;
-    x=Math.max(edge,Math.min(x,innerWidth-r.width-edge));
-    y=Math.max(edge,Math.min(y,innerHeight-r.height-edge));
-    el.style.left=Math.round(x)+'px';
-    el.style.top=Math.round(y)+'px';
-  }
-
-  window.__tsfMoveTip=placeTip;
-
-  function visibleTips(){
-    const p=activePage();
-    const out=[];
-    TIP_IDS.forEach(id=>{const t=document.getElementById(id);if(t&&isVisible(t))out.push(t)});
-    if(p){
-      p.querySelectorAll('[class*="tooltip"],[id*="Tooltip"],[id$="Tip"]').forEach(t=>{if(isVisible(t)&&!out.includes(t))out.push(t)});
-    }
-    return out;
-  }
-
-  function queuePosition(e){
-    pointerX=e.clientX;pointerY=e.clientY;
-    if(raf)return;
-    raf=requestAnimationFrame(()=>{
-      raf=0;
-      visibleTips().forEach(t=>placeTip(t,pointerX,pointerY));
-    });
-  }
-
-  /* IMPORTANTE: se escucha en bubble para ejecutarse DESPUES del tooltip nativo.
-     Asi ningun modulo puede volver a mandarlo arriba. */
-  document.addEventListener('pointermove',queuePosition,false);
-  document.addEventListener('mousemove',queuePosition,false);
-  document.addEventListener('pointerdown',queuePosition,false);
-
-  function hideTips(){
-    TIP_IDS.forEach(id=>{const t=document.getElementById(id);if(t)t.style.display='none'});
-    const p=activePage();if(p)p.querySelectorAll('[class*="tooltip"],[id*="Tooltip"],[id$="Tip"]').forEach(t=>t.style.display='none');
-  }
-  addEventListener('scroll',hideTips,true);
-  addEventListener('blur',hideTips);
-
-  /* ===== GUIAS VERTICALES ===== */
   const trendDefs=[
     ['rcTrend','.rc96-chart'],
     ['roTrend','.ro-trend-wrap'],
     ['rc10Trend','.rc10-trend-wrap'],
     ['dc11Trend','.dc11-canvas-wrap']
   ];
+
   function installGuide(id,wrapSel){
-    const c=document.getElementById(id);if(!c||c.dataset.v104Guide==='1')return;
+    const c=document.getElementById(id);if(!c||c.dataset.v105Guide==='1')return;
     const wrap=c.closest(wrapSel)||c.parentElement;if(!wrap)return;
-    c.dataset.v104Guide='1';
-    let g=wrap.querySelector(':scope > .v104-bi-guide');
-    if(!g){g=document.createElement('div');g.className='v104-bi-guide';wrap.appendChild(g)}
+    c.dataset.v105Guide='1';
+    if(getComputedStyle(wrap).position==='static')wrap.style.position='relative';
+    let g=wrap.querySelector(':scope > .v105-hover-guide');
+    if(!g){g=document.createElement('div');g.className='v105-hover-guide';wrap.appendChild(g)}
     const move=e=>{
       const cr=c.getBoundingClientRect(),wr=wrap.getBoundingClientRect();
       const x=Math.max(0,Math.min(cr.width,e.clientX-cr.left));
-      g.style.left=(cr.left-wr.left+x)+'px';g.classList.add('show');
+      g.style.left=Math.round(cr.left-wr.left+x)+'px';
+      g.classList.add('show');
     };
-    const leave=()=>g.classList.remove('show');
-    c.addEventListener('pointermove',move);c.addEventListener('mousemove',move);
-    c.addEventListener('pointerleave',leave);c.addEventListener('mouseleave',leave);
+    c.addEventListener('pointermove',move,{passive:true});
+    c.addEventListener('pointerleave',()=>g.classList.remove('show'),{passive:true});
   }
-  function installGuides(){trendDefs.forEach(x=>installGuide(...x))}
+  function installGuides(){trendDefs.forEach(x=>installGuide(x[0],x[1]))}
 
-  /* ===== ESTADO VISUAL DE FILTROS ===== */
-  function clearVisual(page){
-    page?.querySelectorAll('.v104-bi-selected,.v104-bi-muted').forEach(el=>el.classList.remove('v104-bi-selected','v104-bi-muted'));
-  }
-  function markGroup(clicked,selector){
-    const page=clicked.closest('.page');if(!page)return;
-    const group=clicked.parentElement?.querySelectorAll(selector)||[];
-    group.forEach(el=>{el.classList.toggle('v104-bi-selected',el===clicked);el.classList.toggle('v104-bi-muted',el!==clicked)});
-  }
-
-  /* El filtro real lo ejecutan los handlers nativos ya existentes.
-     Esta capa solo normaliza la respuesta visual para que todas las hojas se sientan igual. */
-  const interactiveSelectors=[
-    '#retail .rac-leg','#retail .rac-rank-row','#retail .rac-family','#retail .rac-seg','#retail .rac-move',
-    '#retailComerciales .rc96-rank-row','#retailComerciales .rc96-bar-row','#retailComerciales #rcSegmentCards button',
-    '#retailOmnibus .ro-row','#retailOmnibus .ro-barrow','#retailOmnibus .ro-donut-legend button',
-    '#retailCamiones .rc10-row','#retailCamiones .rc10-barrow','#retailCamiones .rc10-donut-legend button',
-    '#concesionarios .dc11-rank-row','#concesionarios .dc11-bar','#concesionarios .dc11-donut-legend button','#concesionarios .dc11-heat-tile'
-  ].join(',');
-
-  document.addEventListener('pointerdown',e=>{
-    const el=e.target.closest?.(interactiveSelectors);if(!el)return;
-    const parent=el.parentElement;if(!parent)return;
-    [...parent.children].forEach(ch=>{
-      if(ch===el){ch.classList.add('v104-bi-selected');ch.classList.remove('v104-bi-muted')}
-      else if(ch.matches?.('button,.rac-leg,.rac-rank-row,.rac-family,.rac-seg,.rac-move,.rc96-rank-row,.rc96-bar-row,.ro-row,.ro-barrow,.rc10-row,.rc10-barrow,.dc11-rank-row,.dc11-bar,.dc11-heat-tile')){ch.classList.add('v104-bi-muted');ch.classList.remove('v104-bi-selected')}
+  /* Departamento: el modulo nativo ya dibuja/hace hover del donut, pero no tenia
+     un click nativo equivalente a los otros dashboards. Se agrega UNA sola vez. */
+  function installDcDonutClick(){
+    const c=document.getElementById('dc11Donut');
+    if(!c||c.dataset.v105Click==='1')return;
+    c.dataset.v105Click='1';
+    c.addEventListener('click',e=>{
+      const r=c.getBoundingClientRect();
+      if(!r.width||!r.height)return;
+      const x=(e.clientX-r.left)*240/r.width-120;
+      const y=(e.clientY-r.top)*240/r.height-120;
+      const rad=Math.hypot(x,y);
+      if(rad<58||rad>92)return;
+      let a=Math.atan2(y,x);if(a< -Math.PI/2)a+=Math.PI*2;
+      const s=(c._slices||[]).find(z=>a>=z.a0&&a<=z.a1);
+      if(!s||s.label==='Otros')return;
+      const sel=document.getElementById('dc11Dept');
+      if(!sel)return;
+      sel.value=s.label;
+      sel.dispatchEvent(new Event('change',{bubbles:true}));
     });
-    requestAnimationFrame(()=>visibleTips().forEach(t=>placeTip(t,pointerX,pointerY)));
-  },true);
-
-  /* Limpiar visual cuando se usa el boton Limpiar o se cambia manualmente un select. */
-  document.addEventListener('click',e=>{
-    if(e.target.closest?.('#racReset,#rcReset,#roReset,#rc10Reset,#dc11Reset')){
-      setTimeout(()=>clearVisual(activePage()),20);
-    }
-  },true);
-  document.addEventListener('change',e=>{
-    if(e.target.matches?.('#retail select,#retailComerciales select,#retailOmnibus select,#retailCamiones select,#concesionarios select')){
-      setTimeout(()=>clearVisual(activePage()),20);
-    }
-  },true);
-
-  /* Re-medicion al cambiar de pestaña: evita canvas deformados. */
-  let resizeTimer=0;
-  function pulse(){
-    clearTimeout(resizeTimer);
-    [40,140,320].forEach(ms=>setTimeout(()=>{
-      installGuides();
-      try{dispatchEvent(new Event('resize'))}catch(_){}
-    },ms));
   }
-  document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>{hideTips();clearVisual(activePage());pulse()}));
 
-  const mo=new MutationObserver(()=>installGuides());
-  mo.observe(document.body,{childList:true,subtree:true});
-  addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(installGuides,90)});
+  /* Limpia restos DOM generados por versiones antiguas, por si el navegador
+     restaura una pagina desde cache. */
+  function removeLegacyArtifacts(){
+    document.querySelectorAll('.tsf-bi-hover-guide,.tsf-v103-guide,.v104-bi-guide,#tsfV103GenericTip,#tsfV104Tip')
+      .forEach(n=>n.remove());
+    document.querySelectorAll('[data-v103-guide],[data-v104-guide]').forEach(n=>{
+      delete n.dataset.v103Guide;delete n.dataset.v104Guide;
+    });
+  }
 
+  function pulse(){
+    removeLegacyArtifacts();installGuides();installDcDonutClick();
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',pulse,{once:true});else pulse();
-  addEventListener('load',()=>setTimeout(pulse,220));
+  window.addEventListener('load',()=>setTimeout(pulse,120),{once:true});
+  document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>setTimeout(pulse,90)));
 })();
 </script>
 
