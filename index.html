@@ -3225,7 +3225,7 @@ const FLOW_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.a
 const FLOW_SECRET = 'TSF2026';
 
 const COL_FUNC='FNCNR',COL_NETA='NETA',COL_FECHA='FECHA',COL_ESTGES='EST_GES',COL_ESTCOM='EST_COM',COL_ZONA='ZONA',COL_PROD='PRODUCTO',COL_SUC='SUCURSAL';
-const PALETTE=['#4E545D','#B8923C','#7B828B','#606771','#A7ADB6','#D5D9DE','#343941','#8F7440'];
+const PALETTE=['#4C4A45','#E8B92E','#6C6963','#88847C','#A7A39A','#C7C2B8','#353432','#9B7C24'];
 const CAMPOS_INTERNOS=['ItemInternalId','@odata.etag','ID'];
 
 function esDesistidoExcluido(fila){
@@ -4735,4 +4735,381 @@ nav{background:#181818!important;border-bottom:1px solid #2A2A2A!important;}
 .login-input:focus{border-color:#FFAB00!important;box-shadow:0 0 0 3px rgba(255,171,0,.15)!important;}
 .btn-enter{background:#FFAB00!important;color:#111!important;box-shadow:none!important;}
 .btn-enter:hover{background:#E99B00!important;color:#111!important;}
+</style>
+
+
+<style id="unified-warm-app-theme">
+/* =========================================================
+   INTERIOR UNIFICADO CON EL LOGIN LUMINOSO
+   Blanco + gris calido + amarillo suave, sin celestes
+   ========================================================= */
+body.app-mode{
+  --ui-gold:#E8B92E;
+  --ui-gold-dark:#9B7C24;
+  --ui-gold-soft:#F8EDC5;
+  --ui-charcoal:#3F3D39;
+  --ui-charcoal-2:#4B4944;
+  --ui-gray:#6E6B65;
+  --ui-gray-2:#918D85;
+  --ui-bg:#F1F1EF;
+  --ui-card:#FFFFFF;
+  --ui-line:#DDDAD3;
+  --ui-row:#F8F7F4;
+  background:var(--ui-bg)!important;
+  color:#252422!important;
+}
+
+body.app-mode main,
+body.app-mode .main-inner{
+  background:var(--ui-bg)!important;
+}
+
+/* CABECERA: misma familia visual del login */
+body.app-mode header{
+  background:#45433F!important;
+  border-bottom:1px solid #5A5751!important;
+  box-shadow:none!important;
+}
+body.app-mode nav{
+  background:#514E49!important;
+  border-bottom:1px solid #625E57!important;
+  box-shadow:none!important;
+}
+body.app-mode .brand-icon,
+body.app-mode .brand-t-logo{
+  background:var(--ui-gold)!important;
+  color:#262522!important;
+  box-shadow:none!important;
+}
+body.app-mode .brand-name{color:#fff!important;}
+body.app-mode .brand-sub{color:#DEDAD2!important;}
+body.app-mode .nav-btn{color:#E4E0D8!important;}
+body.app-mode .nav-btn:hover{color:#fff!important;}
+body.app-mode .nav-btn.active{
+  color:#fff!important;
+  border-bottom-color:var(--ui-gold)!important;
+}
+body.app-mode .role-badge{
+  background:#FFF3C8!important;
+  color:#725B1B!important;
+  border:1px solid #E7CB75!important;
+}
+body.app-mode .btn-logout{
+  background:#fff!important;
+  color:#403D38!important;
+  border:1px solid #D8D4CC!important;
+}
+body.app-mode .btn-logout:hover{
+  background:#F7F1DE!important;
+  color:#403D38!important;
+}
+
+/* TITULO Y ACCIONES */
+body.app-mode .page-title{color:#292825!important;}
+body.app-mode .page-title-meta{color:#79756E!important;}
+body.app-mode .dashboard-actions .zoom-control,
+body.app-mode .btn-secondary,
+body.app-mode .btn-clear,
+body.app-mode .btn-csv{
+  background:#fff!important;
+  color:#393733!important;
+  border:1px solid #D5D1C9!important;
+  box-shadow:none!important;
+}
+body.app-mode .btn-secondary:hover,
+body.app-mode .btn-clear:hover,
+body.app-mode .btn-csv:hover{
+  background:#F8F4E8!important;
+  border-color:#D0B760!important;
+  color:#6F5A1F!important;
+}
+body.app-mode .btn-pdf,
+body.app-mode .btn-primary,
+body.app-mode .btn-success{
+  background:#44423E!important;
+  color:#fff!important;
+  border:1px solid #44423E!important;
+  box-shadow:none!important;
+}
+body.app-mode .btn-pdf:hover,
+body.app-mode .btn-primary:hover,
+body.app-mode .btn-success:hover{
+  background:#55524C!important;
+}
+
+/* FILTROS */
+body.app-mode .filter-bar{
+  background:#FFFFFF!important;
+  border:1px solid var(--ui-line)!important;
+  border-radius:14px!important;
+  box-shadow:0 4px 14px rgba(67,63,57,.05)!important;
+}
+body.app-mode .filter-bar label{
+  color:#47443F!important;
+  font-weight:900!important;
+}
+body.app-mode .filter-select-dash,
+body.app-mode .filter-select,
+body.app-mode .search-input,
+body.app-mode .multi-select-btn,
+body.app-mode .form-input{
+  background:#FCFCFB!important;
+  color:#302F2C!important;
+  border:1px solid #D7D3CB!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+}
+body.app-mode .filter-select-dash:focus,
+body.app-mode .filter-select:focus,
+body.app-mode .search-input:focus,
+body.app-mode .multi-select-btn:focus,
+body.app-mode .form-input:focus{
+  border-color:#D0AE3D!important;
+  box-shadow:0 0 0 3px rgba(232,185,46,.12)!important;
+}
+body.app-mode .multi-select-menu{
+  background:#fff!important;
+  border:1px solid #D7D3CB!important;
+  box-shadow:0 12px 28px rgba(67,63,57,.13)!important;
+}
+body.app-mode .multi-option:hover{background:#FAF5E6!important;}
+body.app-mode .multi-option.active-all{color:#8B6D18!important;}
+body.app-mode .multi-option input,
+body.app-mode .estado-check{accent-color:#D6AA27!important;}
+
+/* KPIs: iguales a la tarjeta blanca del login */
+body.app-mode .kpi-grid{gap:12px!important;}
+body.app-mode .kpi-card,
+body.app-mode .kpi-card.blue,
+body.app-mode .kpi-card.gold,
+body.app-mode .kpi-card.green,
+body.app-mode .kpi-card.purple,
+body.app-mode .kpi-card.teal,
+body.app-mode .kpi-card.orange{
+  background:#FFFFFF!important;
+  color:#282724!important;
+  border:1px solid #DDD9D1!important;
+  border-radius:14px!important;
+  box-shadow:0 5px 16px rgba(67,63,57,.06)!important;
+  position:relative!important;
+  overflow:hidden!important;
+}
+body.app-mode .kpi-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:3px;
+  background:var(--ui-gold)!important;
+}
+body.app-mode .kpi-card:hover{
+  transform:translateY(-2px)!important;
+  box-shadow:0 9px 22px rgba(67,63,57,.10)!important;
+}
+body.app-mode .kpi-stripe{display:none!important;}
+body.app-mode .kpi-icon,
+body.app-mode .kpi-card.blue .kpi-icon,
+body.app-mode .kpi-card.gold .kpi-icon,
+body.app-mode .kpi-card.green .kpi-icon,
+body.app-mode .kpi-card.purple .kpi-icon,
+body.app-mode .kpi-card.teal .kpi-icon,
+body.app-mode .kpi-card.orange .kpi-icon{
+  background:#FBF2D3!important;
+  color:#514C42!important;
+  border:1px solid #E8D89F!important;
+}
+body.app-mode .kpi-icon svg{
+  stroke:#514C42!important;
+  color:#514C42!important;
+}
+body.app-mode .kpi-label{color:#777168!important;font-weight:800!important;}
+body.app-mode .kpi-value,
+body.app-mode .kpi-card.blue .kpi-value,
+body.app-mode .kpi-card.gold .kpi-value,
+body.app-mode .kpi-card.green .kpi-value,
+body.app-mode .kpi-card.purple .kpi-value,
+body.app-mode .kpi-card.teal .kpi-value,
+body.app-mode .kpi-card.orange .kpi-value{
+  color:#282724!important;
+}
+body.app-mode .kpi-sub{color:#77736D!important;}
+body.app-mode .kpi-sub-neta,
+body.app-mode .kpi-card.blue .kpi-sub-neta,
+body.app-mode .kpi-card.gold .kpi-sub-neta,
+body.app-mode .kpi-card.green .kpi-sub-neta,
+body.app-mode .kpi-card.purple .kpi-sub-neta{
+  color:#8A6E1D!important;
+  border-top:1px solid #EEEAE3!important;
+}
+
+/* TARJETAS DE GRAFICOS */
+body.app-mode .chart-card{
+  background:#FFFFFF!important;
+  border:1px solid #DDD9D1!important;
+  border-radius:14px!important;
+  box-shadow:0 5px 16px rgba(67,63,57,.06)!important;
+}
+body.app-mode .chart-card:hover{
+  box-shadow:0 8px 22px rgba(67,63,57,.09)!important;
+}
+body.app-mode .chart-head{
+  background:#55524C!important;
+  border-radius:14px 14px 0 0!important;
+  position:relative!important;
+}
+body.app-mode .chart-head::after{
+  content:'';
+  position:absolute;
+  left:0;right:0;bottom:0;
+  height:2px;
+  background:var(--ui-gold)!important;
+}
+body.app-mode .chart-title{color:#fff!important;}
+body.app-mode .chart-badge{
+  background:#69655F!important;
+  color:#fff!important;
+  border:1px solid #77736C!important;
+}
+
+/* SIN CELESTE/TURQUESA: barras cálidas y sobrias */
+body.app-mode .bar-track,
+body.app-mode .suc-track,
+body.app-mode .estges-track{
+  background:#E9E6E0!important;
+}
+body.app-mode .bar-fill,
+body.app-mode .suc-fill,
+body.app-mode .estges-fill,
+body.app-mode .vbar-fill{
+  background:linear-gradient(90deg,#8B877F 0%,#D7AE32 100%)!important;
+}
+body.app-mode .bar-label,
+body.app-mode .suc-label,
+body.app-mode .estges-label,
+body.app-mode .vbar-lbl,
+body.app-mode .neta-big{color:#302E2A!important;}
+body.app-mode .bar-count,
+body.app-mode .suc-amount,
+body.app-mode .estges-count,
+body.app-mode .vbar-val,
+body.app-mode .vbar-neta,
+body.app-mode .donut-legend-count,
+body.app-mode .donut-legend-pct{color:#625E57!important;}
+body.app-mode .cnt-small,
+body.app-mode .donut-legend-neta{color:#8A6E1D!important;}
+body.app-mode .bar-row:hover,
+body.app-mode .suc-row:hover,
+body.app-mode .estges-row:hover,
+body.app-mode .vbar-col:hover,
+body.app-mode .donut-legend-item:hover,
+body.app-mode .net-table tbody tr:hover{
+  background:#FAF5E7!important;
+  border-radius:8px!important;
+}
+
+/* DONUT */
+body.app-mode .donut-center-label .dcl-val{color:#2D2B28!important;}
+body.app-mode .donut-center-label .dcl-sub{color:#7A756D!important;}
+body.app-mode .donut-legend-item{color:#302E2A!important;}
+
+/* TABLAS */
+body.app-mode .table-wrap{
+  background:#FFFFFF!important;
+  border:1px solid #DDD9D1!important;
+  border-radius:14px!important;
+  box-shadow:0 5px 16px rgba(67,63,57,.05)!important;
+}
+body.app-mode #view-expedientes thead th,
+body.app-mode table thead th,
+body.app-mode .detail-table thead th,
+body.app-mode .detalle-table thead th{
+  background:#55524C!important;
+  color:#FFFFFF!important;
+  box-shadow:none!important;
+}
+body.app-mode #view-expedientes tbody tr:nth-child(even) td,
+body.app-mode tbody tr:nth-child(even) td{
+  background:#F9F8F5!important;
+}
+body.app-mode #view-expedientes tbody tr:hover td,
+body.app-mode tbody tr:hover td{
+  background:#FAF5E7!important;
+}
+body.app-mode .net-table th,
+body.app-mode .net-tfoot td{
+  background:#F5F3EF!important;
+  color:#5A554E!important;
+  border-color:#E2DED7!important;
+}
+body.app-mode .net-table td{
+  border-bottom:1px solid #EEEAE4!important;
+}
+body.app-mode .net-tfoot .net-amount,
+body.app-mode .net-amount{color:#806719!important;}
+body.app-mode .pagination{
+  background:#fff!important;
+  border-color:#DDD9D1!important;
+}
+body.app-mode .page-btn{
+  background:#fff!important;
+  color:#383631!important;
+  border-color:#D5D1C9!important;
+}
+body.app-mode .page-btn:hover{
+  background:#FAF5E7!important;
+  border-color:#D0B760!important;
+  color:#806719!important;
+}
+body.app-mode .page-btn.active{
+  background:#55524C!important;
+  color:#fff!important;
+  border-color:#55524C!important;
+}
+
+/* BADGES */
+body.app-mode .badge-act{background:#F7EBC0!important;color:#6F591A!important;}
+body.app-mode .badge-proye{background:#ECEAE6!important;color:#56524C!important;}
+body.app-mode .badge-lsng{background:#F1EFEA!important;color:#3F3C37!important;}
+body.app-mode .badge-crdt{background:#F8EFCF!important;color:#735B16!important;}
+body.app-mode .badge-lsbk{background:#ECEAE6!important;color:#514E48!important;}
+body.app-mode .badge-grey{background:#EEECE8!important;color:#5B5751!important;}
+
+/* MODALES */
+body.app-mode .modal-overlay,
+body.app-mode .detalle-overlay{background:rgba(59,56,50,.58)!important;}
+body.app-mode .modal,
+body.app-mode .detalle-modal,
+body.app-mode .detail-modal{
+  background:#FFFFFF!important;
+  border:1px solid #DDD9D1!important;
+  box-shadow:0 24px 64px rgba(67,63,57,.18)!important;
+}
+body.app-mode .modal-header,
+body.app-mode .detalle-header,
+body.app-mode .detail-modal-header{
+  background:#55524C!important;
+  color:#fff!important;
+}
+body.app-mode .modal-expid,
+body.app-mode .detail-modal-count,
+body.app-mode .detalle-header span{
+  background:#E8B92E!important;
+  color:#302E29!important;
+}
+body.app-mode .btn-close,
+body.app-mode .detalle-close{
+  background:#E8B92E!important;
+  color:#302E29!important;
+}
+body.app-mode .btn-close:hover,
+body.app-mode .detalle-close:hover{
+  background:#D6AA27!important;
+}
+
+/* Mata cualquier azul/celeste heredado en SVGs e iconos internos */
+body.app-mode .kpi-card svg,
+body.app-mode .chart-card svg,
+body.app-mode .nav-btn svg,
+body.app-mode .page-title svg{
+  stroke:currentColor!important;
+}
 </style>
