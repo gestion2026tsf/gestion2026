@@ -2852,6 +2852,331 @@ body.app-mode .detalle-close:hover{
 }
 </style>
 
+
+<style id="coherent-light-interior">
+/* =========================================================
+   INTERIOR COHERENTE CON EL LOGIN CLARO
+   ========================================================= */
+:root{
+  --ui-bg:#F3F0EA;
+  --ui-panel:#FFFDFC;
+  --ui-panel-2:#FBF8F2;
+  --ui-stroke:#DDD6CA;
+  --ui-stroke-2:#E8E2D7;
+  --ui-text:#262B33;
+  --ui-muted:#6F7680;
+  --ui-warm:#635E57;
+  --ui-warm-2:#7A746B;
+  --ui-gold:#D7B446;
+  --ui-gold-dark:#B28E24;
+  --ui-gold-soft:#F5E7B3;
+  --ui-shadow:0 6px 20px rgba(38,43,51,.06);
+}
+
+/* ===== SOLO ADENTRO ===== */
+body.app-mode,
+body.app-mode main,
+body.app-mode .main-inner,
+body.app-mode #view-dashboard{
+  background:var(--ui-bg)!important;
+  color:var(--ui-text)!important;
+}
+
+body.app-mode header{
+  background:linear-gradient(180deg,#58544F 0%, #605B55 100%)!important;
+  border-bottom:1px solid rgba(255,255,255,.08)!important;
+  box-shadow:0 2px 12px rgba(0,0,0,.10)!important;
+}
+body.app-mode nav{
+  background:#6A645D!important;
+  border-bottom:1px solid rgba(255,255,255,.08)!important;
+}
+body.app-mode .brand-icon,
+body.app-mode .brand-t-logo{
+  background:var(--ui-gold)!important;
+  color:#222!important;
+}
+body.app-mode .brand-name,
+body.app-mode .nav-link,
+body.app-mode .nav-right{color:#fff!important;}
+body.app-mode .nav-link.active{
+  border-bottom:2px solid var(--ui-gold)!important;
+  color:#fff!important;
+}
+body.app-mode .user-badge{
+  background:#F4E6B5!important;
+  color:#7A5E09!important;
+  border:1px solid #E0C96E!important;
+}
+
+/* top toolbar buttons */
+body.app-mode .btn-primary,
+body.app-mode .btn-success,
+body.app-mode .btn-pdf{
+  background:#4C4944!important;
+  color:#fff!important;
+  border:1px solid #4C4944!important;
+  box-shadow:none!important;
+}
+body.app-mode .btn-primary:hover,
+body.app-mode .btn-success:hover,
+body.app-mode .btn-pdf:hover{
+  background:#3F3C38!important;
+  border-color:#3F3C38!important;
+}
+body.app-mode .btn-clear,
+body.app-mode .btn-secondary,
+body.app-mode .page-btn{
+  background:#FFFDFC!important;
+  color:#4E4A44!important;
+  border:1px solid #D7D0C6!important;
+}
+body.app-mode .btn-clear:hover,
+body.app-mode .btn-secondary:hover,
+body.app-mode .page-btn:hover{
+  background:#F7F3EC!important;
+  border-color:#C9C0B2!important;
+}
+body.app-mode .page-btn.active{
+  background:#69635C!important;
+  color:#fff!important;
+  border-color:#69635C!important;
+}
+
+/* filtros */
+body.app-mode .filter-bar{
+  background:var(--ui-panel)!important;
+  border:1px solid var(--ui-stroke)!important;
+  border-radius:16px!important;
+  box-shadow:var(--ui-shadow)!important;
+}
+body.app-mode .filter-bar label{
+  color:#5E5A54!important;
+  font-weight:800!important;
+}
+body.app-mode .filter-select-dash,
+body.app-mode .filter-select,
+body.app-mode .search-input,
+body.app-mode .multi-select-btn,
+body.app-mode .form-input{
+  background:#FFFDFC!important;
+  color:#4B5058!important;
+  border:1px solid #D7D0C6!important;
+  border-radius:10px!important;
+}
+body.app-mode .filter-select-dash:focus,
+body.app-mode .filter-select:focus,
+body.app-mode .search-input:focus,
+body.app-mode .multi-select-btn:focus,
+body.app-mode .form-input:focus{
+  border-color:var(--ui-gold)!important;
+  box-shadow:0 0 0 3px rgba(215,180,70,.12)!important;
+}
+body.app-mode .multi-select-menu{
+  background:#FFFDFC!important;
+  border:1px solid #D7D0C6!important;
+  box-shadow:0 14px 30px rgba(38,43,51,.10)!important;
+}
+body.app-mode .multi-option.active-all{color:#8B711C!important;}
+
+/* Título página */
+body.app-mode .view-head, body.app-mode .page-head{
+  color:var(--ui-text)!important;
+}
+
+/* KPI cards */
+body.app-mode .kpi-card{
+  background:var(--ui-panel)!important;
+  border:1px solid var(--ui-stroke)!important;
+  border-radius:16px!important;
+  box-shadow:var(--ui-shadow)!important;
+  color:var(--ui-text)!important;
+  position:relative!important;
+}
+body.app-mode .kpi-card::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:3px;
+  background:linear-gradient(90deg,var(--ui-gold),#E6CA74)!important;
+  border-radius:16px 16px 0 0!important;
+}
+body.app-mode .kpi-card:hover{transform:translateY(-1px)!important;box-shadow:0 10px 24px rgba(38,43,51,.08)!important;}
+body.app-mode .kpi-stripe{display:none!important;}
+body.app-mode .kpi-icon,
+body.app-mode .kpi-card.blue .kpi-icon,
+body.app-mode .kpi-card.gold .kpi-icon,
+body.app-mode .kpi-card.green .kpi-icon,
+body.app-mode .kpi-card.purple .kpi-icon,
+body.app-mode .kpi-card.teal .kpi-icon,
+body.app-mode .kpi-card.orange .kpi-icon{
+  background:#F7EECF!important;
+  border:1px solid #E4D08D!important;
+  color:#6D5716!important;
+}
+body.app-mode .kpi-icon svg{stroke:#6D5716!important;}
+body.app-mode .kpi-label{color:#7B746B!important;letter-spacing:.6px!important;}
+body.app-mode .kpi-value,
+body.app-mode .kpi-card.blue .kpi-value,
+body.app-mode .kpi-card.gold .kpi-value,
+body.app-mode .kpi-card.green .kpi-value,
+body.app-mode .kpi-card.purple .kpi-value,
+body.app-mode .kpi-card.teal .kpi-value,
+body.app-mode .kpi-card.orange .kpi-value{
+  color:#23272F!important;
+}
+body.app-mode .kpi-sub, body.app-mode .kpi-sub-neta{
+  color:#7A746B!important;
+  border-top:1px solid #EEE7DB!important;
+}
+
+/* cards de gráficos */
+body.app-mode .chart-card{
+  background:var(--ui-panel)!important;
+  border:1px solid var(--ui-stroke)!important;
+  border-radius:16px!important;
+  box-shadow:var(--ui-shadow)!important;
+  overflow:hidden!important;
+}
+body.app-mode .chart-head{
+  background:#6C665E!important;
+  color:#fff!important;
+  padding:10px 16px!important;
+  border-radius:16px 16px 0 0!important;
+  position:relative!important;
+  margin-bottom:10px!important;
+}
+body.app-mode .chart-head::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:var(--ui-gold)!important;
+}
+body.app-mode .chart-title{color:#fff!important;font-weight:800!important;}
+body.app-mode .chart-badge{
+  background:#F1E2AD!important;
+  color:#7A5E09!important;
+  border:1px solid #E0C96E!important;
+}
+
+/* tablas internas */
+body.app-mode .net-table thead th{
+  background:#F7F3EC!important;
+  color:#655F57!important;
+  border-bottom:1px solid #E5DECF!important;
+}
+body.app-mode .net-table tbody td{
+  color:#32363E!important;
+  border-bottom:1px solid #F0EBE2!important;
+}
+body.app-mode .net-table tbody tr:nth-child(even) td{background:#FFFEFC!important;}
+body.app-mode .net-tfoot td{
+  background:#F8F4EB!important;
+  color:#554E46!important;
+  border-top:1px solid #E1D8C8!important;
+}
+body.app-mode .net-amount{color:#B28E24!important;font-weight:800!important;}
+
+/* barras y listas */
+body.app-mode .bar-track,
+body.app-mode .suc-track,
+body.app-mode .estges-track{
+  background:#E8E2D8!important;
+}
+body.app-mode .bar-fill,
+body.app-mode .suc-fill,
+body.app-mode .estges-fill,
+body.app-mode .vbar-fill{
+  background:linear-gradient(90deg,#AE9960 0%, #D7B446 100%)!important;
+}
+body.app-mode .bar-label,
+body.app-mode .suc-label,
+body.app-mode .estges-label,
+body.app-mode .vbar-lbl{
+  color:#403C37!important;
+  font-weight:700!important;
+}
+body.app-mode .bar-count,
+body.app-mode .suc-right,
+body.app-mode .estges-count,
+body.app-mode .vbar-val{color:#6F675D!important;}
+body.app-mode .neta-big,
+body.app-mode .suc-amount,
+body.app-mode .donut-legend-neta{color:#A8831C!important;}
+body.app-mode .cnt-small,
+body.app-mode .donut-legend-pct{color:#8B7C5A!important;}
+body.app-mode .bar-row:hover,
+body.app-mode .suc-row:hover,
+body.app-mode .estges-row:hover,
+body.app-mode .vbar-col:hover,
+body.app-mode .donut-legend-item:hover,
+body.app-mode .net-table tbody tr:hover{
+  background:#FCF6E7!important;
+  border-radius:8px!important;
+}
+
+/* donut legend */
+body.app-mode .donut-legend-dot{border:none!important;box-shadow:none!important;}
+body.app-mode .donut-legend-label{color:#4A4640!important;}
+body.app-mode .donut-legend-count{color:#5F5A53!important;}
+
+/* vista barras verticales */
+body.app-mode #chart-zonas-v{align-items:flex-end!important;padding:6px 8px 2px!important;}
+body.app-mode .vbar-col{background:transparent!important;}
+body.app-mode .vbar-fill{border-radius:8px 8px 0 0!important;min-width:38px!important;}
+body.app-mode .vbar-neta{color:#23272F!important;font-weight:800!important;}
+
+/* tablas generales / expediente */
+body.app-mode .table-wrap{
+  background:var(--ui-panel)!important;
+  border:1px solid var(--ui-stroke)!important;
+  border-radius:16px!important;
+  box-shadow:var(--ui-shadow)!important;
+}
+body.app-mode .data-table thead th,
+body.app-mode .detail-table thead th,
+body.app-mode .detalle-table thead th{
+  background:#6C665E!important;
+  color:#fff!important;
+}
+body.app-mode .data-table tbody td,
+body.app-mode .detail-table tbody td,
+body.app-mode .detalle-table tbody td{
+  color:#32363E!important;
+  border-bottom:1px solid #F0EBE2!important;
+}
+body.app-mode .data-table tbody tr:nth-child(even) td,
+body.app-mode .detalle-table tbody tr:nth-child(even) td{background:#FFFEFC!important;}
+body.app-mode .data-table tbody tr:hover td,
+body.app-mode .detail-table tbody tr:hover td,
+body.app-mode .detalle-table tbody tr:hover td{background:#FCF6E7!important;}
+
+/* modales */
+body.app-mode .modal, body.app-mode .detalle-modal{
+  background:var(--ui-panel)!important;
+  border:1px solid var(--ui-stroke)!important;
+  box-shadow:0 24px 60px rgba(38,43,51,.18)!important;
+}
+body.app-mode .modal-header, body.app-mode .detalle-header{
+  background:#6C665E!important;
+  color:#fff!important;
+}
+body.app-mode .modal-expid,
+body.app-mode .detail-modal-count,
+body.app-mode .detalle-header span{
+  background:#F3E2AA!important;
+  color:#7A5E09!important;
+  border:1px solid #E0C96E!important;
+}
+body.app-mode .btn-close, body.app-mode .detalle-close{
+  background:#D7B446!important;
+  color:#2A2D31!important;
+  border:none!important;
+}
+body.app-mode .btn-close:hover, body.app-mode .detalle-close:hover{background:#C8A436!important;color:#111!important;}
+
+/* elimina restos celestes */
+body.app-mode [style*="#5BC7C8"],
+body.app-mode [style*="rgb(91, 199, 200)"]{
+  filter:hue-rotate(-150deg) saturate(.3) brightness(1.05)!important;
+}
+</style>
+
 </head>
 <body>
 <div class="loading-bar" id="loadingBar"></div>
@@ -3225,7 +3550,7 @@ const FLOW_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.a
 const FLOW_SECRET = 'TSF2026';
 
 const COL_FUNC='FNCNR',COL_NETA='NETA',COL_FECHA='FECHA',COL_ESTGES='EST_GES',COL_ESTCOM='EST_COM',COL_ZONA='ZONA',COL_PROD='PRODUCTO',COL_SUC='SUCURSAL';
-const PALETTE=['#4C4A45','#E8B92E','#6C6963','#88847C','#A7A39A','#C7C2B8','#353432','#9B7C24'];
+const PALETTE=['#605A52','#C8A642','#7A736A','#9A9388','#B7B0A6','#D9D2C8','#45413C','#A8882D'];
 const CAMPOS_INTERNOS=['ItemInternalId','@odata.etag','ID'];
 
 function esDesistidoExcluido(fila){
