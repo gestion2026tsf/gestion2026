@@ -2165,6 +2165,35 @@ body.dash-zoom-200 #chart-zonas-v .vbar-lbl{font-size:14px!important;max-width:1
 }
 
 </style>
+
+<style>
+/* =========================================================
+   DETALLE CLICKEABLE DEL DASHBOARD - OCTUBRE 2026
+   ========================================================= */
+.kpi-card,.bar-row,.estges-row,.suc-row,.vbar-col,.net-table tbody tr,.donut-legend-item,#donutEstCom{
+  cursor:pointer!important;
+}
+.kpi-card:hover,.bar-row:hover,.estges-row:hover,.suc-row:hover,.vbar-col:hover,.net-table tbody tr:hover,.donut-legend-item:hover{
+  filter:brightness(.97);
+}
+.detail-modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,20,20,.72);z-index:12000;align-items:center;justify-content:center;padding:22px;backdrop-filter:blur(4px)}
+.detail-modal-overlay.open{display:flex}
+.detail-modal{width:min(1500px,97vw);max-height:90vh;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 28px 80px rgba(0,0,0,.40);display:flex;flex-direction:column}
+.detail-modal-head{background:#343434;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.detail-modal-title{font-size:14px;font-weight:900}
+.detail-modal-count{font-size:10px;font-weight:900;background:#F0005B;border-radius:999px;padding:4px 10px;margin-left:8px}
+.detail-close{border:0;background:#fff;color:#d93636;width:30px;height:30px;border-radius:6px;font-weight:900;cursor:pointer;font-size:18px;line-height:1}
+.detail-table-wrap{overflow:auto;flex:1;min-height:0}
+.detail-table{width:100%;min-width:1450px;border-collapse:collapse;font-size:10px}
+.detail-table thead th{position:sticky;top:0;z-index:2;background:#F0005B!important;color:#fff!important;padding:9px 10px;text-align:left;font-size:9px;font-weight:900;white-space:nowrap}
+.detail-table tbody td{padding:7px 10px;border-bottom:1px solid #e8e8e8;color:#111;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.detail-table tbody tr:nth-child(even) td{background:#f1f1f1}
+.detail-table tbody tr:hover td{background:#ffe3ef!important}
+.detail-table td.num{text-align:right;font-weight:800}
+.detail-empty{padding:36px;text-align:center;color:#666;font-weight:700}
+.detail-modal-foot{padding:9px 16px;background:#f3f3f3;border-top:1px solid #ddd;font-size:10px;font-weight:800;color:#444}
+</style>
+
 </head>
 <body>
 <div class="loading-bar" id="loadingBar"></div>
@@ -2282,8 +2311,8 @@ body.dash-zoom-200 #chart-zonas-v .vbar-lbl{font-size:14px!important;max-width:1
                 <span class="multi-option-text">Todos ACTIVADO 2026</span>
               </label>
               <label class="multi-option active-all">
-                <input type="checkbox" value="SETIEMBRE_2026" class="estado-check" onchange="applyDashFilter()">
-                <span class="multi-option-text">SETIEMBRE 2026</span>
+                <input type="checkbox" value="OCTUBRE_2026" class="estado-check" onchange="applyDashFilter()">
+                <span class="multi-option-text">OCTUBRE 2026</span>
               </label>
               <div id="estadoOpciones"></div>
             </div>
@@ -2447,8 +2476,8 @@ body.dash-zoom-200 #chart-zonas-v .vbar-lbl{font-size:14px!important;max-width:1
                 <span class="multi-option-text">Todos ACTIVADO 2026</span>
               </label>
               <label class="multi-option active-all">
-                <input type="checkbox" value="SETIEMBRE_2026" class="estado-exp-check" onchange="filterTable()">
-                <span class="multi-option-text">SETIEMBRE 2026</span>
+                <input type="checkbox" value="OCTUBRE_2026" class="estado-exp-check" onchange="filterTable()">
+                <span class="multi-option-text">OCTUBRE 2026</span>
               </label>
               <div id="estadoExpOpciones"></div>
             </div>
@@ -2713,8 +2742,8 @@ function updateEstadoLabel(){
   }else if(seleccionados.length===1){
     if(seleccionados[0]==='ACTIVADO_2026'){
       btn.textContent='Todos ACTIVADO 2026';
-    }else if(seleccionados[0]==='SETIEMBRE_2026'){
-      btn.textContent='SETIEMBRE 2026';
+    }else if(seleccionados[0]==='OCTUBRE_2026'){
+      btn.textContent='OCTUBRE 2026';
     }else{
       btn.textContent=seleccionados[0];
     }
@@ -2737,8 +2766,8 @@ function updateDashFilters(){
   const activo2026=document.querySelector('.estado-check[value="ACTIVADO_2026"]');
   if(activo2026)activo2026.checked=seleccionadosPrevios.has('ACTIVADO_2026');
 
-  const setiembre2026=document.querySelector('.estado-check[value="SETIEMBRE_2026"]');
-  if(setiembre2026)setiembre2026.checked=seleccionadosPrevios.has('SETIEMBRE_2026');
+  const octubre2026=document.querySelector('.estado-check[value="OCTUBRE_2026"]');
+  if(octubre2026)octubre2026.checked=seleccionadosPrevios.has('OCTUBRE_2026');
 
   document.getElementById('filtroZonaDash').innerHTML =
     '<option value="">Todas</option>' +
@@ -2770,7 +2799,7 @@ function applyDashFilter(){
     const cumpleEstado =
       estGes.length===0 ||
       (estGes.includes('ACTIVADO_2026') && isActivado(r)) ||
-      (estGes.includes('SETIEMBRE_2026') && getMesKeyFromRow(r) === 'SET26') ||
+      (estGes.includes('OCTUBRE_2026') && getMesKeyFromRow(r) === 'OCT26') ||
       estGes.includes(estado);
 
     return cumpleEstado &&
@@ -3082,6 +3111,7 @@ function updateDashboard(){
   renderSucursal(d,netaKey);
   renderZonasV(d);
   renderEstGes(d,netaKey);
+  setTimeout(activarClicksDashboard,0);
 }
 
 /* ════════════════════════════════════════
@@ -3420,7 +3450,7 @@ function updateEstadoExpLabel(){
     btn.textContent='Todos los estados';
   }else if(seleccionados.length===1){
     if(seleccionados[0]==='ACTIVADO_2026')btn.textContent='Todos ACTIVADO 2026';
-    else if(seleccionados[0]==='SETIEMBRE_2026')btn.textContent='SETIEMBRE 2026';
+    else if(seleccionados[0]==='OCTUBRE_2026')btn.textContent='OCTUBRE 2026';
     else btn.textContent=seleccionados[0];
   }else{
     btn.textContent=seleccionados.length+' seleccionados';
@@ -3443,7 +3473,7 @@ function filterTable(){
     const cumpleEstado =
       estados.length===0 ||
       (estados.includes('ACTIVADO_2026') && isActivado(r)) ||
-      (estados.includes('SETIEMBRE_2026') && getMesKeyFromRow(r) === 'SET26') ||
+      (estados.includes('OCTUBRE_2026') && getMesKeyFromRow(r) === 'OCT26') ||
       estados.includes(est);
     const cumpleFuncionario = !funcQ || func.toLowerCase().includes(funcQ);
     return(!q||txt.includes(q))&&(!prod||String(r[COL_PROD]).includes(prod))&&cumpleFuncionario&&cumpleEstado;
@@ -3470,8 +3500,8 @@ function updateFiltros(){
   }).join('');
   const activo=document.querySelector('.estado-exp-check[value="ACTIVADO_2026"]');
   if(activo)activo.checked=seleccionadosPrevios.has('ACTIVADO_2026');
-  const setiembre=document.querySelector('.estado-exp-check[value="SETIEMBRE_2026"]');
-  if(setiembre)setiembre.checked=seleccionadosPrevios.has('SETIEMBRE_2026');
+  const octubre=document.querySelector('.estado-exp-check[value="OCTUBRE_2026"]');
+  if(octubre)octubre.checked=seleccionadosPrevios.has('OCTUBRE_2026');
   updateEstadoExpLabel();
 }
 
@@ -3665,6 +3695,161 @@ document.getElementById('modal').addEventListener('click',e=>{if(e.target===docu
     if(!session){ document.body.classList.remove('app-mode'); }
   },0);
 })();
+</script>
+
+
+<!-- MODAL DETALLE DASHBOARD -->
+<div class="detail-modal-overlay" id="detailDashboardModal" onclick="if(event.target===this)cerrarDetalleDashboard()">
+  <div class="detail-modal">
+    <div class="detail-modal-head">
+      <div><span class="detail-modal-title" id="detailDashboardTitle">Detalle</span><span class="detail-modal-count" id="detailDashboardCount">0 registros</span></div>
+      <button class="detail-close" type="button" onclick="cerrarDetalleDashboard()">×</button>
+    </div>
+    <div class="detail-table-wrap" id="detailDashboardBody"></div>
+    <div class="detail-modal-foot">Haz clic fuera del cuadro o en × para cerrar.</div>
+  </div>
+</div>
+
+
+<script>
+/* =========================================================
+   DRILL-DOWN: CUALQUIER ELEMENTO DEL DASHBOARD ABRE DETALLE
+   Columnas: PRODUCTO, RUC, NOMBRE_RSOCIAL_CLIENTE, ZONA,
+   SUCURSAL, FNCNR, EST_COM, EST_GES, RECURRENCIA, MNDA, TEA, NETA
+   ========================================================= */
+function campoFlexible(candidatos){
+  for(const c of candidatos){ if(headers.includes(c)) return c; }
+  const upper=headers.map(h=>[h,String(h).toUpperCase()]);
+  for(const c of candidatos){
+    const cc=String(c).toUpperCase();
+    const found=upper.find(([,h])=>h===cc || h.includes(cc));
+    if(found) return found[0];
+  }
+  return null;
+}
+
+function valorDetalle(r,candidatos){
+  const k=campoFlexible(candidatos);
+  return k ? (r[k] ?? '') : '';
+}
+
+function fmtTeaDetalle(v){
+  if(v===null || v===undefined || v==='') return '';
+  if(typeof parseTea==='function'){
+    const n=parseTea(v);
+    if(isFinite(n)) return (n*100).toFixed(2)+'%';
+  }
+  const s=String(v).trim();
+  if(s.includes('%')) return s;
+  const n=Number(String(v).replace(',','.'));
+  if(!isFinite(n)) return s;
+  return (Math.abs(n)<=1 ? n*100 : n).toFixed(2)+'%';
+}
+
+function abrirDetalleDashboard(titulo,filas){
+  const modal=document.getElementById('detailDashboardModal');
+  const body=document.getElementById('detailDashboardBody');
+  if(!modal||!body)return;
+  const netaKey=typeof getNetaKey==='function'?getNetaKey():campoFlexible(['NETA','COLOC. NETA','COLOC_NETA']);
+  const teaKey=typeof getTeaKey==='function'?getTeaKey():campoFlexible(['TEA','TASA']);
+  document.getElementById('detailDashboardTitle').textContent=titulo||'Detalle';
+  document.getElementById('detailDashboardCount').textContent=(filas?.length||0).toLocaleString('es-PE')+' registros';
+  if(!filas?.length){
+    body.innerHTML='<div class="detail-empty">No hay registros para esta selección.</div>';
+    modal.classList.add('open');return;
+  }
+  const cols=[
+    ['PRODUCTO',['PRODUCTO']],['RUC',['RUC']],['NOMBRE_RSOCIAL_CLIENTE',['NOMBRE_RSOCIAL_CLIENTE','CLIENTE','RAZON SOCIAL','RAZÓN SOCIAL']],
+    ['ZONA',['ZONA']],['SUCURSAL',['SUCURSAL']],['FNCNR',['FNCNR','FNCNE','FUNCIONARIO','EJECUTIVO']],
+    ['EST_COM',['EST_COM']],['EST_GES',['EST_GES']],['RECURRENCIA',['RECURRENCIA','RECURRENTE']],['MNDA',['MNDA','MONEDA']]
+  ];
+  let html='<table class="detail-table"><thead><tr>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'<th>TEA</th><th>NETA</th></tr></thead><tbody>';
+  html+=filas.map(r=>{
+    const base=cols.map(([,cands])=>'<td title="'+escHTML(valorDetalle(r,cands))+'">'+escHTML(valorDetalle(r,cands))+'</td>').join('');
+    const tea=teaKey?fmtTeaDetalle(r[teaKey]):'';
+    const neta=netaKey?parseNeta(r[netaKey]):0;
+    return '<tr>'+base+'<td class="num">'+escHTML(tea)+'</td><td class="num">'+(netaKey?escHTML(fmtMonto(neta)):'')+'</td></tr>';
+  }).join('');
+  html+='</tbody></table>';
+  body.innerHTML=html;
+  body.scrollTop=0;body.scrollLeft=0;
+  modal.classList.add('open');
+}
+
+function cerrarDetalleDashboard(){
+  document.getElementById('detailDashboardModal')?.classList.remove('open');
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrarDetalleDashboard();});
+
+function mesLabelAKey(lbl){
+  const m={ENE:'ENE26',FEB:'FEB26',MAR:'MAR26',ABR:'ABR26',MAY:'MAY26',JUN:'JUN26',JUL:'JUL26',AGO:'AGO26',SET:'SET26',SEP:'SET26',OCT:'OCT26',NOV:'NOV26',DIC:'DIC26'};
+  return m[String(lbl||'').trim().toUpperCase()]||String(lbl||'').trim().toUpperCase();
+}
+
+function clickRows(containerSelector,rowSelector,labelSelector,predicateFactory,titlePrefix){
+  document.querySelectorAll(containerSelector+' '+rowSelector).forEach(row=>{
+    row.onclick=()=>{
+      const lab=row.querySelector(labelSelector);
+      const valor=(lab?.getAttribute('title')||lab?.textContent||'').trim();
+      const pred=predicateFactory(valor);
+      abrirDetalleDashboard(titlePrefix+': '+valor,dashData.filter(pred));
+    };
+  });
+}
+
+function activarClicksDashboard(){
+  const d=Array.isArray(dashData)?dashData:[];
+  const funcKey=headers.includes(COL_FUNC)?COL_FUNC:campoFlexible(['FNCNR','FNCNE','FUNCIONARIO','EJECUTIVO']);
+
+  const cards=document.querySelectorAll('.kpi-grid .kpi-card');
+  if(cards[0]) cards[0].onclick=()=>abrirDetalleDashboard('Total Operaciones',d);
+  if(cards[1]) cards[1].onclick=()=>abrirDetalleDashboard('Leasing (LSNG)',d.filter(r=>String(r[COL_PROD]||'').toUpperCase().startsWith('L')));
+  if(cards[2]) cards[2].onclick=()=>abrirDetalleDashboard('Crédito Directo (CRDT)',d.filter(r=>String(r[COL_PROD]||'').toUpperCase().startsWith('C')));
+  if(cards[3]) cards[3].onclick=()=>abrirDetalleDashboard('Neta Total',d);
+  if(cards[4]) cards[4].onclick=()=>abrirDetalleDashboard('Clientes Únicos',d);
+  if(cards[5]) cards[5].onclick=()=>abrirDetalleDashboard('Funcionarios',d);
+
+  clickRows('#chart-producto','.bar-row','.bar-label',v=>r=>String(r[COL_PROD]||'').trim()===v,'Producto');
+  clickRows('#chart-zonas','.bar-row','.bar-label',v=>r=>String(r[COL_ZONA]||'').trim()===v,'Zona');
+  clickRows('#chart-funcionarios','.bar-row','.bar-label',v=>r=>String(r[funcKey]||'').trim()===v,'Funcionario');
+  clickRows('#chart-sucursal','.suc-row','.suc-label',v=>r=>String((typeof getSucursalKey==='function'?getSucursalKey(r):r[COL_SUC])||'').trim()===v,'Sucursal');
+  clickRows('#chart-zonas-v','.vbar-col','.vbar-lbl',v=>r=>String(r[COL_ZONA]||'').trim()===v,'Zona');
+
+  document.querySelectorAll('#chart-neta-mes tbody tr').forEach(row=>{
+    row.onclick=()=>{
+      const lbl=row.querySelector('.net-mes-label')?.textContent?.trim()||'';
+      const key=mesLabelAKey(lbl);
+      abrirDetalleDashboard('Mes: '+lbl,d.filter(r=>getMesKeyFromRow(r)===key));
+    };
+  });
+
+  document.querySelectorAll('#donut-legend .donut-legend-item').forEach(item=>{
+    item.onclick=()=>{
+      const estado=item.querySelector('.donut-legend-label')?.getAttribute('title')||item.querySelector('.donut-legend-label')?.textContent||'';
+      abrirDetalleDashboard('Estado de Gestión: '+estado,d.filter(r=>String(r[COL_ESTGES]||'').trim()===estado.trim()));
+    };
+  });
+
+  const canvas=document.getElementById('donutEstCom');
+  if(canvas){
+    canvas.onclick=(evt)=>{
+      if(!donutChartInstance)return;
+      const pts=donutChartInstance.getElementsAtEventForMode(evt,'nearest',{intersect:true},true);
+      if(!pts.length)return;
+      const idx=pts[0].index;
+      const estado=donutChartInstance.data.labels[idx];
+      abrirDetalleDashboard('Estado de Gestión: '+estado,d.filter(r=>String(r[COL_ESTGES]||'').trim()===String(estado).trim()));
+    };
+  }
+
+  document.querySelectorAll('#chart-estados .estges-row').forEach(row=>{
+    row.onclick=()=>{
+      const mes=row.querySelector('.estges-label')?.getAttribute('title')||row.querySelector('.estges-label')?.textContent||'';
+      abrirDetalleDashboard('Mes: '+mes,d.filter(r=>getMesKeyFromRow(r)===mes.trim()));
+    };
+  });
+}
 </script>
 
 </body>
