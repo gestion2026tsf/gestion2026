@@ -2567,7 +2567,7 @@ const FLOW_URL = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.a
 const FLOW_SECRET = 'TSF2026';
 
 const COL_FUNC='FNCNR',COL_NETA='NETA',COL_FECHA='FECHA',COL_ESTGES='EST_GES',COL_ESTCOM='EST_COM',COL_ZONA='ZONA',COL_PROD='PRODUCTO',COL_SUC='SUCURSAL';
-const PALETTE=['#5BC7C8','#F0005B','#F5B000','#7C3AED','#444444','#FF8AB8','#2F2F2F','#8A8A8A'];
+const PALETTE=['#111111','#FFAB00','#6B7280','#374151','#9CA3AF','#D1D5DB','#1F2937','#B45309'];
 const CAMPOS_INTERNOS=['ItemInternalId','@odata.etag','ID'];
 
 function esDesistidoExcluido(fila){
@@ -3176,14 +3176,14 @@ function renderVBars(el,data){
 function renderProducto(d,netaKey){
   const data=groupByNeta(d,r=>String(r[COL_PROD]||'').trim()||'S/D',netaKey);
   document.getElementById('badge-prod').textContent=data.length+' tipos';
-  renderHBars(document.getElementById('chart-producto'),data,'#F0005B');
+  renderHBars(document.getElementById('chart-producto'),data,'#FFAB00');
 }
 
 function renderZonas(d){
   const netaKey=getNetaKey();
   const data=groupByNeta(d,r=>String(r[COL_ZONA]||'').trim()||'S/D',netaKey).slice(0,10);
   document.getElementById('badge-zona').textContent=data.length+' zonas';
-  renderHBars(document.getElementById('chart-zonas'),data,'#F0005B');
+  renderHBars(document.getElementById('chart-zonas'),data,'#FFAB00');
 }
 
 function renderFuncionarios(d,funcKey){
@@ -3191,7 +3191,7 @@ function renderFuncionarios(d,funcKey){
   const netaKey=getNetaKey();
   const data=groupByNeta(d,r=>String(r[funcKey]||'').trim(),netaKey).filter(x=>x[0]&&x[0]!=='S/D').slice(0,12);
   document.getElementById('badge-func').textContent=data.length+' funcionarios';
-  renderHBars(document.getElementById('chart-funcionarios'),data,'#F0005B');
+  renderHBars(document.getElementById('chart-funcionarios'),data,'#FFAB00');
 }
 
 function renderNetaMes(d,netaKey){
@@ -3854,3 +3854,227 @@ function activarClicksDashboard(){
 
 </body>
 </html>
+
+<style>
+/* =========================================================
+   TEMA GERENCIAL TSF - OVERRIDE FINAL
+   Negro / blanco / gris / ambar corporativo #FFAB00
+   ========================================================= */
+:root{
+  --accent:#FFAB00!important;
+  --accent2:#FFAB00!important;
+  --accent-dark:#D18B00!important;
+  --accent-light:#FFF5D6!important;
+  --success:#FFAB00!important;
+  --success-light:#FFF5D6!important;
+  --warn:#FFAB00!important;
+  --warn-light:#FFF5D6!important;
+  --navy:#111111!important;
+  --navy2:#1B1B1B!important;
+  --navy3:#2B2B2B!important;
+  --bg:#F4F5F7!important;
+  --bg2:#ECEFF3!important;
+  --card:#FFFFFF!important;
+  --border:#E1E4E8!important;
+  --border2:#D2D6DC!important;
+  --text:#111111!important;
+  --text2:#333333!important;
+  --muted:#6B7280!important;
+  --muted2:#8B919A!important;
+  --shadow:0 4px 14px rgba(0,0,0,.06)!important;
+  --shadow-md:0 8px 24px rgba(0,0,0,.10)!important;
+  --shadow-lg:0 18px 48px rgba(0,0,0,.16)!important;
+}
+
+html,body{background:#F4F5F7!important;color:#111!important;}
+body{font-family:'Montserrat','Segoe UI',Arial,sans-serif!important;}
+main,.main-inner{background:#F4F5F7!important;}
+
+/* HEADER */
+header{
+  background:#111111!important;
+  border-bottom:1px solid #2B2B2B!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.16)!important;
+}
+nav{background:#181818!important;border-bottom:1px solid #2A2A2A!important;}
+.brand-icon,.brand-t-logo{background:#FFAB00!important;color:#111!important;box-shadow:none!important;}
+.brand-name{color:#fff!important;}
+.brand-sub{color:#BFC3C9!important;}
+.nav-btn{color:#C7CBD1!important;}
+.nav-btn:hover{color:#fff!important;}
+.nav-btn.active{color:#fff!important;border-bottom-color:#FFAB00!important;}
+.role-badge{background:#FFF2C7!important;color:#8A5C00!important;border:1px solid #FFD46A!important;}
+.btn-logout{background:#fff!important;color:#111!important;border:1px solid #ddd!important;}
+.btn-logout:hover{background:#FFAB00!important;color:#111!important;}
+
+/* PAGE */
+.page-title{color:#111!important;font-weight:900!important;}
+.page-title-meta{color:#6B7280!important;}
+
+/* FILTROS */
+.filter-bar{
+  background:#fff!important;
+  border:1px solid #E1E4E8!important;
+  border-radius:12px!important;
+  padding:12px 14px!important;
+  box-shadow:0 3px 12px rgba(0,0,0,.05)!important;
+}
+.filter-bar label{color:#111!important;font-weight:900!important;}
+.filter-select-dash,.filter-select,.search-input,.multi-select-btn,.form-input{
+  background:#fff!important;
+  color:#111!important;
+  border:1px solid #D2D6DC!important;
+  border-radius:7px!important;
+  box-shadow:none!important;
+}
+.filter-select-dash:focus,.filter-select:focus,.search-input:focus,.multi-select-btn:focus,.form-input:focus{
+  border-color:#FFAB00!important;
+  box-shadow:0 0 0 3px rgba(255,171,0,.14)!important;
+}
+.multi-select-menu{border:1px solid #D2D6DC!important;border-radius:9px!important;box-shadow:0 12px 28px rgba(0,0,0,.14)!important;}
+.multi-option:hover{background:#FFF8E7!important;}
+.multi-option.active-all{color:#9A6500!important;}
+.multi-option input,.estado-check{accent-color:#FFAB00!important;}
+
+/* BOTONES */
+.btn-primary,.btn-success,.btn-pdf{
+  background:#111!important;
+  color:#fff!important;
+  border:1px solid #111!important;
+  box-shadow:none!important;
+}
+.btn-primary:hover,.btn-success:hover,.btn-pdf:hover{background:#2A2A2A!important;}
+.btn-secondary,.btn-clear,.btn-csv{
+  background:#fff!important;
+  color:#111!important;
+  border:1px solid #D2D6DC!important;
+  box-shadow:none!important;
+}
+.btn-csv:hover,.btn-secondary:hover,.btn-clear:hover{border-color:#FFAB00!important;color:#9A6500!important;background:#FFFDF7!important;}
+
+/* KPIs */
+.kpi-grid{gap:12px!important;}
+.kpi-card,
+.kpi-card.blue,.kpi-card.gold,.kpi-card.green,.kpi-card.purple,.kpi-card.teal,.kpi-card.orange{
+  background:#fff!important;
+  color:#111!important;
+  border:1px solid #E1E4E8!important;
+  border-radius:12px!important;
+  box-shadow:0 4px 14px rgba(0,0,0,.06)!important;
+  position:relative!important;
+  overflow:hidden!important;
+}
+.kpi-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:4px;
+  background:linear-gradient(90deg,#111 0%,#FFAB00 100%);
+}
+.kpi-card:hover{transform:translateY(-2px)!important;box-shadow:0 9px 22px rgba(0,0,0,.10)!important;}
+.kpi-stripe{display:none!important;}
+.kpi-icon,.kpi-card.blue .kpi-icon,.kpi-card.gold .kpi-icon,.kpi-card.green .kpi-icon,.kpi-card.purple .kpi-icon,.kpi-card.teal .kpi-icon,.kpi-card.orange .kpi-icon{
+  background:#FFF4CC!important;
+  color:#111!important;
+  border:1px solid #FFE29A!important;
+}
+.kpi-icon svg{stroke:#111!important;}
+.kpi-label{color:#6B7280!important;font-weight:800!important;}
+.kpi-value,.kpi-card.blue .kpi-value,.kpi-card.gold .kpi-value,.kpi-card.green .kpi-value,.kpi-card.purple .kpi-value,.kpi-card.teal .kpi-value,.kpi-card.orange .kpi-value{
+  color:#111!important;
+}
+.kpi-sub{color:#737983!important;}
+.kpi-sub-neta,.kpi-card.blue .kpi-sub-neta,.kpi-card.gold .kpi-sub-neta,.kpi-card.green .kpi-sub-neta,.kpi-card.purple .kpi-sub-neta{
+  color:#9A6500!important;
+  border-top:1px solid #EEE!important;
+}
+
+/* CHART CARDS */
+.chart-card{
+  background:#fff!important;
+  border:1px solid #E1E4E8!important;
+  border-radius:12px!important;
+  box-shadow:0 4px 14px rgba(0,0,0,.06)!important;
+}
+.chart-card:hover{box-shadow:0 8px 22px rgba(0,0,0,.09)!important;}
+.chart-head{
+  background:#111!important;
+  border-radius:12px 12px 0 0!important;
+  position:relative!important;
+}
+.chart-head::after{
+  content:'';
+  position:absolute;
+  left:0;right:0;bottom:0;
+  height:3px;
+  background:#FFAB00;
+}
+.chart-title{color:#fff!important;}
+.chart-badge{background:#2A2A2A!important;color:#fff!important;}
+
+/* GRAFICOS */
+.bar-track,.suc-track,.estges-track{background:#ECEFF3!important;}
+.bar-fill,.suc-fill,.estges-fill,.vbar-fill{background:linear-gradient(90deg,#202020 0%,#FFAB00 100%)!important;}
+.bar-label,.suc-label,.estges-label,.vbar-lbl{color:#111!important;}
+.bar-count,.suc-amount,.estges-count,.vbar-val,.vbar-neta{color:#333!important;}
+.neta-big{color:#111!important;}
+.cnt-small{color:#9A6500!important;}
+
+/* DONUT */
+.donut-center-label .dcl-val{color:#111!important;}
+.donut-center-label .dcl-sub{color:#6B7280!important;}
+.donut-legend-item{color:#111!important;border-radius:7px!important;}
+.donut-legend-item:hover{background:#FFF8E7!important;}
+.donut-legend-count,.donut-legend-pct{color:#333!important;}
+.donut-legend-neta{color:#9A6500!important;}
+
+/* TABLES */
+.table-wrap{background:#fff!important;border:1px solid #E1E4E8!important;border-radius:12px!important;box-shadow:0 4px 14px rgba(0,0,0,.05)!important;}
+#view-expedientes thead th, table thead th{background:#111!important;color:#fff!important;box-shadow:none!important;}
+#view-expedientes tbody tr:nth-child(even) td, tbody tr:nth-child(even) td{background:#FAFAFB!important;}
+#view-expedientes tbody tr:hover td, tbody tr:hover td{background:#FFF8E7!important;}
+.net-table th{background:#F8F9FA!important;color:#5F6670!important;border-bottom:1px solid #E5E7EB!important;}
+.net-table td{border-bottom:1px solid #EEF0F2!important;}
+.net-tfoot td{background:#F8F9FA!important;color:#111!important;border-top:1px solid #E1E4E8!important;}
+.net-tfoot .net-amount,.net-amount{color:#9A6500!important;}
+.pagination{background:#fff!important;border-color:#E1E4E8!important;}
+.page-btn{background:#fff!important;color:#111!important;border-color:#D2D6DC!important;}
+.page-btn:hover{background:#FFF8E7!important;border-color:#FFAB00!important;color:#9A6500!important;}
+.page-btn.active{background:#111!important;color:#fff!important;border-color:#111!important;}
+
+/* BADGES */
+.badge{font-weight:800!important;}
+.badge-act{background:#FFF1BF!important;color:#7A5100!important;}
+.badge-proye{background:#F2F3F5!important;color:#4B5563!important;}
+.badge-lsng{background:#EFEFEF!important;color:#111!important;}
+.badge-crdt{background:#FFF4D6!important;color:#8A5C00!important;}
+.badge-lsbk{background:#F2F2F2!important;color:#333!important;}
+.badge-inac{background:#FDECEC!important;color:#A23B3B!important;}
+.badge-grey{background:#F1F2F4!important;color:#555!important;}
+
+/* MODALES */
+.modal-overlay,.detalle-overlay{background:rgba(0,0,0,.62)!important;}
+.modal,.detalle-modal,.detail-modal{background:#fff!important;border:1px solid #E1E4E8!important;border-radius:14px!important;box-shadow:0 24px 64px rgba(0,0,0,.22)!important;}
+.modal-header,.detalle-header,.detail-modal-header{background:#111!important;color:#fff!important;}
+.modal-header h3,.detalle-header h3,.detail-modal-header h3{color:#fff!important;}
+.modal-expid,.detail-modal-count,.detalle-header span{background:#FFAB00!important;color:#111!important;}
+.btn-close,.detalle-close{background:#FFAB00!important;color:#111!important;}
+.btn-close:hover,.detalle-close:hover{background:#D18B00!important;color:#111!important;}
+.detail-table thead th,.detalle-table thead th{background:#111!important;color:#fff!important;}
+.detail-table tbody tr:hover td,.detalle-table tbody tr:hover td{background:#FFF8E7!important;}
+
+/* LOGIN: mantener branding, pero mas sobrio */
+#login-screen{
+  background:radial-gradient(circle at 20% 15%,rgba(255,171,0,.22),transparent 30%),linear-gradient(135deg,#161616 0%,#050505 100%)!important;
+}
+.login-box{background:rgba(22,22,22,.96)!important;border:1px solid rgba(255,255,255,.10)!important;box-shadow:0 28px 70px rgba(0,0,0,.48)!important;}
+.login-logo{background:#FFAB00!important;color:#111!important;box-shadow:0 0 26px rgba(255,171,0,.20)!important;}
+.login-tagline{background:#FFAB00!important;color:#111!important;}
+.login-box h1{text-shadow:none!important;}
+.role-card.selected{background:#262626!important;border-color:#FFAB00!important;box-shadow:inset 0 0 0 1px rgba(255,171,0,.3)!important;}
+.role-card:hover{border-color:#FFAB00!important;}
+.login-input{border-color:#6B5A2A!important;box-shadow:none!important;}
+.login-input:focus{border-color:#FFAB00!important;box-shadow:0 0 0 3px rgba(255,171,0,.15)!important;}
+.btn-enter{background:#FFAB00!important;color:#111!important;box-shadow:none!important;}
+.btn-enter:hover{background:#E99B00!important;color:#111!important;}
+</style>
