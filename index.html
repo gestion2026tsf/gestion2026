@@ -66,7 +66,21 @@ body.app-mode #app{display:flex!important;}
 .login-road{position:absolute;left:0;right:0;bottom:0;height:120px;pointer-events:none;}
 .login-road::before{content:'';position:absolute;left:0;right:0;bottom:0;height:8px;background:#2B2A27;}
 .login-road::after{content:'';position:absolute;left:0;right:0;bottom:3px;height:2px;background:repeating-linear-gradient(90deg,rgba(242,183,5,.6) 0 32px,transparent 32px 56px);}
-.login-road svg{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:min(760px,120vw);height:auto;z-index:1;}
+.login-road .veh{position:absolute;bottom:7px;z-index:1;height:auto;}
+.login-road .veh-truck{right:calc(50% + 4px);width:clamp(190px,24vw,320px);animation:driveL 3.4s cubic-bezier(.2,.75,.25,1) both;}
+.login-road .veh-tractor{left:calc(50% + 4px);width:clamp(100px,12.6vw,168px);animation:driveR 3.4s cubic-bezier(.2,.75,.25,1) both;}
+.login-road .veh-tractor svg{transform:scaleX(-1);display:block;width:100%;height:auto;}
+.login-road .veh-truck svg{display:block;width:100%;height:auto;}
+@keyframes driveL{0%{transform:translateX(-75vw)}84%{transform:translateX(5px)}93%{transform:translateX(-2px)}100%{transform:translateX(0)}}
+@keyframes driveR{0%{transform:translateX(75vw)}84%{transform:translateX(-5px)}93%{transform:translateX(2px)}100%{transform:translateX(0)}}
+.login-road .wheel{transform-box:fill-box;transform-origin:center;animation:spin 3.4s cubic-bezier(.2,.75,.25,1) both;}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(3240deg)}}
+.meet-glow{position:absolute;left:50%;bottom:22px;width:90px;height:90px;margin-left:-45px;border-radius:50%;background:radial-gradient(circle,rgba(255,210,63,.85) 0,rgba(242,183,5,.35) 35%,transparent 70%);opacity:0;animation:meet 1.6s ease-out 3s both;}
+@keyframes meet{0%{opacity:0;transform:scale(.3)}35%{opacity:1;transform:scale(1.25)}100%{opacity:.4;transform:scale(1)}}
+.meet-spark{position:absolute;left:50%;bottom:66px;width:4px;height:12px;margin-left:-2px;border-radius:2px;background:var(--y2);opacity:0;transform-origin:50% 34px;animation:spark .9s ease-out 3s both;}
+.meet-spark.s2{transform:rotate(-40deg);} .meet-spark.s3{transform:rotate(40deg);}
+@keyframes spark{0%{opacity:0;translate:0 10px}40%{opacity:1}100%{opacity:0;translate:0 -6px}}
+@media (prefers-reduced-motion:reduce){.login-road .veh,.login-road .wheel{animation:none!important;}.meet-glow{animation:none;opacity:.4;}.meet-spark{display:none;}}
 .login-box{position:relative;z-index:1;width:380px;max-width:100%;background:#fff;border-radius:20px;padding:30px 30px 26px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4);}
 .login-logo{width:46px;height:46px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
 .login-logo::before{content:"T";font-size:24px;font-weight:800;color:var(--ink);line-height:1;}
@@ -192,16 +206,16 @@ body.viewer-mode .readonly-banner{display:flex!important;}
 /* ================= KPIs ================= */
 .kpi-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px;}
 .kpi-card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px 13px;
-  display:grid;grid-template-columns:auto 1fr;grid-auto-rows:auto;align-content:start;column-gap:8px;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+  display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto auto 1fr;column-gap:8px;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
 .kpi-card:hover{border-color:var(--line2);box-shadow:var(--sh-h);}
 .kpi-stripe{display:none;}
 .kpi-icon{grid-column:1;grid-row:1;width:24px;height:24px;border-radius:7px;background:var(--y-soft);color:var(--y-dark);display:flex;align-items:center;justify-content:center;}
 .kpi-icon svg{width:13px;height:13px;stroke:currentColor!important;}
 .kpi-label{grid-column:2;grid-row:1;align-self:center;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .kpi-value,.kpi-sub,.kpi-sub-neta{grid-column:1 / -1;}
-.kpi-value{font-size:26px;font-weight:800;color:var(--ink);line-height:1;letter-spacing:-.8px;margin:12px 0 5px;}
+.kpi-value{font-size:clamp(20px,1.7vw,26px);font-weight:800;color:var(--ink);line-height:1;letter-spacing:-.8px;margin:12px 0 5px;}
 .kpi-sub{font-size:11px;font-weight:500;color:var(--muted);line-height:1.35;}
-.kpi-sub-neta{justify-self:start;margin-top:7px;padding-top:7px;border-top:1px dashed var(--line2);width:100%;color:var(--y-dark);font-size:11.5px;font-weight:700;}
+.kpi-sub-neta{align-self:end;justify-self:start;margin-top:7px;padding-top:7px;border-top:1px dashed var(--line2);width:100%;color:var(--y-dark);font-size:11.5px;font-weight:700;}
 .kpi-card.orange{background:var(--ink);border-color:var(--ink);}
 .kpi-card.orange::after{content:'';position:absolute;right:-30px;bottom:-50px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(242,183,5,.22),transparent 70%);pointer-events:none;}
 .kpi-card.orange .kpi-icon{background:var(--y);color:var(--ink);}
@@ -212,7 +226,8 @@ body.viewer-mode .readonly-banner{display:flex!important;}
 .dash-row{display:grid;gap:10px;margin-bottom:10px;}
 .dash-row.cols-2{grid-template-columns:1fr 1fr;}
 .dash-row.cols-3{grid-template-columns:repeat(3,minmax(0,1fr));}
-.chart-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;}
+.chart-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;}
+.chart-card>div:not(.chart-head){flex:1 1 auto;}
 .chart-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:13px 16px 10px;}
 .chart-title{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.15px;}
 .chart-badge{font-size:11px;font-weight:500;color:var(--muted);white-space:nowrap;}
@@ -232,8 +247,9 @@ body.viewer-mode .readonly-banner{display:flex!important;}
 .bar-row:first-child .neta-big,.suc-row:first-child .suc-amount{color:var(--y-dark);}
 
 /* Zonas en columnas */
-#chart-zonas-v{width:100%;height:232px;display:flex;justify-content:center;align-items:flex-end;gap:clamp(8px,2vw,22px);padding:6px 16px 14px!important;}
-#chart-zonas-v .vbar-col{flex:1 1 0;min-width:0;max-width:96px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;border-radius:8px;cursor:pointer;padding-top:4px;transition:background .12s;}
+#chart-zonas-v{width:100%;min-height:232px;display:flex;justify-content:center;align-items:flex-end;gap:clamp(8px,2vw,22px);padding:6px 16px 14px!important;}
+#chart-zonas-v{align-self:stretch;}
+#chart-zonas-v .vbar-col{flex:1 1 0;min-width:0;max-width:110px;align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;border-radius:8px;cursor:pointer;padding-top:4px;transition:background .12s;}
 #chart-zonas-v .vbar-col:hover{background:#FAF8F3;}
 #chart-zonas-v .vbar-neta{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap;}
 #chart-zonas-v .vbar-val{font-size:10.5px;font-weight:500;color:var(--muted);white-space:nowrap;margin:1px 0 6px;}
@@ -243,7 +259,8 @@ body.viewer-mode .readonly-banner{display:flex!important;}
 #chart-zonas-v .vbar-lbl{width:100%;text-align:center;font-size:11.5px;font-weight:600;color:var(--text2);margin-top:7px;padding-top:6px;border-top:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
 /* Tasa ponderada: línea de tendencia */
-.tasa-chart{width:100%;height:auto;display:block;overflow:visible;}
+#chart-estados{display:flex;flex-direction:column;justify-content:center;}
+.tasa-chart{width:100%;height:auto;max-height:230px;display:block;overflow:visible;}
 .tasa-chart .estges-row{cursor:pointer;}
 .tasa-chart .estges-row:hover .tasa-hit{fill:#FAF8F3;}
 .tasa-chart .estges-row:hover .tasa-dot{r:5.5;}
@@ -266,6 +283,11 @@ body.viewer-mode .readonly-banner{display:flex!important;}
 .net-bar{display:block;height:100%;background:var(--rest);border-radius:5px;}
 .net-bar.top{background:var(--y);}
 .net-amount{font-weight:700;color:var(--ink);min-width:98px;text-align:right;}
+.net-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px;}
+.net-summary>div{background:#FAF9F6;border:1px solid #F0EDE6;border-radius:10px;padding:9px 12px;}
+.net-summary span{display:block;font-size:11px;color:var(--muted);margin-bottom:2px;}
+.net-summary strong{font-size:17px;font-weight:800;color:var(--ink);letter-spacing:-.4px;font-variant-numeric:tabular-nums;}
+.net-summary>div:first-child strong{color:var(--y-dark);}
 .net-tfoot td{border-bottom:0;border-top:1px solid var(--line2);font-weight:800;padding-top:9px;}
 .net-tfoot .net-amount{color:var(--y-dark);}
 #chart-neta-mes{overflow:hidden;}
@@ -385,8 +407,8 @@ body.viewer-mode .readonly-banner{display:flex!important;}
 body.dash-zoom-125 #dashboardZoomArea{font-size:112%;}
 body.dash-zoom-150 #dashboardZoomArea{font-size:122%;}
 body.dash-zoom-200 #dashboardZoomArea{font-size:135%;}
-body.dash-zoom-125 .kpi-grid,body.dash-zoom-150 .kpi-grid,body.dash-zoom-200 .kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
-body.dash-zoom-125 .kpi-value{font-size:32px;}
+body.dash-zoom-150 .kpi-grid,body.dash-zoom-200 .kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+body.dash-zoom-125 .kpi-value{font-size:clamp(22px,2vw,30px);}
 body.dash-zoom-150 .kpi-value{font-size:38px;}
 body.dash-zoom-200 .kpi-value{font-size:46px;}
 body.dash-zoom-200 .kpi-label{font-size:15px;}
@@ -396,7 +418,8 @@ body.dash-zoom-150 .bar-label,body.dash-zoom-150 .neta-big{font-size:14px;}
 body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .suc-label,body.dash-zoom-200 .suc-amount{font-size:16px;}
 
 /* ================= RESPONSIVE ================= */
-@media(max-width:1400px){.kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+.kpi-sub{overflow-wrap:anywhere;}
 @media(max-width:1100px){
   .dash-row.cols-2,.dash-row.cols-3{grid-template-columns:1fr;}
   .hero{grid-template-columns:1fr auto;}
@@ -450,6 +473,10 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
   .chart-card>div:not(.chart-head){padding:0 8px 5px;}
   .net-table th,.net-table td{font-size:6.5px;padding:1.5px 5px;}
   .net-amount{min-width:50px;}
+  .net-summary{gap:4px;margin-bottom:4px;}
+  .net-summary>div{padding:3px 6px;}
+  .net-summary span{font-size:6px;}
+  .net-summary strong{font-size:9px;}
   .net-bar-track{height:3px;}
   .donut-wrap{gap:8px;padding:0 8px 5px;}
   .donut-chart-box,#donutEstCom{width:80px!important;height:80px!important;}
@@ -465,7 +492,7 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
   .neta-big,.suc-amount{min-width:30px;}
   .cnt-small{font-size:5.5px;}
   .bar-track,.suc-track{height:3px;}
-  #chart-zonas-v{height:90px;padding:2px 8px 5px!important;gap:6px;}
+  #chart-zonas-v{min-height:90px;height:90px;padding:2px 8px 5px!important;gap:6px;}
   #chart-zonas-v .vbar-neta{font-size:6.5px;}
   #chart-zonas-v .vbar-val{font-size:5.5px;margin:0 0 2px;}
   #chart-zonas-v .vbar-lbl{font-size:6px;margin-top:2px;padding-top:2px;}
@@ -558,10 +585,10 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
     </button>
   </div>
   <div class="login-road" aria-hidden="true">
-    <svg viewBox="0 0 980 160" preserveAspectRatio="xMidYMax meet">
-      <g transform="translate(110 0)"><use href="#veh-truck"/></g>
-      <g transform="translate(240 0)"><use href="#veh-tractor"/></g>
-    </svg>
+    <div class="meet-glow"></div>
+    <div class="meet-spark"></div><div class="meet-spark s2"></div><div class="meet-spark s3"></div>
+    <div class="veh veh-truck"><svg viewBox="0 20 364 134"><use href="#veh-truck"/><g class="wheel"><circle cx="50" cy="136" r="15" fill="#141312"/><circle cx="50" cy="136" r="6.3" fill="#A29D93"/><path d="M39.8 136H60.2M50 125.8V146.2" stroke="#141312" stroke-width="2"/></g><g class="wheel"><circle cx="85" cy="136" r="15" fill="#141312"/><circle cx="85" cy="136" r="6.3" fill="#A29D93"/><path d="M74.8 136H95.2M85 125.8V146.2" stroke="#141312" stroke-width="2"/></g><g class="wheel"><circle cx="205" cy="136" r="15" fill="#141312"/><circle cx="205" cy="136" r="6.3" fill="#A29D93"/><path d="M194.8 136H215.2M205 125.8V146.2" stroke="#141312" stroke-width="2"/></g><g class="wheel"><circle cx="290" cy="136" r="15" fill="#141312"/><circle cx="290" cy="136" r="6.3" fill="#A29D93"/><path d="M279.8 136H300.2M290 125.8V146.2" stroke="#141312" stroke-width="2"/></g><g class="wheel"><circle cx="333" cy="136" r="15" fill="#141312"/><circle cx="333" cy="136" r="6.3" fill="#A29D93"/><path d="M322.8 136H343.2M333 125.8V146.2" stroke="#141312" stroke-width="2"/></g></svg></div>
+    <div class="veh veh-tractor"><svg viewBox="404 34 196 120"><use href="#veh-tractor"/><g class="wheel"><circle cx="452" cy="121" r="30" fill="#141312"/><circle cx="452" cy="121" r="12.6" fill="#F2B705"/><path d="M431.6 121H472.4M452 100.6V141.4" stroke="#141312" stroke-width="2"/></g><g class="wheel"><circle cx="574" cy="135" r="16" fill="#141312"/><circle cx="574" cy="135" r="6.7" fill="#F2B705"/><path d="M563.1 135H584.9M574 124.1V145.9" stroke="#141312" stroke-width="2"/></g></svg></div>
   </div>
 </div>
 
@@ -1330,6 +1357,7 @@ function groupByNeta(rows,labelFn,netaKey){
     k, v.clientes.size, v.neta, v.ops, v.netaTasa>0 ? v.pesoTea/v.netaTasa : null
   ]).sort((a,b)=>b[2]-a[2]);
 }
+function plural(n,uno,varios){return n+' '+(n===1?uno:varios);}
 function setText(id,value){
   const el=document.getElementById(id);
   if(el)el.textContent=value;
@@ -1446,20 +1474,20 @@ function renderVBars(el,data){
 
 function renderProducto(d,netaKey){
   const data=groupByNeta(d,r=>String(r[COL_PROD]||'').trim()||'S/D',netaKey);
-  document.getElementById('badge-prod').textContent=data.length+' tipos';
+  document.getElementById('badge-prod').textContent=plural(data.length,'tipo','tipos');
   renderHBars(document.getElementById('chart-producto'),data);
 }
 function renderZonas(d){
   const netaKey=getNetaKey();
   const data=groupByNeta(d,r=>String(r[COL_ZONA]||'').trim()||'S/D',netaKey).slice(0,10);
-  document.getElementById('badge-zona').textContent=data.length+' zonas';
+  document.getElementById('badge-zona').textContent=plural(data.length,'zona','zonas');
   renderHBars(document.getElementById('chart-zonas'),data);
 }
 function renderFuncionarios(d,funcKey){
   if(!funcKey){document.getElementById('chart-funcionarios').innerHTML='<div class="empty-state" style="padding:12px"><p>No se encontró la columna de funcionario</p></div>';return;}
   const netaKey=getNetaKey();
   const data=groupByNeta(d,r=>String(r[funcKey]||'').trim(),netaKey).filter(x=>x[0]&&x[0]!=='S/D').slice(0,12);
-  document.getElementById('badge-func').textContent=data.length+' funcionarios';
+  document.getElementById('badge-func').textContent=plural(data.length,'funcionario','funcionarios');
   renderHBars(document.getElementById('chart-funcionarios'),data);
 }
 
@@ -1487,9 +1515,15 @@ function renderNetaMes(d,netaKey){
     const top=Math.abs(v.suma)===maxNeta?' top':'';
     html+=`<tr><td class="net-mes-label">${v.label}</td><td class="net-ops">${v.count}</td>${netaKey?`<td><div class="net-cell"><div class="net-bar-track"><span class="net-bar${top}" style="width:${w}%"></span></div><span class="net-amount">${fmtMonto(v.suma)}</span></div></td>`:''}</tr>`;
   });
-  html+=`</tbody><tfoot><tr class="net-tfoot"><td>Total</td><td class="net-ops" style="text-align:right">${totalOps}</td>${netaKey?`<td><div class="net-cell"><div style="flex:1"></div><span class="net-amount">${fmtMonto(totalNeta)}</span></div></td>`:''}</tr></tfoot></table>`;
-  el.innerHTML=html;
-  document.getElementById('badge-neta-mes').textContent=rows.length+' meses · mes más alto en amarillo';
+  html+=`</tbody></table>`;
+  const promedio=totalOps>0?totalNeta/totalOps:0;
+  const resumen=`<div class="net-summary">
+    <div><span>Neta del periodo</span><strong>${netaKey?fmtMonto(totalNeta):'—'}</strong></div>
+    <div><span>Operaciones</span><strong>${totalOps.toLocaleString('es-PE')}</strong></div>
+    <div><span>Neta promedio por operación</span><strong>${netaKey?fmtMonto(promedio):'—'}</strong></div>
+  </div>`;
+  el.innerHTML=resumen+html;
+  document.getElementById('badge-neta-mes').textContent=plural(rows.length,'mes','meses');
 }
 
 function mesOrdenEstadoCom(label){
@@ -1529,7 +1563,7 @@ function renderEstCom(d){
     });
 
   const total = entries.reduce((s,[,c])=>s+c,0);
-  document.getElementById('badge-estcom').textContent = entries.length + ' estados';
+  document.getElementById('badge-estcom').textContent = plural(entries.length,'estado','estados');
   document.getElementById('donut-total').textContent = total.toLocaleString('es-PE');
 
   const canvas = document.getElementById('donutEstCom');
@@ -1586,7 +1620,7 @@ function renderSucursal(d,netaKey){
   if(!netaKey){document.getElementById('chart-sucursal').innerHTML='<div class="empty-state"><p>No se encontró la columna NETA</p></div>';return;}
   const data=groupByNeta(d,getSucursalKey,netaKey).slice(0,8);
   const max=Math.abs(data[0]?.[2]||1)||1;
-  document.getElementById('badge-suc').textContent=data.length+' sucursales';
+  document.getElementById('badge-suc').textContent=plural(data.length,'sucursal','sucursales');
   const el=document.getElementById('chart-sucursal');
   if(!data.length){el.innerHTML='<div class="empty-state"><p>Sin datos para este filtro</p></div>';return;}
   el.innerHTML=data.map(([l,clientes,neta,ops,tasa])=>{
@@ -1628,7 +1662,7 @@ function renderEstGes(d,netaKey){
     .map(([mes,v])=>[mes, v.neta > 0 ? v.pesoTea / v.neta : null, v.ops, v.neta])
     .filter(x=>x[1] !== null)
     .sort((a,b)=>(orden[a[0]]||98)-(orden[b[0]]||98));
-  document.getElementById('badge-estges').textContent=data.length+' meses';
+  document.getElementById('badge-estges').textContent=plural(data.length,'mes','meses');
   if(!data.length){
     el.innerHTML='<div class="empty-state"><p>Sin datos válidos de NETA y TEA para el filtro seleccionado</p></div>';
     return;
@@ -1638,8 +1672,9 @@ function renderEstGes(d,netaKey){
   const tMin=Math.min(...tasas), tMax=Math.max(...tasas);
   const pad=Math.max((tMax-tMin)*0.25,0.002);
   const lo=tMin-pad, hi=tMax+pad;
-  const step=46, W=Math.max(data.length*step,200), H=190, top=26, bottom=150;
-  const xs=i=>step/2+i*step;
+  const step=46, W=Math.max(data.length*step,460), H=190, top=26, bottom=150;
+  const off=(W-data.length*step)/2;
+  const xs=i=>off+step/2+i*step;
   const ys=t=>bottom-((t-lo)/(hi-lo))*(bottom-top);
   const pts=data.map(([,t],i)=>[xs(i),ys(t)]);
   const line=pts.map(p=>p.join(',')).join(' ');
@@ -1661,7 +1696,7 @@ function renderEstGes(d,netaKey){
     </g>`;
   });
   svg+='</svg>';
-  el.innerHTML=svg+'<div class="tasa-note">Tasa en %. El punto amarillo es el mes con la tasa más alta.</div>';
+  el.innerHTML=svg+`<div class="tasa-note">${data.length>1?'Tasa en %. El punto amarillo es el mes con la tasa más alta.':'Tasa en %. Seleccione más meses para ver la tendencia.'}</div>`;
 }
 
 function getEstadosExpSeleccionados(){
