@@ -508,6 +508,26 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
 @media(max-width:1100px){.rrhh-kpis{grid-template-columns:repeat(3,minmax(0,1fr));}}
 @media(max-width:760px){.rrhh-kpis{grid-template-columns:1fr 1fr;}.rrhh-search{flex:1 1 100%;}}
 
+.seg{display:inline-flex;background:#F3F1EC;border-radius:9px;padding:3px;gap:2px;}
+.seg-btn{height:26px;padding:0 12px;border:0;border-radius:7px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;}
+.seg-btn:hover{color:var(--ink);}
+.seg-btn.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(31,30,28,.12);}
+.rrhh-kpis{grid-template-columns:repeat(6,minmax(0,1fr));}
+.rrhh-table tr.mes-head td{background:var(--ink);color:#fff;padding:9px 12px;font-weight:700;border:0;}
+.rrhh-table tr.mes-head .mh{display:flex;align-items:center;gap:12px;}
+.rrhh-table tr.mes-head .mh b{font-size:13.5px;}
+.rrhh-table tr.mes-head .mh span{font-size:11px;color:#A9A498;font-weight:500;}
+.rrhh-table tr.mes-head .mh em{margin-left:auto;font-style:normal;color:var(--y);font-size:12.5px;}
+.rrhh-table tr.mes-head+tr td{padding-top:9px;}
+.rrhh-table td.rk{width:42px;}
+.rrhh-table td.nom{font-weight:700;color:var(--ink);white-space:normal;min-width:200px;}
+.rrhh-table td.nom .rrhh-share{margin:5px 0 0;max-width:150px;}
+.rrhh-table td.ubi{color:var(--muted);}
+.tag{display:inline-flex;margin-left:7px;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:700;vertical-align:1px;}
+.tag.lider{background:var(--y-soft);color:var(--y-dark);}
+.tag.zonal{background:var(--ink);color:var(--y);}
+.rrhh-table tbody.grp+tbody.grp tr.mes-head td{border-top:10px solid #fff;}
+@media(max-width:1100px){.rrhh-kpis{grid-template-columns:repeat(3,minmax(0,1fr));}}
 /* ================= PDF ================= */
 *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 @media print{
@@ -984,7 +1004,7 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
           <div class="hero-text">
             <div class="hero-kicker">Recursos Humanos</div>
             <div class="page-title">Producción por funcionario</div>
-            <span class="page-title-meta">Neta, tasa ponderada, bono y fondo colocado por mes</span>
+            <span class="page-title-meta">Resultados por mes: funcionarios, líderes y zonales</span>
           </div>
           <div class="hero-art" aria-hidden="true">
             <svg viewBox="0 16 640 146" preserveAspectRatio="xMidYMax meet">
@@ -1007,6 +1027,14 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
         </section>
 
         <div class="filter-bar">
+          <label>Cargo</label>
+          <div class="seg" id="rrhhCargo">
+            <button type="button" class="seg-btn active" data-v="func" onclick="setCargoRRHH('func')">Funcionarios</button>
+            <button type="button" class="seg-btn" data-v="lider" onclick="setCargoRRHH('lider')">Líderes</button>
+            <button type="button" class="seg-btn" data-v="zonal" onclick="setCargoRRHH('zonal')">Zonales</button>
+          </div>
+          <label>Zona</label>
+          <select class="filter-select-dash" id="rrhhZona" onchange="renderRRHH()"><option value="">Todas</option></select>
           <label>Mes</label>
           <select class="filter-select-dash" id="rrhhMes" onchange="renderRRHH()"><option value="">Todos</option></select>
           <label>Operaciones</label>
@@ -1014,15 +1042,14 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
             <option value="activadas">Solo activadas</option>
             <option value="todas">Todas</option>
           </select>
-          <label>Funcionario</label>
-          <input class="rrhh-search" type="text" id="rrhhBuscar" placeholder="Buscar funcionario…" oninput="renderRRHH()">
+          <input class="rrhh-search" type="text" id="rrhhBuscar" placeholder="Buscar nombre…" oninput="renderRRHH()">
           <button class="btn-clear" onclick="limpiarRRHH()">✕ Limpiar</button>
         </div>
 
         <div class="kpi-grid rrhh-kpis" id="rrhhKpis"></div>
 
         <div class="chart-card">
-          <div class="chart-head"><div class="chart-title">Detalle por funcionario y mes</div><div class="chart-badge" id="rrhhBadge"></div></div>
+          <div class="chart-head"><div class="chart-title" id="rrhhTitulo">Funcionarios por mes</div><div class="chart-badge" id="rrhhBadge"></div></div>
           <div id="rrhhTabla"><div class="empty-state"><p>Cargando…</p></div></div>
         </div>
         <div class="rrhh-note" id="rrhhNota"></div>
@@ -1093,9 +1120,8 @@ const PALETTE=['#F2B705','#2A2926','#FFD23F','#6B675F','#C99A00','#A29D93','#FFE
 const CAMPOS_INTERNOS=['ItemInternalId','@odata.etag','ID'];
 
 function esDesistidoExcluido(fila){
-  const estadoGestion=String(fila?.[COL_ESTGES]||'').trim().toUpperCase();
-  return estadoGestion.includes('9.DESISTIDO.AGO26') ||
-         estadoGestion==='9.DESISTIDO.JUN26';
+  // Cualquier estado DESISTIDO (de cualquier mes) se excluye de todo: no cuenta, no suma y no aparece.
+  return String(fila?.[COL_ESTGES]||'').toUpperCase().includes('DESISTIDO');
 }
 
 let allData=[],filteredData=[],dashData=[];
@@ -2092,39 +2118,66 @@ async function exportExcel(){
 
 
 /* ════════════════════════════════════════
-   RRHH — PRODUCCIÓN POR FUNCIONARIO Y MES
+   RRHH — RESULTADOS POR MES
+   Edite aquí los líderes por sucursal y los zonales por zona.
    ════════════════════════════════════════ */
-const RRHH_MES_LBL={ENE26:'Ene 2026',FEB26:'Feb 2026',MAR26:'Mar 2026',ABR26:'Abr 2026',MAY26:'May 2026',JUN26:'Jun 2026',JUL26:'Jul 2026',AGO26:'Ago 2026',SET26:'Set 2026',OCT26:'Oct 2026',NOV26:'Nov 2026',DIC26:'Dic 2026','S/Mes':'Sin mes'};
-const RRHH_MES_ORD={ENE26:1,FEB26:2,MAR26:3,ABR26:4,MAY26:5,JUN26:6,JUL26:7,AGO26:8,SET26:9,OCT26:10,NOV26:11,DIC26:12,'S/Mes':99};
-let rrhhFilasExport=[];
+const LIDERES_POR_SUCURSAL = {
+  'SURCO 1': 'Blanca Huaycochea Miranda',
+  'SURCO 2': 'Eder Rojas Blas'
+  // 'NOMBRE SUCURSAL': 'Nombre del líder',
+};
+const ZONALES_POR_ZONA = {
+  'CENTRO': 'Pedro Delgado Navarrete',
+  'NORTE':  'Katherine Lozano Arbañil',
+  'SUR':    'Peter Escobedo Gutierrez'
+};
+
+const RRHH_MES_LBL={ENE26:'Enero 2026',FEB26:'Febrero 2026',MAR26:'Marzo 2026',ABR26:'Abril 2026',MAY26:'Mayo 2026',JUN26:'Junio 2026',JUL26:'Julio 2026',AGO26:'Agosto 2026',SET26:'Setiembre 2026',OCT26:'Octubre 2026',NOV26:'Noviembre 2026',DIC26:'Diciembre 2026','S/Mes':'Sin mes'};
+const RRHH_MES_ORD={ENE26:1,FEB26:2,MAR26:3,ABR26:4,MAY26:5,JUN26:6,JUL26:7,AGO26:8,SET26:9,OCT26:10,NOV26:11,DIC26:12,'S/Mes':0};
+let rrhhFilasExport=[], rrhhCargo='func';
+
+function normTxt(v){return String(v??'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();}
+function normZona(v){return normTxt(v).replace(/^ZONA\s+/,'');}
+const LIDERES_N=Object.fromEntries(Object.entries(LIDERES_POR_SUCURSAL).map(([k,v])=>[normTxt(k),v]));
+const ZONALES_N=Object.fromEntries(Object.entries(ZONALES_POR_ZONA).map(([k,v])=>[normZona(k),v]));
+const NOMBRES_LIDER=new Set(Object.values(LIDERES_POR_SUCURSAL).map(normTxt));
+const NOMBRES_ZONAL=new Set(Object.values(ZONALES_POR_ZONA).map(normTxt));
+function titulo(t){return String(t).toLowerCase().replace(/(^|\s)\S/g,m=>m.toUpperCase());}
 
 function getBonoKey(){
-  return findHeaderExact(['BONO','BONOS','SUMA BONO','MONTO BONO','BONO FUNCIONARIO','BONO_FUNCIONARIO']) || findHeaderContains(['BONO']);
+  return findHeaderExact(['BONO_COLO','BONO COLO','BONO','BONOS']) || findHeaderContains(['BONO']);
 }
 function getFondoKey(){
-  return findHeaderExact(['FONDO COLOCADO','FONDO_COLOCADO','FONDOS COLOCADOS','FONDO','MONTO FONDO']) || findHeaderContains(['FONDO']);
+  return findHeaderExact(['FONDO COLOCADO','FONDO_COLOCADO','FONDOS COLOCADOS','FONDO']) || findHeaderContains(['FONDO']);
 }
 function getFuncKeyRRHH(){
   return headers.includes(COL_FUNC)?COL_FUNC:detectField(['FNCNR','FNCNE','FUNCIONARIO','ANALISTA','EJECUTIVO']);
 }
 function fmtNum2(n){return Number(n||0).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});}
 
+function setCargoRRHH(v){
+  rrhhCargo=v;
+  document.querySelectorAll('#rrhhCargo .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===v));
+  renderRRHH();
+}
 function actualizarRRHH(){
-  const sel=document.getElementById('rrhhMes');
-  if(!sel)return;
-  const previo=sel.value;
-  const meses=[...new Set(allData.map(getMesKeyFromRow))].sort((a,b)=>(RRHH_MES_ORD[a]||98)-(RRHH_MES_ORD[b]||98));
-  sel.innerHTML='<option value="">Todos</option>'+meses.map(m=>`<option value="${escHTML(m)}">${escHTML(RRHH_MES_LBL[m]||m)}</option>`).join('');
-  if(meses.includes(previo))sel.value=previo;
+  const selM=document.getElementById('rrhhMes'), selZ=document.getElementById('rrhhZona');
+  if(!selM)return;
+  const pm=selM.value, pz=selZ.value;
+  const meses=[...new Set(allData.map(getMesKeyFromRow))].sort((a,b)=>(RRHH_MES_ORD[b]??-1)-(RRHH_MES_ORD[a]??-1));
+  selM.innerHTML='<option value="">Todos</option>'+meses.map(m=>`<option value="${escHTML(m)}">${escHTML(RRHH_MES_LBL[m]||m)}</option>`).join('');
+  if(meses.includes(pm))selM.value=pm;
+  const zonas=[...new Set(allData.map(r=>normZona(r[COL_ZONA])).filter(Boolean))].sort();
+  selZ.innerHTML='<option value="">Todas</option>'+zonas.map(z=>`<option value="${escHTML(z)}">${escHTML(titulo(z))}</option>`).join('');
+  if(zonas.includes(pz))selZ.value=pz;
   renderRRHH();
 }
 function limpiarRRHH(){
-  document.getElementById('rrhhMes').value='';
+  ['rrhhMes','rrhhZona','rrhhBuscar'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('rrhhEstado').value='activadas';
-  document.getElementById('rrhhBuscar').value='';
-  renderRRHH();
+  setCargoRRHH('func');
 }
-function nuevoAcum(){return {ops:0,neta:0,pesoTea:0,netaTasa:0,bono:0,fondo:0};}
+function nuevoAcum(){return {ops:0,neta:0,pesoTea:0,netaTasa:0,bono:0,fondo:0,cli:new Set()};}
 function sumarAcum(acc,r,k){
   acc.ops++;
   if(k.neta)acc.neta+=parseNeta(r[k.neta]);
@@ -2132,74 +2185,91 @@ function sumarAcum(acc,r,k){
   if(t){acc.pesoTea+=t.pesoTea;acc.netaTasa+=t.neta;}
   if(k.bono)acc.bono+=parseNeta(r[k.bono]);
   if(k.fondo)acc.fondo+=parseNeta(r[k.fondo]);
+  const c=getClienteKey(r); if(c)acc.cli.add(c);
 }
 function tasaAcum(acc){return acc.netaTasa>0?acc.pesoTea/acc.netaTasa:null;}
 function txtTasa(t){return t===null?'—':(t*100).toFixed(2)+'%';}
+
+// Devuelve a quién se atribuye la fila según el cargo elegido (o null si no aplica).
+function entidadRRHH(r,k){
+  if(rrhhCargo==='lider'){
+    const suc=normTxt(r[COL_SUC]); const n=LIDERES_N[suc];
+    return n?{id:'L|'+n,nombre:n,ubi:titulo(suc),tipo:'lider'}:null;
+  }
+  if(rrhhCargo==='zonal'){
+    const z=normZona(r[COL_ZONA]); const n=ZONALES_N[z];
+    return n?{id:'Z|'+n,nombre:n,ubi:'Zona '+titulo(z),tipo:'zonal'}:null;
+  }
+  const f=k.func?String(r[k.func]||'').trim():'';
+  if(!f)return null;
+  const nf=normTxt(f);
+  const tipo=NOMBRES_ZONAL.has(nf)?'zonal':NOMBRES_LIDER.has(nf)?'lider':'';
+  return {id:'F|'+nf,nombre:f,ubi:titulo(normTxt(r[COL_SUC]))||'—',tipo};
+}
 
 function renderRRHH(){
   const cont=document.getElementById('rrhhTabla');
   if(!cont)return;
   const k={neta:getNetaKey(),bono:getBonoKey(),fondo:getFondoKey(),func:getFuncKeyRRHH()};
   const mesSel=document.getElementById('rrhhMes').value;
+  const zonaSel=document.getElementById('rrhhZona').value;
   const soloAct=document.getElementById('rrhhEstado').value==='activadas';
-  const q=(document.getElementById('rrhhBuscar').value||'').toLowerCase().trim();
+  const q=normTxt(document.getElementById('rrhhBuscar').value);
+  const etq={func:['Funcionarios','funcionario','funcionarios'],lider:['Líderes','líder','líderes'],zonal:['Zonales','zonal','zonales']}[rrhhCargo];
+  document.getElementById('rrhhTitulo').textContent=etq[0]+' por mes';
 
-  const filas=allData.filter(r=>{
-    if(soloAct && !isActivado(r))return false;
-    if(mesSel && getMesKeyFromRow(r)!==mesSel)return false;
-    const f=k.func?String(r[k.func]||'').trim():'';
-    if(!f)return false;
-    return !q || f.toLowerCase().includes(q);
-  });
-
-  const map={}; const total=nuevoAcum();
-  filas.forEach(r=>{
-    const f=String(r[k.func]).trim();
+  const meses={}; const total=nuevoAcum(); const personas=new Set();
+  allData.forEach(r=>{
+    if(esDesistidoExcluido(r))return;
+    if(soloAct && !isActivado(r))return;
     const m=getMesKeyFromRow(r);
-    if(!map[f])map[f]={nombre:f,tot:nuevoAcum(),meses:{}};
-    if(!map[f].meses[m])map[f].meses[m]=nuevoAcum();
-    sumarAcum(map[f].tot,r,k); sumarAcum(map[f].meses[m],r,k); sumarAcum(total,r,k);
+    if(mesSel && m!==mesSel)return;
+    if(zonaSel && normZona(r[COL_ZONA])!==zonaSel)return;
+    const e=entidadRRHH(r,k);
+    if(!e)return;
+    if(q && !normTxt(e.nombre).includes(q))return;
+    if(!meses[m])meses[m]={tot:nuevoAcum(),ents:{}};
+    if(!meses[m].ents[e.id])meses[m].ents[e.id]={...e,acc:nuevoAcum()};
+    sumarAcum(meses[m].ents[e.id].acc,r,k); sumarAcum(meses[m].tot,r,k); sumarAcum(total,r,k);
+    personas.add(e.id);
   });
-  const funcs=Object.values(map).sort((a,b)=>b.tot.neta-a.tot.neta);
+  const listaMeses=Object.entries(meses).sort((a,b)=>(RRHH_MES_ORD[b[0]]??-1)-(RRHH_MES_ORD[a[0]]??-1));
 
-  // KPIs
   const icon=(d)=>`<div class="kpi-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${d}</svg></div>`;
   document.getElementById('rrhhKpis').innerHTML=`
     <div class="kpi-card orange">${icon('<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>')}<div class="kpi-label">Neta total</div><div class="kpi-value">${fmtMontoRaw(total.neta)}</div><div class="kpi-sub">${plural(total.ops,'operación','operaciones')}</div></div>
     <div class="kpi-card">${icon('<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>')}<div class="kpi-label">Tasa ponderada</div><div class="kpi-value">${txtTasa(tasaAcum(total))}</div><div class="kpi-sub">ponderada por neta</div></div>
-    <div class="kpi-card">${icon('<circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/>')}<div class="kpi-label">Bono total</div><div class="kpi-value">${k.bono?fmtMontoRaw(total.bono):'—'}</div><div class="kpi-sub">${k.bono?'suma de bonos':'columna no encontrada'}</div></div>
+    <div class="kpi-card">${icon('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/>')}<div class="kpi-label">Clientes únicos</div><div class="kpi-value">${total.cli.size.toLocaleString('es-PE')}</div><div class="kpi-sub">según filtro</div></div>
+    <div class="kpi-card">${icon('<circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/>')}<div class="kpi-label">Bono total</div><div class="kpi-value">${k.bono?fmtMontoRaw(total.bono):'—'}</div><div class="kpi-sub">${k.bono?'suma de '+escHTML(k.bono):'columna no encontrada'}</div></div>
     <div class="kpi-card">${icon('<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>')}<div class="kpi-label">Fondo colocado</div><div class="kpi-value">${k.fondo?fmtMontoRaw(total.fondo):'—'}</div><div class="kpi-sub">${k.fondo?'suma de fondo colocado':'columna no encontrada'}</div></div>
-    <div class="kpi-card">${icon('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>')}<div class="kpi-label">Funcionarios</div><div class="kpi-value">${funcs.length}</div><div class="kpi-sub">con operaciones</div></div>`;
+    <div class="kpi-card">${icon('<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>')}<div class="kpi-label">${etq[0]}</div><div class="kpi-value">${personas.size}</div><div class="kpi-sub">con operaciones</div></div>`;
+  document.getElementById('rrhhBadge').textContent=plural(listaMeses.length,'mes','meses');
 
-  document.getElementById('rrhhBadge').textContent=plural(funcs.length,'funcionario','funcionarios');
-  const faltan=[!k.neta&&'NETA',!k.bono&&'BONO',!k.fondo&&'FONDO COLOCADO',!k.func&&'FUNCIONARIO'].filter(Boolean);
+  const faltan=[!k.neta&&'NETA',!k.bono&&'BONO_COLO',!k.fondo&&'FONDO COLOCADO',!k.func&&'FUNCIONARIO'].filter(Boolean);
+  const notaCargo=rrhhCargo==='lider'?' Líderes: suma de todas las operaciones de su sucursal; el bono mostrado es el bono acumulado del equipo.'
+    :rrhhCargo==='zonal'?' Zonales: suma de todas las operaciones de su zona; el bono mostrado es el bono acumulado del equipo.':'';
   document.getElementById('rrhhNota').innerHTML=(faltan.length?`<b>No se encontró en el Excel: ${faltan.join(', ')}.</b> `:'')+
-    `Tasa ponderada = suma(NETA × TEA) / suma(NETA). ${soloAct?'Solo se incluyen operaciones activadas.':'Se incluyen operaciones en todos los estados.'}`;
+    `Tasa ponderada = suma(NETA × TEA) / suma(NETA). Los desistidos no se consideran. ${soloAct?'Solo operaciones activadas.':'Operaciones en todos los estados.'}${notaCargo}`;
 
   rrhhFilasExport=[];
-  if(!funcs.length){cont.innerHTML='<div class="empty-state"><p>Sin operaciones para el filtro seleccionado</p></div>';return;}
+  if(!listaMeses.length){cont.innerHTML='<div class="empty-state"><p>Sin operaciones para el filtro seleccionado</p></div>';return;}
 
-  const maxNeta=Math.max(...funcs.map(f=>Math.abs(f.tot.neta)),1);
-  const celdas=(a)=>`<td class="num">${a.ops}</td><td class="num neta">${fmtNum2(a.neta)}</td><td class="num tasa">${txtTasa(tasaAcum(a))}</td><td class="num">${k.bono?fmtNum2(a.bono):'—'}</td><td class="num">${k.fondo?fmtNum2(a.fondo):'—'}</td>`;
-  let html=`<table class="rrhh-table"><thead><tr><th>Funcionario</th><th>Mes</th><th class="num">Ops.</th><th class="num">Neta (US$)</th><th class="num">Tasa ponderada</th><th class="num">Bono</th><th class="num">Fondo colocado</th></tr></thead>`;
-  funcs.forEach((f,i)=>{
-    const meses=Object.entries(f.meses).sort((a,b)=>(RRHH_MES_ORD[a[0]]||98)-(RRHH_MES_ORD[b[0]]||98));
-    const conSub=meses.length>1;
-    const span=meses.length+(conSub?1:0);
-    const share=Math.round(Math.abs(f.tot.neta)/maxNeta*100);
-    const funcCell=`<td class="func" rowspan="${span}"><div class="rrhh-func"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span><span class="rrhh-name">${escHTML(f.nombre)}</span></div><div class="rrhh-share${i===0?' top':''}"><span style="width:${share}%"></span></div>${conSub?`<div class="rrhh-sub">${plural(meses.length,'mes','meses')} con operaciones</div>`:''}</td>`;
-    html+='<tbody class="grp">';
-    meses.forEach(([m,a],j)=>{
-      html+=`<tr>${j===0?funcCell:''}<td class="mes">${escHTML(RRHH_MES_LBL[m]||m)}</td>${celdas(a)}</tr>`;
-      rrhhFilasExport.push({Funcionario:f.nombre,Mes:RRHH_MES_LBL[m]||m,Operaciones:a.ops,'Neta (US$)':+a.neta.toFixed(2),'Tasa ponderada (%)':tasaAcum(a)===null?'':+(tasaAcum(a)*100).toFixed(2),Bono:k.bono?+a.bono.toFixed(2):'','Fondo colocado':k.fondo?+a.fondo.toFixed(2):''});
+  const celdas=a=>`<td class="num">${a.ops}</td><td class="num">${a.cli.size}</td><td class="num neta">${fmtNum2(a.neta)}</td><td class="num tasa">${txtTasa(tasaAcum(a))}</td><td class="num">${k.bono?fmtNum2(a.bono):'—'}</td><td class="num">${k.fondo?fmtNum2(a.fondo):'—'}</td>`;
+  const colUbi=rrhhCargo==='zonal'?'Zona':'Sucursal';
+  let html=`<table class="rrhh-table"><thead><tr><th>#</th><th>Nombre</th><th>${colUbi}</th><th class="num">Ops.</th><th class="num">Clientes únicos</th><th class="num">Neta (US$)</th><th class="num">Tasa pond.</th><th class="num">${rrhhCargo==='func'?'Bono':'Bono equipo'}</th><th class="num">Fondo colocado</th></tr></thead>`;
+  listaMeses.forEach(([m,g])=>{
+    const ents=Object.values(g.ents).sort((a,b)=>b.acc.neta-a.acc.neta);
+    const max=Math.max(...ents.map(e=>Math.abs(e.acc.neta)),1);
+    html+=`<tbody class="grp"><tr class="mes-head"><td colspan="9"><div class="mh"><b>${escHTML(RRHH_MES_LBL[m]||m)}</b><span>${plural(ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></td></tr>`;
+    ents.forEach((e,i)=>{
+      const tag=e.tipo==='lider'?'<span class="tag lider">Líder</span>':e.tipo==='zonal'?'<span class="tag zonal">Zonal</span>':'';
+      html+=`<tr><td class="rk"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span></td><td class="nom">${escHTML(e.nombre)}${rrhhCargo==='func'?tag:''}<div class="rrhh-share${i===0?' top':''}"><span style="width:${Math.round(Math.abs(e.acc.neta)/max*100)}%"></span></div></td><td class="ubi">${escHTML(e.ubi)}</td>${celdas(e.acc)}</tr>`;
+      rrhhFilasExport.push({Mes:RRHH_MES_LBL[m]||m,Cargo:etq[1],Nombre:e.nombre,[colUbi]:e.ubi,Operaciones:e.acc.ops,'Clientes únicos':e.acc.cli.size,'Neta (US$)':+e.acc.neta.toFixed(2),'Tasa ponderada (%)':tasaAcum(e.acc)===null?'':+(tasaAcum(e.acc)*100).toFixed(2),[rrhhCargo==='func'?'Bono':'Bono equipo']:k.bono?+e.acc.bono.toFixed(2):'','Fondo colocado':k.fondo?+e.acc.fondo.toFixed(2):''});
     });
-    if(conSub){
-      html+=`<tr class="subtotal"><td class="mes">Total</td>${celdas(f.tot)}</tr>`;
-      rrhhFilasExport.push({Funcionario:f.nombre,Mes:'TOTAL',Operaciones:f.tot.ops,'Neta (US$)':+f.tot.neta.toFixed(2),'Tasa ponderada (%)':tasaAcum(f.tot)===null?'':+(tasaAcum(f.tot)*100).toFixed(2),Bono:k.bono?+f.tot.bono.toFixed(2):'','Fondo colocado':k.fondo?+f.tot.fondo.toFixed(2):''});
-    }
+    if(ents.length>1)html+=`<tr class="subtotal"><td></td><td>Total ${escHTML(RRHH_MES_LBL[m]||m)}</td><td></td>${celdas(g.tot)}</tr>`;
     html+='</tbody>';
   });
-  html+=`<tfoot><tr><td>Total general</td><td>${mesSel?escHTML(RRHH_MES_LBL[mesSel]||mesSel):'Todos los meses'}</td>${celdas(total)}</tr></tfoot></table>`;
+  html+=`<tfoot><tr><td></td><td>Total general</td><td>${mesSel?escHTML(RRHH_MES_LBL[mesSel]||mesSel):'Todos los meses'}</td>${celdas(total)}</tr></tfoot></table>`;
   cont.innerHTML=html;
 }
 
@@ -2209,10 +2279,10 @@ async function exportarRRHH(){
     await cargarSheetJS();
     const ws=XLSX.utils.json_to_sheet(rrhhFilasExport);
     ws['!autofilter']={ref:ws['!ref']};
-    ws['!cols']=[{wch:30},{wch:12},{wch:12},{wch:16},{wch:18},{wch:14},{wch:16}];
+    ws['!cols']=[{wch:16},{wch:12},{wch:32},{wch:16},{wch:12},{wch:14},{wch:16},{wch:18},{wch:14},{wch:16}];
     const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,'Funcionarios');
-    XLSX.writeFile(wb,`RRHH_Produccion_${new Date().toISOString().slice(0,10)}.xlsx`);
+    XLSX.utils.book_append_sheet(wb,ws,'RRHH');
+    XLSX.writeFile(wb,`RRHH_${rrhhCargo}_${new Date().toISOString().slice(0,10)}.xlsx`);
     showToast('✓ Excel exportado');
   }catch(e){console.error(e);showToast('No se pudo generar el Excel. Revisa tu conexión.',true);}
 }
