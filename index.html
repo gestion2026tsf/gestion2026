@@ -512,7 +512,7 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
 .seg-btn{height:26px;padding:0 12px;border:0;border-radius:7px;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;}
 .seg-btn:hover{color:var(--ink);}
 .seg-btn.active{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(31,30,28,.12);}
-.rrhh-kpis{grid-template-columns:repeat(6,minmax(0,1fr));}
+.rrhh-kpis{grid-template-columns:repeat(5,minmax(0,1fr));}
 .rrhh-table tr.mes-head td{background:var(--ink);color:#fff;padding:9px 12px;font-weight:700;border:0;}
 .rrhh-table tr.mes-head .mh{display:flex;align-items:center;gap:12px;}
 .rrhh-table tr.mes-head .mh b{font-size:13.5px;}
@@ -530,58 +530,17 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
 @media(max-width:1100px){.rrhh-kpis{grid-template-columns:repeat(3,minmax(0,1fr));}}
 .rrhh-head{align-items:center;}
 .rrhh-head-r{display:flex;align-items:center;gap:10px;}
-/* Tarjetas por funcionario */
-.fmes{margin-bottom:18px;}
-.fmes:last-child{margin-bottom:4px;}
-.fmes-cap{padding:4px 2px 12px;background:#fff;}
-.fmes-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;background:var(--ink);color:#fff;margin-bottom:12px;}
-.fmes-head b{font-size:15px;font-weight:800;letter-spacing:-.2px;}
-.fmes-head span{font-size:11.5px;color:#A9A498;}
-.fmes-head em{margin-left:auto;font-style:normal;font-weight:800;color:var(--y);font-size:13px;}
-.fmes-dl{height:28px;display:inline-flex;align-items:center;gap:6px;padding:0 11px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:transparent;color:#fff;font-size:11.5px;font-weight:600;cursor:pointer;}
-.fmes-dl:hover{background:rgba(255,255,255,.1);}
-.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;}
-.fcard{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 16px 12px;overflow:hidden;box-shadow:0 1px 2px rgba(31,30,28,.04);transition:box-shadow .15s,transform .15s;}
-.fcard:hover{box-shadow:var(--sh-h);transform:translateY(-2px);}
-.fcard::before{content:'';position:absolute;left:0;top:0;right:0;height:4px;background:var(--rest);}
-.fcard.top{background:linear-gradient(155deg,#2B2A27,#1F1E1C);border-color:#1F1E1C;color:#fff;}
-.fcard.top::before{background:var(--y);}
-.fcard.top::after{content:'';position:absolute;right:-50px;top:-50px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(242,183,5,.25),transparent 70%);pointer-events:none;}
-.fc-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;position:relative;z-index:1;}
-.fc-top .rrhh-rank{width:28px;height:28px;font-size:12px;}
-.fc-id{flex:1;min-width:0;}
-.fc-id b{display:block;font-size:13.5px;font-weight:800;color:var(--ink);line-height:1.25;}
-.fcard.top .fc-id b{color:#fff;}
-.fc-id small{display:block;font-size:11px;color:var(--muted);margin-top:2px;}
-.fcard.top .fc-id small{color:#A9A498;}
-.fc-id .tag{margin:4px 0 0;}
-.fc-dl{flex:0 0 auto;width:28px;height:28px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.fc-dl:hover{border-color:var(--y);color:var(--y-dark);}
-.fcard.top .fc-dl{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);color:#fff;}
-.fc-neta{position:relative;z-index:1;}
-.fc-neta small{display:block;font-size:11px;color:var(--muted);}
-.fcard.top .fc-neta small{color:#A9A498;}
-.fc-neta strong{display:block;font-size:24px;font-weight:800;letter-spacing:-.7px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.15;}
-.fcard.top .fc-neta strong{color:var(--y);}
-.fc-bar{height:5px;background:#F0EDE6;border-radius:5px;overflow:hidden;margin:9px 0 13px;position:relative;z-index:1;}
-.fcard.top .fc-bar{background:rgba(255,255,255,.12);}
-.fc-bar span{display:block;height:100%;background:var(--rest);border-radius:5px;}
-.fcard.top .fc-bar span{background:var(--y);}
-.fc-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;position:relative;z-index:1;}
-.fc-grid div{grid-column:span 2;background:#FAF9F6;border-radius:9px;padding:7px 9px;min-width:0;}
-.fcard.top .fc-grid div{background:rgba(255,255,255,.06);}
-.fc-grid div.w3{grid-column:span 3;}
-.fc-grid small{display:block;font-size:10px;color:var(--muted);white-space:nowrap;}
-.fcard.top .fc-grid small{color:#A9A498;}
-.fc-grid b{display:block;font-size:13px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.fcard.top .fc-grid b{color:#fff;}
-.fc-grid b.t{color:var(--y-dark);}
-.fcard.top .fc-grid b.t{color:var(--y);}
-.fc-foot{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:9px;border-top:1px dashed var(--line2);font-size:10px;color:var(--muted2);position:relative;z-index:1;}
-.fcard.top .fc-foot{border-top-color:rgba(255,255,255,.14);color:#85817A;}
-.fc-foot i{width:14px;height:14px;border-radius:50%;background:var(--y);color:var(--ink);font-style:normal;font-weight:800;font-size:9px;display:flex;align-items:center;justify-content:center;}
-.capturando .fc-dl,.capturando .fmes-dl{display:none!important;}
-.capturando .fcard{transform:none!important;box-shadow:none!important;}
+/* Encabezado del reporte (sale también en la imagen descargada) */
+.rrhh-cap{background:#fff;}
+.rep-head{display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:12px;border-radius:12px;background:linear-gradient(110deg,#2B2A27,#1F1E1C);color:#fff;position:relative;overflow:hidden;}
+.rep-head::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--y);}
+.rep-logo{flex:0 0 auto;width:38px;height:38px;border-radius:50%;background:var(--y);color:var(--ink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;}
+.rep-tit b{display:block;font-size:15px;font-weight:800;letter-spacing:-.2px;}
+.rep-tit span{display:block;font-size:11.5px;color:#C9C4B9;margin-top:2px;}
+.rep-meta{margin-left:auto;text-align:right;font-size:11px;color:#A9A498;line-height:1.5;}
+.rep-meta b{color:var(--y);font-size:15px;font-weight:800;display:block;}
+.rep-note{font-size:10.5px;color:var(--muted);margin-top:10px;}
+.capturando .rrhh-table tbody.grp:hover td{background:inherit;}
 /* ================= PDF ================= */
 *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 @media print{
@@ -1058,7 +1017,7 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
           <div class="hero-text">
             <div class="hero-kicker">Recursos Humanos</div>
             <div class="page-title">Producción por funcionario</div>
-            <span class="page-title-meta">Resultados por mes: funcionarios, líderes y zonales</span>
+            <span class="page-title-meta">Neta, tasa ponderada, clientes únicos y bono por mes</span>
           </div>
           <div class="hero-art" aria-hidden="true">
             <svg viewBox="0 16 640 146" preserveAspectRatio="xMidYMax meet">
@@ -1105,10 +1064,14 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
         <div class="chart-card">
           <div class="chart-head rrhh-head"><div class="chart-title" id="rrhhTitulo">Funcionarios por mes</div>
             <div class="rrhh-head-r"><span class="chart-badge" id="rrhhBadge"></span>
-              <div class="seg" id="rrhhVista">
-                <button type="button" class="seg-btn active" data-v="tarjetas" onclick="setVistaRRHH('tarjetas')">Tarjetas</button>
-                <button type="button" class="seg-btn" data-v="tabla" onclick="setVistaRRHH('tabla')">Tabla</button>
-              </div>
+              <button type="button" class="btn-secondary" onclick="descargarImagenRRHH()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Descargar imagen
+              </button>
+              <button type="button" class="btn-csv" onclick="exportarRRHH()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Exportar Excel
+              </button>
             </div>
           </div>
           <div id="rrhhTabla"><div class="empty-state"><p>Cargando…</p></div></div>
@@ -2195,7 +2158,7 @@ const ZONALES_POR_ZONA = {
 
 const RRHH_MES_LBL={ENE26:'Enero 2026',FEB26:'Febrero 2026',MAR26:'Marzo 2026',ABR26:'Abril 2026',MAY26:'Mayo 2026',JUN26:'Junio 2026',JUL26:'Julio 2026',AGO26:'Agosto 2026',SET26:'Setiembre 2026',OCT26:'Octubre 2026',NOV26:'Noviembre 2026',DIC26:'Diciembre 2026','S/Mes':'Sin mes'};
 const RRHH_MES_ORD={ENE26:1,FEB26:2,MAR26:3,ABR26:4,MAY26:5,JUN26:6,JUL26:7,AGO26:8,SET26:9,OCT26:10,NOV26:11,DIC26:12,'S/Mes':0};
-let rrhhFilasExport=[], rrhhCargo='func', rrhhVista='tarjetas';
+let rrhhCargo='func';
 
 function normTxt(v){return String(v??'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();}
 function normZona(v){return normTxt(v).replace(/^ZONA\s+/,'');}
@@ -2207,9 +2170,6 @@ function titulo(t){return String(t).toLowerCase().replace(/(^|\s)\S/g,m=>m.toUpp
 
 function getBonoKey(){
   return findHeaderExact(['BONO_COLO','BONO COLO','BONO','BONOS']) || findHeaderContains(['BONO']);
-}
-function getFondoKey(){
-  return findHeaderExact(['FONDO COLOCADO','FONDO_COLOCADO','FONDOS COLOCADOS','FONDO']) || findHeaderContains(['FONDO']);
 }
 function getFuncKeyRRHH(){
   return headers.includes(COL_FUNC)?COL_FUNC:detectField(['FNCNR','FNCNE','FUNCIONARIO','ANALISTA','EJECUTIVO']);
@@ -2238,14 +2198,13 @@ function limpiarRRHH(){
   document.getElementById('rrhhEstado').value='activadas';
   setCargoRRHH('func');
 }
-function nuevoAcum(){return {ops:0,neta:0,pesoTea:0,netaTasa:0,bono:0,fondo:0,cli:new Set()};}
+function nuevoAcum(){return {ops:0,neta:0,pesoTea:0,netaTasa:0,bono:0,cli:new Set()};}
 function sumarAcum(acc,r,k){
   acc.ops++;
   if(k.neta)acc.neta+=parseNeta(r[k.neta]);
   const t=getFilaTasaPartes(r,k.neta);
   if(t){acc.pesoTea+=t.pesoTea;acc.netaTasa+=t.neta;}
   if(k.bono)acc.bono+=parseNeta(r[k.bono]);
-  if(k.fondo)acc.fondo+=parseNeta(r[k.fondo]);
   const c=getClienteKey(r); if(c)acc.cli.add(c);
 }
 function tasaAcum(acc){return acc.netaTasa>0?acc.pesoTea/acc.netaTasa:null;}
@@ -2268,10 +2227,18 @@ function entidadRRHH(r,k){
   return {id:'F|'+nf,nombre:f,ubi:titulo(normTxt(r[COL_SUC]))||'—',tipo};
 }
 
+function filtrosTxtRRHH(){
+  const sel=id=>{const e=document.getElementById(id);return e.options[e.selectedIndex]?.text||'';};
+  const cargo={func:'Funcionarios',lider:'Líderes',zonal:'Zonales'}[rrhhCargo];
+  const q=document.getElementById('rrhhBuscar').value.trim();
+  return `Cargo: ${cargo} · Zona: ${sel('rrhhZona')} · Mes: ${sel('rrhhMes')} · Operaciones: ${sel('rrhhEstado')}${q?' · Búsqueda: '+q:''}`;
+}
+let rrhhData=null;
+
 function renderRRHH(){
   const cont=document.getElementById('rrhhTabla');
   if(!cont)return;
-  const k={neta:getNetaKey(),bono:getBonoKey(),fondo:getFondoKey(),func:getFuncKeyRRHH()};
+  const k={neta:getNetaKey(),bono:getBonoKey(),func:getFuncKeyRRHH()};
   const mesSel=document.getElementById('rrhhMes').value;
   const zonaSel=document.getElementById('rrhhZona').value;
   const soloAct=document.getElementById('rrhhEstado').value==='activadas';
@@ -2294,7 +2261,12 @@ function renderRRHH(){
     sumarAcum(meses[m].ents[e.id].acc,r,k); sumarAcum(meses[m].tot,r,k); sumarAcum(total,r,k);
     personas.add(e.id);
   });
-  const listaMeses=Object.entries(meses).sort((a,b)=>(RRHH_MES_ORD[b[0]]??-1)-(RRHH_MES_ORD[a[0]]??-1));
+  const listaMeses=Object.entries(meses)
+    .sort((a,b)=>(RRHH_MES_ORD[b[0]]??-1)-(RRHH_MES_ORD[a[0]]??-1))
+    .map(([m,g])=>({m,label:RRHH_MES_LBL[m]||m,tot:g.tot,ents:Object.values(g.ents).sort((a,b)=>b.acc.neta-a.acc.neta)}));
+  const colUbi=rrhhCargo==='zonal'?'Zona':'Sucursal';
+  const colBono=rrhhCargo==='func'?'Bono':'Bono equipo';
+  rrhhData={listaMeses,total,k,etq,colUbi,colBono,personas:personas.size,mesSel,filtros:filtrosTxtRRHH(),soloAct};
 
   const icon=(d)=>`<div class="kpi-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${d}</svg></div>`;
   document.getElementById('rrhhKpis').innerHTML=`
@@ -2302,122 +2274,112 @@ function renderRRHH(){
     <div class="kpi-card">${icon('<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>')}<div class="kpi-label">Tasa ponderada</div><div class="kpi-value">${txtTasa(tasaAcum(total))}</div><div class="kpi-sub">ponderada por neta</div></div>
     <div class="kpi-card">${icon('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/>')}<div class="kpi-label">Clientes únicos</div><div class="kpi-value">${total.cli.size.toLocaleString('es-PE')}</div><div class="kpi-sub">según filtro</div></div>
     <div class="kpi-card">${icon('<circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/>')}<div class="kpi-label">Bono total</div><div class="kpi-value">${k.bono?fmtMontoRaw(total.bono):'—'}</div><div class="kpi-sub">${k.bono?'suma de '+escHTML(k.bono):'columna no encontrada'}</div></div>
-    <div class="kpi-card">${icon('<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>')}<div class="kpi-label">Fondo colocado</div><div class="kpi-value">${k.fondo?fmtMontoRaw(total.fondo):'—'}</div><div class="kpi-sub">${k.fondo?'suma de fondo colocado':'columna no encontrada'}</div></div>
     <div class="kpi-card">${icon('<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>')}<div class="kpi-label">${etq[0]}</div><div class="kpi-value">${personas.size}</div><div class="kpi-sub">con operaciones</div></div>`;
   document.getElementById('rrhhBadge').textContent=plural(listaMeses.length,'mes','meses');
 
-  const faltan=[!k.neta&&'NETA',!k.bono&&'BONO_COLO',!k.fondo&&'FONDO COLOCADO',!k.func&&'FUNCIONARIO'].filter(Boolean);
-  const notaCargo=rrhhCargo==='lider'?' Líderes: suma de todas las operaciones de su sucursal; el bono mostrado es el bono acumulado del equipo.'
-    :rrhhCargo==='zonal'?' Zonales: suma de todas las operaciones de su zona; el bono mostrado es el bono acumulado del equipo.':'';
-  document.getElementById('rrhhNota').innerHTML=(faltan.length?`<b>No se encontró en el Excel: ${faltan.join(', ')}.</b> `:'')+
-    `Tasa ponderada = suma(NETA × TEA) / suma(NETA). Los desistidos no se consideran. ${soloAct?'Solo operaciones activadas.':'Operaciones en todos los estados.'}${notaCargo}`;
+  const faltan=[!k.neta&&'NETA',!k.bono&&'BONO_COLO',!k.func&&'FUNCIONARIO'].filter(Boolean);
+  const notaCargo=rrhhCargo==='lider'?' Líderes: suma de las operaciones de su sucursal; el bono es el acumulado del equipo.'
+    :rrhhCargo==='zonal'?' Zonales: suma de las operaciones de su zona; el bono es el acumulado del equipo.':'';
+  const nota=`Tasa ponderada = suma(NETA × TEA) / suma(NETA). Desistidos excluidos. ${soloAct?'Solo operaciones activadas.':'Operaciones en todos los estados.'}${notaCargo}`;
+  rrhhData.nota=nota;
+  document.getElementById('rrhhNota').innerHTML=faltan.length?`<b>No se encontró en el Excel: ${faltan.join(', ')}.</b>`:'';
 
-  rrhhFilasExport=[];
   if(!listaMeses.length){cont.innerHTML='<div class="empty-state"><p>Sin operaciones para el filtro seleccionado</p></div>';return;}
 
-  const celdas=a=>`<td class="num">${a.ops}</td><td class="num">${a.cli.size}</td><td class="num neta">${fmtNum2(a.neta)}</td><td class="num tasa">${txtTasa(tasaAcum(a))}</td><td class="num">${k.bono?fmtNum2(a.bono):'—'}</td><td class="num">${k.fondo?fmtNum2(a.fondo):'—'}</td>`;
-  const colUbi=rrhhCargo==='zonal'?'Zona':'Sucursal';
-  let html=`<table class="rrhh-table"><thead><tr><th>#</th><th>Nombre</th><th>${colUbi}</th><th class="num">Ops.</th><th class="num">Clientes únicos</th><th class="num">Neta (US$)</th><th class="num">Tasa pond.</th><th class="num">${rrhhCargo==='func'?'Bono':'Bono equipo'}</th><th class="num">Fondo colocado</th></tr></thead>`;
-  listaMeses.forEach(([m,g])=>{
-    const ents=Object.values(g.ents).sort((a,b)=>b.acc.neta-a.acc.neta);
-    const max=Math.max(...ents.map(e=>Math.abs(e.acc.neta)),1);
-    html+=`<tbody class="grp"><tr class="mes-head"><td colspan="9"><div class="mh"><b>${escHTML(RRHH_MES_LBL[m]||m)}</b><span>${plural(ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></td></tr>`;
-    ents.forEach((e,i)=>{
+  const celdas=a=>`<td class="num">${a.ops}</td><td class="num">${a.cli.size}</td><td class="num neta">${fmtNum2(a.neta)}</td><td class="num tasa">${txtTasa(tasaAcum(a))}</td><td class="num">${k.bono?fmtNum2(a.bono):'—'}</td>`;
+  let html=`<div class="rrhh-cap" id="rrhhCap">
+    <div class="rep-head"><div class="rep-logo">T</div>
+      <div class="rep-tit"><b>Total Servicios Financieros · RRHH — ${etq[0]} por mes</b><span>${escHTML(rrhhData.filtros)}</span></div>
+      <div class="rep-meta"><b>${fmtMonto(total.neta)}</b>Neta total · ${plural(personas.size,etq[1],etq[2])}<br>Generado el ${new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'})}</div>
+    </div>
+    <table class="rrhh-table"><thead><tr><th>#</th><th>Nombre</th><th>${colUbi}</th><th class="num">Ops.</th><th class="num">Clientes únicos</th><th class="num">Neta (US$)</th><th class="num">Tasa pond.</th><th class="num">${colBono}</th></tr></thead>`;
+  listaMeses.forEach(g=>{
+    const max=Math.max(...g.ents.map(e=>Math.abs(e.acc.neta)),1);
+    html+=`<tbody class="grp"><tr class="mes-head"><td colspan="8"><div class="mh"><b>${escHTML(g.label)}</b><span>${plural(g.ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></td></tr>`;
+    g.ents.forEach((e,i)=>{
       const tag=e.tipo==='lider'?'<span class="tag lider">Líder</span>':e.tipo==='zonal'?'<span class="tag zonal">Zonal</span>':'';
       html+=`<tr><td class="rk"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span></td><td class="nom">${escHTML(e.nombre)}${rrhhCargo==='func'?tag:''}<div class="rrhh-share${i===0?' top':''}"><span style="width:${Math.round(Math.abs(e.acc.neta)/max*100)}%"></span></div></td><td class="ubi">${escHTML(e.ubi)}</td>${celdas(e.acc)}</tr>`;
-      rrhhFilasExport.push({Mes:RRHH_MES_LBL[m]||m,Cargo:etq[1],Nombre:e.nombre,[colUbi]:e.ubi,Operaciones:e.acc.ops,'Clientes únicos':e.acc.cli.size,'Neta (US$)':+e.acc.neta.toFixed(2),'Tasa ponderada (%)':tasaAcum(e.acc)===null?'':+(tasaAcum(e.acc)*100).toFixed(2),[rrhhCargo==='func'?'Bono':'Bono equipo']:k.bono?+e.acc.bono.toFixed(2):'','Fondo colocado':k.fondo?+e.acc.fondo.toFixed(2):''});
     });
-    if(ents.length>1)html+=`<tr class="subtotal"><td></td><td>Total ${escHTML(RRHH_MES_LBL[m]||m)}</td><td></td>${celdas(g.tot)}</tr>`;
+    if(g.ents.length>1)html+=`<tr class="subtotal"><td></td><td>Total ${escHTML(g.label)}</td><td></td>${celdas(g.tot)}</tr>`;
     html+='</tbody>';
   });
-  html+=`<tfoot><tr><td></td><td>Total general</td><td>${mesSel?escHTML(RRHH_MES_LBL[mesSel]||mesSel):'Todos los meses'}</td>${celdas(total)}</tr></tfoot></table>`;
-  cont.innerHTML=rrhhVista==='tarjetas'?tarjetasRRHH(listaMeses,k,etq):html;
+  html+=`<tfoot><tr><td></td><td>Total general</td><td>${mesSel?escHTML(RRHH_MES_LBL[mesSel]||mesSel):'Todos los meses'}</td>${celdas(total)}</tr></tfoot></table>
+    <div class="rep-note">${escHTML(nota)}</div></div>`;
+  cont.innerHTML=html;
 }
 
-/* ── Tarjetas de RRHH y descarga como imagen ── */
-function setVistaRRHH(v){
-  rrhhVista=v;
-  document.querySelectorAll('#rrhhVista .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===v));
-  renderRRHH();
-}
-function tarjetasRRHH(listaMeses,k,etq){
-  const dl='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
-  return listaMeses.map(([m,g])=>{
-    const mesTxt=RRHH_MES_LBL[m]||m;
-    const ents=Object.values(g.ents).sort((a,b)=>b.acc.neta-a.acc.neta);
-    const max=Math.max(...ents.map(e=>Math.abs(e.acc.neta)),1);
-    const cards=ents.map((e,i)=>{
-      const a=e.acc, t=tasaAcum(a);
-      const tag=e.tipo==='lider'?'<span class="tag lider">Líder</span>':e.tipo==='zonal'?'<span class="tag zonal">Zonal</span>':'';
-      return `<div class="fcard${i===0?' top':''}" data-nombre="${escHTML(e.nombre)}" data-mes="${escHTML(mesTxt)}">
-        <div class="fc-top"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span>
-          <div class="fc-id"><b>${escHTML(e.nombre)}</b><small>${escHTML(e.ubi)} · ${escHTML(mesTxt)}</small>${rrhhCargo==='func'?tag:''}</div>
-          <button type="button" class="fc-dl" title="Descargar tarjeta como imagen" onclick="descargarTarjetaRRHH(this)">${dl}</button></div>
-        <div class="fc-neta"><small>Neta colocada (US$)</small><strong>${fmtNum2(a.neta)}</strong></div>
-        <div class="fc-bar"><span style="width:${Math.round(Math.abs(a.neta)/max*100)}%"></span></div>
-        <div class="fc-grid">
-          <div><small>Tasa pond.</small><b class="t">${txtTasa(t)}</b></div>
-          <div><small>Clientes</small><b>${a.cli.size}</b></div>
-          <div><small>Ops.</small><b>${a.ops}</b></div>
-          <div class="w3"><small>${rrhhCargo==='func'?'Bono':'Bono equipo'}</small><b>${k.bono?fmtNum2(a.bono):'—'}</b></div>
-          <div class="w3"><small>Fondo colocado</small><b>${k.fondo?fmtNum2(a.fondo):'—'}</b></div>
-        </div>
-        <div class="fc-foot"><i>T</i>Total Servicios Financieros · Gestión 2026</div>
-      </div>`;
-    }).join('');
-    return `<section class="fmes"><div class="fmes-cap" data-mes="${escHTML(mesTxt)}">
-      <div class="fmes-head"><b>${escHTML(mesTxt)}</b><span>${plural(ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')} · tasa ${txtTasa(tasaAcum(g.tot))}</span><em>Neta ${fmtMonto(g.tot.neta)}</em>
-        <button type="button" class="fmes-dl" onclick="descargarMesRRHH(this)">${dl} Descargar mes</button></div>
-      <div class="fgrid">${cards}</div></div></section>`;
-  }).join('');
-}
-function cargarHtml2Canvas(){
+/* ── Descargas de la tabla RRHH ── */
+function cargarScript(url,global){
   return new Promise((resolve,reject)=>{
-    if(window.html2canvas){resolve();return;}
+    if(window[global]){resolve();return;}
     const sc=document.createElement('script');
-    sc.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-    sc.onload=()=>resolve(); sc.onerror=()=>reject(new Error('No se pudo cargar el generador de imágenes'));
+    sc.src=url; sc.onload=()=>resolve(); sc.onerror=()=>reject(new Error('No se pudo cargar '+global));
     document.head.appendChild(sc);
   });
 }
 function nombreArchivo(t){return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w\-]+/g,'_').replace(/_+/g,'_').slice(0,80);}
-async function capturarPNG(el,archivo){
+function bajarArchivo(href,nombre){const a=document.createElement('a');a.download=nombre;a.href=href;document.body.appendChild(a);a.click();a.remove();}
+function sufijoRRHH(){return `${rrhhData.etq[0]}_${rrhhData.mesSel?(RRHH_MES_LBL[rrhhData.mesSel]||rrhhData.mesSel):'todos_los_meses'}_${new Date().toISOString().slice(0,10)}`;}
+
+async function descargarImagenRRHH(){
+  const el=document.getElementById('rrhhCap');
+  if(!el){showToast('No hay datos para descargar',true);return;}
   try{
     showToast('Generando imagen…');
-    await cargarHtml2Canvas();
+    await cargarScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js','html2canvas');
     if(document.fonts&&document.fonts.ready)await document.fonts.ready;
     el.classList.add('capturando');
-    const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
+    const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',logging:false,windowWidth:Math.max(el.scrollWidth,1100)});
     el.classList.remove('capturando');
-    const a=document.createElement('a');
-    a.download=nombreArchivo(archivo)+'.png';
-    a.href=canvas.toDataURL('image/png');
-    document.body.appendChild(a); a.click(); a.remove();
+    bajarArchivo(canvas.toDataURL('image/png'),nombreArchivo('RRHH_'+sufijoRRHH())+'.png');
     showToast('✓ Imagen descargada');
-  }catch(e){
-    el.classList.remove('capturando');
-    console.error(e); showToast('No se pudo generar la imagen. Revisa tu conexión.',true);
-  }
-}
-function descargarTarjetaRRHH(btn){
-  const card=btn.closest('.fcard');
-  capturarPNG(card,`RRHH_${card.dataset.mes}_${card.dataset.nombre}`);
-}
-function descargarMesRRHH(btn){
-  const cap=btn.closest('.fmes-cap');
-  capturarPNG(cap,`RRHH_${rrhhCargo}_${cap.dataset.mes}`);
+  }catch(e){el.classList.remove('capturando');console.error(e);showToast('No se pudo generar la imagen. Revisa tu conexión.',true);}
 }
 
 async function exportarRRHH(){
-  if(!rrhhFilasExport.length){showToast('No hay datos para exportar',true);return;}
+  if(!rrhhData||!rrhhData.listaMeses.length){showToast('No hay datos para exportar',true);return;}
   try{
-    await cargarSheetJS();
-    const ws=XLSX.utils.json_to_sheet(rrhhFilasExport);
-    ws['!autofilter']={ref:ws['!ref']};
-    ws['!cols']=[{wch:16},{wch:12},{wch:32},{wch:16},{wch:12},{wch:14},{wch:16},{wch:18},{wch:14},{wch:16}];
-    const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,'RRHH');
-    XLSX.writeFile(wb,`RRHH_${rrhhCargo}_${new Date().toISOString().slice(0,10)}.xlsx`);
+    showToast('Generando Excel…');
+    await cargarScript('https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js','ExcelJS');
+    const d=rrhhData, conBono=!!d.k.bono;
+    const wb=new ExcelJS.Workbook(); wb.creator='Gestión 2026';
+    const ws=wb.addWorksheet('RRHH',{views:[{state:'frozen',ySplit:5}],pageSetup:{orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0}});
+    const N=8;
+    ws.columns=[{width:6},{width:36},{width:18},{width:10},{width:16},{width:18},{width:14},{width:16}];
+    const INK='FF1F1E1C',Y='FFF2B705',YS='FFFFF7DD',GR='FFF5F3EE',LN='FFE6E2D9';
+    const borde={bottom:{style:'thin',color:{argb:LN}}};
+    const fila=(vals,est={})=>{const r=ws.addRow(vals);r.eachCell({includeEmpty:true},(c,i)=>{if(i>N)return;Object.assign(c,est.cell||{});if(est.fill)c.fill={type:'pattern',pattern:'solid',fgColor:{argb:est.fill}};if(est.font)c.font=est.font;c.border=borde;});if(est.height)r.height=est.height;return r;};
+    const fmt=(r)=>{r.getCell(4).numFmt='#,##0';r.getCell(5).numFmt='#,##0';r.getCell(6).numFmt='#,##0.00';r.getCell(7).numFmt='0.00%';r.getCell(8).numFmt='#,##0.00';[4,5,6,7,8].forEach(i=>r.getCell(i).alignment={horizontal:'right'});};
+    const vals=(a)=>[a.ops,a.cli.size,+a.neta.toFixed(2),tasaAcum(a)===null?null:+tasaAcum(a).toFixed(6),conBono?+a.bono.toFixed(2):null];
+
+    // Encabezado
+    let r=fila(['TOTAL SERVICIOS FINANCIEROS'],{fill:INK,font:{bold:true,size:15,color:{argb:Y}},height:28}); ws.mergeCells(r.number,1,r.number,N); r.getCell(1).alignment={vertical:'middle',indent:1};
+    r=fila([`RRHH — ${d.etq[0]} por mes`],{fill:INK,font:{bold:true,size:12,color:{argb:'FFFFFFFF'}},height:20}); ws.mergeCells(r.number,1,r.number,N); r.getCell(1).alignment={vertical:'middle',indent:1};
+    r=fila([`${d.filtros}   |   Generado: ${new Date().toLocaleString('es-PE')}`],{fill:INK,font:{size:9,color:{argb:'FFA9A498'}},height:18}); ws.mergeCells(r.number,1,r.number,N); r.getCell(1).alignment={vertical:'middle',indent:1};
+    ws.addRow([]);
+    r=fila(['#','Nombre',d.colUbi,'Ops.','Clientes únicos','Neta (US$)','Tasa pond.',d.colBono],{fill:Y,font:{bold:true,color:{argb:INK}},height:20});
+    r.eachCell(c=>c.alignment={vertical:'middle',horizontal:'center'});
+
+    d.listaMeses.forEach(g=>{
+      r=fila([`${g.label}  ·  ${plural(g.ents.length,d.etq[1],d.etq[2])}  ·  ${plural(g.tot.ops,'operación','operaciones')}`,'','','','',+g.tot.neta.toFixed(2)],{fill:'FF2B2A27',font:{bold:true,color:{argb:'FFFFFFFF'}},height:19});
+      ws.mergeCells(r.number,1,r.number,5); r.getCell(6).numFmt='#,##0.00'; r.getCell(6).font={bold:true,color:{argb:Y}}; r.getCell(6).alignment={horizontal:'right'};
+      g.ents.forEach((e,i)=>{
+        r=fila([i+1,e.nombre,e.ubi,...vals(e.acc)],{font:{color:{argb:INK},bold:i===0}});
+        fmt(r); r.getCell(1).alignment={horizontal:'center'};
+        if(i===0){r.getCell(1).fill={type:'pattern',pattern:'solid',fgColor:{argb:Y}};}
+        if(e.tipo&&rrhhCargo==='func')r.getCell(2).value=`${e.nombre} (${e.tipo==='lider'?'Líder':'Zonal'})`;
+      });
+      if(g.ents.length>1){r=fila(['',`Total ${g.label}`,'',...vals(g.tot)],{fill:GR,font:{bold:true,color:{argb:INK}}});fmt(r);}
+      ws.addRow([]);
+    });
+    r=fila(['','TOTAL GENERAL',d.mesSel?(RRHH_MES_LBL[d.mesSel]||d.mesSel):'Todos los meses',...vals(d.total)],{fill:INK,font:{bold:true,color:{argb:Y}},height:20}); fmt(r);
+    ws.addRow([]);
+    r=ws.addRow([d.nota]); ws.mergeCells(r.number,1,r.number,N); r.getCell(1).font={italic:true,size:9,color:{argb:'FF85817A'}}; r.getCell(1).alignment={wrapText:true}; r.height=30;
+
+    const buf=await wb.xlsx.writeBuffer();
+    const url=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+    bajarArchivo(url,nombreArchivo('RRHH_'+sufijoRRHH())+'.xlsx');
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
     showToast('✓ Excel exportado');
   }catch(e){console.error(e);showToast('No se pudo generar el Excel. Revisa tu conexión.',true);}
 }
