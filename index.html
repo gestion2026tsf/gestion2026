@@ -81,19 +81,20 @@ body.app-mode #app{display:flex!important;}
 .meet-spark.s2{transform:rotate(-40deg);} .meet-spark.s3{transform:rotate(40deg);}
 @keyframes spark{0%{opacity:0;translate:0 10px}40%{opacity:1}100%{opacity:0;translate:0 -6px}}
 @media (prefers-reduced-motion:reduce){.login-road .veh,.login-road .wheel{animation:none!important;}.meet-glow{animation:none;opacity:.4;}.meet-spark{display:none;}}
-.login-box{position:relative;z-index:1;width:380px;max-width:100%;background:#fff;border-radius:20px;padding:30px 30px 26px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4);}
+.login-box{position:relative;z-index:1;width:430px;max-width:100%;background:#fff;border-radius:20px;padding:30px 28px 26px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4);}
 .login-logo{width:46px;height:46px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
 .login-logo::before{content:"T";font-size:24px;font-weight:800;color:var(--ink);line-height:1;}
 .login-tagline{display:inline-block;color:var(--y-dark);font-size:11.5px;font-weight:700;margin-bottom:4px;}
 .login-box h1{font-size:24px;font-weight:800;color:var(--ink);letter-spacing:-.6px;margin-bottom:6px;}
 .login-box p{font-size:12.5px;color:var(--muted);font-weight:500;line-height:1.5;margin-bottom:20px;}
-.login-roles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.role-card{border:1px solid var(--line);background:#FAF9F6;border-radius:12px;padding:12px 8px;cursor:pointer;transition:border-color .15s,background .15s;}
+.login-roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px;}
+.role-card{border:1px solid var(--line);background:#FAF9F6;border-radius:12px;padding:12px 6px;cursor:pointer;transition:border-color .15s,background .15s;}
 .role-card:hover{border-color:var(--y-line);}
 .role-card.selected{border-color:var(--y);background:var(--y-soft);}
 .role-card-icon{font-size:18px;margin-bottom:4px;}
 .role-card-title{font-size:13px;font-weight:700;color:var(--ink);}
 .role-card-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+@media(max-width:400px){.login-roles{grid-template-columns:1fr;}}
 .login-input{width:100%;height:42px;border-radius:10px;border:1px solid var(--line2);background:#fff;color:var(--ink);padding:0 14px;font-size:13.5px;font-weight:600;outline:none;margin-bottom:10px;}
 .login-input::placeholder{color:var(--muted2);font-weight:500;}
 .login-input:focus{border-color:var(--y);box-shadow:0 0 0 3px rgba(242,183,5,.16);}
@@ -472,6 +473,41 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
   .form-grid{grid-template-columns:1fr;}
 }
 
+
+/* ================= RRHH ================= */
+.rrhh-kpis{grid-template-columns:repeat(5,minmax(0,1fr));}
+.rrhh-kpis .kpi-card{cursor:default;}
+.rrhh-search{height:30px;min-width:200px;padding:0 10px;border:1px solid var(--line2);border-radius:8px;background:#fff;color:var(--text);font-size:12px;outline:none;}
+.rrhh-search:focus{border-color:var(--y);box-shadow:0 0 0 3px rgba(242,183,5,.15);}
+#rrhhTabla{overflow-x:auto;}
+.rrhh-table{width:100%;min-width:820px;border-collapse:collapse;font-size:12.5px;}
+.rrhh-table th{padding:8px 12px;font-size:11px;font-weight:600;color:var(--muted);text-align:left;border-bottom:1px solid var(--line);background:#FAF9F6;white-space:nowrap;}
+.rrhh-table th.num,.rrhh-table td.num{text-align:right;font-variant-numeric:tabular-nums;}
+.rrhh-table td{padding:7px 12px;border-bottom:1px solid #F3F1EC;color:var(--text);white-space:nowrap;}
+.rrhh-table tbody.grp{border-top:1px solid var(--line2);}
+.rrhh-table tbody.grp:first-of-type{border-top:0;}
+.rrhh-table tbody.grp:hover td{background:#FFFDF6;}
+.rrhh-table td.func{vertical-align:top;padding-top:10px;min-width:220px;background:#fff!important;border-right:1px solid #F3F1EC;}
+.rrhh-func{display:flex;align-items:center;gap:9px;}
+.rrhh-rank{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:#F0EEE9;color:var(--text2);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.rrhh-rank.top{background:var(--y);color:var(--ink);}
+.rrhh-name{font-weight:700;color:var(--ink);white-space:normal;line-height:1.25;}
+.rrhh-share{margin:7px 0 0 31px;height:4px;background:#F0EDE6;border-radius:4px;overflow:hidden;max-width:170px;}
+.rrhh-share span{display:block;height:100%;background:var(--rest);border-radius:4px;}
+.rrhh-rank.top~div .rrhh-share span,.rrhh-share.top span{background:var(--y);}
+.rrhh-sub{font-size:10.5px;color:var(--muted);margin:4px 0 0 31px;}
+.rrhh-table td.mes{color:var(--text2);}
+.rrhh-table tr.subtotal td{background:#FAF9F6;font-weight:800;color:var(--ink);}
+.rrhh-table tr.subtotal td.mes{color:var(--muted);font-weight:600;}
+.rrhh-table td.neta{font-weight:700;}
+.rrhh-table td.tasa{color:var(--y-dark);font-weight:700;}
+.rrhh-table tfoot td{padding:10px 12px;background:var(--ink);color:#fff;font-weight:800;border:0;}
+.rrhh-table tfoot td.tasa{color:var(--y);}
+.rrhh-note{font-size:11px;color:var(--muted);margin:8px 2px 0;}
+.rrhh-note b{color:var(--danger);font-weight:700;}
+@media(max-width:1100px){.rrhh-kpis{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:760px){.rrhh-kpis{grid-template-columns:1fr 1fr;}.rrhh-search{flex:1 1 100%;}}
+
 /* ================= PDF ================= */
 *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 @media print{
@@ -611,6 +647,11 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
         <div class="role-card-title">Solo lectura</div>
         <div class="role-card-sub">Solo visualizar</div>
       </div>
+      <div class="role-card" id="card-rrhh" onclick="selectRol('rrhh')">
+        <div class="role-card-icon">👥</div>
+        <div class="role-card-title">RRHH</div>
+        <div class="role-card-sub">Solo visualizar</div>
+      </div>
     </div>
     <input class="login-input" type="password" id="loginClave" placeholder="Clave de acceso" autocomplete="off" onkeydown="if(event.key==='Enter')signIn()">
     <div class="login-err" id="loginErr">❌ Clave incorrecta. Intenta de nuevo.</div>
@@ -638,13 +679,17 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
       </div>
     </div>
     <nav>
-      <button class="nav-btn active" onclick="showView('dashboard',this)">
+      <button class="nav-btn active" id="nav-dashboard" onclick="showView('dashboard',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
         Dashboard
       </button>
-      <button class="nav-btn" onclick="showView('expedientes',this)">
+      <button class="nav-btn" id="nav-expedientes" onclick="showView('expedientes',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
         Expedientes
+      </button>
+      <button class="nav-btn" id="nav-rrhh" onclick="showView('rrhh',this)" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        RRHH
       </button>
     </nav>
     <div class="header-right">
@@ -933,6 +978,56 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
         </div>
       </div>
 
+      <!-- RRHH -->
+      <div class="view" id="view-rrhh">
+        <section class="page-header hero">
+          <div class="hero-text">
+            <div class="hero-kicker">Recursos Humanos</div>
+            <div class="page-title">Producción por funcionario</div>
+            <span class="page-title-meta">Neta, tasa ponderada, bono y fondo colocado por mes</span>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <svg viewBox="0 16 640 146" preserveAspectRatio="xMidYMax meet">
+              <rect x="-40" y="151" width="720" height="11" fill="#141312"/>
+              <line class="road-dash" x1="-40" y1="156.5" x2="680" y2="156.5" stroke="#F2B705" stroke-width="2" stroke-dasharray="32 24" opacity=".7"/>
+              <use href="#veh-truck"/>
+              <use href="#veh-tractor"/>
+            </svg>
+          </div>
+          <div class="dashboard-actions">
+            <button class="btn-secondary" onclick="loadData()" title="Volver a cargar los datos">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              Actualizar
+            </button>
+            <button class="btn-pdf" onclick="exportarRRHH()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Exportar Excel
+            </button>
+          </div>
+        </section>
+
+        <div class="filter-bar">
+          <label>Mes</label>
+          <select class="filter-select-dash" id="rrhhMes" onchange="renderRRHH()"><option value="">Todos</option></select>
+          <label>Operaciones</label>
+          <select class="filter-select-dash" id="rrhhEstado" onchange="renderRRHH()">
+            <option value="activadas">Solo activadas</option>
+            <option value="todas">Todas</option>
+          </select>
+          <label>Funcionario</label>
+          <input class="rrhh-search" type="text" id="rrhhBuscar" placeholder="Buscar funcionario…" oninput="renderRRHH()">
+          <button class="btn-clear" onclick="limpiarRRHH()">✕ Limpiar</button>
+        </div>
+
+        <div class="kpi-grid rrhh-kpis" id="rrhhKpis"></div>
+
+        <div class="chart-card">
+          <div class="chart-head"><div class="chart-title">Detalle por funcionario y mes</div><div class="chart-badge" id="rrhhBadge"></div></div>
+          <div id="rrhhTabla"><div class="empty-state"><p>Cargando…</p></div></div>
+        </div>
+        <div class="rrhh-note" id="rrhhNota"></div>
+      </div>
+
     </div>
   </main>
 </div>
@@ -988,6 +1083,7 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
    ════════════════════════════════════════ */
 const CLAVE_ADMIN  = 'TSF2026admin';
 const CLAVE_VIEWER = 'TSF2026ver';
+const CLAVE_RRHH   = 'TSF2026ver';
 const FLOW_URL     = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/a30a1f18625542cd973a4803bea28799/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-b1799_uGO-dPQYVeAZ0VvdlBAXHhg4iewbmm1KTjlo';
 const FLOW_SECRET  = 'TSF2026';
 
@@ -1009,10 +1105,12 @@ let donutChartInstance=null;
 let usuarioActual='',rolActual='';
 let rolSeleccionado='admin';
 
+function nombreRol(rol){return rol==='admin'?'Administrador':rol==='rrhh'?'RRHH':'Solo lectura';}
 function selectRol(rol){
   rolSeleccionado=rol;
   document.getElementById('card-admin').classList.toggle('selected',rol==='admin');
   document.getElementById('card-viewer').classList.toggle('selected',rol==='viewer');
+  document.getElementById('card-rrhh').classList.toggle('selected',rol==='rrhh');
 }
 
 function signIn(){
@@ -1023,6 +1121,7 @@ function signIn(){
   let rolOk=false;
   if(rolSeleccionado==='admin'&&clave===CLAVE_ADMIN){rolOk=true;rolActual='admin';}
   else if(rolSeleccionado==='viewer'&&clave===CLAVE_VIEWER){rolOk=true;rolActual='viewer';}
+  else if(rolSeleccionado==='rrhh'&&clave===CLAVE_RRHH){rolOk=true;rolActual='rrhh';}
 
   if(!rolOk){
     err.textContent='❌ Clave incorrecta para ese rol.';
@@ -1032,7 +1131,7 @@ function signIn(){
   }
 
   err.style.display='none';
-  usuarioActual=rolActual==='admin'?'Administrador':'Solo lectura';
+  usuarioActual=nombreRol(rolActual);
   localStorage.setItem('gestion_session',JSON.stringify({rol:rolActual,ts:Date.now()}));
   showApp();
   loadData();
@@ -1057,7 +1156,13 @@ function showApp(){
   document.getElementById('dash-fecha').textContent=new Date().toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const badge=document.getElementById('roleBadge');
   if(rolActual==='admin'){badge.textContent='Administrador';badge.className='role-badge admin';document.body.classList.remove('viewer-mode');}
-  else{badge.textContent='Solo lectura';badge.className='role-badge viewer';document.body.classList.add('viewer-mode');}
+  else{badge.textContent=nombreRol(rolActual);badge.className='role-badge viewer';document.body.classList.add('viewer-mode');}
+  // RRHH solo ve su tablero; el administrador ve las tres pestañas; Solo lectura no ve RRHH.
+  const esRRHH=rolActual==='rrhh';
+  document.getElementById('nav-dashboard').style.display=esRRHH?'none':'';
+  document.getElementById('nav-expedientes').style.display=esRRHH?'none':'';
+  document.getElementById('nav-rrhh').style.display=(esRRHH||rolActual==='admin')?'':'none';
+  showView(esRRHH?'rrhh':'dashboard',document.getElementById(esRRHH?'nav-rrhh':'nav-dashboard'));
 }
 
 window.onload=()=>{
@@ -1066,7 +1171,7 @@ window.onload=()=>{
     try{
       const s=JSON.parse(session);
       if(Date.now()-s.ts<8*60*60*1000){
-        rolActual=s.rol;usuarioActual=rolActual==='admin'?'Administrador':'Solo lectura';
+        rolActual=s.rol;usuarioActual=nombreRol(rolActual);
         showApp();
         const cache=localStorage.getItem('gestion_data_cache');
         if(cache){
@@ -1818,6 +1923,7 @@ function updateFiltros(){
   const octubre=document.querySelector('.estado-exp-check[value="OCTUBRE_2026"]');
   if(octubre)octubre.checked=seleccionadosPrevios.has('OCTUBRE_2026');
   updateEstadoExpLabel();
+  if(typeof actualizarRRHH==='function')actualizarRRHH();
 }
 
 document.addEventListener('click',function(e){
@@ -1982,6 +2088,133 @@ async function exportExcel(){
     console.error(e);
     showToast('No se pudo generar el Excel. Revisa tu conexión.',true);
   }
+}
+
+
+/* ════════════════════════════════════════
+   RRHH — PRODUCCIÓN POR FUNCIONARIO Y MES
+   ════════════════════════════════════════ */
+const RRHH_MES_LBL={ENE26:'Ene 2026',FEB26:'Feb 2026',MAR26:'Mar 2026',ABR26:'Abr 2026',MAY26:'May 2026',JUN26:'Jun 2026',JUL26:'Jul 2026',AGO26:'Ago 2026',SET26:'Set 2026',OCT26:'Oct 2026',NOV26:'Nov 2026',DIC26:'Dic 2026','S/Mes':'Sin mes'};
+const RRHH_MES_ORD={ENE26:1,FEB26:2,MAR26:3,ABR26:4,MAY26:5,JUN26:6,JUL26:7,AGO26:8,SET26:9,OCT26:10,NOV26:11,DIC26:12,'S/Mes':99};
+let rrhhFilasExport=[];
+
+function getBonoKey(){
+  return findHeaderExact(['BONO','BONOS','SUMA BONO','MONTO BONO','BONO FUNCIONARIO','BONO_FUNCIONARIO']) || findHeaderContains(['BONO']);
+}
+function getFondoKey(){
+  return findHeaderExact(['FONDO COLOCADO','FONDO_COLOCADO','FONDOS COLOCADOS','FONDO','MONTO FONDO']) || findHeaderContains(['FONDO']);
+}
+function getFuncKeyRRHH(){
+  return headers.includes(COL_FUNC)?COL_FUNC:detectField(['FNCNR','FNCNE','FUNCIONARIO','ANALISTA','EJECUTIVO']);
+}
+function fmtNum2(n){return Number(n||0).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+function actualizarRRHH(){
+  const sel=document.getElementById('rrhhMes');
+  if(!sel)return;
+  const previo=sel.value;
+  const meses=[...new Set(allData.map(getMesKeyFromRow))].sort((a,b)=>(RRHH_MES_ORD[a]||98)-(RRHH_MES_ORD[b]||98));
+  sel.innerHTML='<option value="">Todos</option>'+meses.map(m=>`<option value="${escHTML(m)}">${escHTML(RRHH_MES_LBL[m]||m)}</option>`).join('');
+  if(meses.includes(previo))sel.value=previo;
+  renderRRHH();
+}
+function limpiarRRHH(){
+  document.getElementById('rrhhMes').value='';
+  document.getElementById('rrhhEstado').value='activadas';
+  document.getElementById('rrhhBuscar').value='';
+  renderRRHH();
+}
+function nuevoAcum(){return {ops:0,neta:0,pesoTea:0,netaTasa:0,bono:0,fondo:0};}
+function sumarAcum(acc,r,k){
+  acc.ops++;
+  if(k.neta)acc.neta+=parseNeta(r[k.neta]);
+  const t=getFilaTasaPartes(r,k.neta);
+  if(t){acc.pesoTea+=t.pesoTea;acc.netaTasa+=t.neta;}
+  if(k.bono)acc.bono+=parseNeta(r[k.bono]);
+  if(k.fondo)acc.fondo+=parseNeta(r[k.fondo]);
+}
+function tasaAcum(acc){return acc.netaTasa>0?acc.pesoTea/acc.netaTasa:null;}
+function txtTasa(t){return t===null?'—':(t*100).toFixed(2)+'%';}
+
+function renderRRHH(){
+  const cont=document.getElementById('rrhhTabla');
+  if(!cont)return;
+  const k={neta:getNetaKey(),bono:getBonoKey(),fondo:getFondoKey(),func:getFuncKeyRRHH()};
+  const mesSel=document.getElementById('rrhhMes').value;
+  const soloAct=document.getElementById('rrhhEstado').value==='activadas';
+  const q=(document.getElementById('rrhhBuscar').value||'').toLowerCase().trim();
+
+  const filas=allData.filter(r=>{
+    if(soloAct && !isActivado(r))return false;
+    if(mesSel && getMesKeyFromRow(r)!==mesSel)return false;
+    const f=k.func?String(r[k.func]||'').trim():'';
+    if(!f)return false;
+    return !q || f.toLowerCase().includes(q);
+  });
+
+  const map={}; const total=nuevoAcum();
+  filas.forEach(r=>{
+    const f=String(r[k.func]).trim();
+    const m=getMesKeyFromRow(r);
+    if(!map[f])map[f]={nombre:f,tot:nuevoAcum(),meses:{}};
+    if(!map[f].meses[m])map[f].meses[m]=nuevoAcum();
+    sumarAcum(map[f].tot,r,k); sumarAcum(map[f].meses[m],r,k); sumarAcum(total,r,k);
+  });
+  const funcs=Object.values(map).sort((a,b)=>b.tot.neta-a.tot.neta);
+
+  // KPIs
+  const icon=(d)=>`<div class="kpi-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${d}</svg></div>`;
+  document.getElementById('rrhhKpis').innerHTML=`
+    <div class="kpi-card orange">${icon('<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>')}<div class="kpi-label">Neta total</div><div class="kpi-value">${fmtMontoRaw(total.neta)}</div><div class="kpi-sub">${plural(total.ops,'operación','operaciones')}</div></div>
+    <div class="kpi-card">${icon('<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>')}<div class="kpi-label">Tasa ponderada</div><div class="kpi-value">${txtTasa(tasaAcum(total))}</div><div class="kpi-sub">ponderada por neta</div></div>
+    <div class="kpi-card">${icon('<circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/>')}<div class="kpi-label">Bono total</div><div class="kpi-value">${k.bono?fmtMontoRaw(total.bono):'—'}</div><div class="kpi-sub">${k.bono?'suma de bonos':'columna no encontrada'}</div></div>
+    <div class="kpi-card">${icon('<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>')}<div class="kpi-label">Fondo colocado</div><div class="kpi-value">${k.fondo?fmtMontoRaw(total.fondo):'—'}</div><div class="kpi-sub">${k.fondo?'suma de fondo colocado':'columna no encontrada'}</div></div>
+    <div class="kpi-card">${icon('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>')}<div class="kpi-label">Funcionarios</div><div class="kpi-value">${funcs.length}</div><div class="kpi-sub">con operaciones</div></div>`;
+
+  document.getElementById('rrhhBadge').textContent=plural(funcs.length,'funcionario','funcionarios');
+  const faltan=[!k.neta&&'NETA',!k.bono&&'BONO',!k.fondo&&'FONDO COLOCADO',!k.func&&'FUNCIONARIO'].filter(Boolean);
+  document.getElementById('rrhhNota').innerHTML=(faltan.length?`<b>No se encontró en el Excel: ${faltan.join(', ')}.</b> `:'')+
+    `Tasa ponderada = suma(NETA × TEA) / suma(NETA). ${soloAct?'Solo se incluyen operaciones activadas.':'Se incluyen operaciones en todos los estados.'}`;
+
+  rrhhFilasExport=[];
+  if(!funcs.length){cont.innerHTML='<div class="empty-state"><p>Sin operaciones para el filtro seleccionado</p></div>';return;}
+
+  const maxNeta=Math.max(...funcs.map(f=>Math.abs(f.tot.neta)),1);
+  const celdas=(a)=>`<td class="num">${a.ops}</td><td class="num neta">${fmtNum2(a.neta)}</td><td class="num tasa">${txtTasa(tasaAcum(a))}</td><td class="num">${k.bono?fmtNum2(a.bono):'—'}</td><td class="num">${k.fondo?fmtNum2(a.fondo):'—'}</td>`;
+  let html=`<table class="rrhh-table"><thead><tr><th>Funcionario</th><th>Mes</th><th class="num">Ops.</th><th class="num">Neta (US$)</th><th class="num">Tasa ponderada</th><th class="num">Bono</th><th class="num">Fondo colocado</th></tr></thead>`;
+  funcs.forEach((f,i)=>{
+    const meses=Object.entries(f.meses).sort((a,b)=>(RRHH_MES_ORD[a[0]]||98)-(RRHH_MES_ORD[b[0]]||98));
+    const conSub=meses.length>1;
+    const span=meses.length+(conSub?1:0);
+    const share=Math.round(Math.abs(f.tot.neta)/maxNeta*100);
+    const funcCell=`<td class="func" rowspan="${span}"><div class="rrhh-func"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span><span class="rrhh-name">${escHTML(f.nombre)}</span></div><div class="rrhh-share${i===0?' top':''}"><span style="width:${share}%"></span></div>${conSub?`<div class="rrhh-sub">${plural(meses.length,'mes','meses')} con operaciones</div>`:''}</td>`;
+    html+='<tbody class="grp">';
+    meses.forEach(([m,a],j)=>{
+      html+=`<tr>${j===0?funcCell:''}<td class="mes">${escHTML(RRHH_MES_LBL[m]||m)}</td>${celdas(a)}</tr>`;
+      rrhhFilasExport.push({Funcionario:f.nombre,Mes:RRHH_MES_LBL[m]||m,Operaciones:a.ops,'Neta (US$)':+a.neta.toFixed(2),'Tasa ponderada (%)':tasaAcum(a)===null?'':+(tasaAcum(a)*100).toFixed(2),Bono:k.bono?+a.bono.toFixed(2):'','Fondo colocado':k.fondo?+a.fondo.toFixed(2):''});
+    });
+    if(conSub){
+      html+=`<tr class="subtotal"><td class="mes">Total</td>${celdas(f.tot)}</tr>`;
+      rrhhFilasExport.push({Funcionario:f.nombre,Mes:'TOTAL',Operaciones:f.tot.ops,'Neta (US$)':+f.tot.neta.toFixed(2),'Tasa ponderada (%)':tasaAcum(f.tot)===null?'':+(tasaAcum(f.tot)*100).toFixed(2),Bono:k.bono?+f.tot.bono.toFixed(2):'','Fondo colocado':k.fondo?+f.tot.fondo.toFixed(2):''});
+    }
+    html+='</tbody>';
+  });
+  html+=`<tfoot><tr><td>Total general</td><td>${mesSel?escHTML(RRHH_MES_LBL[mesSel]||mesSel):'Todos los meses'}</td>${celdas(total)}</tr></tfoot></table>`;
+  cont.innerHTML=html;
+}
+
+async function exportarRRHH(){
+  if(!rrhhFilasExport.length){showToast('No hay datos para exportar',true);return;}
+  try{
+    await cargarSheetJS();
+    const ws=XLSX.utils.json_to_sheet(rrhhFilasExport);
+    ws['!autofilter']={ref:ws['!ref']};
+    ws['!cols']=[{wch:30},{wch:12},{wch:12},{wch:16},{wch:18},{wch:14},{wch:16}];
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,'Funcionarios');
+    XLSX.writeFile(wb,`RRHH_Produccion_${new Date().toISOString().slice(0,10)}.xlsx`);
+    showToast('✓ Excel exportado');
+  }catch(e){console.error(e);showToast('No se pudo generar el Excel. Revisa tu conexión.',true);}
 }
 
 function showView(name,btn){
