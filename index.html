@@ -528,6 +528,60 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
 .tag.zonal{background:var(--ink);color:var(--y);}
 .rrhh-table tbody.grp+tbody.grp tr.mes-head td{border-top:10px solid #fff;}
 @media(max-width:1100px){.rrhh-kpis{grid-template-columns:repeat(3,minmax(0,1fr));}}
+.rrhh-head{align-items:center;}
+.rrhh-head-r{display:flex;align-items:center;gap:10px;}
+/* Tarjetas por funcionario */
+.fmes{margin-bottom:18px;}
+.fmes:last-child{margin-bottom:4px;}
+.fmes-cap{padding:4px 2px 12px;background:#fff;}
+.fmes-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;background:var(--ink);color:#fff;margin-bottom:12px;}
+.fmes-head b{font-size:15px;font-weight:800;letter-spacing:-.2px;}
+.fmes-head span{font-size:11.5px;color:#A9A498;}
+.fmes-head em{margin-left:auto;font-style:normal;font-weight:800;color:var(--y);font-size:13px;}
+.fmes-dl{height:28px;display:inline-flex;align-items:center;gap:6px;padding:0 11px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:transparent;color:#fff;font-size:11.5px;font-weight:600;cursor:pointer;}
+.fmes-dl:hover{background:rgba(255,255,255,.1);}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;}
+.fcard{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 16px 12px;overflow:hidden;box-shadow:0 1px 2px rgba(31,30,28,.04);transition:box-shadow .15s,transform .15s;}
+.fcard:hover{box-shadow:var(--sh-h);transform:translateY(-2px);}
+.fcard::before{content:'';position:absolute;left:0;top:0;right:0;height:4px;background:var(--rest);}
+.fcard.top{background:linear-gradient(155deg,#2B2A27,#1F1E1C);border-color:#1F1E1C;color:#fff;}
+.fcard.top::before{background:var(--y);}
+.fcard.top::after{content:'';position:absolute;right:-50px;top:-50px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(242,183,5,.25),transparent 70%);pointer-events:none;}
+.fc-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;position:relative;z-index:1;}
+.fc-top .rrhh-rank{width:28px;height:28px;font-size:12px;}
+.fc-id{flex:1;min-width:0;}
+.fc-id b{display:block;font-size:13.5px;font-weight:800;color:var(--ink);line-height:1.25;}
+.fcard.top .fc-id b{color:#fff;}
+.fc-id small{display:block;font-size:11px;color:var(--muted);margin-top:2px;}
+.fcard.top .fc-id small{color:#A9A498;}
+.fc-id .tag{margin:4px 0 0;}
+.fc-dl{flex:0 0 auto;width:28px;height:28px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.fc-dl:hover{border-color:var(--y);color:var(--y-dark);}
+.fcard.top .fc-dl{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);color:#fff;}
+.fc-neta{position:relative;z-index:1;}
+.fc-neta small{display:block;font-size:11px;color:var(--muted);}
+.fcard.top .fc-neta small{color:#A9A498;}
+.fc-neta strong{display:block;font-size:24px;font-weight:800;letter-spacing:-.7px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.15;}
+.fcard.top .fc-neta strong{color:var(--y);}
+.fc-bar{height:5px;background:#F0EDE6;border-radius:5px;overflow:hidden;margin:9px 0 13px;position:relative;z-index:1;}
+.fcard.top .fc-bar{background:rgba(255,255,255,.12);}
+.fc-bar span{display:block;height:100%;background:var(--rest);border-radius:5px;}
+.fcard.top .fc-bar span{background:var(--y);}
+.fc-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;position:relative;z-index:1;}
+.fc-grid div{grid-column:span 2;background:#FAF9F6;border-radius:9px;padding:7px 9px;min-width:0;}
+.fcard.top .fc-grid div{background:rgba(255,255,255,.06);}
+.fc-grid div.w3{grid-column:span 3;}
+.fc-grid small{display:block;font-size:10px;color:var(--muted);white-space:nowrap;}
+.fcard.top .fc-grid small{color:#A9A498;}
+.fc-grid b{display:block;font-size:13px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fcard.top .fc-grid b{color:#fff;}
+.fc-grid b.t{color:var(--y-dark);}
+.fcard.top .fc-grid b.t{color:var(--y);}
+.fc-foot{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:9px;border-top:1px dashed var(--line2);font-size:10px;color:var(--muted2);position:relative;z-index:1;}
+.fcard.top .fc-foot{border-top-color:rgba(255,255,255,.14);color:#85817A;}
+.fc-foot i{width:14px;height:14px;border-radius:50%;background:var(--y);color:var(--ink);font-style:normal;font-weight:800;font-size:9px;display:flex;align-items:center;justify-content:center;}
+.capturando .fc-dl,.capturando .fmes-dl{display:none!important;}
+.capturando .fcard{transform:none!important;box-shadow:none!important;}
 /* ================= PDF ================= */
 *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 @media print{
@@ -1049,7 +1103,14 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
         <div class="kpi-grid rrhh-kpis" id="rrhhKpis"></div>
 
         <div class="chart-card">
-          <div class="chart-head"><div class="chart-title" id="rrhhTitulo">Funcionarios por mes</div><div class="chart-badge" id="rrhhBadge"></div></div>
+          <div class="chart-head rrhh-head"><div class="chart-title" id="rrhhTitulo">Funcionarios por mes</div>
+            <div class="rrhh-head-r"><span class="chart-badge" id="rrhhBadge"></span>
+              <div class="seg" id="rrhhVista">
+                <button type="button" class="seg-btn active" data-v="tarjetas" onclick="setVistaRRHH('tarjetas')">Tarjetas</button>
+                <button type="button" class="seg-btn" data-v="tabla" onclick="setVistaRRHH('tabla')">Tabla</button>
+              </div>
+            </div>
+          </div>
           <div id="rrhhTabla"><div class="empty-state"><p>Cargando…</p></div></div>
         </div>
         <div class="rrhh-note" id="rrhhNota"></div>
@@ -1108,11 +1169,11 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
    CONFIGURACIÓN — reemplace los marcadores
    por sus valores (no los comparta en chats)
    ════════════════════════════════════════ */
-const CLAVE_ADMIN  = 'TSF2026admin';
-const CLAVE_VIEWER = 'TSF2026ver';
-const CLAVE_RRHH   = 'TSF2026ver';
-const FLOW_URL     = 'https://default2e32ce4d97184ed381d28de99f5e6a.e3.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/a30a1f18625542cd973a4803bea28799/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-b1799_uGO-dPQYVeAZ0VvdlBAXHhg4iewbmm1KTjlo';
-const FLOW_SECRET  = 'TSF2026';
+const CLAVE_ADMIN  = 'CLAVE_ADMIN_AQUI';
+const CLAVE_VIEWER = 'CLAVE_LECTURA_AQUI';
+const CLAVE_RRHH   = 'CLAVE_RRHH_AQUI';
+const FLOW_URL     = 'URL_DEL_FLOW_AQUI';
+const FLOW_SECRET  = 'SECRETO_FLOW_AQUI';
 
 const COL_FUNC='FNCNR',COL_NETA='NETA',COL_FECHA='FECHA',COL_ESTGES='EST_GES',COL_ESTCOM='EST_COM',COL_ZONA='ZONA',COL_PROD='PRODUCTO',COL_SUC='SUCURSAL';
 /* Paleta Total para el donut: amarillos y grises cálidos alternados */
@@ -2134,7 +2195,7 @@ const ZONALES_POR_ZONA = {
 
 const RRHH_MES_LBL={ENE26:'Enero 2026',FEB26:'Febrero 2026',MAR26:'Marzo 2026',ABR26:'Abril 2026',MAY26:'Mayo 2026',JUN26:'Junio 2026',JUL26:'Julio 2026',AGO26:'Agosto 2026',SET26:'Setiembre 2026',OCT26:'Octubre 2026',NOV26:'Noviembre 2026',DIC26:'Diciembre 2026','S/Mes':'Sin mes'};
 const RRHH_MES_ORD={ENE26:1,FEB26:2,MAR26:3,ABR26:4,MAY26:5,JUN26:6,JUL26:7,AGO26:8,SET26:9,OCT26:10,NOV26:11,DIC26:12,'S/Mes':0};
-let rrhhFilasExport=[], rrhhCargo='func';
+let rrhhFilasExport=[], rrhhCargo='func', rrhhVista='tarjetas';
 
 function normTxt(v){return String(v??'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();}
 function normZona(v){return normTxt(v).replace(/^ZONA\s+/,'');}
@@ -2270,7 +2331,81 @@ function renderRRHH(){
     html+='</tbody>';
   });
   html+=`<tfoot><tr><td></td><td>Total general</td><td>${mesSel?escHTML(RRHH_MES_LBL[mesSel]||mesSel):'Todos los meses'}</td>${celdas(total)}</tr></tfoot></table>`;
-  cont.innerHTML=html;
+  cont.innerHTML=rrhhVista==='tarjetas'?tarjetasRRHH(listaMeses,k,etq):html;
+}
+
+/* ── Tarjetas de RRHH y descarga como imagen ── */
+function setVistaRRHH(v){
+  rrhhVista=v;
+  document.querySelectorAll('#rrhhVista .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===v));
+  renderRRHH();
+}
+function tarjetasRRHH(listaMeses,k,etq){
+  const dl='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+  return listaMeses.map(([m,g])=>{
+    const mesTxt=RRHH_MES_LBL[m]||m;
+    const ents=Object.values(g.ents).sort((a,b)=>b.acc.neta-a.acc.neta);
+    const max=Math.max(...ents.map(e=>Math.abs(e.acc.neta)),1);
+    const cards=ents.map((e,i)=>{
+      const a=e.acc, t=tasaAcum(a);
+      const tag=e.tipo==='lider'?'<span class="tag lider">Líder</span>':e.tipo==='zonal'?'<span class="tag zonal">Zonal</span>':'';
+      return `<div class="fcard${i===0?' top':''}" data-nombre="${escHTML(e.nombre)}" data-mes="${escHTML(mesTxt)}">
+        <div class="fc-top"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span>
+          <div class="fc-id"><b>${escHTML(e.nombre)}</b><small>${escHTML(e.ubi)} · ${escHTML(mesTxt)}</small>${rrhhCargo==='func'?tag:''}</div>
+          <button type="button" class="fc-dl" title="Descargar tarjeta como imagen" onclick="descargarTarjetaRRHH(this)">${dl}</button></div>
+        <div class="fc-neta"><small>Neta colocada (US$)</small><strong>${fmtNum2(a.neta)}</strong></div>
+        <div class="fc-bar"><span style="width:${Math.round(Math.abs(a.neta)/max*100)}%"></span></div>
+        <div class="fc-grid">
+          <div><small>Tasa pond.</small><b class="t">${txtTasa(t)}</b></div>
+          <div><small>Clientes</small><b>${a.cli.size}</b></div>
+          <div><small>Ops.</small><b>${a.ops}</b></div>
+          <div class="w3"><small>${rrhhCargo==='func'?'Bono':'Bono equipo'}</small><b>${k.bono?fmtNum2(a.bono):'—'}</b></div>
+          <div class="w3"><small>Fondo colocado</small><b>${k.fondo?fmtNum2(a.fondo):'—'}</b></div>
+        </div>
+        <div class="fc-foot"><i>T</i>Total Servicios Financieros · Gestión 2026</div>
+      </div>`;
+    }).join('');
+    return `<section class="fmes"><div class="fmes-cap" data-mes="${escHTML(mesTxt)}">
+      <div class="fmes-head"><b>${escHTML(mesTxt)}</b><span>${plural(ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')} · tasa ${txtTasa(tasaAcum(g.tot))}</span><em>Neta ${fmtMonto(g.tot.neta)}</em>
+        <button type="button" class="fmes-dl" onclick="descargarMesRRHH(this)">${dl} Descargar mes</button></div>
+      <div class="fgrid">${cards}</div></div></section>`;
+  }).join('');
+}
+function cargarHtml2Canvas(){
+  return new Promise((resolve,reject)=>{
+    if(window.html2canvas){resolve();return;}
+    const sc=document.createElement('script');
+    sc.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    sc.onload=()=>resolve(); sc.onerror=()=>reject(new Error('No se pudo cargar el generador de imágenes'));
+    document.head.appendChild(sc);
+  });
+}
+function nombreArchivo(t){return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w\-]+/g,'_').replace(/_+/g,'_').slice(0,80);}
+async function capturarPNG(el,archivo){
+  try{
+    showToast('Generando imagen…');
+    await cargarHtml2Canvas();
+    if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+    el.classList.add('capturando');
+    const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
+    el.classList.remove('capturando');
+    const a=document.createElement('a');
+    a.download=nombreArchivo(archivo)+'.png';
+    a.href=canvas.toDataURL('image/png');
+    document.body.appendChild(a); a.click(); a.remove();
+    showToast('✓ Imagen descargada');
+  }catch(e){
+    el.classList.remove('capturando');
+    console.error(e); showToast('No se pudo generar la imagen. Revisa tu conexión.',true);
+  }
+}
+function descargarTarjetaRRHH(btn){
+  const card=btn.closest('.fcard');
+  capturarPNG(card,`RRHH_${card.dataset.mes}_${card.dataset.nombre}`);
+}
+function descargarMesRRHH(btn){
+  const cap=btn.closest('.fmes-cap');
+  capturarPNG(cap,`RRHH_${rrhhCargo}_${cap.dataset.mes}`);
 }
 
 async function exportarRRHH(){
