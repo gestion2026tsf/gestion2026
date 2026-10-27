@@ -395,14 +395,47 @@ body.viewer-mode .readonly-banner{display:flex!important;}
 .detail-modal-count{font-size:11px;font-weight:700;background:var(--y-soft);color:var(--y-dark);border-radius:999px;padding:3px 9px;margin-left:10px;}
 .detail-close{border:0;background:transparent;color:var(--muted);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1;}
 .detail-close:hover{background:#F3F1EC;color:var(--ink);}
+.detail-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);background:#FDFCF9;}
+.ds-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-width:0;}
+.ds-card span{display:block;font-size:11px;color:var(--muted);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ds-card strong{display:block;font-size:18px;font-weight:800;color:var(--ink);letter-spacing:-.4px;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.ds-card small{display:block;font-size:10.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ds-card.main{background:var(--ink);border-color:var(--ink);}
+.ds-card.main span,.ds-card.main small{color:#A9A498;}
+.ds-card.main strong{color:var(--y);}
+.detail-tools{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);}
+.detail-search{position:relative;flex:1;max-width:360px;}
+.detail-search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);}
+.detail-search input{width:100%;height:32px;padding:0 10px 0 30px;border:1px solid var(--line2);border-radius:8px;font-size:12px;color:var(--text);outline:none;background:#fff;}
+.detail-search input:focus{border-color:var(--y);box-shadow:0 0 0 3px rgba(242,183,5,.15);}
+.detail-shown{font-size:11.5px;color:var(--muted);margin-right:auto;}
 .detail-table-wrap{overflow:auto;flex:1;min-height:0;}
-.detail-table{width:100%;min-width:1450px;border-collapse:collapse;font-size:11.5px;}
-.detail-table thead th{position:sticky;top:0;z-index:2;background:#FAF9F6;color:var(--muted);padding:9px 10px;text-align:left;font-size:11px;font-weight:600;white-space:nowrap;border-bottom:1px solid var(--line);}
-.detail-table tbody td{padding:7px 10px;border-bottom:1px solid #F3F1EC;color:var(--text);white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis;}
+.detail-table{width:100%;min-width:1280px;border-collapse:separate;border-spacing:0;font-size:12px;}
+.detail-table thead th{position:sticky;top:0;z-index:3;background:#FAF9F6;color:var(--muted);padding:9px 12px;text-align:left;font-size:11px;font-weight:600;white-space:nowrap;border-bottom:1px solid var(--line);cursor:pointer;user-select:none;}
+.detail-table thead th:hover{color:var(--ink);}
+.detail-table thead th .sort{opacity:.35;font-size:9px;margin-left:3px;}
+.detail-table thead th.sorted{color:var(--ink);}
+.detail-table thead th.sorted .sort{opacity:1;color:var(--y-dark);}
+.detail-table th.num,.detail-table td.num{text-align:right;}
+.detail-table tbody td{padding:8px 12px;border-bottom:1px solid #F3F1EC;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px;background:#fff;}
 .detail-table tbody tr:hover td{background:#FFFBEE;}
-.detail-table td.num{text-align:right;font-weight:700;}
+.detail-table td.cli{font-weight:600;max-width:280px;}
+.detail-table td.cli small{display:block;font-size:10.5px;font-weight:500;color:var(--muted);margin-top:1px;font-variant-numeric:tabular-nums;}
+.detail-table td.neta{font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;}
+.detail-table td.tea{font-weight:700;color:var(--y-dark);font-variant-numeric:tabular-nums;}
+.detail-table td.muted{color:var(--muted);}
+.detail-table th.sticky-l,.detail-table td.sticky-l{position:sticky;left:0;z-index:2;box-shadow:1px 0 0 var(--line);}
+.detail-table thead th.sticky-l{z-index:4;}
+.detail-table tfoot td{position:sticky;bottom:0;z-index:2;background:#FAF9F6;border-top:1px solid var(--line2);padding:9px 12px;font-weight:800;white-space:nowrap;}
+.detail-table tfoot td.sticky-l{z-index:4;}
+.pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:600;background:#F0EEE9;color:#55514A;}
+.pill.y{background:var(--y-soft);color:var(--y-dark);}
+.pill.dark{background:var(--ink);color:#fff;}
+.pill.ok{background:#E8F4EC;color:#2D6A45;}
+.pill.new{background:#EEF1FB;color:#3A4C8C;}
 .detail-empty{padding:34px;text-align:center;color:var(--muted);font-weight:600;}
 .detail-modal-foot{padding:8px 16px;background:#FAF9F6;border-top:1px solid var(--line);font-size:11px;color:var(--muted);}
+@media(max-width:900px){.detail-summary{grid-template-columns:repeat(2,minmax(0,1fr));}.ds-card.main{grid-column:1 / -1;}}
 
 /* ================= TAMAÑO DE VISTA ================= */
 #dashboardZoomArea{width:100%;}
@@ -926,13 +959,25 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
 
 <!-- MODAL DETALLE DASHBOARD -->
 <div class="detail-modal-overlay" id="detailDashboardModal" onclick="if(event.target===this)cerrarDetalleDashboard()">
-  <div class="detail-modal">
+  <div class="detail-modal" role="dialog" aria-modal="true" aria-labelledby="detailDashboardTitle">
     <div class="detail-modal-head">
       <div><span class="detail-modal-title" id="detailDashboardTitle">Detalle</span><span class="detail-modal-count" id="detailDashboardCount">0 registros</span></div>
-      <button class="detail-close" type="button" onclick="cerrarDetalleDashboard()">×</button>
+      <button class="detail-close" type="button" onclick="cerrarDetalleDashboard()" aria-label="Cerrar">×</button>
+    </div>
+    <div class="detail-summary" id="detailSummary"></div>
+    <div class="detail-tools">
+      <div class="detail-search">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="detailSearch" placeholder="Buscar cliente, RUC, funcionario, sucursal…" oninput="renderDetalleTabla()">
+      </div>
+      <span class="detail-shown" id="detailShown"></span>
+      <button class="btn-csv" type="button" onclick="exportarDetalle()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Exportar Excel
+      </button>
     </div>
     <div class="detail-table-wrap" id="detailDashboardBody"></div>
-    <div class="detail-modal-foot">Haz clic fuera del cuadro, en × o presiona Esc para cerrar.</div>
+    <div class="detail-modal-foot">Haz clic en un encabezado para ordenar. Cierra con ×, Esc o haciendo clic fuera del cuadro.</div>
   </div>
 </div>
 
@@ -1978,35 +2023,144 @@ function fmtTeaDetalle(v){
   if(n!==null && isFinite(n)) return (n*100).toFixed(2)+'%';
   return String(v);
 }
+let detalleTitulo='',detalleFilas=[],detalleVista=[],detalleOrden={campo:'neta',dir:-1};
+const DETALLE_COLS=[
+  {id:'cliente',  label:'Cliente',        cands:['NOMBRE_RSOCIAL_CLIENTE','CLIENTE','RAZON SOCIAL','RAZÓN SOCIAL'], cls:'cli sticky-l'},
+  {id:'producto', label:'Producto',       cands:['PRODUCTO']},
+  {id:'neta',     label:'Neta (US$)',     num:true, cls:'num neta'},
+  {id:'tea',      label:'TEA',            num:true, cls:'num tea'},
+  {id:'mnda',     label:'Moneda',         cands:['MNDA','MONEDA']},
+  {id:'zona',     label:'Zona',           cands:['ZONA']},
+  {id:'sucursal', label:'Sucursal',       cands:['SUCURSAL']},
+  {id:'func',     label:'Funcionario',    cands:['FNCNR','FNCNE','FUNCIONARIO','EJECUTIVO']},
+  {id:'recu',     label:'Recurrencia',    cands:['RECURRENCIA','RECURRENTE']},
+  {id:'estcom',   label:'Est. comercial', cands:['EST_COM']},
+  {id:'estges',   label:'Est. gestión',   cands:['EST_GES']}
+];
+function detalleValor(r,col){
+  if(col.id==='neta'){const k=getNetaKey();return k?parseNeta(r[k]):0;}
+  if(col.id==='tea'){const k=getTeaKey();const t=k?parseTasaDecimal(r[k]):null;return t===null||!isFinite(t)?null:t;}
+  return String(valorDetalle(r,col.cands)??'').trim();
+}
+function pillProducto(v){const u=v.toUpperCase();return `<span class="pill ${u.startsWith('L')?'dark':u.startsWith('C')?'y':''}">${escHTML(v)}</span>`;}
+function pillRecurrencia(v){const u=v.toUpperCase();const c=u.includes('RECURR')?'ok':u.includes('NUEV')?'new':u.includes('REACT')?'y':'';return v?`<span class="pill ${c}">${escHTML(v.charAt(0)+v.slice(1).toLowerCase())}</span>`:'';}
+function pillEstado(v){const u=v.toUpperCase();return v?`<span class="pill ${u.startsWith('8.ACTIVADO')?'y':''}">${escHTML(v)}</span>`:'';}
+
 function abrirDetalleDashboard(titulo,filas){
   const modal=document.getElementById('detailDashboardModal');
-  const body=document.getElementById('detailDashboardBody');
-  if(!modal||!body)return;
-  const netaKey=getNetaKey();
-  const teaKey=getTeaKey();
-  document.getElementById('detailDashboardTitle').textContent=titulo||'Detalle';
-  document.getElementById('detailDashboardCount').textContent=(filas?.length||0).toLocaleString('es-PE')+' registros';
-  if(!filas?.length){
-    body.innerHTML='<div class="detail-empty">No hay registros para esta selección.</div>';
-    modal.classList.add('open');return;
-  }
-  const cols=[
-    ['PRODUCTO',['PRODUCTO']],['RUC',['RUC']],['NOMBRE_RSOCIAL_CLIENTE',['NOMBRE_RSOCIAL_CLIENTE','CLIENTE','RAZON SOCIAL','RAZÓN SOCIAL']],
-    ['ZONA',['ZONA']],['SUCURSAL',['SUCURSAL']],['FNCNR',['FNCNR','FNCNE','FUNCIONARIO','EJECUTIVO']],
-    ['EST_COM',['EST_COM']],['EST_GES',['EST_GES']],['RECURRENCIA',['RECURRENCIA','RECURRENTE']],['MNDA',['MNDA','MONEDA']]
-  ];
-  let html='<table class="detail-table"><thead><tr>'+cols.map(c=>'<th>'+c[0]+'</th>').join('')+'<th>TEA</th><th>NETA</th></tr></thead><tbody>';
-  html+=filas.map(r=>{
-    const base=cols.map(([,cands])=>'<td title="'+escHTML(valorDetalle(r,cands))+'">'+escHTML(valorDetalle(r,cands))+'</td>').join('');
-    const tea=teaKey?fmtTeaDetalle(r[teaKey]):'';
-    const neta=netaKey?parseNeta(r[netaKey]):0;
-    return '<tr>'+base+'<td class="num">'+escHTML(tea)+'</td><td class="num">'+(netaKey?escHTML(fmtMonto(neta)):'')+'</td></tr>';
-  }).join('');
-  html+='</tbody></table>';
-  body.innerHTML=html;
-  body.scrollTop=0;body.scrollLeft=0;
+  if(!modal)return;
+  detalleTitulo=titulo||'Detalle';
+  detalleFilas=Array.isArray(filas)?filas:[];
+  detalleOrden={campo:'neta',dir:-1};
+  document.getElementById('detailDashboardTitle').textContent=detalleTitulo;
+  document.getElementById('detailDashboardCount').textContent=plural(detalleFilas.length,'registro','registros');
+  document.getElementById('detailSearch').value='';
+  renderDetalleResumen();
+  renderDetalleTabla();
   modal.classList.add('open');
 }
+
+function renderDetalleResumen(){
+  const el=document.getElementById('detailSummary');
+  const netaKey=getNetaKey();
+  const f=detalleFilas;
+  const neta=netaKey?f.reduce((s,r)=>s+parseNeta(r[netaKey]),0):0;
+  const clientes=new Set(f.map(getClienteKey).filter(Boolean)).size;
+  const tasa=calcTasaPonderada(f,netaKey);
+  const lsng=f.filter(r=>String(r[COL_PROD]||'').toUpperCase().startsWith('L'));
+  const crdt=f.filter(r=>String(r[COL_PROD]||'').toUpperCase().startsWith('C'));
+  const netaDe=arr=>netaKey?arr.reduce((s,r)=>s+parseNeta(r[netaKey]),0):0;
+  el.innerHTML=`
+    <div class="ds-card main"><span>Neta total</span><strong>${fmtMonto(neta)}</strong><small>${plural(f.length,'operación','operaciones')}</small></div>
+    <div class="ds-card"><span>Clientes únicos</span><strong>${clientes.toLocaleString('es-PE')}</strong><small>Promedio ${f.length?fmtMonto(neta/f.length):'—'} por operación</small></div>
+    <div class="ds-card"><span>Tasa ponderada (TEA)</span><strong>${tasa!==null?(tasa*100).toFixed(2)+'%':'—'}</strong><small>ponderada por neta</small></div>
+    <div class="ds-card"><span>Leasing (LSNG)</span><strong>${fmtMonto(netaDe(lsng))}</strong><small>${plural(lsng.length,'operación','operaciones')}</small></div>
+    <div class="ds-card"><span>Crédito directo (CRDT)</span><strong>${fmtMonto(netaDe(crdt))}</strong><small>${plural(crdt.length,'operación','operaciones')}</small></div>`;
+}
+
+function renderDetalleTabla(){
+  const body=document.getElementById('detailDashboardBody');
+  const q=(document.getElementById('detailSearch')?.value||'').toLowerCase().trim();
+  const rucKey=campoFlexible(['RUC']);
+  detalleVista=detalleFilas.filter(r=>{
+    if(!q)return true;
+    return DETALLE_COLS.filter(c=>!c.num).map(c=>detalleValor(r,c)).concat(rucKey?String(r[rucKey]||''):'').join(' ').toLowerCase().includes(q);
+  });
+  const col=DETALLE_COLS.find(c=>c.id===detalleOrden.campo)||DETALLE_COLS[2];
+  detalleVista.sort((a,b)=>{
+    const va=detalleValor(a,col),vb=detalleValor(b,col);
+    if(col.num)return ((va??-Infinity)-(vb??-Infinity))*detalleOrden.dir;
+    return String(va).localeCompare(String(vb),'es')*detalleOrden.dir;
+  });
+  document.getElementById('detailShown').textContent=q?`${detalleVista.length} de ${detalleFilas.length} registros`:'';
+  if(!detalleVista.length){
+    body.innerHTML=`<div class="detail-empty">${detalleFilas.length?'Ningún registro coincide con la búsqueda.':'No hay registros para esta selección.'}</div>`;
+    return;
+  }
+  const netaKey=getNetaKey();
+  const totalNeta=netaKey?detalleVista.reduce((s,r)=>s+parseNeta(r[netaKey]),0):0;
+  const tasaVista=calcTasaPonderada(detalleVista,netaKey);
+  const head=DETALLE_COLS.map(c=>{
+    const on=c.id===detalleOrden.campo;
+    const flecha=on?(detalleOrden.dir>0?'▲':'▼'):'↕';
+    return `<th class="${c.num?'num ':''}${c.cls&&c.cls.includes('sticky-l')?'sticky-l ':''}${on?'sorted':''}" onclick="ordenarDetalle('${c.id}')">${c.label}<span class="sort">${flecha}</span></th>`;
+  }).join('');
+  const filas=detalleVista.map(r=>{
+    const celdas=DETALLE_COLS.map(c=>{
+      const v=detalleValor(r,c);
+      let html;
+      if(c.id==='cliente') html=`${escHTML(v)}<small>${escHTML(rucKey?r[rucKey]:'')}</small>`;
+      else if(c.id==='neta') html=netaKey?Number(v).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+      else if(c.id==='tea') html=v===null?'—':(v*100).toFixed(2)+'%';
+      else if(c.id==='producto') html=pillProducto(v);
+      else if(c.id==='recu') html=pillRecurrencia(v);
+      else if(c.id==='estges') html=pillEstado(v);
+      else html=escHTML(v);
+      const extra=['zona','sucursal','mnda','estcom'].includes(c.id)?' muted':'';
+      return `<td class="${c.cls||''}${extra}" title="${escHTML(c.num?'':v)}">${html}</td>`;
+    }).join('');
+    return `<tr>${celdas}</tr>`;
+  }).join('');
+  const pie=DETALLE_COLS.map(c=>{
+    if(c.id==='cliente')return `<td class="sticky-l">Total ${q?'filtrado':''} · ${plural(detalleVista.length,'registro','registros')}</td>`;
+    if(c.id==='neta')return `<td class="num">${netaKey?totalNeta.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2}):'—'}</td>`;
+    if(c.id==='tea')return `<td class="num" style="color:var(--y-dark)">${tasaVista!==null?(tasaVista*100).toFixed(2)+'%':'—'}</td>`;
+    return '<td></td>';
+  }).join('');
+  body.innerHTML=`<table class="detail-table"><thead><tr>${head}</tr></thead><tbody>${filas}</tbody><tfoot><tr>${pie}</tr></tfoot></table>`;
+}
+
+function ordenarDetalle(id){
+  if(detalleOrden.campo===id)detalleOrden.dir*=-1;
+  else{const c=DETALLE_COLS.find(x=>x.id===id);detalleOrden={campo:id,dir:c&&c.num?-1:1};}
+  renderDetalleTabla();
+}
+
+async function exportarDetalle(){
+  if(!detalleVista.length){showToast('No hay registros para exportar',true);return;}
+  try{
+    await cargarSheetJS();
+    const rucKey=campoFlexible(['RUC']);
+    const datos=detalleVista.map(r=>{
+      const o={};
+      DETALLE_COLS.forEach(c=>{
+        const v=detalleValor(r,c);
+        if(c.id==='tea')o[c.label]=v===null?'':Number((v*100).toFixed(2));
+        else o[c.label]=v;
+        if(c.id==='cliente')o['RUC']=rucKey?r[rucKey]:'';
+      });
+      return o;
+    });
+    const ws=XLSX.utils.json_to_sheet(datos);
+    ws['!autofilter']={ref:ws['!ref']};
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,'Detalle');
+    const nombre=detalleTitulo.replace(/[^\w\-]+/g,'_').slice(0,60);
+    XLSX.writeFile(wb,`Detalle_${nombre}.xlsx`);
+    showToast('✓ Detalle exportado');
+  }catch(e){console.error(e);showToast('No se pudo generar el Excel. Revisa tu conexión.',true);}
+}
+
 function cerrarDetalleDashboard(){ document.getElementById('detailDashboardModal')?.classList.remove('open'); }
 document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrarDetalleDashboard();});
 
