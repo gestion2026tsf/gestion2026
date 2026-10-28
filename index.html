@@ -2257,14 +2257,26 @@ function limpiarRRHH(){
   document.getElementById('rrhhEstado').value='activadas';
   setCargoRRHH('func');
 }
-function nuevoAcum(){return {ops:0,neta:0,pesoTea:0,netaTasa:0,bono:0,cli:new Set()};}
+function nuevoAcum(){return {ops:0,neta:0,pesoTea:0,netaTasa:0,bono:0,cli:new Set(),exec:new Set(),cliPorExec:{}};}
 function sumarAcum(acc,r,k){
   acc.ops++;
-  if(k.neta)acc.neta+=parseNeta(r[k.neta]);
+  const netaFila=k.neta?parseNeta(r[k.neta]):0;
+  if(k.neta)acc.neta+=netaFila;
   const t=getFilaTasaPartes(r,k.neta);
   if(t){acc.pesoTea+=t.pesoTea;acc.netaTasa+=t.neta;}
   if(k.bono)acc.bono+=parseNeta(r[k.bono]);
   const c=getClienteKey(r); if(c)acc.cli.add(c);
+
+  // Para Líderes: ejecutivo único = funcionario distinto que sí colocó (NETA > 0).
+  // Clientes promedio = promedio de clientes únicos de esos ejecutivos que colocaron.
+  if(k.func && netaFila>0){
+    const f=normTxt(r[k.func]);
+    if(f){
+      acc.exec.add(f);
+      if(!acc.cliPorExec[f])acc.cliPorExec[f]=new Set();
+      if(c)acc.cliPorExec[f].add(c);
+    }
+  }
 }
 function tasaAcum(acc){return acc.netaTasa>0?acc.pesoTea/acc.netaTasa:null;}
 function txtTasa(t){return t===null?'—':(t*100).toFixed(2)+'%';}
@@ -2300,6 +2312,29 @@ function factorTasaRRHH(tasa){
 }
 function txtFactorColRRHH(v){return (v*100).toFixed(2).replace('.',',')+'%';}
 function txtFactorTasaRRHH(v){return Math.round(v*100)+'%';}
+
+// SOLO LÍDERES: promedio y factor de clientes.
+function ejecutivosUnicosLider(acc){return acc?.exec?.size||0;}
+function bonoPromedioLider(acc){
+  const n=ejecutivosUnicosLider(acc);
+  return n>0?acc.bono/n:0;
+}
+function clientesPromedioLider(acc){
+  const n=ejecutivosUnicosLider(acc);
+  if(!n)return 0;
+  let total=0;
+  acc.exec.forEach(f=>{total+=(acc.cliPorExec?.[f]?.size||0);});
+  return total/n;
+}
+function factorClientesLider(prom){
+  const v=Number(prom||0);
+  if(v>=6)return 1.20;
+  if(v>=5)return 1.10;
+  if(v>=4)return 1.00;
+  if(v>=3)return 0.50;
+  return 0;
+}
+function txtFactorClientesLider(v){return Math.round((v||0)*100)+'%';}
 
 // Devuelve a quién se atribuye la fila según el cargo elegido (o null si no aplica).
 function entidadRRHH(r,k){
@@ -2361,26 +2396,48 @@ function renderRRHH(){
   rrhhData={listaMeses,total,k,etq,personas:personas.size,mesesSel,filtros:filtrosTxtRRHH(),soloAct};
 
   const icon=(d)=>`<div class="kpi-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${d}</svg></div>`;
-  document.getElementById('rrhhKpis').innerHTML=`
-    <div class="kpi-card orange">${icon('<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>')}<div class="kpi-label">Neta total</div><div class="kpi-value">${fmtMontoRaw(total.neta)}</div><div class="kpi-sub">${plural(total.ops,'operación','operaciones')}</div></div>
-    <div class="kpi-card">${icon('<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>')}<div class="kpi-label">Tasa ponderada</div><div class="kpi-value">${txtTasa(tasaAcum(total))}</div><div class="kpi-sub">ponderada por neta</div></div>
-    <div class="kpi-card">${icon('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/>')}<div class="kpi-label">Clientes únicos</div><div class="kpi-value">${total.cli.size.toLocaleString('es-PE')}</div><div class="kpi-sub">según filtro</div></div>
-    <div class="kpi-card">${icon('<circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/>')}<div class="kpi-label">Bono_Colocacion</div><div class="kpi-value">${k.bono?fmtMontoRaw(total.bono):'—'}</div><div class="kpi-sub">${k.bono?'suma de '+escHTML(k.bono):'columna no encontrada'}</div></div>
-    <div class="kpi-card">${icon('<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>')}<div class="kpi-label">${etq[0]}</div><div class="kpi-value">${personas.size}</div><div class="kpi-sub">con operaciones</div></div>`;
+  if(rrhhCargo==='lider'){
+    const execTot=ejecutivosUnicosLider(total);
+    const cliPromTot=clientesPromedioLider(total);
+    const bonoPromTot=k.bono?bonoPromedioLider(total):0;
+    document.getElementById('rrhhKpis').innerHTML=`
+      <div class="kpi-card orange">${icon('<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>')}<div class="kpi-label">Neta total</div><div class="kpi-value">${fmtMontoRaw(total.neta)}</div><div class="kpi-sub">${plural(total.ops,'operación','operaciones')}</div></div>
+      <div class="kpi-card">${icon('<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>')}<div class="kpi-label">Tasa ponderada</div><div class="kpi-value">${txtTasa(tasaAcum(total))}</div><div class="kpi-sub">ponderada por neta</div></div>
+      <div class="kpi-card">${icon('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/>')}<div class="kpi-label">Clientes prom.</div><div class="kpi-value">${fmtNum2(cliPromTot)}</div><div class="kpi-sub">Factor ${txtFactorClientesLider(factorClientesLider(cliPromTot))}</div></div>
+      <div class="kpi-card">${icon('<circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/>')}<div class="kpi-label">Bono_Colocacion prom.</div><div class="kpi-value">${k.bono?fmtMontoRaw(bonoPromTot):'—'}</div><div class="kpi-sub">Factor ${k.bono?txtFactorColRRHH(factorColocacionRRHH(bonoPromTot)):'—'}</div></div>
+      <div class="kpi-card">${icon('<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>')}<div class="kpi-label">Ejecutivos únicos</div><div class="kpi-value">${execTot}</div><div class="kpi-sub">funcionarios que colocaron</div></div>`;
+  }else{
+    document.getElementById('rrhhKpis').innerHTML=`
+      <div class="kpi-card orange">${icon('<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>')}<div class="kpi-label">Neta total</div><div class="kpi-value">${fmtMontoRaw(total.neta)}</div><div class="kpi-sub">${plural(total.ops,'operación','operaciones')}</div></div>
+      <div class="kpi-card">${icon('<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>')}<div class="kpi-label">Tasa ponderada</div><div class="kpi-value">${txtTasa(tasaAcum(total))}</div><div class="kpi-sub">ponderada por neta</div></div>
+      <div class="kpi-card">${icon('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/>')}<div class="kpi-label">Clientes únicos</div><div class="kpi-value">${total.cli.size.toLocaleString('es-PE')}</div><div class="kpi-sub">según filtro</div></div>
+      <div class="kpi-card">${icon('<circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/>')}<div class="kpi-label">Bono_Colocacion</div><div class="kpi-value">${k.bono?fmtMontoRaw(total.bono):'—'}</div><div class="kpi-sub">${k.bono?'suma de '+escHTML(k.bono):'columna no encontrada'}</div></div>
+      <div class="kpi-card">${icon('<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>')}<div class="kpi-label">${etq[0]}</div><div class="kpi-value">${personas.size}</div><div class="kpi-sub">con operaciones</div></div>`;
+  }
   document.getElementById('rrhhBadge').textContent=plural(listaMeses.length,'mes','meses');
 
   const faltan=[!k.neta&&'NETA',!k.bono&&'BONO_COLO',!k.func&&'FUNCIONARIO'].filter(Boolean);
-  const notaCargo=rrhhCargo==='lider'?' Líderes: suma de las operaciones de su sucursal.'
+  const notaCargo=rrhhCargo==='lider'?' Líderes: Ejecutivos únicos = funcionarios distintos con NETA > 0. Bono_Colocacion mostrado = promedio BONO_COLO del equipo / ejecutivos únicos. Clientes prom. = promedio de clientes únicos por ejecutivo que colocó. Factor clientes: 0-2=0%, 3=50%, 4=100%, 5=110%, 6+=120%. Tasa ponderada = suma(NETA × TEA) / suma(NETA).'
     :rrhhCargo==='zonal'?' Zonales: suma de las operaciones de su zona.'
     :rrhhCargo==='head'?' HEAD · MARIO TABORI: vista de todos los funcionarios individuales.':'';
-  const nota=`Tasa ponderada = suma(NETA × TEA) / suma(NETA). Bono_Colocacion = suma de BONO_COLO. Desistidos excluidos. ${soloAct?'Solo operaciones activadas.':'Operaciones en todos los estados.'}${notaCargo}`;
+  const nota=`Tasa ponderada = suma(NETA × TEA) / suma(NETA). Desistidos excluidos. ${soloAct?'Solo operaciones activadas.':'Operaciones en todos los estados.'}${notaCargo}`;
   rrhhData.nota=nota;
   document.getElementById('rrhhNota').innerHTML=faltan.length?`<b>No se encontró en el Excel: ${faltan.join(', ')}.</b>`:'';
 
   if(!listaMeses.length){cont.innerHTML='<div class="empty-state"><p>Sin operaciones para el filtro seleccionado</p></div>';return;}
 
+  const esLider=rrhhCargo==='lider';
   const celdas=a=>{
     const tasa=tasaAcum(a);
+    if(esLider){
+      const exec=ejecutivosUnicosLider(a);
+      const bonoProm=k.bono?bonoPromedioLider(a):0;
+      const fCol=k.bono?factorColocacionRRHH(bonoProm):null;
+      const cliProm=clientesPromedioLider(a);
+      const fCli=factorClientesLider(cliProm);
+      const fTasa=factorTasaRRHH(tasa);
+      return `<td class="num">${a.ops}</td><td class="num">${exec}</td><td class="num">${fmtNum2(cliProm)}</td><td class="num factor factor-clientes">${txtFactorClientesLider(fCli)}</td><td class="num neta">${fmtNum2(a.neta)}</td><td class="num bono-col">${k.bono?fmtNum2(bonoProm):'—'}</td><td class="num factor factor-col">${fCol===null?'—':txtFactorColRRHH(fCol)}</td><td class="num tasa">${txtTasa(tasa)}</td><td class="num factor factor-tasa">${txtFactorTasaRRHH(fTasa)}</td>`;
+    }
     const fCol=k.bono?factorColocacionRRHH(a.bono):null;
     const fTasa=factorTasaRRHH(tasa);
     return `<td class="num">${a.ops}</td><td class="num">${a.cli.size}</td><td class="num neta">${fmtNum2(a.neta)}</td><td class="num bono-col">${k.bono?fmtNum2(a.bono):'—'}</td><td class="num factor factor-col">${fCol===null?'—':txtFactorColRRHH(fCol)}</td><td class="num tasa">${txtTasa(tasa)}</td><td class="num factor factor-tasa">${txtFactorTasaRRHH(fTasa)}</td>`;
@@ -2390,10 +2447,13 @@ function renderRRHH(){
       <div class="rep-tit"><b>Total Servicios Financieros · RRHH — ${etq[0]}</b><span>${escHTML(rrhhData.filtros)}</span></div>
       <div class="rep-meta"><b>${fmtMonto(total.neta)}</b>Neta total · ${plural(personas.size,etq[1],etq[2])}<br>Generado el ${new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'})}</div>
     </div>`;
-  const cabeceraCols=`<tr class="col-head"><th>#</th><th>Nombre</th><th>Sucursal</th><th>Zona</th><th class="num">Ops.</th><th class="num">Clientes únicos</th><th class="num">Neta (US$)</th><th class="num">Bono_Colocacion</th><th class="num factor-col">Factor coloc.</th><th class="num">Tasa pond.</th><th class="num factor-col">Factor tasa</th></tr>`;
+  const cabeceraCols=esLider
+    ?`<tr class="col-head"><th>#</th><th>Nombre</th><th>Sucursal</th><th>Zona</th><th class="num">Ops.</th><th class="num">Ejecutivos únicos</th><th class="num">Clientes prom.</th><th class="num">Factor clientes</th><th class="num">Neta (US$)</th><th class="num">Bono_Colocacion prom.</th><th class="num factor-col">Factor coloc.</th><th class="num">Tasa pond.</th><th class="num factor-col">Factor tasa</th></tr>`
+    :`<tr class="col-head"><th>#</th><th>Nombre</th><th>Sucursal</th><th>Zona</th><th class="num">Ops.</th><th class="num">Clientes únicos</th><th class="num">Neta (US$)</th><th class="num">Bono_Colocacion</th><th class="num factor-col">Factor coloc.</th><th class="num">Tasa pond.</th><th class="num factor-col">Factor tasa</th></tr>`;
+  const rrhhColspan=esLider?13:11;
   listaMeses.forEach((g,gi)=>{
     const max=Math.max(...g.ents.map(e=>Math.abs(e.acc.neta)),1);
-    html+=`<table class="rrhh-table"><thead><tr class="mes-head"><th colspan="11"><div class="mh"><b>${escHTML(g.label)}</b><span>${plural(g.ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></th></tr>${cabeceraCols}</thead><tbody class="grp">`;
+    html+=`<table class="rrhh-table"><thead><tr class="mes-head"><th colspan="${rrhhColspan}"><div class="mh"><b>${escHTML(g.label)}</b><span>${plural(g.ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></th></tr>${cabeceraCols}</thead><tbody class="grp">`;
     g.ents.forEach((e,i)=>{
       const tag=e.tipo==='lider'?'<span class="tag lider">Líder</span>':e.tipo==='zonal'?'<span class="tag zonal">Zonal</span>':'';
       html+=`<tr><td class="rk"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span></td><td class="nom">${escHTML(e.nombre)}${(rrhhCargo==='func'||rrhhCargo==='head')?tag:''}<div class="rrhh-share${i===0?' top':''}"><span style="width:${Math.round(Math.abs(e.acc.neta)/max*100)}%"></span></div></td><td class="ubi">${escHTML(e.sucursal)}</td><td class="zona">${escHTML(e.zona)}</td>${celdas(e.acc)}</tr>`;
@@ -2446,32 +2506,56 @@ async function exportarRRHH(){
     const d=rrhhData, conBono=!!d.k.bono;
     const wb=new ExcelJS.Workbook(); wb.creator='Gestión 2026';
     const ws=wb.addWorksheet('RRHH',{views:[{state:'frozen',ySplit:5}],pageSetup:{orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0}});
-    const N=11;
-    ws.columns=[{width:6},{width:34},{width:18},{width:16},{width:10},{width:16},{width:18},{width:18},{width:15},{width:14},{width:14}];
+    const esLider=d.etq[0]==='Líderes';
+    const N=esLider?13:11;
+    ws.columns=esLider
+      ?[{width:6},{width:34},{width:18},{width:16},{width:10},{width:16},{width:16},{width:15},{width:18},{width:20},{width:15},{width:14},{width:14}]
+      :[{width:6},{width:34},{width:18},{width:16},{width:10},{width:16},{width:18},{width:18},{width:15},{width:14},{width:14}];
     const INK='FF1F1E1C',Y='FFF2B705',GR='FFF5F3EE',LN='FFE6E2D9';
     const borde={bottom:{style:'thin',color:{argb:LN}}};
     const fila=(vals,est={})=>{const r=ws.addRow(vals);r.eachCell({includeEmpty:true},(c,i)=>{if(i>N)return;if(est.fill)c.fill={type:'pattern',pattern:'solid',fgColor:{argb:est.fill}};if(est.font)c.font=est.font;c.border=borde;});if(est.height)r.height=est.height;return r;};
     const vals=(a)=>{
-      const t=tasaAcum(a),fc=conBono?factorColocacionRRHH(a.bono):null,ft=factorTasaRRHH(t);
+      const t=tasaAcum(a),ft=factorTasaRRHH(t);
+      if(esLider){
+        const exec=ejecutivosUnicosLider(a),cliProm=clientesPromedioLider(a),fCli=factorClientesLider(cliProm);
+        const bonoProm=conBono?bonoPromedioLider(a):0,fc=conBono?factorColocacionRRHH(bonoProm):null;
+        return [a.ops,exec,+cliProm.toFixed(2),fCli,+a.neta.toFixed(2),conBono?+bonoProm.toFixed(2):null,fc,t===null?null:+t.toFixed(6),ft];
+      }
+      const fc=conBono?factorColocacionRRHH(a.bono):null;
       return [a.ops,a.cli.size,+a.neta.toFixed(2),conBono?+a.bono.toFixed(2):null,fc,t===null?null:+t.toFixed(6),ft];
     };
     const fmt=(r)=>{
-      [5,6].forEach(i=>r.getCell(i).numFmt='#,##0');
-      [7,8].forEach(i=>r.getCell(i).numFmt='#,##0.00');
-      r.getCell(9).numFmt='0.00%'; r.getCell(10).numFmt='0.00%'; r.getCell(11).numFmt='0%';
-      [5,6,7,8,9,10,11].forEach(i=>r.getCell(i).alignment={horizontal:'right'});
+      if(esLider){
+        [5,6].forEach(i=>r.getCell(i).numFmt='#,##0');
+        r.getCell(7).numFmt='0.00'; r.getCell(8).numFmt='0%';
+        [9,10].forEach(i=>r.getCell(i).numFmt='#,##0.00');
+        r.getCell(11).numFmt='0.00%'; r.getCell(12).numFmt='0.00%'; r.getCell(13).numFmt='0%';
+        [5,6,7,8,9,10,11,12,13].forEach(i=>r.getCell(i).alignment={horizontal:'right'});
+      }else{
+        [5,6].forEach(i=>r.getCell(i).numFmt='#,##0');
+        [7,8].forEach(i=>r.getCell(i).numFmt='#,##0.00');
+        r.getCell(9).numFmt='0.00%'; r.getCell(10).numFmt='0.00%'; r.getCell(11).numFmt='0%';
+        [5,6,7,8,9,10,11].forEach(i=>r.getCell(i).alignment={horizontal:'right'});
+      }
     };
 
     let r=fila(['TOTAL SERVICIOS FINANCIEROS'],{fill:INK,font:{bold:true,size:15,color:{argb:Y}},height:28}); ws.mergeCells(r.number,1,r.number,N);
     r=fila([`RRHH — ${d.etq[0]}`],{fill:INK,font:{bold:true,size:12,color:{argb:'FFFFFFFF'}},height:20}); ws.mergeCells(r.number,1,r.number,N);
     r=fila([`${d.filtros}   |   Generado: ${new Date().toLocaleString('es-PE')}`],{fill:INK,font:{size:9,color:{argb:'FFA9A498'}},height:18}); ws.mergeCells(r.number,1,r.number,N);
     ws.addRow([]);
-    r=fila(['#','Nombre','Sucursal','Zona','Ops.','Clientes únicos','Neta (US$)','Bono_Colocacion','Factor coloc.','Tasa pond.','Factor tasa'],{fill:Y,font:{bold:true,color:{argb:INK}},height:20});
+    r=fila(esLider
+      ?['#','Nombre','Sucursal','Zona','Ops.','Ejecutivos únicos','Clientes prom.','Factor clientes','Neta (US$)','Bono_Colocacion prom.','Factor coloc.','Tasa pond.','Factor tasa']
+      :['#','Nombre','Sucursal','Zona','Ops.','Clientes únicos','Neta (US$)','Bono_Colocacion','Factor coloc.','Tasa pond.','Factor tasa'],{fill:Y,font:{bold:true,color:{argb:INK}},height:20});
     r.eachCell(c=>c.alignment={vertical:'middle',horizontal:'center'});
 
     d.listaMeses.forEach(g=>{
-      r=fila([`${g.label}  ·  ${plural(g.ents.length,d.etq[1],d.etq[2])}  ·  ${plural(g.tot.ops,'operación','operaciones')}`,'','','','','',+g.tot.neta.toFixed(2)],{fill:'FF2B2A27',font:{bold:true,color:{argb:'FFFFFFFF'}},height:19});
-      ws.mergeCells(r.number,1,r.number,6); r.getCell(7).numFmt='#,##0.00'; r.getCell(7).font={bold:true,color:{argb:Y}}; r.getCell(7).alignment={horizontal:'right'};
+      if(esLider){
+        r=fila([`${g.label}  ·  ${plural(g.ents.length,d.etq[1],d.etq[2])}  ·  ${plural(g.tot.ops,'operación','operaciones')}`,'','','','','','','',+g.tot.neta.toFixed(2)],{fill:'FF2B2A27',font:{bold:true,color:{argb:'FFFFFFFF'}},height:19});
+        ws.mergeCells(r.number,1,r.number,8); r.getCell(9).numFmt='#,##0.00'; r.getCell(9).font={bold:true,color:{argb:Y}}; r.getCell(9).alignment={horizontal:'right'};
+      }else{
+        r=fila([`${g.label}  ·  ${plural(g.ents.length,d.etq[1],d.etq[2])}  ·  ${plural(g.tot.ops,'operación','operaciones')}`,'','','','','',+g.tot.neta.toFixed(2)],{fill:'FF2B2A27',font:{bold:true,color:{argb:'FFFFFFFF'}},height:19});
+        ws.mergeCells(r.number,1,r.number,6); r.getCell(7).numFmt='#,##0.00'; r.getCell(7).font={bold:true,color:{argb:Y}}; r.getCell(7).alignment={horizontal:'right'};
+      }
       g.ents.forEach((e,i)=>{
         r=fila([i+1,e.nombre,e.sucursal,e.zona,...vals(e.acc)],{font:{color:{argb:INK},bold:i===0}});
         fmt(r); r.getCell(1).alignment={horizontal:'center'};
