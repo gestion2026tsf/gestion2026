@@ -486,7 +486,12 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
 .rrhh-table td{padding:7px 12px;border-bottom:1px solid #F3F1EC;color:var(--text);white-space:nowrap;}
 .rrhh-table tbody.grp{border-top:1px solid var(--line2);}
 .rrhh-table tbody.grp:first-of-type{border-top:0;}
-.rrhh-table tbody.grp:hover td{background:#FFFDF6;}
+/* Hover solo sobre filas de datos: el encabezado negro del mes NO cambia */
+.rrhh-table tbody.grp:hover tr:not(.mes-head) td{background:#FFFDF6;}
+.rrhh-table tbody.grp:hover tr.mes-head td{background:var(--ink);color:#fff;}
+.rrhh-table td.factor{font-weight:800;color:var(--ink);text-align:right;}
+.rrhh-table td.factor-tasa{color:var(--y-dark);}
+.rrhh-table th.factor-col{min-width:92px;}
 .rrhh-table td.func{vertical-align:top;padding-top:10px;min-width:220px;background:#fff!important;border-right:1px solid #F3F1EC;}
 .rrhh-func{display:flex;align-items:center;gap:9px;}
 .rrhh-rank{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:#F0EEE9;color:var(--text2);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
@@ -2210,6 +2215,38 @@ function sumarAcum(acc,r,k){
 function tasaAcum(acc){return acc.netaTasa>0?acc.pesoTea/acc.netaTasa:null;}
 function txtTasa(t){return t===null?'—':(t*100).toFixed(2)+'%';}
 
+// Factores mostrados SOLO en la tabla RRHH.
+// Colocación: el tramo se determina con el acumulado de BONO_COLO del funcionario.
+function factorColocacionRRHH(bonoColo){
+  const v=Number(bonoColo||0);
+  if(v>=400000)return 0.0060;
+  if(v>=370000)return 0.0058;
+  if(v>=330000)return 0.0056;
+  if(v>=300000)return 0.0054;
+  if(v>=260000)return 0.0052;
+  if(v>=230000)return 0.0050;
+  if(v>=195000)return 0.0048;
+  if(v>=160000)return 0.0045;
+  if(v>=124500)return 0.0042;
+  if(v>=100000)return 0.0039;
+  return 0;
+}
+
+// Tasa: el tramo se determina con la tasa ponderada del funcionario.
+function factorTasaRRHH(tasa){
+  if(tasa===null || !isFinite(tasa))return 0;
+  const pct=tasa*100;
+  if(pct>=19.5)return 1.10;
+  if(pct>=19.0)return 1.05;
+  if(pct>=18.3)return 1.00;
+  if(pct>=18.0)return 0.90;
+  if(pct>=17.5)return 0.80;
+  if(pct>=16.5)return 0.60;
+  return 0;
+}
+function txtFactorColRRHH(v){return (v*100).toFixed(2).replace('.',',')+'%';}
+function txtFactorTasaRRHH(v){return Math.round(v*100)+'%';}
+
 // Devuelve a quién se atribuye la fila según el cargo elegido (o null si no aplica).
 function entidadRRHH(r,k){
   if(rrhhCargo==='lider'){
@@ -2286,16 +2323,21 @@ function renderRRHH(){
 
   if(!listaMeses.length){cont.innerHTML='<div class="empty-state"><p>Sin operaciones para el filtro seleccionado</p></div>';return;}
 
-  const celdas=a=>`<td class="num">${a.ops}</td><td class="num">${a.cli.size}</td><td class="num neta">${fmtNum2(a.neta)}</td><td class="num tasa">${txtTasa(tasaAcum(a))}</td><td class="num">${k.bono?fmtNum2(a.bono):'—'}</td>`;
+  const celdas=a=>{
+    const tasa=tasaAcum(a);
+    const fCol=k.bono?factorColocacionRRHH(a.bono):null;
+    const fTasa=factorTasaRRHH(tasa);
+    return `<td class="num">${a.ops}</td><td class="num">${a.cli.size}</td><td class="num neta">${fmtNum2(a.neta)}</td><td class="num tasa">${txtTasa(tasa)}</td><td class="num factor factor-col">${fCol===null?'—':txtFactorColRRHH(fCol)}</td><td class="num factor factor-tasa">${txtFactorTasaRRHH(fTasa)}</td><td class="num">${k.bono?fmtNum2(a.bono):'—'}</td>`;
+  };
   let html=`<div class="rrhh-cap" id="rrhhCap">
     <div class="rep-head"><div class="rep-logo">T</div>
       <div class="rep-tit"><b>Total Servicios Financieros · RRHH — ${etq[0]} por mes</b><span>${escHTML(rrhhData.filtros)}</span></div>
       <div class="rep-meta"><b>${fmtMonto(total.neta)}</b>Neta total · ${plural(personas.size,etq[1],etq[2])}<br>Generado el ${new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'})}</div>
     </div>
-    <table class="rrhh-table"><thead><tr><th>#</th><th>Nombre</th><th>${colUbi}</th><th class="num">Ops.</th><th class="num">Clientes únicos</th><th class="num">Neta (US$)</th><th class="num">Tasa pond.</th><th class="num">${colBono}</th></tr></thead>`;
+    <table class="rrhh-table"><thead><tr><th>#</th><th>Nombre</th><th>${colUbi}</th><th class="num">Ops.</th><th class="num">Clientes únicos</th><th class="num">Neta (US$)</th><th class="num">Tasa pond.</th><th class="num factor-col">Factor coloc.</th><th class="num factor-col">Factor tasa</th><th class="num">${colBono}</th></tr></thead>`;
   listaMeses.forEach(g=>{
     const max=Math.max(...g.ents.map(e=>Math.abs(e.acc.neta)),1);
-    html+=`<tbody class="grp"><tr class="mes-head"><td colspan="8"><div class="mh"><b>${escHTML(g.label)}</b><span>${plural(g.ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></td></tr>`;
+    html+=`<tbody class="grp"><tr class="mes-head"><td colspan="10"><div class="mh"><b>${escHTML(g.label)}</b><span>${plural(g.ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></td></tr>`;
     g.ents.forEach((e,i)=>{
       const tag=e.tipo==='lider'?'<span class="tag lider">Líder</span>':e.tipo==='zonal'?'<span class="tag zonal">Zonal</span>':'';
       html+=`<tr><td class="rk"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span></td><td class="nom">${escHTML(e.nombre)}${rrhhCargo==='func'?tag:''}<div class="rrhh-share${i===0?' top':''}"><span style="width:${Math.round(Math.abs(e.acc.neta)/max*100)}%"></span></div></td><td class="ubi">${escHTML(e.ubi)}</td>${celdas(e.acc)}</tr>`;
