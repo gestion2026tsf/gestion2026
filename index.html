@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestión 2026 — Total Servicios Financieros</title>
+<title>Gestión 2026 — Total Servicios Financieros — RRHH corregido</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -2401,11 +2401,21 @@ function renderRRHH(){
     const cliPromTot=clientesPromedioLider(total);
     const bonoPromTot=k.bono?bonoPromedioLider(total):0;
     document.getElementById('rrhhKpis').innerHTML=`
-      <div class="kpi-card orange">${icon('<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>')}<div class="kpi-label">Neta total</div><div class="kpi-value">${fmtMontoRaw(total.neta)}</div><div class="kpi-sub">${plural(total.ops,'operación','operaciones')}</div></div>
+      <div class="kpi-card orange">${icon('<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>')}<div class="kpi-label">Neta total</div><div class="kpi-value">${fmtMontoRaw(total.neta)}</div><div class="kpi-sub">${total.cli.size.toLocaleString('es-PE')} clientes únicos</div></div>
       <div class="kpi-card">${icon('<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>')}<div class="kpi-label">Tasa ponderada</div><div class="kpi-value">${txtTasa(tasaAcum(total))}</div><div class="kpi-sub">ponderada por neta</div></div>
       <div class="kpi-card">${icon('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/>')}<div class="kpi-label">Clientes prom.</div><div class="kpi-value">${fmtNum2(cliPromTot)}</div><div class="kpi-sub">Factor ${txtFactorClientesLider(factorClientesLider(cliPromTot))}</div></div>
       <div class="kpi-card">${icon('<circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/>')}<div class="kpi-label">Bono_Colocacion prom.</div><div class="kpi-value">${k.bono?fmtMontoRaw(bonoPromTot):'—'}</div><div class="kpi-sub">Factor ${k.bono?txtFactorColRRHH(factorColocacionRRHH(bonoPromTot)):'—'}</div></div>
       <div class="kpi-card">${icon('<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>')}<div class="kpi-label">Ejecutivos únicos</div><div class="kpi-value">${execTot}</div><div class="kpi-sub">funcionarios que colocaron</div></div>`;
+  }else if(rrhhCargo==='zonal'){
+    const execTot=ejecutivosUnicosLider(total);
+    const cliPromTot=clientesPromedioLider(total);
+    const bonoPromTot=k.bono?bonoPromedioLider(total):0;
+    document.getElementById('rrhhKpis').innerHTML=`
+      <div class="kpi-card orange">${icon('<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>')}<div class="kpi-label">Neta total</div><div class="kpi-value">${fmtMontoRaw(total.neta)}</div><div class="kpi-sub">${total.cli.size.toLocaleString('es-PE')} clientes únicos</div></div>
+      <div class="kpi-card">${icon('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>')}<div class="kpi-label">Ejecutivos únicos</div><div class="kpi-value">${execTot}</div><div class="kpi-sub">funcionarios que colocaron</div></div>
+      <div class="kpi-card">${icon('<circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/>')}<div class="kpi-label">Clientes prom.</div><div class="kpi-value">${fmtNum2(cliPromTot)}</div><div class="kpi-sub">Factor ${txtFactorClientesLider(factorClientesLider(cliPromTot))}</div></div>
+      <div class="kpi-card">${icon('<circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/>')}<div class="kpi-label">Bono_Colocacion prom.</div><div class="kpi-value">${k.bono?fmtMontoRaw(bonoPromTot):'—'}</div><div class="kpi-sub">Factor ${k.bono?txtFactorColRRHH(factorColocacionRRHH(bonoPromTot)):'—'}</div></div>
+      <div class="kpi-card">${icon('<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>')}<div class="kpi-label">Tasa ponderada</div><div class="kpi-value">${txtTasa(tasaAcum(total))}</div><div class="kpi-sub">ponderada por neta</div></div>`;
   }else{
     document.getElementById('rrhhKpis').innerHTML=`
       <div class="kpi-card orange">${icon('<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>')}<div class="kpi-label">Neta total</div><div class="kpi-value">${fmtMontoRaw(total.neta)}</div><div class="kpi-sub">${plural(total.ops,'operación','operaciones')}</div></div>
@@ -2417,8 +2427,8 @@ function renderRRHH(){
   document.getElementById('rrhhBadge').textContent=plural(listaMeses.length,'mes','meses');
 
   const faltan=[!k.neta&&'NETA',!k.bono&&'BONO_COLO',!k.func&&'FUNCIONARIO'].filter(Boolean);
-  const notaCargo=rrhhCargo==='lider'?' Líderes: Ejecutivos únicos = funcionarios distintos con NETA > 0. Bono_Colocacion mostrado = promedio BONO_COLO del equipo / ejecutivos únicos. Clientes prom. = promedio de clientes únicos por ejecutivo que colocó. Factor clientes: 0-2=0%, 3=50%, 4=100%, 5=110%, 6+=120%. Tasa ponderada = suma(NETA × TEA) / suma(NETA).'
-    :rrhhCargo==='zonal'?' Zonales: suma de las operaciones de su zona.'
+  const notaCargo=rrhhCargo==='lider'?' Líderes: Clientes únicos = clientes distintos de toda la sucursal del líder. Ejecutivos únicos = funcionarios distintos con NETA > 0. Bono_Colocacion = suma total de BONO_COLO del equipo. Bono_Colocacion prom. = Bono_Colocacion / ejecutivos únicos y ese promedio determina el Factor coloc. Clientes prom. = promedio de clientes únicos por ejecutivo que colocó. Factor clientes: 0-2=0%, 3=50%, 4=100%, 5=110%, 6+=120%. Tasa ponderada = suma(NETA × TEA) / suma(NETA).'
+    :rrhhCargo==='zonal'?' Zonales: Sucursal no se muestra. Clientes únicos = clientes distintos de toda la zona. Ejecutivos únicos = funcionarios distintos con NETA > 0. Clientes prom. = promedio de clientes únicos por ejecutivo que colocó y determina el Factor clientes. Bono_Colocacion = suma total de BONO_COLO de la zona. Bono_Colocacion prom. = Bono_Colocacion / ejecutivos únicos y ese promedio determina el Factor coloc. Tasa ponderada = suma(NETA × TEA) / suma(NETA).'
     :rrhhCargo==='head'?' HEAD · MARIO TABORI: vista de todos los funcionarios individuales.':'';
   const nota=`Tasa ponderada = suma(NETA × TEA) / suma(NETA). Desistidos excluidos. ${soloAct?'Solo operaciones activadas.':'Operaciones en todos los estados.'}${notaCargo}`;
   rrhhData.nota=nota;
@@ -2427,6 +2437,7 @@ function renderRRHH(){
   if(!listaMeses.length){cont.innerHTML='<div class="empty-state"><p>Sin operaciones para el filtro seleccionado</p></div>';return;}
 
   const esLider=rrhhCargo==='lider';
+  const esZonal=rrhhCargo==='zonal';
   const celdas=a=>{
     const tasa=tasaAcum(a);
     if(esLider){
@@ -2436,7 +2447,16 @@ function renderRRHH(){
       const cliProm=clientesPromedioLider(a);
       const fCli=factorClientesLider(cliProm);
       const fTasa=factorTasaRRHH(tasa);
-      return `<td class="num">${a.ops}</td><td class="num">${exec}</td><td class="num">${fmtNum2(cliProm)}</td><td class="num factor factor-clientes">${txtFactorClientesLider(fCli)}</td><td class="num neta">${fmtNum2(a.neta)}</td><td class="num bono-col">${k.bono?fmtNum2(bonoProm):'—'}</td><td class="num factor factor-col">${fCol===null?'—':txtFactorColRRHH(fCol)}</td><td class="num tasa">${txtTasa(tasa)}</td><td class="num factor factor-tasa">${txtFactorTasaRRHH(fTasa)}</td>`;
+      return `<td class="num">${a.cli.size}</td><td class="num">${exec}</td><td class="num">${fmtNum2(cliProm)}</td><td class="num factor factor-clientes">${txtFactorClientesLider(fCli)}</td><td class="num neta">${fmtNum2(a.neta)}</td><td class="num bono-col">${k.bono?fmtNum2(a.bono):'—'}</td><td class="num bono-col-prom">${k.bono?fmtNum2(bonoProm):'—'}</td><td class="num factor factor-col">${fCol===null?'—':txtFactorColRRHH(fCol)}</td><td class="num tasa">${txtTasa(tasa)}</td><td class="num factor factor-tasa">${txtFactorTasaRRHH(fTasa)}</td>`;
+    }
+    if(esZonal){
+      const exec=ejecutivosUnicosLider(a);
+      const cliProm=clientesPromedioLider(a);
+      const bonoProm=k.bono?bonoPromedioLider(a):0;
+      const fCol=k.bono?factorColocacionRRHH(bonoProm):null;
+      const fTasa=factorTasaRRHH(tasa);
+      const fCli=factorClientesLider(cliProm);
+      return `<td class="num">${a.cli.size}</td><td class="num">${exec}</td><td class="num">${fmtNum2(cliProm)}</td><td class="num factor factor-clientes">${txtFactorClientesLider(fCli)}</td><td class="num neta">${fmtNum2(a.neta)}</td><td class="num bono-col">${k.bono?fmtNum2(a.bono):'—'}</td><td class="num bono-col-prom">${k.bono?fmtNum2(bonoProm):'—'}</td><td class="num factor factor-col">${fCol===null?'—':txtFactorColRRHH(fCol)}</td><td class="num tasa">${txtTasa(tasa)}</td><td class="num factor factor-tasa">${txtFactorTasaRRHH(fTasa)}</td>`;
     }
     const fCol=k.bono?factorColocacionRRHH(a.bono):null;
     const fTasa=factorTasaRRHH(tasa);
@@ -2448,17 +2468,28 @@ function renderRRHH(){
       <div class="rep-meta"><b>${fmtMonto(total.neta)}</b>Neta total · ${plural(personas.size,etq[1],etq[2])}<br>Generado el ${new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'})}</div>
     </div>`;
   const cabeceraCols=esLider
-    ?`<tr class="col-head"><th>#</th><th>Nombre</th><th>Sucursal</th><th>Zona</th><th class="num">Ops.</th><th class="num">Ejecutivos únicos</th><th class="num">Clientes prom.</th><th class="num">Factor clientes</th><th class="num">Neta (US$)</th><th class="num">Bono_Colocacion prom.</th><th class="num factor-col">Factor coloc.</th><th class="num">Tasa pond.</th><th class="num factor-col">Factor tasa</th></tr>`
-    :`<tr class="col-head"><th>#</th><th>Nombre</th><th>Sucursal</th><th>Zona</th><th class="num">Ops.</th><th class="num">Clientes únicos</th><th class="num">Neta (US$)</th><th class="num">Bono_Colocacion</th><th class="num factor-col">Factor coloc.</th><th class="num">Tasa pond.</th><th class="num factor-col">Factor tasa</th></tr>`;
-  const rrhhColspan=esLider?13:11;
+    ?`<tr class="col-head"><th>#</th><th>Nombre</th><th>Sucursal</th><th>Zona</th><th class="num">Clientes únicos</th><th class="num">Ejecutivos únicos</th><th class="num">Clientes prom.</th><th class="num">Factor clientes</th><th class="num">Neta (US$)</th><th class="num">Bono_Colocacion</th><th class="num">Bono_Colocacion prom.</th><th class="num factor-col">Factor coloc.</th><th class="num">Tasa pond.</th><th class="num factor-col">Factor tasa</th></tr>`
+    :esZonal
+      ?`<tr class="col-head"><th>#</th><th>Nombre</th><th>Zona</th><th class="num">Clientes únicos</th><th class="num">Ejecutivos únicos</th><th class="num">Clientes prom.</th><th class="num">Factor clientes</th><th class="num">Neta (US$)</th><th class="num">Bono_Colocacion</th><th class="num">Bono_Colocacion prom.</th><th class="num factor-col">Factor coloc.</th><th class="num">Tasa pond.</th><th class="num factor-col">Factor tasa</th></tr>`
+      :`<tr class="col-head"><th>#</th><th>Nombre</th><th>Sucursal</th><th>Zona</th><th class="num">Ops.</th><th class="num">Clientes únicos</th><th class="num">Neta (US$)</th><th class="num">Bono_Colocacion</th><th class="num factor-col">Factor coloc.</th><th class="num">Tasa pond.</th><th class="num factor-col">Factor tasa</th></tr>`;
+  const rrhhColspan=esLider?14:(esZonal?13:11);
   listaMeses.forEach((g,gi)=>{
     const max=Math.max(...g.ents.map(e=>Math.abs(e.acc.neta)),1);
-    html+=`<table class="rrhh-table"><thead><tr class="mes-head"><th colspan="${rrhhColspan}"><div class="mh"><b>${escHTML(g.label)}</b><span>${plural(g.ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></th></tr>${cabeceraCols}</thead><tbody class="grp">`;
+    const resumenMes=(esLider||esZonal)
+      ?`${plural(g.ents.length,etq[1],etq[2])} · ${g.tot.cli.size.toLocaleString('es-PE')} clientes únicos`
+      :`${plural(g.ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')}`;
+    html+=`<table class="rrhh-table"><thead><tr class="mes-head"><th colspan="${rrhhColspan}"><div class="mh"><b>${escHTML(g.label)}</b><span>${resumenMes}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></th></tr>${cabeceraCols}</thead><tbody class="grp">`;
     g.ents.forEach((e,i)=>{
       const tag=e.tipo==='lider'?'<span class="tag lider">Líder</span>':e.tipo==='zonal'?'<span class="tag zonal">Zonal</span>':'';
-      html+=`<tr><td class="rk"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span></td><td class="nom">${escHTML(e.nombre)}${(rrhhCargo==='func'||rrhhCargo==='head')?tag:''}<div class="rrhh-share${i===0?' top':''}"><span style="width:${Math.round(Math.abs(e.acc.neta)/max*100)}%"></span></div></td><td class="ubi">${escHTML(e.sucursal)}</td><td class="zona">${escHTML(e.zona)}</td>${celdas(e.acc)}</tr>`;
+      const ubicacion=esZonal
+        ?`<td class="zona">${escHTML(e.zona)}</td>`
+        :`<td class="ubi">${escHTML(e.sucursal)}</td><td class="zona">${escHTML(e.zona)}</td>`;
+      html+=`<tr><td class="rk"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span></td><td class="nom">${escHTML(e.nombre)}${(rrhhCargo==='func'||rrhhCargo==='head')?tag:''}<div class="rrhh-share${i===0?' top':''}"><span style="width:${Math.round(Math.abs(e.acc.neta)/max*100)}%"></span></div></td>${ubicacion}${celdas(e.acc)}</tr>`;
     });
-    if(g.ents.length>1)html+=`<tr class="subtotal"><td></td><td>Total ${escHTML(g.label)}</td><td></td><td></td>${celdas(g.tot)}</tr>`;
+    if(g.ents.length>1){
+      const vacias=esZonal?'<td></td>':'<td></td><td></td>';
+      html+=`<tr class="subtotal"><td></td><td>Total ${escHTML(g.label)}</td>${vacias}${celdas(g.tot)}</tr>`;
+    }
     html+='</tbody>';
     if(gi===listaMeses.length-1){
       const mesesTotal=mesesSel.length?mesesSel.map(m=>RRHH_MES_LBL[m]||m).join(', '):'Todos los meses';
@@ -2507,10 +2538,13 @@ async function exportarRRHH(){
     const wb=new ExcelJS.Workbook(); wb.creator='Gestión 2026';
     const ws=wb.addWorksheet('RRHH',{views:[{state:'frozen',ySplit:5}],pageSetup:{orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0}});
     const esLider=d.etq[0]==='Líderes';
-    const N=esLider?13:11;
+    const esZonal=d.etq[0]==='Zonales';
+    const N=esLider?14:(esZonal?13:11);
     ws.columns=esLider
-      ?[{width:6},{width:34},{width:18},{width:16},{width:10},{width:16},{width:16},{width:15},{width:18},{width:20},{width:15},{width:14},{width:14}]
-      :[{width:6},{width:34},{width:18},{width:16},{width:10},{width:16},{width:18},{width:18},{width:15},{width:14},{width:14}];
+      ?[{width:6},{width:34},{width:18},{width:16},{width:16},{width:16},{width:16},{width:15},{width:18},{width:18},{width:20},{width:15},{width:14},{width:14}]
+      :esZonal
+        ?[{width:6},{width:34},{width:16},{width:16},{width:16},{width:16},{width:15},{width:18},{width:18},{width:20},{width:15},{width:14},{width:14}]
+        :[{width:6},{width:34},{width:18},{width:16},{width:10},{width:16},{width:18},{width:18},{width:15},{width:14},{width:14}];
     const INK='FF1F1E1C',Y='FFF2B705',GR='FFF5F3EE',LN='FFE6E2D9';
     const borde={bottom:{style:'thin',color:{argb:LN}}};
     const fila=(vals,est={})=>{const r=ws.addRow(vals);r.eachCell({includeEmpty:true},(c,i)=>{if(i>N)return;if(est.fill)c.fill={type:'pattern',pattern:'solid',fgColor:{argb:est.fill}};if(est.font)c.font=est.font;c.border=borde;});if(est.height)r.height=est.height;return r;};
@@ -2519,7 +2553,12 @@ async function exportarRRHH(){
       if(esLider){
         const exec=ejecutivosUnicosLider(a),cliProm=clientesPromedioLider(a),fCli=factorClientesLider(cliProm);
         const bonoProm=conBono?bonoPromedioLider(a):0,fc=conBono?factorColocacionRRHH(bonoProm):null;
-        return [a.ops,exec,+cliProm.toFixed(2),fCli,+a.neta.toFixed(2),conBono?+bonoProm.toFixed(2):null,fc,t===null?null:+t.toFixed(6),ft];
+        return [a.cli.size,exec,+cliProm.toFixed(2),fCli,+a.neta.toFixed(2),conBono?+a.bono.toFixed(2):null,conBono?+bonoProm.toFixed(2):null,fc,t===null?null:+t.toFixed(6),ft];
+      }
+      if(esZonal){
+        const exec=ejecutivosUnicosLider(a),cliProm=clientesPromedioLider(a),fCli=factorClientesLider(cliProm);
+        const bonoProm=conBono?bonoPromedioLider(a):0,fc=conBono?factorColocacionRRHH(bonoProm):null;
+        return [a.cli.size,exec,+cliProm.toFixed(2),fCli,+a.neta.toFixed(2),conBono?+a.bono.toFixed(2):null,conBono?+bonoProm.toFixed(2):null,fc,t===null?null:+t.toFixed(6),ft];
       }
       const fc=conBono?factorColocacionRRHH(a.bono):null;
       return [a.ops,a.cli.size,+a.neta.toFixed(2),conBono?+a.bono.toFixed(2):null,fc,t===null?null:+t.toFixed(6),ft];
@@ -2528,9 +2567,15 @@ async function exportarRRHH(){
       if(esLider){
         [5,6].forEach(i=>r.getCell(i).numFmt='#,##0');
         r.getCell(7).numFmt='0.00'; r.getCell(8).numFmt='0%';
-        [9,10].forEach(i=>r.getCell(i).numFmt='#,##0.00');
+        [9,10,11].forEach(i=>r.getCell(i).numFmt='#,##0.00');
+        r.getCell(12).numFmt='0.00%'; r.getCell(13).numFmt='0.00%'; r.getCell(14).numFmt='0%';
+        [5,6,7,8,9,10,11,12,13,14].forEach(i=>r.getCell(i).alignment={horizontal:'right'});
+      }else if(esZonal){
+        [4,5].forEach(i=>r.getCell(i).numFmt='#,##0');
+        r.getCell(6).numFmt='0.00'; r.getCell(7).numFmt='0%';
+        [8,9,10].forEach(i=>r.getCell(i).numFmt='#,##0.00');
         r.getCell(11).numFmt='0.00%'; r.getCell(12).numFmt='0.00%'; r.getCell(13).numFmt='0%';
-        [5,6,7,8,9,10,11,12,13].forEach(i=>r.getCell(i).alignment={horizontal:'right'});
+        [4,5,6,7,8,9,10,11,12,13].forEach(i=>r.getCell(i).alignment={horizontal:'right'});
       }else{
         [5,6].forEach(i=>r.getCell(i).numFmt='#,##0');
         [7,8].forEach(i=>r.getCell(i).numFmt='#,##0.00');
@@ -2544,29 +2589,38 @@ async function exportarRRHH(){
     r=fila([`${d.filtros}   |   Generado: ${new Date().toLocaleString('es-PE')}`],{fill:INK,font:{size:9,color:{argb:'FFA9A498'}},height:18}); ws.mergeCells(r.number,1,r.number,N);
     ws.addRow([]);
     r=fila(esLider
-      ?['#','Nombre','Sucursal','Zona','Ops.','Ejecutivos únicos','Clientes prom.','Factor clientes','Neta (US$)','Bono_Colocacion prom.','Factor coloc.','Tasa pond.','Factor tasa']
-      :['#','Nombre','Sucursal','Zona','Ops.','Clientes únicos','Neta (US$)','Bono_Colocacion','Factor coloc.','Tasa pond.','Factor tasa'],{fill:Y,font:{bold:true,color:{argb:INK}},height:20});
+      ?['#','Nombre','Sucursal','Zona','Clientes únicos','Ejecutivos únicos','Clientes prom.','Factor clientes','Neta (US$)','Bono_Colocacion','Bono_Colocacion prom.','Factor coloc.','Tasa pond.','Factor tasa']
+      :esZonal
+        ?['#','Nombre','Zona','Clientes únicos','Ejecutivos únicos','Clientes prom.','Factor clientes','Neta (US$)','Bono_Colocacion','Bono_Colocacion prom.','Factor coloc.','Tasa pond.','Factor tasa']
+        :['#','Nombre','Sucursal','Zona','Ops.','Clientes únicos','Neta (US$)','Bono_Colocacion','Factor coloc.','Tasa pond.','Factor tasa'],{fill:Y,font:{bold:true,color:{argb:INK}},height:20});
     r.eachCell(c=>c.alignment={vertical:'middle',horizontal:'center'});
 
     d.listaMeses.forEach(g=>{
       if(esLider){
-        r=fila([`${g.label}  ·  ${plural(g.ents.length,d.etq[1],d.etq[2])}  ·  ${plural(g.tot.ops,'operación','operaciones')}`,'','','','','','','',+g.tot.neta.toFixed(2)],{fill:'FF2B2A27',font:{bold:true,color:{argb:'FFFFFFFF'}},height:19});
+        r=fila([`${g.label}  ·  ${plural(g.ents.length,d.etq[1],d.etq[2])}  ·  ${g.tot.cli.size} clientes únicos`,'','','','','','','',+g.tot.neta.toFixed(2)],{fill:'FF2B2A27',font:{bold:true,color:{argb:'FFFFFFFF'}},height:19});
         ws.mergeCells(r.number,1,r.number,8); r.getCell(9).numFmt='#,##0.00'; r.getCell(9).font={bold:true,color:{argb:Y}}; r.getCell(9).alignment={horizontal:'right'};
+      }else if(esZonal){
+        r=fila([`${g.label}  ·  ${plural(g.ents.length,d.etq[1],d.etq[2])}  ·  ${g.tot.cli.size} clientes únicos`,'','','','','','',+g.tot.neta.toFixed(2)],{fill:'FF2B2A27',font:{bold:true,color:{argb:'FFFFFFFF'}},height:19});
+        ws.mergeCells(r.number,1,r.number,7); r.getCell(8).numFmt='#,##0.00'; r.getCell(8).font={bold:true,color:{argb:Y}}; r.getCell(8).alignment={horizontal:'right'};
       }else{
         r=fila([`${g.label}  ·  ${plural(g.ents.length,d.etq[1],d.etq[2])}  ·  ${plural(g.tot.ops,'operación','operaciones')}`,'','','','','',+g.tot.neta.toFixed(2)],{fill:'FF2B2A27',font:{bold:true,color:{argb:'FFFFFFFF'}},height:19});
         ws.mergeCells(r.number,1,r.number,6); r.getCell(7).numFmt='#,##0.00'; r.getCell(7).font={bold:true,color:{argb:Y}}; r.getCell(7).alignment={horizontal:'right'};
       }
       g.ents.forEach((e,i)=>{
-        r=fila([i+1,e.nombre,e.sucursal,e.zona,...vals(e.acc)],{font:{color:{argb:INK},bold:i===0}});
+        const base=esZonal?[i+1,e.nombre,e.zona]:[i+1,e.nombre,e.sucursal,e.zona];
+        r=fila([...base,...vals(e.acc)],{font:{color:{argb:INK},bold:i===0}});
         fmt(r); r.getCell(1).alignment={horizontal:'center'};
         if(i===0)r.getCell(1).fill={type:'pattern',pattern:'solid',fgColor:{argb:Y}};
         if(e.tipo&&(rrhhCargo==='func'||rrhhCargo==='head'))r.getCell(2).value=`${e.nombre} (${e.tipo==='lider'?'Líder':'Zonal'})`;
       });
-      if(g.ents.length>1){r=fila(['',`Total ${g.label}`,'','',...vals(g.tot)],{fill:GR,font:{bold:true,color:{argb:INK}}});fmt(r);}
+      if(g.ents.length>1){
+        const base=esZonal?['',`Total ${g.label}`,'']:['',`Total ${g.label}`,'',''];
+        r=fila([...base,...vals(g.tot)],{fill:GR,font:{bold:true,color:{argb:INK}}});fmt(r);
+      }
       ws.addRow([]);
     });
     const mt=(d.mesesSel||[]).length?d.mesesSel.map(m=>RRHH_MES_LBL[m]||m).join(', '):'Todos los meses';
-    r=fila(['','TOTAL GENERAL',mt,'',...vals(d.total)],{fill:INK,font:{bold:true,color:{argb:Y}},height:20}); fmt(r);
+    r=fila(esZonal?['','TOTAL GENERAL',mt,...vals(d.total)]:['','TOTAL GENERAL',mt,'',...vals(d.total)],{fill:INK,font:{bold:true,color:{argb:Y}},height:20}); fmt(r);
     ws.addRow([]);
     r=ws.addRow([d.nota]); ws.mergeCells(r.number,1,r.number,N); r.getCell(1).font={italic:true,size:9,color:{argb:'FF85817A'}}; r.getCell(1).alignment={wrapText:true}; r.height=30;
 
