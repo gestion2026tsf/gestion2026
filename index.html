@@ -636,6 +636,10 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
   #chart-zonas-v .vbar-lbl{font-size:6px;margin-top:2px;padding-top:2px;}
   .tasa-note{font-size:6px;}
 }
+
+.rrhh-detail-table tr.rrhh-exec-detail-row{cursor:pointer;}
+.rrhh-detail-table tr.rrhh-exec-detail-row:hover td{background:#FFF4CC!important;}
+.rrhh-detail-table tr.rrhh-exec-detail-row td:first-child{font-weight:800;color:var(--y-dark);}
 </style>
 </head>
 <body>
@@ -2497,13 +2501,13 @@ function renderRRHH(){
     const resumenMes=(esLider||esZonal)
       ?`${plural(g.ents.length,etq[1],etq[2])} · ${g.tot.cli.size.toLocaleString('es-PE')} clientes únicos`
       :`${plural(g.ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')}`;
-    html+=`<table class="rrhh-table"><thead><tr class="mes-head"><th colspan="${rrhhColspan}"><div class="mh"><b>${escHTML(g.label)}</b><span>${resumenMes}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></th></tr>${cabeceraCols}</thead><tbody class="grp">`;
+    html+=`<table class="rrhh-table" data-month-key="${escHTML(g.m)}"><thead><tr class="mes-head"><th colspan="${rrhhColspan}"><div class="mh"><b>${escHTML(g.label)}</b><span>${resumenMes}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></th></tr>${cabeceraCols}</thead><tbody class="grp">`;
     g.ents.forEach((e,i)=>{
       const tag=e.tipo==='lider'?'<span class="tag lider">Líder</span>':e.tipo==='zonal'?'<span class="tag zonal">Zonal</span>':'';
       const ubicacion=esZonal
         ?`<td class="zona">${escHTML(e.zona)}</td>`
         :`<td class="ubi">${escHTML(e.sucursal)}</td><td class="zona">${escHTML(e.zona)}</td>`;
-      const clickEquipo=(esLider||esZonal)?` class="rrhh-clickable-row" data-team-detail="${escHTML(e.id)}" data-team-name="${escHTML(e.nombre)}" title="Haz clic para ver los ejecutivos, clientes y colocaciones del equipo"`:'';
+      const clickEquipo=(esLider||esZonal)?` class="rrhh-clickable-row" data-team-detail="${escHTML(e.id)}" data-team-name="${escHTML(e.nombre)}" data-team-month="${escHTML(g.m)}" title="Haz clic para ver el detalle del equipo en ${escHTML(g.label)}"`:'';
       html+=`<tr${clickEquipo}><td class="rk"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span></td><td class="nom">${escHTML(e.nombre)}${(rrhhCargo==='func'||rrhhCargo==='head')?tag:''}<div class="rrhh-share${i===0?' top':''}"><span style="width:${Math.round(Math.abs(e.acc.neta)/max*100)}%"></span></div></td>${ubicacion}${celdas(e.acc)}</tr>`;
     });
     if(g.ents.length>1){
@@ -2519,15 +2523,42 @@ function renderRRHH(){
   });
   html+=`<div class="rep-note">${escHTML(nota)}</div></div>`;
   cont.innerHTML=html;
-  cont.querySelectorAll('tr[data-team-detail]').forEach(row=>{
-    row.addEventListener('click',()=>abrirDetalleEquipo(row.dataset.teamDetail,row.dataset.teamName));
+  // Vincula el detalle al mes real de la tabla donde se hizo clic.
+  // Se lee desde data-month-key del contenedor mensual para evitar que el modal
+  // vuelva a sumar todos los meses cuando el filtro superior está en 'Todos'.
+  cont.querySelectorAll('table.rrhh-table').forEach(tabla=>{
+    const mesTabla=tabla.dataset.monthKey || '';
+    tabla.querySelectorAll('tr[data-team-detail]').forEach(row=>{
+      row.dataset.teamMonth=mesTabla;
+      row.addEventListener('click',()=>abrirDetalleEquipo(
+        row.dataset.teamDetail,
+        row.dataset.teamName,
+        row.dataset.teamMonth || mesTabla
+      ));
+    });
   });
 }
 
-/* ── Detalle interactivo del equipo de un líder o zonal ── */
-let rrhhDetalleFilas=[];
+/* -- Interactive team detail: executive summary first, client placements second -- */
+let rrhhDetalleBase=[];
+let rrhhDetalleEjecutivos=[];
+let rrhhDetalleModo='ejecutivos';
+let rrhhDetalleEjecutivoActivo='';
+let rrhhDetalleContexto={tipo:'',nombre:'',mes:''};
 function cerrarDetalleEquipo(){document.getElementById('rrhhTeamModal')?.classList.remove('open');}
-function abrirDetalleEquipo(id,nombre){
+function normalizarMesDetalle(v){
+  const raw=String(v||'').trim();
+  if(!raw)return '';
+  if(RRHH_MES_LBL[raw])return raw;
+  const norm=normTxt(raw);
+  const encontrado=Object.entries(RRHH_MES_LBL).find(([key,label])=>normTxt(label)===norm);
+  if(encontrado)return encontrado[0];
+  const m=norm.match(/(ENE|FEB|MAR|ABR|MAY|JUN|JUL|AGO|SET|SEP|OCT|NOV|DIC)\s*\.?\s*(26|2026)?/);
+  if(!m)return raw;
+  const mapa={ENE:'ENE26',FEB:'FEB26',MAR:'MAR26',ABR:'ABR26',MAY:'MAY26',JUN:'JUN26',JUL:'JUL26',AGO:'AGO26',SET:'SET26',SEP:'SET26',OCT:'OCT26',NOV:'NOV26',DIC:'DIC26'};
+  return mapa[m[1]]||raw;
+}
+function abrirDetalleEquipo(id,nombre,mesFila){
   if(!rrhhData)return;
   const tipo=String(id||'').split('|')[0];
   const k=rrhhData.k;
@@ -2535,60 +2566,121 @@ function abrirDetalleEquipo(id,nombre){
   const zona=tipo==='Z'?Object.entries(ZONALES_POR_ZONA).find(([,n])=>normTxt(n)===normTxt(nombre))?.[0]:null;
   if((tipo==='L'&&!sucursal)||(tipo==='Z'&&!zona)){showToast('No se pudo identificar el equipo seleccionado',true);return;}
 
-  const grupos=new Map();
-  const ejecutivos=new Set();
-  const clientes=new Set();
-  let netaTotal=0,bonoTotal=0,pesoTeaTotal=0,netaTasaTotal=0,opsTotal=0;
+  // Always bind the detail to the exact month block clicked, even if the page filter is "Todos".
+  const mesObjetivo=normalizarMesDetalle(mesFila);
+  const base=[];
   allData.forEach(r=>{
     if(esDesistidoExcluido(r))return;
     if(rrhhData.soloAct&&!isActivado(r))return;
-    const mes=getMesKeyFromRow(r);
-    if(rrhhData.mesesSel?.length&&!rrhhData.mesesSel.includes(mes))return;
+    const mes=normalizarMesDetalle(getMesKeyFromRow(r));
+    if(mesObjetivo && mes!==mesObjetivo)return;
+    if(!mesObjetivo && rrhhData.mesesSel?.length && !rrhhData.mesesSel.includes(mes))return;
     if(rrhhData.zonaSel&&normZona(r[COL_ZONA])!==rrhhData.zonaSel)return;
     if(tipo==='L'&&normTxt(r[COL_SUC])!==normTxt(sucursal))return;
     if(tipo==='Z'&&normZona(r[COL_ZONA])!==normZona(zona))return;
     const neta=k.neta?parseNeta(r[k.neta]):0;
-    if(!(neta>0))return; // Mostrar solo funcionarios que realmente colocaron.
+    if(!(neta>0))return;
     const ejecutivo=k.func?String(r[k.func]||'').trim():'';
     if(!ejecutivo)return;
-    const clienteKey=getClienteKey(r)||String(r['NOMBRE_RSOCIAL_CLIENTE']||r['CLIENTE']||'').trim().toUpperCase();
-    const cliente=String(r['NOMBRE_RSOCIAL_CLIENTE']||r['CLIENTE']||r['RAZON SOCIAL']||r['RAZÓN SOCIAL']||r['RUC']||'Cliente sin identificar').trim();
-    const grupoKey=normTxt(ejecutivo)+'||'+clienteKey;
-    if(!grupos.has(grupoKey))grupos.set(grupoKey,{ejecutivo,cliente,clienteKey,ruc:String(r['RUC']||'—'),sucursal:String(r[COL_SUC]||'—'),zona:String(r[COL_ZONA]||'—'),ops:0,neta:0,bono:0,pesoTea:0,netaTasa:0});
-    const g=grupos.get(grupoKey);
-    g.ops++;g.neta+=neta;
-    if(k.bono)g.bono+=parseNeta(r[k.bono]);
-    const t=getFilaTasaPartes(r,k.neta);
-    if(t){g.pesoTea+=t.pesoTea;g.netaTasa+=t.neta;}
-    ejecutivos.add(normTxt(ejecutivo));
-    if(clienteKey)clientes.add(clienteKey);
-    netaTotal+=neta;
-    if(k.bono)bonoTotal+=parseNeta(r[k.bono]);
-    if(t){pesoTeaTotal+=t.pesoTea;netaTasaTotal+=t.neta;}
-    opsTotal++;
+    base.push(r);
   });
-  rrhhDetalleFilas=[...grupos.values()].map(g=>({...g,tasa:g.netaTasa>0?g.pesoTea/g.netaTasa:null})).sort((a,b)=>b.neta-a.neta);
+  rrhhDetalleBase=base;
+  const execMap=new Map();
+  const clientesEquipo=new Set();
+  let netaTotal=0,bonoTotal=0,pesoTeaTotal=0,netaTasaTotal=0;
+  base.forEach(r=>{
+    const ejecutivo=String(r[k.func]||'').trim();
+    const execKey=normTxt(ejecutivo);
+    const clienteKey=getClienteKey(r);
+    const neta=k.neta?parseNeta(r[k.neta]):0;
+    const bono=k.bono?parseNeta(r[k.bono]):0;
+    const t=getFilaTasaPartes(r,k.neta);
+    if(!execMap.has(execKey))execMap.set(execKey,{key:execKey,nombre:ejecutivo,clientes:new Set(),ops:0,neta:0,bono:0,pesoTea:0,netaTasa:0,rows:[]});
+    const e=execMap.get(execKey);
+    e.ops++;e.neta+=neta;e.bono+=bono;e.rows.push(r);
+    if(clienteKey){e.clientes.add(clienteKey);clientesEquipo.add(clienteKey);}
+    if(t){e.pesoTea+=t.pesoTea;e.netaTasa+=t.neta;netaTotal+=t.neta;pesoTeaTotal+=t.pesoTea;netaTasaTotal+=t.neta;}
+    netaTotal+=0;
+    bonoTotal+=bono;
+  });
+  rrhhDetalleEjecutivos=[...execMap.values()].map(e=>({...e,tasa:e.netaTasa>0?e.pesoTea/e.netaTasa:null})).sort((a,b)=>b.neta-a.neta);
+  // Use the same row-level scope for every summary KPI and the drill-down table.
+  netaTotal=base.reduce((sum,r)=>sum+(k.neta?parseNeta(r[k.neta]):0),0);
   const tasaTotal=netaTasaTotal>0?pesoTeaTotal/netaTasaTotal:null;
-  const tipoLabel=tipo==='L'?'Líder':'Zonal';
-  document.getElementById('rrhhTeamTitle').textContent=`${tipoLabel}: ${nombre}`;
-  document.getElementById('rrhhTeamCount').textContent=`${ejecutivos.size} ejecutivos · ${clientes.size} clientes`;
+  const tipoLabel=tipo==='L'?'Lider':'Zonal';
+  const mesTitulo=mesObjetivo?(RRHH_MES_LBL[mesObjetivo]||mesObjetivo):'';
+  rrhhDetalleContexto={tipo,nombre,mes:mesObjetivo};
+  rrhhDetalleModo='ejecutivos';
+  rrhhDetalleEjecutivoActivo='';
+  document.getElementById('rrhhTeamTitle').textContent=`${tipoLabel}: ${nombre}${mesTitulo?' - '+mesTitulo:''}`;
+  document.getElementById('rrhhTeamCount').textContent=`${rrhhDetalleEjecutivos.length} ejecutivos - ${clientesEquipo.size} clientes`;
   document.getElementById('rrhhTeamSummary').innerHTML=`
-    <div class="ds-card main"><span>Neta total</span><strong>${fmtMontoRaw(netaTotal)}</strong><small>${opsTotal.toLocaleString('es-PE')} operaciones con colocación</small></div>
-    <div class="ds-card"><span>Ejecutivos únicos</span><strong>${ejecutivos.size}</strong><small>Con NETA mayor a cero</small></div>
-    <div class="ds-card"><span>Clientes únicos</span><strong>${clientes.size}</strong><small>Sin duplicar por equipo</small></div>
-    <div class="ds-card"><span>Bono_Colocacion</span><strong>${k.bono?fmtMontoRaw(bonoTotal):'—'}</strong><small>Suma de BONO_COLO</small></div>
+    <div class="ds-card main"><span>Neta total</span><strong>${fmtMontoRaw(netaTotal)}</strong><small>${base.length.toLocaleString('es-PE')} operaciones con NETA mayor a cero</small></div>
+    <div class="ds-card"><span>Ejecutivos unicos</span><strong>${rrhhDetalleEjecutivos.length}</strong><small>Del mes seleccionado</small></div>
+    <div class="ds-card"><span>Clientes unicos</span><strong>${clientesEquipo.size}</strong><small>Sin duplicar por equipo</small></div>
+    <div class="ds-card"><span>Bono_Colocacion</span><strong>${k.bono?fmtMontoRaw(bonoTotal):'--'}</strong><small>Suma de BONO_COLO</small></div>
     <div class="ds-card"><span>Tasa pond.</span><strong>${txtTasa(tasaTotal)}</strong><small>Ponderada por NETA</small></div>`;
-  const search=document.getElementById('rrhhTeamSearch'); if(search)search.value='';
+  const search=document.getElementById('rrhhTeamSearch');if(search)search.value='';
+  const back=document.getElementById('rrhhTeamBack');if(back)back.style.display='none';
   renderDetalleEquipoTabla();
   document.getElementById('rrhhTeamModal').classList.add('open');
+}
+function volverResumenEjecutivos(){
+  rrhhDetalleModo='ejecutivos';rrhhDetalleEjecutivoActivo='';
+  const back=document.getElementById('rrhhTeamBack');if(back)back.style.display='none';
+  const tipoLabel=rrhhDetalleContexto.tipo==='L'?'Lider':'Zonal';
+  const mes=rrhhDetalleContexto.mes?(RRHH_MES_LBL[rrhhDetalleContexto.mes]||rrhhDetalleContexto.mes):'';
+  document.getElementById('rrhhTeamTitle').textContent=`${tipoLabel}: ${rrhhDetalleContexto.nombre}${mes?' - '+mes:''}`;
+  document.getElementById('rrhhTeamSearch').placeholder='Buscar ejecutivo...';
+  renderDetalleEquipoTabla();
+}
+function abrirDetalleEjecutivoEquipo(execKey){
+  const e=rrhhDetalleEjecutivos.find(x=>x.key===execKey);
+  if(!e)return;
+  rrhhDetalleModo='clientes';rrhhDetalleEjecutivoActivo=execKey;
+  const back=document.getElementById('rrhhTeamBack');if(back)back.style.display='inline-flex';
+  document.getElementById('rrhhTeamTitle').textContent=`${e.nombre} - clientes y colocaciones`;
+  document.getElementById('rrhhTeamCount').textContent=`${e.clientes.size} clientes - ${e.ops} operaciones`;
+  document.getElementById('rrhhTeamSummary').innerHTML=`
+    <div class="ds-card main"><span>Neta del ejecutivo</span><strong>${fmtMontoRaw(e.neta)}</strong><small>${e.ops} operaciones con colocacion</small></div>
+    <div class="ds-card"><span>Clientes unicos</span><strong>${e.clientes.size}</strong><small>De este ejecutivo</small></div>
+    <div class="ds-card"><span>Bono_Colocacion</span><strong>${fmtMontoRaw(e.bono)}</strong><small>Suma de BONO_COLO</small></div>
+    <div class="ds-card"><span>Tasa pond.</span><strong>${txtTasa(e.tasa)}</strong><small>Ponderada por NETA</small></div>`;
+  document.getElementById('rrhhTeamSearch').value='';
+  document.getElementById('rrhhTeamSearch').placeholder='Buscar cliente, RUC, sucursal o zona...';
+  renderDetalleEquipoTabla();
 }
 function renderDetalleEquipoTabla(){
   const body=document.getElementById('rrhhTeamBody');
   if(!body)return;
   const q=normTxt(document.getElementById('rrhhTeamSearch')?.value||'');
-  const filas=rrhhDetalleFilas.filter(r=>!q||normTxt([r.ejecutivo,r.cliente,r.clienteKey,r.ruc,r.sucursal,r.zona].join(' ')).includes(q));
-  document.getElementById('rrhhTeamShown').textContent=`${filas.length} filas de ejecutivo y cliente`;
-  if(!filas.length){body.innerHTML='<div class="detail-empty">No hay colocaciones que coincidan con la búsqueda o los filtros actuales.</div>';return;}
+  if(rrhhDetalleModo==='ejecutivos'){
+    const filas=rrhhDetalleEjecutivos.filter(e=>!q||normTxt(e.nombre).includes(q));
+    document.getElementById('rrhhTeamShown').textContent=`${filas.length} de ${rrhhDetalleEjecutivos.length} ejecutivos - haz clic en uno para ver sus clientes`;
+    if(!filas.length){body.innerHTML='<div class="detail-empty">No hay ejecutivos que coincidan con la busqueda.</div>';return;}
+    body.innerHTML=`<table class="rrhh-detail-table"><thead><tr><th>Ejecutivo (clic para detalle)</th><th class="num">Clientes unicos</th><th class="num">Ops.</th><th class="num">Neta (US$)</th><th class="num">Bono_Colocacion</th><th class="num">Tasa pond.</th></tr></thead><tbody>${filas.map(e=>`<tr class="rrhh-exec-detail-row" data-exec-key="${escHTML(e.key)}" title="Ver clientes y colocaciones de ${escHTML(e.nombre)}"><td class="exec">${escHTML(e.nombre)} &#8599;</td><td class="num">${e.clientes.size}</td><td class="num">${e.ops}</td><td class="num neta">${fmtNum2(e.neta)}</td><td class="num bono">${fmtNum2(e.bono)}</td><td class="num tasa">${txtTasa(e.tasa)}</td></tr>`).join('')}</tbody></table>`;
+    body.querySelectorAll('tr[data-exec-key]').forEach(row=>row.addEventListener('click',()=>abrirDetalleEjecutivoEquipo(row.dataset.execKey)));
+    return;
+  }
+  const e=rrhhDetalleEjecutivos.find(x=>x.key===rrhhDetalleEjecutivoActivo);
+  if(!e){body.innerHTML='<div class="detail-empty">No se encontro el ejecutivo seleccionado.</div>';return;}
+  const k=rrhhData.k;
+  const grupos=new Map();
+  e.rows.forEach(r=>{
+    const clienteKey=getClienteKey(r)||String(r['NOMBRE_RSOCIAL_CLIENTE']||r['CLIENTE']||'').trim().toUpperCase();
+    const cliente=String(r['NOMBRE_RSOCIAL_CLIENTE']||r['CLIENTE']||r['RAZON SOCIAL']||r['RAZÓN SOCIAL']||r['RUC']||'Cliente sin identificar').trim();
+    const ruc=String(r['RUC']||'--');
+    const neta=k.neta?parseNeta(r[k.neta]):0;
+    const bono=k.bono?parseNeta(r[k.bono]):0;
+    const t=getFilaTasaPartes(r,k.neta);
+    const key=clienteKey||cliente.toUpperCase();
+    if(!grupos.has(key))grupos.set(key,{ejecutivo:e.nombre,cliente,clienteKey:key,ruc,sucursal:String(r[COL_SUC]||'--'),zona:String(r[COL_ZONA]||'--'),ops:0,neta:0,bono:0,pesoTea:0,netaTasa:0});
+    const g=grupos.get(key);g.ops++;g.neta+=neta;g.bono+=bono;
+    if(t){g.pesoTea+=t.pesoTea;g.netaTasa+=t.neta;}
+  });
+  const filas=[...grupos.values()].map(g=>({...g,tasa:g.netaTasa>0?g.pesoTea/g.netaTasa:null})).filter(r=>!q||normTxt([r.cliente,r.clienteKey,r.ruc,r.sucursal,r.zona].join(' ')).includes(q)).sort((a,b)=>b.neta-a.neta);
+  document.getElementById('rrhhTeamShown').textContent=`${filas.length} clientes de ${e.clientes.size} - ${e.nombre}`;
+  if(!filas.length){body.innerHTML='<div class="detail-empty">No hay clientes que coincidan con la busqueda.</div>';return;}
   body.innerHTML=`<table class="rrhh-detail-table"><thead><tr><th>Ejecutivo</th><th>Cliente</th><th>RUC</th><th>Sucursal</th><th>Zona</th><th class="num">Ops.</th><th class="num">Neta (US$)</th><th class="num">Bono_Colocacion</th><th class="num">Tasa pond.</th></tr></thead><tbody>${filas.map(r=>`<tr><td class="exec">${escHTML(r.ejecutivo)}</td><td class="client" title="${escHTML(r.cliente)}">${escHTML(r.cliente)}</td><td>${escHTML(r.ruc)}</td><td>${escHTML(r.sucursal)}</td><td>${escHTML(r.zona)}</td><td class="num">${r.ops}</td><td class="num neta">${fmtNum2(r.neta)}</td><td class="num bono">${fmtNum2(r.bono)}</td><td class="num tasa">${txtTasa(r.tasa)}</td></tr>`).join('')}</tbody></table>`;
 }
 
@@ -2972,7 +3064,8 @@ function activarClicksDashboard(){
     </div>
     <div class="detail-summary" id="rrhhTeamSummary"></div>
     <div class="detail-tools">
-      <div class="detail-search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="rrhhTeamSearch" placeholder="Buscar ejecutivo, cliente, RUC, sucursal o zona…" oninput="renderDetalleEquipoTabla()"></div>
+      <button class="btn-secondary" id="rrhhTeamBack" type="button" onclick="volverResumenEjecutivos()" style="display:none">&#8592; Resumen de ejecutivos</button>
+      <div class="detail-search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="rrhhTeamSearch" placeholder="Buscar ejecutivo, cliente, RUC, sucursal o zona..." oninput="renderDetalleEquipoTabla()"></div>
       <span class="detail-shown" id="rrhhTeamShown"></span>
     </div>
     <div class="detail-table-wrap" id="rrhhTeamBody"></div>
