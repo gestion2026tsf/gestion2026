@@ -2497,7 +2497,7 @@ function renderRRHH(){
     const resumenMes=(esLider||esZonal)
       ?`${plural(g.ents.length,etq[1],etq[2])} · ${g.tot.cli.size.toLocaleString('es-PE')} clientes únicos`
       :`${plural(g.ents.length,etq[1],etq[2])} · ${plural(g.tot.ops,'operación','operaciones')}`;
-    html+=`<table class="rrhh-table"><thead><tr class="mes-head"><th colspan="${rrhhColspan}"><div class="mh"><b>${escHTML(g.label)}</b><span>${resumenMes}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></th></tr>${cabeceraCols}</thead><tbody class="grp">`;
+    html+=`<table class="rrhh-table" data-month-key="${escHTML(g.m)}"><thead><tr class="mes-head"><th colspan="${rrhhColspan}"><div class="mh"><b>${escHTML(g.label)}</b><span>${resumenMes}</span><em>Neta ${fmtMonto(g.tot.neta)}</em></div></th></tr>${cabeceraCols}</thead><tbody class="grp">`;
     g.ents.forEach((e,i)=>{
       const tag=e.tipo==='lider'?'<span class="tag lider">Líder</span>':e.tipo==='zonal'?'<span class="tag zonal">Zonal</span>':'';
       const ubicacion=esZonal
@@ -2519,8 +2519,19 @@ function renderRRHH(){
   });
   html+=`<div class="rep-note">${escHTML(nota)}</div></div>`;
   cont.innerHTML=html;
-  cont.querySelectorAll('tr[data-team-detail]').forEach(row=>{
-    row.addEventListener('click',()=>abrirDetalleEquipo(row.dataset.teamDetail,row.dataset.teamName,row.dataset.teamMonth));
+  // Vincula el detalle al mes real de la tabla donde se hizo clic.
+  // Se lee desde data-month-key del contenedor mensual para evitar que el modal
+  // vuelva a sumar todos los meses cuando el filtro superior está en 'Todos'.
+  cont.querySelectorAll('table.rrhh-table').forEach(tabla=>{
+    const mesTabla=tabla.dataset.monthKey || '';
+    tabla.querySelectorAll('tr[data-team-detail]').forEach(row=>{
+      row.dataset.teamMonth=mesTabla;
+      row.addEventListener('click',()=>abrirDetalleEquipo(
+        row.dataset.teamDetail,
+        row.dataset.teamName,
+        mesTabla
+      ));
+    });
   });
 }
 
