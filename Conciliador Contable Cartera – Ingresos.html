@@ -518,6 +518,25 @@ body.dash-zoom-200 .bar-label,body.dash-zoom-200 .neta-big,body.dash-zoom-200 .s
 .rrhh-table td.zona{color:var(--text2);font-weight:600;}
 .rrhh-table td.bono-col{font-weight:700;color:var(--ink);}
 
+/* Detalle interactivo de líderes y zonales */
+.rrhh-table tr.rrhh-clickable-row{cursor:pointer;}
+.rrhh-table tr.rrhh-clickable-row:hover td{background:#FFF4CC!important;}
+.rrhh-table tr.rrhh-clickable-row td.nom::after{content:'  ↗';font-size:10px;color:var(--y-dark);font-weight:800;}
+#rrhhTeamModal .detail-modal{max-width:1450px;}
+#rrhhTeamSummary{grid-template-columns:repeat(5,minmax(0,1fr));}
+.rrhh-detail-table{width:100%;min-width:1050px;border-collapse:separate;border-spacing:0;font-size:12px;}
+.rrhh-detail-table thead th{position:sticky;top:0;z-index:3;background:var(--ink);color:#fff;padding:10px 12px;text-align:left;font-size:11px;font-weight:800;white-space:nowrap;border-bottom:1px solid #3B3935;}
+.rrhh-detail-table thead th.num,.rrhh-detail-table tbody td.num{text-align:right;font-variant-numeric:tabular-nums;}
+.rrhh-detail-table tbody td{padding:9px 12px;border-bottom:1px solid #F0EDE6;white-space:nowrap;color:var(--text);background:#fff;}
+.rrhh-detail-table tbody tr:hover td{background:#FFF9E8;}
+.rrhh-detail-table td.exec{font-weight:800;color:var(--ink);}
+.rrhh-detail-table td.client{font-weight:650;max-width:280px;overflow:hidden;text-overflow:ellipsis;}
+.rrhh-detail-table td.neta{font-weight:800;color:var(--ink);}
+.rrhh-detail-table td.bono{font-weight:700;}
+.rrhh-detail-table td.tasa{font-weight:800;color:var(--y-dark);}
+@media(max-width:760px){#rrhhTeamSummary{grid-template-columns:repeat(2,minmax(0,1fr));}}
+
+
 @media(max-width:760px){.rrhh-kpis{grid-template-columns:1fr 1fr;}.rrhh-search{flex:1 1 100%;}}
 
 .seg{display:inline-flex;background:#F3F1EC;border-radius:9px;padding:3px;gap:2px;}
@@ -2393,7 +2412,7 @@ function renderRRHH(){
   const listaMeses=Object.entries(meses)
     .sort((a,b)=>(RRHH_MES_ORD[b[0]]??-1)-(RRHH_MES_ORD[a[0]]??-1))
     .map(([m,g])=>({m,label:RRHH_MES_LBL[m]||m,tot:g.tot,ents:Object.values(g.ents).sort((a,b)=>b.acc.neta-a.acc.neta)}));
-  rrhhData={listaMeses,total,k,etq,personas:personas.size,mesesSel,filtros:filtrosTxtRRHH(),soloAct};
+  rrhhData={listaMeses,total,k,etq,personas:personas.size,mesesSel,filtros:filtrosTxtRRHH(),soloAct,zonaSel};
 
   const icon=(d)=>`<div class="kpi-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${d}</svg></div>`;
   if(rrhhCargo==='lider'){
@@ -2484,7 +2503,8 @@ function renderRRHH(){
       const ubicacion=esZonal
         ?`<td class="zona">${escHTML(e.zona)}</td>`
         :`<td class="ubi">${escHTML(e.sucursal)}</td><td class="zona">${escHTML(e.zona)}</td>`;
-      html+=`<tr><td class="rk"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span></td><td class="nom">${escHTML(e.nombre)}${(rrhhCargo==='func'||rrhhCargo==='head')?tag:''}<div class="rrhh-share${i===0?' top':''}"><span style="width:${Math.round(Math.abs(e.acc.neta)/max*100)}%"></span></div></td>${ubicacion}${celdas(e.acc)}</tr>`;
+      const clickEquipo=(esLider||esZonal)?` class="rrhh-clickable-row" data-team-detail="${escHTML(e.id)}" data-team-name="${escHTML(e.nombre)}" data-team-month="${escHTML(g.m)}" title="Haz clic para ver el detalle del equipo en ${escHTML(g.label)}"`:'';
+      html+=`<tr${clickEquipo}><td class="rk"><span class="rrhh-rank${i===0?' top':''}">${i+1}</span></td><td class="nom">${escHTML(e.nombre)}${(rrhhCargo==='func'||rrhhCargo==='head')?tag:''}<div class="rrhh-share${i===0?' top':''}"><span style="width:${Math.round(Math.abs(e.acc.neta)/max*100)}%"></span></div></td>${ubicacion}${celdas(e.acc)}</tr>`;
     });
     if(g.ents.length>1){
       const vacias=esZonal?'<td></td>':'<td></td><td></td>';
@@ -2499,6 +2519,82 @@ function renderRRHH(){
   });
   html+=`<div class="rep-note">${escHTML(nota)}</div></div>`;
   cont.innerHTML=html;
+  cont.querySelectorAll('tr[data-team-detail]').forEach(row=>{
+    row.addEventListener('click',()=>abrirDetalleEquipo(row.dataset.teamDetail,row.dataset.teamName,row.dataset.teamMonth));
+  });
+}
+
+/* ── Detalle interactivo del equipo de un líder o zonal ── */
+let rrhhDetalleFilas=[];
+function cerrarDetalleEquipo(){document.getElementById('rrhhTeamModal')?.classList.remove('open');}
+function abrirDetalleEquipo(id,nombre,mesFila){
+  if(!rrhhData)return;
+  const tipo=String(id||'').split('|')[0];
+  const k=rrhhData.k;
+  const sucursal=tipo==='L'?Object.entries(LIDERES_POR_SUCURSAL).find(([,n])=>normTxt(n)===normTxt(nombre))?.[0]:null;
+  const zona=tipo==='Z'?Object.entries(ZONALES_POR_ZONA).find(([,n])=>normTxt(n)===normTxt(nombre))?.[0]:null;
+  if((tipo==='L'&&!sucursal)||(tipo==='Z'&&!zona)){showToast('No se pudo identificar el equipo seleccionado',true);return;}
+
+  const grupos=new Map();
+  const ejecutivos=new Set();
+  const clientes=new Set();
+  let netaTotal=0,bonoTotal=0,pesoTeaTotal=0,netaTasaTotal=0,opsTotal=0;
+  allData.forEach(r=>{
+    if(esDesistidoExcluido(r))return;
+    if(rrhhData.soloAct&&!isActivado(r))return;
+    const mes=getMesKeyFromRow(r);
+    // El detalle debe coincidir con el bloque mensual exacto donde se hizo clic.
+    // Si no se recibió mesFila (compatibilidad), se respetan los meses seleccionados.
+    if(mesFila){
+      if(mes!==mesFila)return;
+    }else if(rrhhData.mesesSel?.length&&!rrhhData.mesesSel.includes(mes))return;
+    if(rrhhData.zonaSel&&normZona(r[COL_ZONA])!==rrhhData.zonaSel)return;
+    if(tipo==='L'&&normTxt(r[COL_SUC])!==normTxt(sucursal))return;
+    if(tipo==='Z'&&normZona(r[COL_ZONA])!==normZona(zona))return;
+    const neta=k.neta?parseNeta(r[k.neta]):0;
+    if(!(neta>0))return; // Mostrar solo funcionarios que realmente colocaron.
+    const ejecutivo=k.func?String(r[k.func]||'').trim():'';
+    if(!ejecutivo)return;
+    const clienteKey=getClienteKey(r)||String(r['NOMBRE_RSOCIAL_CLIENTE']||r['CLIENTE']||'').trim().toUpperCase();
+    const cliente=String(r['NOMBRE_RSOCIAL_CLIENTE']||r['CLIENTE']||r['RAZON SOCIAL']||r['RAZÓN SOCIAL']||r['RUC']||'Cliente sin identificar').trim();
+    const grupoKey=normTxt(ejecutivo)+'||'+clienteKey;
+    if(!grupos.has(grupoKey))grupos.set(grupoKey,{ejecutivo,cliente,clienteKey,ruc:String(r['RUC']||'—'),sucursal:String(r[COL_SUC]||'—'),zona:String(r[COL_ZONA]||'—'),ops:0,neta:0,bono:0,pesoTea:0,netaTasa:0});
+    const g=grupos.get(grupoKey);
+    g.ops++;g.neta+=neta;
+    if(k.bono)g.bono+=parseNeta(r[k.bono]);
+    const t=getFilaTasaPartes(r,k.neta);
+    if(t){g.pesoTea+=t.pesoTea;g.netaTasa+=t.neta;}
+    ejecutivos.add(normTxt(ejecutivo));
+    if(clienteKey)clientes.add(clienteKey);
+    netaTotal+=neta;
+    if(k.bono)bonoTotal+=parseNeta(r[k.bono]);
+    if(t){pesoTeaTotal+=t.pesoTea;netaTasaTotal+=t.neta;}
+    opsTotal++;
+  });
+  rrhhDetalleFilas=[...grupos.values()].map(g=>({...g,tasa:g.netaTasa>0?g.pesoTea/g.netaTasa:null})).sort((a,b)=>b.neta-a.neta);
+  const tasaTotal=netaTasaTotal>0?pesoTeaTotal/netaTasaTotal:null;
+  const tipoLabel=tipo==='L'?'Líder':'Zonal';
+  const mesTitulo=mesFila?(RRHH_MES_LBL[mesFila]||mesFila):'';
+  document.getElementById('rrhhTeamTitle').textContent=`${tipoLabel}: ${nombre}${mesTitulo?' · '+mesTitulo:''}`;
+  document.getElementById('rrhhTeamCount').textContent=`${ejecutivos.size} ejecutivos · ${clientes.size} clientes`;
+  document.getElementById('rrhhTeamSummary').innerHTML=`
+    <div class="ds-card main"><span>Neta total</span><strong>${fmtMontoRaw(netaTotal)}</strong><small>${opsTotal.toLocaleString('es-PE')} operaciones con colocación</small></div>
+    <div class="ds-card"><span>Ejecutivos únicos</span><strong>${ejecutivos.size}</strong><small>Con NETA mayor a cero</small></div>
+    <div class="ds-card"><span>Clientes únicos</span><strong>${clientes.size}</strong><small>Sin duplicar por equipo</small></div>
+    <div class="ds-card"><span>Bono_Colocacion</span><strong>${k.bono?fmtMontoRaw(bonoTotal):'—'}</strong><small>Suma de BONO_COLO</small></div>
+    <div class="ds-card"><span>Tasa pond.</span><strong>${txtTasa(tasaTotal)}</strong><small>Ponderada por NETA</small></div>`;
+  const search=document.getElementById('rrhhTeamSearch'); if(search)search.value='';
+  renderDetalleEquipoTabla();
+  document.getElementById('rrhhTeamModal').classList.add('open');
+}
+function renderDetalleEquipoTabla(){
+  const body=document.getElementById('rrhhTeamBody');
+  if(!body)return;
+  const q=normTxt(document.getElementById('rrhhTeamSearch')?.value||'');
+  const filas=rrhhDetalleFilas.filter(r=>!q||normTxt([r.ejecutivo,r.cliente,r.clienteKey,r.ruc,r.sucursal,r.zona].join(' ')).includes(q));
+  document.getElementById('rrhhTeamShown').textContent=`${filas.length} filas de ejecutivo y cliente`;
+  if(!filas.length){body.innerHTML='<div class="detail-empty">No hay colocaciones que coincidan con la búsqueda o los filtros actuales.</div>';return;}
+  body.innerHTML=`<table class="rrhh-detail-table"><thead><tr><th>Ejecutivo</th><th>Cliente</th><th>RUC</th><th>Sucursal</th><th>Zona</th><th class="num">Ops.</th><th class="num">Neta (US$)</th><th class="num">Bono_Colocacion</th><th class="num">Tasa pond.</th></tr></thead><tbody>${filas.map(r=>`<tr><td class="exec">${escHTML(r.ejecutivo)}</td><td class="client" title="${escHTML(r.cliente)}">${escHTML(r.cliente)}</td><td>${escHTML(r.ruc)}</td><td>${escHTML(r.sucursal)}</td><td>${escHTML(r.zona)}</td><td class="num">${r.ops}</td><td class="num neta">${fmtNum2(r.neta)}</td><td class="num bono">${fmtNum2(r.bono)}</td><td class="num tasa">${txtTasa(r.tasa)}</td></tr>`).join('')}</tbody></table>`;
 }
 
 /* ── Descargas de la tabla RRHH ── */
@@ -2810,7 +2906,7 @@ async function exportarDetalle(){
 }
 
 function cerrarDetalleDashboard(){ document.getElementById('detailDashboardModal')?.classList.remove('open'); }
-document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrarDetalleDashboard();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){cerrarDetalleDashboard();cerrarDetalleEquipo();}});
 
 function mesLabelAKey(lbl){
   const m={ENE:'ENE26',FEB:'FEB26',MAR:'MAR26',ABR:'ABR26',MAY:'MAY26',JUN:'JUN26',JUL:'JUL26',AGO:'AGO26',SET:'SET26',SEP:'SET26',OCT:'OCT26',NOV:'NOV26',DIC:'DIC26'};
@@ -2872,5 +2968,22 @@ function activarClicksDashboard(){
   });
 }
 </script>
+
+<div class="detail-modal-overlay" id="rrhhTeamModal" onclick="if(event.target===this)cerrarDetalleEquipo()">
+  <div class="detail-modal" role="dialog" aria-modal="true" aria-labelledby="rrhhTeamTitle">
+    <div class="detail-modal-head">
+      <div><span class="detail-modal-title" id="rrhhTeamTitle">Detalle del equipo</span><span class="detail-modal-count" id="rrhhTeamCount">0 ejecutivos</span></div>
+      <button class="detail-close" type="button" onclick="cerrarDetalleEquipo()" aria-label="Cerrar">×</button>
+    </div>
+    <div class="detail-summary" id="rrhhTeamSummary"></div>
+    <div class="detail-tools">
+      <div class="detail-search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="rrhhTeamSearch" placeholder="Buscar ejecutivo, cliente, RUC, sucursal o zona…" oninput="renderDetalleEquipoTabla()"></div>
+      <span class="detail-shown" id="rrhhTeamShown"></span>
+    </div>
+    <div class="detail-table-wrap" id="rrhhTeamBody"></div>
+    <div class="detail-modal-foot">Detalle de las operaciones con NETA mayor a cero. La tasa ponderada se calcula ponderando la TEA por NETA. Cierra con ×, Esc o haciendo clic fuera del cuadro.</div>
+  </div>
+</div>
+
 </body>
 </html>
