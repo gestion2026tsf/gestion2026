@@ -1412,8 +1412,9 @@ function buildCards(){
           <div class="footnote" style="margin:0;">El número de al lado de cada columna es cuántos dígitos rellenar con ceros a la izquierda (déjalo en 0 si no hace falta).</div>
         </div>
         <div>
-          <label class="fld">Columna fecha de emisión (opcional)</label>
-          <select data-role="fechacol"><option value="">— no usar —</option></select>
+          <label class="fld">${b.id === 'A' ? 'Fecha de emisión (Premium no se utiliza)' : 'Columna fecha de emisión (opcional)'}</label>
+          <select data-role="fechacol" ${b.id === 'A' ? 'disabled' : ''}><option value="">— ${b.id === 'A' ? 'no aplica' : 'no usar'} —</option></select>
+          ${b.id === 'A' ? '<p class="footnote" style="margin:0;">Para la fecha de emisión se prioriza TCI; si no hay una fecha válida, se utiliza SIRE. Premium no se considera como fuente.</p>' : ''}
         </div>
         <div>
           <label class="fld">Columna estado (opcional, ej. Aceptado / con errores)</label>
@@ -1589,10 +1590,19 @@ function applyHeaderRow(b, card, rowNum){
   key1Sel.innerHTML = opts;
   key2Sel.innerHTML = opts;
   statusSel.innerHTML = '<option value="">— ninguna —</option>' + opts;
-  fechaSel.innerHTML = '<option value="">— no usar —</option>' + opts;
-  const fechaIdx = detectarColumnaFechaEmision(headers);
-  b.fechaCol = fechaIdx >= 0 ? String(fechaIdx) : '';
-  fechaSel.value = b.fechaCol;
+  if(b.id === 'A'){
+    // Premium se conserva para el cruce, pero no se utiliza para la fecha de emisión.
+    b.fechaCol = '';
+    fechaSel.innerHTML = '<option value="">— no aplica: prioridad TCI → SIRE —</option>';
+    fechaSel.value = '';
+    fechaSel.disabled = true;
+  }else{
+    fechaSel.innerHTML = '<option value="">— no usar —</option>' + opts;
+    const fechaIdx = detectarColumnaFechaEmision(headers);
+    b.fechaCol = fechaIdx >= 0 ? String(fechaIdx) : '';
+    fechaSel.value = b.fechaCol;
+    fechaSel.disabled = false;
+  }
 
   const serieIdx = headers.findIndex(h=> /^serie/i.test(String(h).trim()) || /\bserie\b/i.test(String(h)));
   const numIdx = findNumIdx(headers, serieIdx, b.rows);
@@ -1669,7 +1679,7 @@ function normKey(v){
 
 function extractKeyed(b){
   const si = b.statusCol !== '' && b.statusCol != null ? parseInt(b.statusCol, 10) : null;
-  const fi = b.fechaCol !== '' && b.fechaCol != null ? parseInt(b.fechaCol, 10) : null;
+  const fi = b.id === 'A' ? null : (b.fechaCol !== '' && b.fechaCol != null ? parseInt(b.fechaCol, 10) : null);
   const counts = new Map();
   const statusByKey = new Map();
   const dateByKey = new Map();
@@ -1694,7 +1704,9 @@ function extractKeyed(b){
 }
 
 function obtenerFechaEmision(r, key){
-  return r.exA.dateByKey.get(key) || r.exB.dateByKey.get(key) || r.exC.dateByKey.get(key) || '';
+  // Regla acordada con Contabilidad: TCI primero; si no tiene fecha válida, SIRE.
+  // Premium no se utiliza como fuente de fecha, especialmente para notas de crédito y débito.
+  return r.exC.dateByKey.get(key) || r.exB.dateByKey.get(key) || '';
 }
 
 function calcularDiasDesdeEmision(fechaISO){
