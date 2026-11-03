@@ -1709,6 +1709,14 @@ function obtenerFechaEmision(r, key){
   return r.exC.dateByKey.get(key) || r.exB.dateByKey.get(key) || '';
 }
 
+function obtenerBaseFechaEmision(r, key){
+  // Identifica de forma explícita qué base aportó la fecha que se muestra.
+  // La misma prioridad se aplica tanto a la fecha como a su trazabilidad.
+  if(r.exC.dateByKey.get(key)) return r.C.label || 'TCI';
+  if(r.exB.dateByKey.get(key)) return r.B.label || 'SIRE';
+  return 'Sin fecha disponible';
+}
+
 function calcularDiasDesdeEmision(fechaISO){
   if(!fechaISO) return '';
   const [y,m,d] = fechaISO.split('-').map(Number);
@@ -1855,7 +1863,7 @@ function renderDetailPreview(r){
   const hasStatusA = r.A.statusCol !== '' && r.A.statusCol != null;
   const hasStatusB = r.B.statusCol !== '' && r.B.statusCol != null;
   const hasStatusC = r.C.statusCol !== '' && r.C.statusCol != null;
-  let head = `<tr><th>Llave</th><th>Fecha emisión</th><th>Días desde emisión</th><th>${r.A.label}</th><th>${r.B.label}</th><th>${r.C.label}</th>`;
+  let head = `<tr><th>Llave</th><th>Fecha emisión</th><th>Días desde emisión</th><th>Base fecha emisión</th><th>${r.A.label}</th><th>${r.B.label}</th><th>${r.C.label}</th>`;
   if(hasStatusA) head += `<th>Estado ${r.A.label}</th>`;
   if(hasStatusB) head += `<th>Estado ${r.B.label}</th>`;
   if(hasStatusC) head += `<th>Estado ${r.C.label}</th>`;
@@ -1867,7 +1875,9 @@ function renderDetailPreview(r){
     const match = n===3 ? 'Completa' : n===2 ? 'Parcial (2/3)' : 'Solo 1 base';
     const fechaEmision = obtenerFechaEmision(r,k);
     const diasEmision = calcularDiasDesdeEmision(fechaEmision);
-    let row = `<tr><td>${k}</td><td>${formatearFechaEmision(fechaEmision)}</td><td>${diasEmision}</td>
+    const baseFechaEmision = obtenerBaseFechaEmision(r,k);
+    const claseFuente = baseFechaEmision === r.C.label ? 'si' : (baseFechaEmision === r.B.label ? 'warn' : 'no');
+    let row = `<tr><td>${k}</td><td>${formatearFechaEmision(fechaEmision)}</td><td>${diasEmision}</td><td><span class="flag ${claseFuente}">${baseFechaEmision}</span></td>
       <td><span class="flag ${inA?'si':'no'}">${inA?'Sí':'No'}</span></td>
       <td><span class="flag ${inB?'si':'no'}">${inB?'Sí':'No'}</span></td>
       <td><span class="flag ${inC?'si':'no'}">${inC?'Sí':'No'}</span></td>`;
@@ -1999,7 +2009,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     const hasStatusB = r.B.statusCol !== '' && r.B.statusCol != null;
     const hasStatusC = r.C.statusCol !== '' && r.C.statusCol != null;
 
-    const header = ['Llave', 'Fecha emisión', 'Días desde emisión', `En ${r.A.label}`, `Dup. en ${r.A.label}`, `En ${r.B.label}`, `Dup. en ${r.B.label}`, `En ${r.C.label}`, `Dup. en ${r.C.label}`];
+    const header = ['Llave', 'Fecha emisión', 'Días desde emisión', 'Base fecha emisión', `En ${r.A.label}`, `Dup. en ${r.A.label}`, `En ${r.B.label}`, `Dup. en ${r.B.label}`, `En ${r.C.label}`, `Dup. en ${r.C.label}`];
     if(hasStatusA) header.push(`Estado ${r.A.label}`);
     if(hasStatusB) header.push(`Estado ${r.B.label}`);
     if(hasStatusC) header.push(`Estado ${r.C.label}`);
@@ -2012,8 +2022,9 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
       const n = [inA,inB,inC].filter(Boolean).length;
       const match = n===3 ? 'Completa' : n===2 ? 'Parcial (2/3)' : 'Solo 1 base';
       const fechaEmision = obtenerFechaEmision(r,k);
+      const baseFechaEmision = obtenerBaseFechaEmision(r,k);
       const serialFecha = fechaISOaSerialExcel(fechaEmision);
-      const row = [k, serialFecha === null ? '' : serialFecha, calcularDiasDesdeEmision(fechaEmision), inA?'Sí':'No', Math.max(0,cA-1), inB?'Sí':'No', Math.max(0,cB-1), inC?'Sí':'No', Math.max(0,cC-1)];
+      const row = [k, serialFecha === null ? '' : serialFecha, calcularDiasDesdeEmision(fechaEmision), baseFechaEmision, inA?'Sí':'No', Math.max(0,cA-1), inB?'Sí':'No', Math.max(0,cB-1), inC?'Sí':'No', Math.max(0,cC-1)];
       if(hasStatusA) row.push((r.exA.statusByKey.get(k)||[]).join(', '));
       if(hasStatusB) row.push((r.exB.statusByKey.get(k)||[]).join(', '));
       if(hasStatusC) row.push((r.exC.statusByKey.get(k)||[]).join(', '));
@@ -2038,7 +2049,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
     }
     wsDetalle['!autofilter']={ref:`A1:${XLSX.utils.encode_col(header.length-1)}${detalleAOA.length}`};
     wsDetalle['!freeze']={xSplit:1,ySplit:1,topLeftCell:'B2',activePane:'bottomRight',state:'frozen'};
-    wsDetalle['!cols']=header.map((h,i)=>({wch:i===0?26:(h==='Fecha emisión'?14:(h==='Días desde emisión'?17:(String(h).startsWith('Estado')?26:16)))}));
+    wsDetalle['!cols']=header.map((h,i)=>({wch:i===0?26:(h==='Fecha emisión'?14:(h==='Días desde emisión'?17:(h==='Base fecha emisión'?22:(String(h).startsWith('Estado')?26:16))))}));
     wsDetalle['!rows']=[{hpt:32}];
     styleRange(wsDetalle,`A1:${XLSX.utils.encode_col(header.length-1)}1`,()=>headerStyle);
     for(let rr=2;rr<=detalleAOA.length;rr++){
@@ -2048,6 +2059,7 @@ document.getElementById('btnDescargar').addEventListener('click', ()=>{
         const h=String(header[cc]??'');
         const v=wsDetalle[ref]?.v;
         if(h==='Coincidencia' || h.startsWith('Estado ')) setStyle(wsDetalle,ref,statusStyle(v));
+        else if(h==='Base fecha emisión') setStyle(wsDetalle,ref,statusStyle(String(v)==='TCI'?'ACEPTADO':(String(v)==='SIRE'?'OBSERVADO':'ERROR')));
         else if(h.startsWith('En ')) setStyle(wsDetalle,ref,statusStyle(String(v)==='Sí'?'Aceptado':'Con Errores'));
         else if(h.startsWith('Dup. ') && Number(v)>0) setStyle(wsDetalle,ref,statusStyle('Con Errores'));
       }
