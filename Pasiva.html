@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Sistema de Pasivas 2908 · v6.17</title>
+<title>Sistema de Pasivas 2908 · v6.18</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
@@ -164,7 +164,7 @@ td{padding:8px 9px;border-bottom:1px solid #eef0f2;white-space:nowrap}
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="mark">TSF</div><div><h1>Sistema de Pasivas · Operaciones en trámite</h1><p>Premium → clasificación → antigüedad → prioridades → dashboard → Excel · v6.17 · TOTAL CORPORATIVO · con depuración de cruces</p></div></div><div class="small">Control contable ejecutivo</div></header>
+<header><div class="brand"><div class="mark">TSF</div><div><h1>Sistema de Pasivas · Operaciones en trámite</h1><p>Premium → clasificación → antigüedad → prioridades → dashboard → Excel · v6.18 · TOTAL CORPORATIVO · con depuración de cruces</p></div></div><div class="small">Control contable ejecutivo</div></header>
 <main>
 <section class="panel">
 <div class="grid">
@@ -229,7 +229,7 @@ td{padding:8px 9px;border-bottom:1px solid #eef0f2;white-space:nowrap}
 <section class="storyCard fullCard">
 <div class="cardHead"><div><span class="sectionKicker">DEPURACIÓN</span><h3>Qué quedó en el detalle activo y qué se excluyó</h3><p>Solo se excluye cuando existe una contrapartida: mismo RUC y misma moneda, con signos opuestos y diferencia menor a 1 (sol o dólar).</p></div></div>
 <div class="reviewStats" id="depStats"></div>
-<div class="explainMini"><b>Cómo se decide:</b> toda diferencia <b>menor a 1</b> (sol o dólar) se excluye, aunque el contrato o el documento sean distintos; el motivo queda escrito. Solo generan <b>alerta</b> las diferencias de 1 o más: <b>MEDIA</b> (de 1 a menos de 5, naranja) y <b>ALTA</b> (desde 5, rojo). <b>Hojas del Excel:</b> Alertas (solo MEDIA y ALTA) · Detalle (todo lo activo) · Excluidas (lo retirado, con motivo) · Historial (todas las líneas, cada una con su estado). Cada línea trae su <b>Explicación</b>. Contabilidad debe validar estos criterios.</div>
+<div class="explainMini"><b>Cómo se decide:</b> toda diferencia <b>menor a 1</b> (sol o dólar) se excluye, aunque el contrato o el documento sean distintos; el motivo queda escrito. Solo generan <b>alerta</b> las diferencias de 1 o más: <b>MEDIA</b> (de 1 a menos de 5, naranja) y <b>ALTA</b> (desde 5, rojo). <b>Hojas del Excel:</b> Alertas (solo MEDIA y ALTA) · Historial (todas las líneas, cada una con su estado y su Explicación; las excluidas salen en gris con su motivo. Filtra la columna Estado Depuracion para quedarte solo con lo activo). Contabilidad debe validar estos criterios.</div>
 </section>
 <section class="storyCard fullCard">
 <div class="cardHead"><div><span class="sectionKicker">CONCILIACIÓN Y VALIDACIONES</span><h3>Base original = Detalle activo + Excluidos</h3><p>Pruebas automáticas calculadas con la base cargada. Una prueba en FALLA significa que no se debe usar el reporte hasta revisar.</p></div><span class="infoPill" id="validBadge">-</span></div>
@@ -254,7 +254,7 @@ td{padding:8px 9px;border-bottom:1px solid #eef0f2;white-space:nowrap}
 <div class="explainMini"><b>Sentido del bloque:</b> prioriza por importe para evitar revisar cientos de filas sin orden.</div>
 <div class="tableShell largeDataTable"><table id="tblPendingTop"></table></div>
 </section>
-<section class="exportBar"><div><h3>Exportar análisis</h3><p>Descarga el Excel (Dashboard, Detalle >30 días, Detalle, Alertas, Excluidas e Historial) o genera un informe PDF ejecutivo.</p></div><div class="exportActions"><span class="pdfProgress" id="pdfProgress">Preparando PDF...</span><button class="pdfButton" id="exportPdf">Descargar informe PDF ejecutivo</button><button class="primary exportButton" id="export">Descargar Excel con Dashboard</button></div></section>
+<section class="exportBar"><div><h3>Exportar análisis</h3><p>Descarga el Excel (Dashboard, Detalle >30 días, Alertas e Historial) o genera un informe PDF ejecutivo.</p></div><div class="exportActions"><span class="pdfProgress" id="pdfProgress">Preparando PDF...</span><button class="pdfButton" id="exportPdf">Descargar informe PDF ejecutivo</button><button class="primary exportButton" id="export">Descargar Excel con Dashboard</button></div></section>
 </div>
 <div class="footer">Sistema local: los archivos se procesan en tu navegador y no se envían a un servidor.</div>
 </main>
@@ -468,7 +468,7 @@ function buildValidation(orig,dep,sm,tol=TOLERANCIA_DEPURACION){
  add(3,'Original = activo + excluidos (saldo USD)',eq(sumU(orig),sumU(act)+sumU(exc)),'diferencia '+r2(sumU(orig)-sumU(act)-sumU(exc)).toFixed(2));
  const idA=new Set(act.map(r=>r['ID Fila Origen'])),idE=new Set(exc.map(r=>r['ID Fila Origen']));
  const dup=[...idA].filter(x=>idE.has(x)).length;
- add(4,'Ningún registro está a la vez en el Detalle activo y en Excluidas, ni repetido dentro de cada hoja',dup===0&&idA.size===act.length&&idE.size===exc.length,'repetidos entre hojas: '+dup);
+ add(4,'Ningún registro está a la vez activo y excluido, ni repetido dentro de cada grupo',dup===0&&idA.size===act.length&&idE.size===exc.length,'repetidos entre hojas: '+dup);
  const sc=exc.filter(r=>r['Metodo Clasificacion']==='SIN CLASIFICAR').length;
  add(5,'No se excluyó ningún registro SIN CLASIFICAR',sc===0,'excluidos SIN CLASIFICAR: '+sc);
  const gmap={};exc.filter(r=>r['Motivo Exclusion']!=='SALDO CERO').forEach(r=>{(gmap[r['ID Grupo']||'(sin grupo)']??=[]).push(r)});
@@ -508,7 +508,7 @@ function buildValidation(orig,dep,sm,tol=TOLERANCIA_DEPURACION){
  const alerts=act.filter(r=>r['Nivel']);
  const badA=alerts.filter(r=>{const d=Math.abs(n(r['Diferencia Neta Grupo']));return d<tol||(d>=NIVEL_ALTO)!==(r['Nivel']==='ALTA')}).length;
  const inAct=alerts.every(r=>idA.has(r['ID Fila Origen']));
- add(17,'Cada alerta está en el Detalle activo, tiene diferencia de '+tol+' o más y su nivel coincide con el monto (MEDIA < '+NIVEL_ALTO+', ALTA ≥ '+NIVEL_ALTO+')',badA===0&&inAct&&alerts.length===dep.review.length,'alertas: '+alerts.length+' · con problema: '+badA);
+ add(17,'Cada alerta es un registro activo, tiene diferencia de '+tol+' o más y su nivel coincide con el monto (MEDIA < '+NIVEL_ALTO+', ALTA ≥ '+NIVEL_ALTO+')',badA===0&&inAct&&alerts.length===dep.review.length,'alertas: '+alerts.length+' · con problema: '+badA);
  return {recon,checks,alerts:buildAlertSummary(act)};
 }
 function topName(names){let best='',bc=-1;for(const k in names){if(names[k]>bc){best=k;bc=names[k]}}return best||'(SIN CLIENTE)'}
@@ -612,7 +612,7 @@ function renderDepuracion(){
  const desc=a=>num(a.groups)+' grupos/pares · diferencias: '+money(a.pen,'PEN')+' y '+money(a.usd,'USD')+'.';
  $('depStats').innerHTML=[
   insightBox('Detalle activo',num(d.clean.length),'Siguen para revisión y seguimiento (de '+num(d.all.length)+' en el Historial).'),
-  insightBox('Excluidas',num(d.removed.length),'Diferencia menor a 1 (sol o dólar) y saldos en cero. Hoja Excluidas.'),
+  insightBox('Excluidas',num(d.removed.length),'Diferencia menor a 1 (sol o dólar) y saldos en cero. En el Historial salen como EXCLUIDA, en gris.'),
   insightBox('Alertas ALTAS ('+num(al[0].lines)+' líneas)',desc(al[0]),'Diferencia de 5 o más. Hoja Alertas, en rojo y primero.'),
   insightBox('Alertas MEDIAS ('+num(al[1].lines)+' líneas)',desc(al[1]),'Diferencia de 1 a menos de 5. Hoja Alertas, en naranja.')
  ].join('');
@@ -794,7 +794,6 @@ async function exportExcel(){
   const outHeaders=[...headers80701];for(const h of calcHeaders)if(!outHeaders.includes(h))outHeaders.push(h);
   const mi=outHeaders.indexOf('Moneda Cruce');
   const detHeaders=[...outHeaders.slice(0,mi+1),'Estado Depuracion','Nivel','Explicacion','Diferencia Neta Grupo','ID Grupo',...outHeaders.slice(mi+1)];
-  const exclHeaders=[...outHeaders,'Moneda','ID Grupo','Motivo Exclusion','Diferencia Neta Grupo','Archivo Origen','Fila Origen'];
   const histHeaders=[...detHeaders,'Moneda','Motivo Exclusion','Archivo Origen','Fila Origen'];
   function fillOf(r){const st=r['Estado Depuracion'],lv=r['Nivel'];if(st==='EXCLUIDA')return 'FFF2F4F7';if(lv==='ALTA')return 'FFFDE2E2';if(lv==='MEDIA')return 'FFFFEBD6';if(st==='A REVISAR')return 'FFFFF9DB';return null}
   function addDetailSheet(name,rows,heads,tabColor,colored){
@@ -809,20 +808,18 @@ async function exportExcel(){
    sh.columns.forEach((col,i)=>{const h=String(heads[i]||'');col.width=h==='Explicacion'?85:Math.min(38,Math.max(11,h.length+2))});
    sh.autoFilter={from:{row:1,column:1},to:{row:1,column:heads.length}};
   }
-  addDetailSheet(('Detalle '+selectedRubro).slice(0,31),depurado.clean,detHeaders,'16794B',true);
   addDetailSheet('Alertas',depurado.review,detHeaders,'DC2626',true);
-  addDetailSheet('Excluidas',depurado.removed,exclHeaders,'6B7280',false);
   addDetailSheet('Historial',depurado.all,histHeaders,'374151',true);
   ws.properties.tabColor={argb:'FFF6A800'};wo.properties.tabColor={argb:'FFF6A800'};
 
   const buffer=await wb.xlsx.writeBuffer();const blob=new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`Pasivas_${selectedRubro}_Dashboard_${$('cutoff').value||'corte'}.xlsx`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-  progress(100);setStatus('Excel generado con 6 pestañas: Dashboard Ejecutivo, Detalle >30 días, <b>Detalle '+selectedRubro+'</b>, <b>Alertas</b> ('+depurado.review.length+' líneas), <b>Excluidas</b> ('+depurado.removed.length+') e <b>Historial</b> ('+depurado.all.length+'). Validaciones OK: <b>'+validation.checks.filter(c=>c.ok).length+'/'+validation.checks.length+'</b>.','ok');
+  progress(100);setStatus('Excel generado con 4 pestañas: Dashboard Ejecutivo, Detalle >30 días, <b>Alertas</b> ('+depurado.review.length+' líneas) e <b>Historial</b> ('+depurado.all.length+' líneas: '+depurado.clean.length+' activas y '+depurado.removed.length+' excluidas, con su motivo). Validaciones OK: <b>'+validation.checks.filter(c=>c.ok).length+'/'+validation.checks.length+'</b>.','ok');
  }catch(e){console.error(e);progress(0);setStatus('No se pudo generar el Excel: '+(e.message||e),'bad')}
 }
 function findHeaderRow(matrix){return matrix.findIndex(row=>row.some(v=>norm(v)==='CUENTA')&&(row.some(v=>norm(v)==='CLIENTE')||row.some(v=>norm(v)==='GLOSA')))}
 async function readPremiumFile(file,fileIndex){const buf=await file.arrayBuffer(),wb=XLSX.read(buf,{type:'array',cellDates:true,cellNF:true});let rows=[];for(const shName of wb.SheetNames){const ws=wb.Sheets[shName],matrix=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true}),hi=findHeaderRow(matrix);if(hi<0)continue;const heads=matrix[hi].map(v=>s(v));for(let j=hi+1;j<matrix.length;j++){const row=matrix[j];if(!row.some(v=>v!==null&&v!==''))continue;const obj=Object.fromEntries(heads.map((h,i)=>[h,row[i]]));const rubro=canonicalRubro(obj.Cuenta);if(!rubro)continue;const ruc=s(obj.Ruc),cliente=s(obj.Cliente),glosa=s(obj.Glosa);if(!ruc&&!cliente&&!glosa)continue;obj.__rubro=rubro;obj.__sourceFile=file.name;obj.__sourceSheet=shName;obj.__sourceRow=j+1;rows.push(obj)}}return rows}
 $('analyze').onclick=async()=>{try{const files=[...$('file').files];if(!files.length)throw new Error('Selecciona primero al menos un reporte de Premium.');if(typeof XLSX==='undefined')throw new Error('No se pudo cargar la librería Excel. Verifica tu conexión a internet al abrir el sistema.');progress(8);setStatus('Leyendo reportes Premium...');sourceFileNames=files.map(f=>f.name);premiumRows=[];for(let i=0;i<files.length;i++){premiumRows.push(...await readPremiumFile(files[i],i));progress(10+Math.round((i+1)/files.length*25))}if(!premiumRows.length)throw new Error('No encontré filas válidas de los rubros 29080601/02 o 29080701/02.');const fechas=premiumRows.map(r=>excelDate(r['Fecha Vou'])).filter(d=>d&&!isNaN(d));if(!fechas.length)throw new Error('No encontré fechas válidas en Fecha Vou.');const maxFecha=new Date(Math.max(...fechas.map(d=>d.getTime()))),cutoff=new Date(maxFecha.getFullYear(),maxFecha.getMonth()+1,0);$('cutoff').value=`${cutoff.getFullYear()}-${String(cutoff.getMonth()+1).padStart(2,'0')}-${String(cutoff.getDate()).padStart(2,'0')}`;
- historyRows=[];progress(45);const detected=[...new Set(premiumRows.map(r=>r.__rubro).filter(Boolean))];selectedRubro=detected.includes('29080701')?'29080701':(detected[0]||'29080701');rawRows80701=premiumRows.filter(r=>r.__rubro===selectedRubro&&(s(r.Ruc)||s(r.Cliente)||s(r.Glosa)));if(!rawRows80701.length)throw new Error(`No encontré partidas del rubro ${selectedRubro} en los reportes cargados. Cuentas detectadas: ${detected.join(', ')||'ninguna'}.`);headers80701=[...new Set(rawRows80701.flatMap(r=>Object.keys(r).filter(k=>!k.startsWith('__'))))];setStatus(`Procesando <b>${rawRows80701.length.toLocaleString('es-PE')}</b> partidas de <b>${selectedRubro}</b> y <b>${premiumRows.length.toLocaleString('es-PE')}</b> filas reconocidas en total...`);await new Promise(r=>setTimeout(r,20));originalRows=analyzeRows(rawRows80701,cutoff,1.00);depurado=depurarDetalle(originalRows);analyzed=depurado.clean;progress(78);summary=buildSummary(analyzed,cutoff);validation=buildValidation(originalRows,depurado,summary);render();progress(100);let control='';let cls='ok';if(selectedRubro==='29080701'&&summary.baseCheck?.isAugust){if(summary.baseCheck.baseMatchesMacro){control=' <b>✓ BASE DE AGOSTO COINCIDE CON LA REFERENCIA DE LA MACRO</b>'}else{control=`<br><b>⚠ CONTROL DE BASE:</b> ${esc(summary.baseCheck.message)}`;cls='warn'}}setStatus(`Listo · v6.17. Archivos: <b>${sourceFileNames.length}</b>. Cuenta procesada: <b>${selectedRubro} · ${RUBROS[selectedRubro]}</b>. Registros originales: <b>${originalRows.length.toLocaleString('es-PE')}</b> · Detalle activo: <b>${analyzed.length.toLocaleString('es-PE')}</b> · Excluidos: <b>${depurado.removed.length.toLocaleString('es-PE')}</b> · <b>${money(summary.pen,'PEN')}</b> · <b>${money(summary.usd,'USD')}</b> · Sin clasificar: <b>${summary.unc}</b> · Fuera de plazo: <b>${summary.late}</b> · A revisar: <b>${depurado.review.length}</b> · Validaciones OK: <b>${validation.checks.filter(c=>c.ok).length}/${validation.checks.length}</b>.${control}`,cls)}catch(e){console.error(e);progress(0);setStatus(e.message||String(e),'bad')}};
+ historyRows=[];progress(45);const detected=[...new Set(premiumRows.map(r=>r.__rubro).filter(Boolean))];selectedRubro=detected.includes('29080701')?'29080701':(detected[0]||'29080701');rawRows80701=premiumRows.filter(r=>r.__rubro===selectedRubro&&(s(r.Ruc)||s(r.Cliente)||s(r.Glosa)));if(!rawRows80701.length)throw new Error(`No encontré partidas del rubro ${selectedRubro} en los reportes cargados. Cuentas detectadas: ${detected.join(', ')||'ninguna'}.`);headers80701=[...new Set(rawRows80701.flatMap(r=>Object.keys(r).filter(k=>!k.startsWith('__'))))];setStatus(`Procesando <b>${rawRows80701.length.toLocaleString('es-PE')}</b> partidas de <b>${selectedRubro}</b> y <b>${premiumRows.length.toLocaleString('es-PE')}</b> filas reconocidas en total...`);await new Promise(r=>setTimeout(r,20));originalRows=analyzeRows(rawRows80701,cutoff,1.00);depurado=depurarDetalle(originalRows);analyzed=depurado.clean;progress(78);summary=buildSummary(analyzed,cutoff);validation=buildValidation(originalRows,depurado,summary);render();progress(100);let control='';let cls='ok';if(selectedRubro==='29080701'&&summary.baseCheck?.isAugust){if(summary.baseCheck.baseMatchesMacro){control=' <b>✓ BASE DE AGOSTO COINCIDE CON LA REFERENCIA DE LA MACRO</b>'}else{control=`<br><b>⚠ CONTROL DE BASE:</b> ${esc(summary.baseCheck.message)}`;cls='warn'}}setStatus(`Listo · v6.18. Archivos: <b>${sourceFileNames.length}</b>. Cuenta procesada: <b>${selectedRubro} · ${RUBROS[selectedRubro]}</b>. Registros originales: <b>${originalRows.length.toLocaleString('es-PE')}</b> · Detalle activo: <b>${analyzed.length.toLocaleString('es-PE')}</b> · Excluidos: <b>${depurado.removed.length.toLocaleString('es-PE')}</b> · <b>${money(summary.pen,'PEN')}</b> · <b>${money(summary.usd,'USD')}</b> · Sin clasificar: <b>${summary.unc}</b> · Fuera de plazo: <b>${summary.late}</b> · A revisar: <b>${depurado.review.length}</b> · Validaciones OK: <b>${validation.checks.filter(c=>c.ok).length}/${validation.checks.length}</b>.${control}`,cls)}catch(e){console.error(e);progress(0);setStatus(e.message||String(e),'bad')}};
 async function canvasFromElements(elements){
   const wrap=document.createElement('div');wrap.className='pdfCaptureWrap';
   const inner=document.createElement('div');inner.className='pdfPageInner';wrap.appendChild(inner);document.body.appendChild(wrap);
